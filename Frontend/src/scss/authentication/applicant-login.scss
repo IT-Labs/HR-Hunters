@@ -1,0 +1,10 @@
+.auth-form-container {
+  text-align: center;
+
+  &--bg-color {
+    background-color: rgba($color: $color-white, $alpha: 0.5);
+    height: 400px;
+    width: 400px;
+    display: inline-block;
+  }
+}
