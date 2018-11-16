@@ -1,0 +1,56 @@
+.auth-form {
+  &__container {
+    text-align: center;
+    margin-top: 3rem;
+    &--bg-color {
+      background-color: rgba($color: $color-white, $alpha: 0.5);
+      height: 34rem;
+      width: 40rem;
+      display: inline-block;
+      padding: 5rem;
+    }
+  }
+
+  &__input {
+    &:not(:last-child) {
+      margin-bottom: 2rem;
+    }
+
+    font-size: $placeholder-font-size;
+    padding: 2rem;
+    width: 100%;
+
+    &::-webkit-input-placeholder {
+      font-size: $placeholder-font-size;
+    }
+    &::-moz-placeholder {
+      font-size: $placeholder-font-size;
+    }
+    &:-ms-input-placeholder {
+      font-size: $placeholder-font-size;
+    }
+    &:-moz-placeholder {
+      font-size: $placeholder-font-size;
+    }
+  }
+
+  &__text {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .auth-form {
+    &__container {
+      margin-top: 2rem;
+      &--bg-color {
+        width: 90%;
+        padding: 3rem 2rem;
+      }
+    }
+  }
+
+  .btn-auth {
+    width: 90%;
+  }
+}

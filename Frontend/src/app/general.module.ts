@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from "@angular/common";
-import { ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 
 import { AdminComponent } from './authentication/admin/admin.component';
@@ -26,6 +26,7 @@ import { AppicantJobPostingsComponent } from './homepage/applicant/applicant-job
 import { NewJobPostingComponent } from './admin-dashboard/job-postings/new-job-posting/new-job-posting.component';
 import { ClientProfileComponent } from './homepage/client/client-profile/client-profile.component';
 import { ApplicantProfileComponent } from './homepage/applicant/applicant-profile/applicant-profile.component';
+import { WelcomeComponent } from './authentication/welcome.component';
 
 
 @NgModule({
@@ -52,11 +53,13 @@ import { ApplicantProfileComponent } from './homepage/applicant/applicant-profil
         ErrorComponent,
         NewJobPostingComponent,
         ClientProfileComponent,
-        ApplicantProfileComponent
+        ApplicantProfileComponent,
+        WelcomeComponent
     ],
     imports: [
         CommonModule,
         ReactiveFormsModule,
+        FormsModule,
         RouterModule
     ]
 })
