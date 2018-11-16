@@ -26,6 +26,7 @@ import { AppicantJobPostingsComponent } from './homepage/applicant/applicant-job
 import { NewJobPostingComponent } from './admin-dashboard/job-postings/new-job-posting/new-job-posting.component';
 import { ClientProfileComponent } from './homepage/client/client-profile/client-profile.component';
 import { ApplicantProfileComponent } from './homepage/applicant/applicant-profile/applicant-profile.component';
+import { WelcomeComponent } from './authentication/welcome.component';
 
 
 @NgModule({
@@ -52,7 +53,8 @@ import { ApplicantProfileComponent } from './homepage/applicant/applicant-profil
         ErrorComponent,
         NewJobPostingComponent,
         ClientProfileComponent,
-        ApplicantProfileComponent
+        ApplicantProfileComponent,
+        WelcomeComponent
     ],
     imports: [
         CommonModule,

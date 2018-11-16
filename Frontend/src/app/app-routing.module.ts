@@ -19,9 +19,11 @@ import { AppicantJobPostingsComponent } from "./homepage/applicant/applicant-job
 import { JobPostingsComponent } from "./admin-dashboard/job-postings/job-postings.component";
 import { ClientProfileComponent } from "./homepage/client/client-profile/client-profile.component";
 import { ApplicantProfileComponent } from "./homepage/applicant/applicant-profile/applicant-profile.component";
+import { WelcomeComponent } from "./authentication/welcome.component";
 
 const routes: Routes = [
   { path: "hr-admin", component: AdminComponent },
+  { path: "welcome", component: WelcomeComponent },
   { path: "client-login", component: ClientLoginComponent },
   { path: "client-register", component: ClientRegisterComponent },
   { path: "applicant-login", component: ApplicantLoginComponent },
