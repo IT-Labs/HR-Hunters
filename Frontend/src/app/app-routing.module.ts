@@ -19,6 +19,7 @@ import { AppicantJobPostingsComponent } from "./homepage/applicant/applicant-job
 import { JobPostingsComponent } from "./admin-dashboard/job-postings/job-postings.component";
 import { ClientProfileComponent } from "./homepage/client/client-profile/client-profile.component";
 import { ApplicantProfileComponent } from "./homepage/applicant/applicant-profile/applicant-profile.component";
+import { AdminDashboardComponent } from "./admin-dashboard/admin-dashboard.component";
 
 const routes: Routes = [
   { path: "hr-admin", component: AdminComponent },
@@ -28,7 +29,7 @@ const routes: Routes = [
   { path: "applicant-register", component: ApplicantRegisterComponent },
   {
     path: "admin-dashboard",
-    component: AdminComponent,
+    component: AdminDashboardComponent,
     children: [
       {
         path: "job-postings",
