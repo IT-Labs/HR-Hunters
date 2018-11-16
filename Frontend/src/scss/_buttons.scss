@@ -1,0 +1,16 @@
+.btn-auth {
+  background-color: $color-btn-auth-bg;
+  color: $color-white;
+  font-weight: 400;
+  font-size: 1.6rem;
+  padding: 1rem;
+  width: 18rem;
+
+  &:hover {
+    background-color: $color-btn-auth-hover;
+  }
+
+  &:active {
+    background-color: $color-btn-auth-active;
+  }
+}
