@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HRHunters.Data
+namespace HRHunters.Domain
 {
     public class Class1
     {
