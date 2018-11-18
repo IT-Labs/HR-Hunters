@@ -1,38 +1,36 @@
 @import "../variables";
 
-
-
-
-
 html, body {
   height: 100%;
 }
-
-
-
 a {
   cursor: pointer;
 }
 
 ul {
   list-style: none;
+ 
 }
 
 .wrapper {
   display: flex;
   min-height: 100%;
   nav {
-    width: 200px;
+    max-width: 180px;
     background: $nav-primary-bg;
-  }
-  
-  nav ul a {
-    position: relative;
-    display: block;
-    padding: 15px 15px 17px 50px;
-    color:$color-white;
-    font-size: 20px;
- 
+
+    li{
+      width: 100%;
+      margin: 0 auto;
+      a{
+        position: relative;
+        display: block;
+        padding: 1.5rem 3rem;
+        color:$color-white !important;
+        font-size: 18px;
+        width: 100%;
+      }
+    }
   }
   
   nav ul a:hover{
@@ -42,6 +40,7 @@ ul {
   nav ul a.active {
     background: $active-bg;
     color: $color-white;
+
   }
   
   nav ul a:before {
