@@ -1,26 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "../../node_modules/bootstrap/scss/bootstrap.scss";
-@import "./variables";
-@import "./fonts";
-@import "./buttons";
-@import "./authentication/welcome-page.scss";
-@import "./authentication/applicant-login.scss";
 
-// Basic Setup
-*,
-*::after,
-*::before {
-  margin: 0;
-  padding: 0;
-  box-sizing: inherit;
-}
+@import "./abstracts/variables";
+@import "./abstracts/mixins";
 
-html {
-  font-size: 62.5%;
-}
+@import "./base/base";
+@import "./base/typography";
 
-body {
-  box-sizing: border-box;
-  font-family: $roboto;
-}
+@import "./components/buttons";
+
+
+@import "./layout/welcome-page.scss";
+@import "./layout/applicant-login.scss";
