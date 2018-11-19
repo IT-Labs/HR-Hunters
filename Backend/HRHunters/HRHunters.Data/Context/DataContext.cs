@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using HRHunters.Data.Context;
-using HRHunters.Common.Models;
+using HRHunters.Common.Entities;
 
 namespace HRHunters.Data.Context
 {
