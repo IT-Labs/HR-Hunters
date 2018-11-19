@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace HRHunters.Domain.Models
+namespace HRHunters.Common.Entities
 {
-    class Applicant : User
+    public class Applicant : User
     {
         public int Id { get; set; }
         [Phone]
