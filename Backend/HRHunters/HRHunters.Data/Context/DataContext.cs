@@ -10,7 +10,11 @@ namespace HRHunters.Data.Context
 {
     public class DataContext : DbContext
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options) { }
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        {
+  
+        }
+
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Applicant> Apllicants { get; set; }
         public DbSet<Application> Applications { get; set; }
@@ -18,13 +22,12 @@ namespace HRHunters.Data.Context
         public DbSet<JobPosting> JobPostings { get; set; }
         public DbSet<User> Users{ get; set; }
 
-
         public class DataContextFactory : IDesignTimeDbContextFactory<DataContext>
         {
             public DataContext CreateDbContext(string[] args)
             {
                 var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-                optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=test;User Id=postgres;Password=;");
+                optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=password;");
 
                 return new DataContext(optionsBuilder.Options);
             }

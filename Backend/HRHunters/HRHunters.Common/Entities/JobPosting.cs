@@ -28,5 +28,8 @@ namespace HRHunters.Common.Entities
         public string NeededExperience { get; set; }
         public int ClientId { get; set; }
 
+        public Client Client { get; set; }
+        public ICollection<Application> Applications { get; set; }
+
     }
 }
