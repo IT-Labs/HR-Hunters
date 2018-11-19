@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HRHunters.Domain.Models
+namespace HRHunters.Data
 {
-    class Admin : User
+    class Class1
     {
     }
 }
