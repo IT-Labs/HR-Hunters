@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HRHunters.Domain.Models
 {
-    public class JobPosting
+    class JobPosting
     {
         public int Id { get; set; }
         [Required]
