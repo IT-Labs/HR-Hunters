@@ -8,29 +8,25 @@ import { Component, OnInit } from '@angular/core';
 export class AdminDashboardComponent implements OnInit {
   selectedUserTab = 1;
   tabs = [
-    {
-      name: 'Dashboard',
-      key: 1,
-      active: true
-    },
+  
      {
      name: 'Jobs',
+     key: 1,
+     active: true
+   },
+   {
+     name: 'Aplications',
      key: 2,
      active: false
    },
    {
-     name: 'Aplications',
+     name: 'Clients',
      key: 3,
      active: false
    },
    {
-     name: 'Clients',
-     key: 4,
-     active: false
-   },
-   {
     name: 'Aplicants',
-    key: 5,
+    key: 4,
     active: false
   },
   ];
@@ -40,6 +36,6 @@ export class AdminDashboardComponent implements OnInit {
   ngOnInit() {
   }
   
-  coinwallet: string[] = ['Dashboard','Jobs','Aplications','Clients','Aplicants'];
+  coinwallet: string[] = ['Jobs','Aplications','Clients','Aplicants'];
   selectedwallet = this.coinwallet[0];
 }

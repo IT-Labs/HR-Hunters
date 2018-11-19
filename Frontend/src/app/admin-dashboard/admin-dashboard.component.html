@@ -1,44 +1,33 @@
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class=" navbar navbar-expand-lg navbar-dark bg-dark ">
   <a class="navbar-brand" href="#"> <i class="fa fa-home"></i> HR Hunters</a>
-  <!-- <button class="navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button> -->
+ 
+  
  
   <!-- <a class="navbar-brand" href="#">Hi, Admin <i class="fa fa-user"></i></a> -->
    
-  <ul class="nav navbar-nav ml-auto">
-      <li class="nav-item active">
+  <ul class=" nav navbar-nav ml-auto admindashboard-page-container__sidebar-container ">
+      <li class="nav-item active ">
          <a class="navbar-brand" href="#">Hi, Admin <i class="fa fa-user"></i></a>
+       
+    
       </li>
-   
+      <li class="admindashboard-page-container__btn-container">
+          <button class="navbar-toggler-left " type="button" data-toggle="collapse" data-target="#sidebarLeft" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+       </li>
+  
     </ul>
   
 </nav>
-<!-- <div class="container">
-  <div class="row dashboard-container">
-    <div class="col-md-3 col-lg-3 col-sm-3">
-        <ul class="nav nav-tabs side_nav vertical-menu" role="tablist">
-            <li *ngFor="let wallet of coinwallet; let first = first;" [ngClass]="{firstItem: first}" role="presentation" class="accounts_li" [class.active]="selectedwallet===wallet">
-              <a (click)="selectedwallet = wallet" aria-controls="one" role="tab" data-toggle="tab">{{wallet}}</a>
-            </li>
-          </ul>
-    </div>
-    <div class="col-md-9 col-lg-9 col-sm-9 ">
-        <div class="tab-content">
-            <div *ngIf="selectedwallet === coinwallet[0]" role="tabpanel" class="tab-pane active" id="one">wallet 1 content</div>
-            <div *ngIf="selectedwallet === coinwallet[1]" role="tabpanel" class="tab-pane active" id="two">wallet 2 content</div>
-            <div *ngIf="selectedwallet === coinwallet[2]" role="tabpanel" class="tab-pane active" id="two">wallet 3 content</div>
-            <div *ngIf="selectedwallet === coinwallet[3]" role="tabpanel" class="tab-pane active" id="two">wallet 4 content</div>
-            <div *ngIf="selectedwallet === coinwallet[4]" role="tabpanel" class="tab-pane active" id="two">wallet 5 content</div>
-          </div>
-    </div>
-  </div>
-</div> -->
- <div class="wrapper">
-      <nav>
-        <ul class="nav nav-tabs side_nav vertical-menu" role="tablist">
-          <li *ngFor="let wallet of coinwallet; let first = first;" [ngClass]="{firstItem: first}" role="presentation" class="accounts_li" [class.active]="selectedwallet===wallet">
+
+
+ <div class="wrapper admindashboard-page-container__wrapper-container">
+      <nav id="sidebarLeft" class="admindashboard-page-container__sidebar-container">
+        <ul class="nav nav-tabs " role="tablist">
+          <li><p><span><i class="fa fa-list-alt" aria-hidden="true"></i></span> Dashboard</p></li>
+          <li *ngFor="let wallet of coinwallet; let first = first;" [ngClass]="{firstItem: first}" role="presentation" type="pills" class="accounts_li" [class.active]="selectedwallet===wallet">
             <a (click)="selectedwallet = wallet" aria-controls="one" role="tab" data-toggle="tab">{{wallet}}</a>
           </li>
         </ul>
@@ -51,7 +40,7 @@
             <div *ngIf="selectedwallet === coinwallet[1]" role="tabpanel" class="tab-pane active" id="two">wallet 2 content</div>
             <div *ngIf="selectedwallet === coinwallet[2]" role="tabpanel" class="tab-pane active" id="two">wallet 3 content</div>
             <div *ngIf="selectedwallet === coinwallet[3]" role="tabpanel" class="tab-pane active" id="two">wallet 4 content</div>
-            <div *ngIf="selectedwallet === coinwallet[4]" role="tabpanel" class="tab-pane active" id="two">wallet 5 content</div>
+    
         </div>
       </div>
     <div class="flex-grid">
