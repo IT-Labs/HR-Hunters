@@ -4,7 +4,6 @@
     margin-top: 3rem;
     &--bg-color {
       background-color: rgba($color: $color-white, $alpha: 0.5);
-      height: 34rem;
       width: 40rem;
       display: inline-block;
       padding: 5rem;
@@ -12,13 +11,20 @@
   }
 
   &__input {
-    &:not(:last-child) {
-      margin-bottom: 2rem;
+    &:not(:first-child) {
+      margin-top: 2rem;
     }
 
     font-size: $placeholder-font-size;
     padding: 2rem;
     width: 100%;
+    font-family: inherit;
+    color: inherit;
+
+    border: none;
+    border-bottom: 4px solid transparent;
+    display: block;
+    transition: all 0.3s;
 
     &::-webkit-input-placeholder {
       font-size: $placeholder-font-size;
@@ -32,10 +38,28 @@
     &:-moz-placeholder {
       font-size: $placeholder-font-size;
     }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 1rem 2rem rgba($color-black, 0.1);
+      border-bottom: 4px solid $color-btn-auth-bg;
+    }
+    &:focus:invalid {
+      border-bottom: 4px solid $color-alert;
+    }
   }
 
   &__text {
+    margin-top: 2rem;
     font-size: 1.6rem;
+    padding: 0;
+  }
+
+  &__alert {
+    margin-top: .5rem;
+    border-radius: 0;
+    color: $color-alert-msg;
+    font-size: 1.3rem;
   }
 }
 
