@@ -1,0 +1,171 @@
+@import "../variables";
+
+html, body {
+  height: 100%;
+}
+a {
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+ 
+}
+
+.wrapper {
+  display: flex;
+  min-height: 100%;
+  nav {
+    max-width: 180px;
+    background: $nav-primary-bg;
+
+    li{
+      width: 100%;
+      margin: 0 auto;
+      a,p{
+        position: relative;
+        display: block;
+        padding: 1.5rem 3rem;
+        color:$color-white !important;
+        font-size: 14px;
+        width: 100%;
+      }
+      p{
+        background:#2276dd;
+      }
+    }
+  }
+  
+  nav ul a:hover{
+      background:$hover-bg;
+      color:$color-white;
+  }
+  nav ul a.active {
+    background: $active-bg;
+    color: $color-white;
+
+  }
+  
+  nav ul a:before {
+    font: normal 16px fontawesome;
+    top: 15px;
+    left: 18px;
+  }
+
+  main {
+    flex: 1;
+    padding: 25px;
+    background: #f5f5f5;
+  }
+  
+  .nav-tabs{
+    border: none;
+  }
+  
+  .flex-grid {
+    display: flex;
+  }
+  
+  .flex-grid > div {
+    flex: 1;
+    margin: 0 20px 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    background: #fff;
+  }
+  
+  .flex-grid > div:last-child {
+    margin-right: 0;
+  }
+  
+  .flex-grid h2 {
+    margin: -15px -15px 15px -15px;
+    padding: 12px 15px;
+    font-size: 14px;
+    font-weight: 400;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .flex-grid li {
+    position: relative;
+    margin: 0 0 10px;
+    padding: 0 0 0 25px;
+  }
+  
+  .flex-grid li:before {
+    content: '\f00c';
+    font: normal 16px fontawesome;
+    top: 0;
+    left: 0;
+    color: #999;
+  }
+
+
+}
+
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+  .admindashboard-page-container {
+    &__navigation-container {
+     button {
+        display: none;
+      }
+   
+    }
+
+    &__btn-container {
+      text-align: center;
+  
+      button {
+        display: none;
+      }
+    }
+   
+    &__wrapper-container{
+      nav{
+      
+      }
+    }
+   
+  }
+}
+// Medium devices (below 425px )
+@media (max-width: 425px) {
+  .admindashboard-page-container {
+    &__navigation-container {
+     button {
+        display: block
+      }
+      &__wrapper-container{
+     
+      main{
+
+        ul{
+          display: inline-block;
+          width: 100%;
+        }
+     
+      }
+    }
+
+    &__sidebar_container{
+      nav {
+        display: inline-flex;
+      width: 100%;
+       }
+     }
+   
+    }
+   
+  }
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+ 
+}
+
+// Extra large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {
+}
