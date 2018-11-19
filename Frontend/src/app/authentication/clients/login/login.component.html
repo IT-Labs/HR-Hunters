@@ -1,3 +1,105 @@
-<p>
-  login works!
-</p>
+<div class="auth-page__container">
+  <div class="auth-page__container--opacity">
+    <div class="auth-page__logo-container">
+      <img src="../../assets/img/hr-hunters-logo.png" alt="Hr Hunters logo" />
+      <div class="auth-page__logo-container__title">HR Hunters</div>
+    </div>
+    <div class="auth-form__container">
+      <div class="auth-form__container--bg-color">
+        <form [formGroup]="clientLoginForm" (ngSubmit)="onClientLogin()">
+          <!-- EMAIL INPUT -->
+          <input
+            type="email"
+            class="form-control auth-form__input"
+            placeholder="Email"
+            formControlName="clientEmail"
+            maxlength="30"
+          />
+
+          <div
+            *ngIf="
+              !clientLoginForm.controls['clientEmail'].valid &&
+              (clientLoginForm.controls['clientEmail'].dirty ||
+                clientLoginForm.controls['clientEmail'].touched)
+            "
+            class="alert alert-warning auth-form__alert"
+          >
+            <div *ngIf="clientLoginForm.controls['clientEmail'].errors.email">
+              Email must be in valid format.
+            </div>
+            <div
+              *ngIf="clientLoginForm.controls['clientEmail'].errors.required"
+            >
+              Email is required.
+            </div>
+            <div
+              *ngIf="clientLoginForm.controls['clientEmail'].errors.minlength"
+            >
+              Email must be at least 6 characters long.
+            </div>
+            <div
+              *ngIf="clientLoginForm.controls['clientEmail'].errors.maxlength"
+            >
+              Email must be up to 30 characters long.
+            </div>
+          </div>
+
+          <!-- PASSWORD INPUT -->
+          <input
+            type="password"
+            class="form-control auth-form__input"
+            placeholder="Password"
+            formControlName="clientPassword"
+            minlength="8"
+            maxlength="20"
+          />
+          <div
+            *ngIf="
+              !clientLoginForm.controls['clientPassword'].valid &&
+              (clientLoginForm.controls['clientPassword'].dirty ||
+                clientLoginForm.controls['clientPassword'].touched)
+            "
+            class="alert alert-warning auth-form__alert"
+          >
+            <div
+              *ngIf="clientLoginForm.controls['clientPassword'].errors.password"
+            >
+              Password is required.
+            </div>
+            <div
+              *ngIf="clientLoginForm.controls['clientPassword'].errors.required"
+            >
+              Password is required.
+            </div>
+            <div
+              *ngIf="
+                clientLoginForm.controls['clientPassword'].errors.minlength
+              "
+            >
+              Password must be at least 8 characters long.
+            </div>
+            <div
+              *ngIf="
+                clientLoginForm.controls['clientPassword'].errors.maxlength
+              "
+            >
+              Password must be up to 20 characters long.
+            </div>
+          </div>
+
+          <p class="auth-form__text">
+            You don't have an account?<br />Register
+            <a routerLink="/client-register">here</a>.
+          </p>
+          <button
+            class="btn btn-auth"
+            type="submit"
+            [disabled]="!clientLoginForm.valid"
+          >
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

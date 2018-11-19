@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRHunters.WebAPI", "HRHunte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRHunters.Data", "HRHunters.Data\HRHunters.Data.csproj", "{4247ADC7-F308-4DA2-810D-529A4ECE31CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HRHunters.Domain", "HRHunters.Domain\HRHunters.Domain.csproj", "{52002176-CDA2-45A2-A1DE-4689458CC26E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HRHunters.Common", "HRHunters.Common\HRHunters.Common.csproj", "{BBD2D03A-D9B1-4D1B-92F1-F048F3347DDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{4247ADC7-F308-4DA2-810D-529A4ECE31CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4247ADC7-F308-4DA2-810D-529A4ECE31CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4247ADC7-F308-4DA2-810D-529A4ECE31CC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{52002176-CDA2-45A2-A1DE-4689458CC26E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{52002176-CDA2-45A2-A1DE-4689458CC26E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{52002176-CDA2-45A2-A1DE-4689458CC26E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{52002176-CDA2-45A2-A1DE-4689458CC26E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBD2D03A-D9B1-4D1B-92F1-F048F3347DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBD2D03A-D9B1-4D1B-92F1-F048F3347DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBD2D03A-D9B1-4D1B-92F1-F048F3347DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBD2D03A-D9B1-4D1B-92F1-F048F3347DDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

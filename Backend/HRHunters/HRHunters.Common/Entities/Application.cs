@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HRHunters.Domain.Models
+namespace HRHunters.Common.Entities
 {
-    class Application
+    public class Application
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }

@@ -4,6 +4,9 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
     <UserSecretsId>c527ec09-0429-4a93-acc4-a53c78c42d4d</UserSecretsId>
+    <ApplicationIcon />
+    <OutputType>WinExe</OutputType>
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,8 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HRHunters.Common\HRHunters.Common.csproj" />
     <ProjectReference Include="..\HRHunters.Data\HRHunters.Data.csproj" />
-    <ProjectReference Include="..\HRHunters.Domain\HRHunters.Domain.csproj" />
   </ItemGroup>
 
 </Project>
