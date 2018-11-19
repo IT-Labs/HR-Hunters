@@ -1,15 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class ClientLoginComponent implements OnInit {
+export class ClientLoginComponent {
 
-  constructor() { }
+  constructor(private fb: FormBuilder) { }
 
-  ngOnInit() {
+  clientLoginForm = this.fb.group({
+    clientEmail: ['', Validators.compose([Validators.required, Validators.minLength(6), Validators.maxLength(30), Validators.email])],
+    clientPassword: ['', Validators.compose([Validators.required, Validators.minLength(8), Validators.maxLength(20)])]
+  })
+
+  onClientLogin() {
+    console.log(this.clientLoginForm.value);
+
+    if (this.clientLoginForm.valid) {
+      this.clientLoginForm.reset()
+    }
   }
-
 }

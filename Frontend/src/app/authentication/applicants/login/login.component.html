@@ -1,18 +1,116 @@
-<div class="welcome-page-container">
-  <div class="welcome-page-container--opacity">
-    <div class="welcome-page-container__logo-container">
+<div class="auth-page__container">
+  <div class="auth-page__container--opacity">
+    <div class="auth-page__logo-container">
       <img src="../../assets/img/hr-hunters-logo.png" alt="Hr Hunters logo" />
-      <div class="welcome-page-container__logo-container__title">
-        HR Hunters
-      </div>
+      <div class="auth-page__logo-container__title">HR Hunters</div>
     </div>
     <div class="auth-form__container">
       <div class="auth-form__container--bg-color">
         <form [formGroup]="applicantLoginForm" (ngSubmit)="onApplicantLogin()">
-          <input type="email" class="form-control auth-form__input" placeholder="Enter email" formControlName="email" maxlength="30">
-          <input type="password" class="form-control auth-form__input" placeholder="Password" formControlName="password" minlength="8" maxlength="30">
-          <p class="auth-form__text">You don't have an account?<br>Register <a href="#">here</a>.</p>
-          <button class="btn btn-auth" type="submit" [disabled]="!applicantLoginForm.valid">Login</button>
+          <!-- EMAIL INPUT -->
+          <input
+            type="email"
+            class="form-control auth-form__input"
+            placeholder="Email"
+            formControlName="applicantEmail"
+            maxlength="30"
+          />
+          <div
+            *ngIf="
+              !applicantLoginForm.controls['applicantEmail'].valid &&
+              (applicantLoginForm.controls['applicantEmail'].dirty ||
+                applicantLoginForm.controls['applicantEmail'].touched)
+            "
+            class="alert alert-warning auth-form__alert"
+          >
+            <div
+              *ngIf="applicantLoginForm.controls['applicantEmail'].errors.email"
+            >
+              Email must be in valid format.
+            </div>
+            <div
+              *ngIf="
+                applicantLoginForm.controls['applicantEmail'].errors.required
+              "
+            >
+              Email is required.
+            </div>
+            <div
+              *ngIf="
+                applicantLoginForm.controls['applicantEmail'].errors.minlength
+              "
+            >
+              Email must be at least 6 characters long.
+            </div>
+            <div
+              *ngIf="
+                applicantLoginForm.controls['applicantEmail'].errors.maxlength
+              "
+            >
+              Email must be up to 30 characters long.
+            </div>
+          </div>
+
+          <!-- PASSWORD INPUT -->
+          <input
+            type="password"
+            class="form-control auth-form__input"
+            placeholder="Password"
+            formControlName="applicantPassword"
+            minlength="8"
+            maxlength="20"
+          />
+          <div
+            *ngIf="
+              !applicantLoginForm.controls['applicantPassword'].valid &&
+              (applicantLoginForm.controls['applicantPassword'].dirty ||
+                applicantLoginForm.controls['applicantPassword'].touched)
+            "
+            class="alert alert-warning auth-form__alert"
+          >
+            <div
+              *ngIf="
+                applicantLoginForm.controls['applicantPassword'].errors.password
+              "
+            >
+              Password is required.
+            </div>
+            <div
+              *ngIf="
+                applicantLoginForm.controls['applicantPassword'].errors.required
+              "
+            >
+              Password is required.
+            </div>
+            <div
+              *ngIf="
+                applicantLoginForm.controls['applicantPassword'].errors
+                  .minlength
+              "
+            >
+              Password must be at least 8 characters long.
+            </div>
+            <div
+              *ngIf="
+                applicantLoginForm.controls['applicantPassword'].errors
+                  .maxlength
+              "
+            >
+              Password must be up to 20 characters long.
+            </div>
+          </div>
+
+          <p class="auth-form__text">
+            You don't have an account?<br />Register
+            <a routerLink="/applicant-register">here</a>.
+          </p>
+          <button
+            class="btn btn-auth"
+            type="submit"
+            [disabled]="!applicantLoginForm.valid"
+          >
+            Login
+          </button>
         </form>
       </div>
     </div>

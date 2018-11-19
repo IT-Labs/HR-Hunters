@@ -1,4 +1,4 @@
-.welcome-page {
+.auth-page {
   &__container {
     background-image: url("/../../assets/img/welcome-bg.jpg");
 
@@ -48,7 +48,7 @@
 
 // Small devices (portrate phones, up to 576px)
 @media (max-width: 576px) {
-  .welcome-page-container {
+  .auth-page-container {
     &__logo-container {
       img {
         height: 9rem;
@@ -75,7 +75,7 @@
 
 // Small devices (landscape phones, up to 576px)
 @media (min-width: 576px) {
-  .welcome-page-container {
+  .auth-page__container {
     &__logo-container {
       img {
         height: 9rem;
@@ -102,7 +102,7 @@
 
 // Medium devices (tablets, 768px and up)
 @media (min-width: 768px) {
-  .welcome-page-container {
+  .auth-page__container {
     &__logo-container {
       img {
         height: 12rem;
@@ -129,7 +129,7 @@
 
 // Large devices (desktops, 992px and up)
 @media (min-width: 992px) {
-  .welcome-page-container {
+  .auth-page-container {
     &__moto-container {
       font-size: 7.5rem;
       font-weight: 500;
