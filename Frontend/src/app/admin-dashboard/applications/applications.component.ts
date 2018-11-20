@@ -19,7 +19,7 @@ export class ApplicationsComponent implements OnInit {
       jobTitle: 'Front',
       postedOn: Date.now(),
       status: "Pending"
-    }
+    },
     {
       id: "1",
       applicantEmail: 'mail',
@@ -28,7 +28,7 @@ export class ApplicationsComponent implements OnInit {
       jobTitle: 'Front',
       postedOn: Date.now(),
       status: "Pending"
-    }
+    },
     {
       id: "1",
       applicantEmail: 'mail',
@@ -37,7 +37,7 @@ export class ApplicationsComponent implements OnInit {
       jobTitle: 'Front',
       postedOn: Date.now(),
       status: "Pending"
-    }
+    },
     {
       id: "1",
       applicantEmail: 'mail',
@@ -46,7 +46,7 @@ export class ApplicationsComponent implements OnInit {
       jobTitle: 'Front',
       postedOn: Date.now(),
       status: "Pending"
-    }
+    },
     {
       id: "1",
       applicantEmail: 'mail',
@@ -55,7 +55,7 @@ export class ApplicationsComponent implements OnInit {
       jobTitle: 'Front',
       postedOn: Date.now(),
       status: "Pending"
-    }
+    },
     {
       id: "1",
       applicantEmail: 'mail',
@@ -64,7 +64,7 @@ export class ApplicationsComponent implements OnInit {
       jobTitle: 'Front',
       postedOn: Date.now(),
       status: "Pending"
-    }
+    },
     {
       id: "1",
       applicantEmail: 'mail',
@@ -73,7 +73,7 @@ export class ApplicationsComponent implements OnInit {
       jobTitle: 'Front',
       postedOn: Date.now(),
       status: "Pending"
-    }
+    },
     {
       id: "1",
       applicantEmail: 'mail',
@@ -82,7 +82,7 @@ export class ApplicationsComponent implements OnInit {
       jobTitle: 'Front',
       postedOn: Date.now(),
       status: "Pending"
-    }
+    },
     {
       id: "1",
       applicantEmail: 'mail',
@@ -91,7 +91,7 @@ export class ApplicationsComponent implements OnInit {
       jobTitle: 'Front',
       postedOn: Date.now(),
       status: "Pending"
-    }
+    },
     {
       id: "1",
       applicantEmail: 'mail',
