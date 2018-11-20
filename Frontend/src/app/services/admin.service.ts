@@ -126,6 +126,11 @@ export class AdminService {
 
   /* === APPLICANTS === */
 
+  // This method should be called within onInit within a component applicants postings
+  getApplicantsUpdateListener() {
+    return this.applicantsUpdated.asObservable();
+  }
+
   // Get all applicants
   getApplicants(applicantsPerPage: number, currentPage: number) {
     const queryParams = `?pagesize=${applicantsPerPage}&page=${currentPage}`;
@@ -159,11 +164,16 @@ export class AdminService {
 
   /* === APPLICATIONS === */
 
+  // This method should be called within onInit within a component applications postings
+  getApplicationsUpdateListener() {
+    return this.applicationsUpdated.asObservable();
+  }
+
   // Get all applications
   getApplications(applicationsPerPage: number, currentPage: number) {
     const queryParams = `?pagesize=${applicationsPerPage}&page=${currentPage}`;
     this.http
-      .get<{ applications: any; maxApplictions: number }>(
+      .get<{ applications: Application[]; maxApplictions: number }>(
         "BACKEND_URL" + queryParams
       )
       .pipe(
@@ -172,7 +182,11 @@ export class AdminService {
             applications: applicationsData.applications.map(application => {
               return {
                 id: application.id,
-                date: application.date,
+                applicantName: application.applicantName,
+                applicantEmail: application.applicantEmail,
+                jobTitle: application.jobTitle,
+                experience: application.experience,
+                postedOn: application.postedOn,
                 status: application.status
               };
             }),
@@ -189,6 +203,14 @@ export class AdminService {
       });
   }
 
+  /* === CLIENTS === */
+
+  // This method should be called within onInit within a component clients postings
+  getClientsUpdateListener() {
+    return this.clientsUpdated.asObservable();
+  }
+
+  // Get all applications
   getClients(clientsPerPage: number, currentPage: number) {
     const queryParams = `?pagesize=${clientsPerPage}&page=${currentPage}`;
     this.http

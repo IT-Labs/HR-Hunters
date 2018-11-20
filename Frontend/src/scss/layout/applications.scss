@@ -1,54 +1,70 @@
-.applications-dash{
-    &__heading{
-        
-        h2{
-            font-size:1.5vw; 
-            padding: 2vh;
-          }
+.applications-dash {
+  &__container {
+    padding: 2rem;
+    width: 100%;
+  }
+
+  &__heading {
+    h2 {
+      font-size: 3.5rem;
     }
-    &__filtering{
-        span{
-            border-right:1px solid  lightgrey;
-            margin:0.5rem 1rem; 
-            padding: 0.5rem 1rem;
-            font-size: 14px;
+  }
+  &__filtering {
+    margin: 1.5rem 0;
+
+    ul {
+      li {
+        border-right: 1px solid lightgrey;
+        padding: 0.3rem 1rem;
+        font-size: 1.4rem;
+        display: inline-block;
+
+        span {
+          margin-left: 0.5rem;
         }
-        span:last-child{
-            border:none;
+
+        span:last-child {
+          border: none;
         }
+      }
     }
-    &__table{
-        padding: 3vh 0vh;
-        &__header{
-            th{
-                color: $color-heading-table-cell;
-            }
+  }
+  &__table {
+    font-size: 1.4rem;
+
+    &__header {
+      th {
+        color: $color-heading-table-cell;
+      }
+
+      &--sorting-icon {
+        display: none;
+      }
+    }
+
+    &--dropdown-btn {
+      &__container {
+        button {
+          width: 11rem;
+          font-size: 1.4rem;
         }
-    }
-    &__pagination{
-        margin: 0 auto;
-        ul {
-            margin:0 auto;
-          justify-content: center;
-             li:before{
-                content:"";
-               }
-             li{
-                margin: 0;
-                padding: 0;
-                padding-left: 0px;
-                list-style: none;
-                border-radius: 0.25rem;
-              }
-          }
-    }
-    }
-    @media(max-width:576px){
-        #applications{
-            &__table{
-                overflow-x:  scroll;
-            }
+        span {
+          font-size: 1.4rem;
         }
+      }
     }
-  
-  
+  }
+  &__pagination {
+    margin-top: 2rem;
+    ul {
+      justify-content: center;
+    }
+  }
+}
+@media (max-width: 991px) {
+  .applications-dash {
+    &__container {
+      overflow-x: scroll;
+    }
+  }
+}

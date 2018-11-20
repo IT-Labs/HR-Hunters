@@ -1,5 +1,9 @@
 export interface Application {
   id: string;
-  date: Date;
+  applicantName: string;
+  applicantEmail: string;
+  jobTitle: string;
+  experience: number;
+  postedOn: number;
   status: string;
 }

@@ -27,7 +27,7 @@ import { NewJobPostingComponent } from './admin-dashboard/job-postings/new-job-p
 import { ClientProfileComponent } from './homepage/client/client-profile/client-profile.component';
 import { ApplicantProfileComponent } from './homepage/applicant/applicant-profile/applicant-profile.component';
 import { WelcomeComponent } from './authentication/welcome.component';
-
+import { NgxPopper } from 'angular-popper';
 
 @NgModule({
     declarations: [
@@ -60,7 +60,8 @@ import { WelcomeComponent } from './authentication/welcome.component';
         CommonModule,
         ReactiveFormsModule,
         FormsModule,
-        RouterModule
+        RouterModule,
+        NgxPopper
     ]
 })
 
