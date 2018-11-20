@@ -88,6 +88,7 @@ export class AuthService {
     }
   }
 
+  // FIX THIS NOT GOOD
   private setAuthTimer(duration: number) {
     this.tokenTimer = setTimeout(() => {
       this.logout();

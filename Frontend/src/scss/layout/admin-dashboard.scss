@@ -22,8 +22,12 @@
     display: flex;
     height: calc(100vh - 4rem);
 
+    &--brand {
+      display: none;
+    }
+
     nav {
-      max-width: 15rem;
+      width: 15rem;
       background: $color-nav-primary-bg;
     }
 
@@ -41,6 +45,11 @@
       }
     }
 
+    &--auth {
+      margin-top: 1rem;
+      //border-top: .1rem solid rgba($color: $color-white, $alpha: .5)
+    }
+
     &--main {
       background-color: $color-nav-main;
 
@@ -55,6 +64,47 @@
 
     &--toggler {
       color: $color-white;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  #admin-dash {
+    &__top-nav {
+      display: none;
+    }
+    &__dashboard-btn {
+      display: none;
+    }
+    &__side-nav {
+      width: 100vw;
+    }
+    &__dropdown-nav {
+      padding-top: .7rem;
+      background-color: $color-nav-primary-bg;
+    }
+  }
+
+  .admin-dash {
+    &__navigation {
+      height: 3.5rem;
+      position: relative;
+      &--brand {
+        padding-left: 1rem;
+      }
+      &--toggler {
+        position: absolute;
+        right: 1rem;
+        top: .3rem;
+      }
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  #admin-dash {
+    &__logout {
+      display: none;
     }
   }
 }
