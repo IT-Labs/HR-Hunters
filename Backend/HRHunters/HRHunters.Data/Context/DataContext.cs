@@ -27,7 +27,7 @@ namespace HRHunters.Data.Context
             public DataContext CreateDbContext(string[] args)
             {
                 var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-                optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=password;");
+                optionsBuilder.UseNpgsql("Server=192.168.5.241;Port=5432;Username=hrhunters;Password=DD1P5Ua6cljJLPLts2my;Database=HR-Hunters;");
 
                 return new DataContext(optionsBuilder.Options);
             }
