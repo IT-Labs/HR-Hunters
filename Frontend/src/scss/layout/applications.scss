@@ -1,0 +1,54 @@
+.applications-dash{
+    &__heading{
+        
+        h2{
+            font-size:1.5vw; 
+            padding: 2vh;
+          }
+    }
+    &__filtering{
+        span{
+            border-right:1px solid  lightgrey;
+            margin:0.5rem 1rem; 
+            padding: 0.5rem 1rem;
+            font-size: 14px;
+        }
+        span:last-child{
+            border:none;
+        }
+    }
+    &__table{
+        padding: 3vh 0vh;
+        &__header{
+            th{
+                color: $color-heading-table-cell;
+            }
+        }
+    }
+    &__pagination{
+        margin: 0 auto;
+        ul {
+            margin:0 auto;
+          justify-content: center;
+             li:before{
+                content:"";
+               }
+             li{
+                margin: 0;
+                padding: 0;
+                padding-left: 0px;
+                list-style: none;
+                border-radius: 0.25rem;
+              }
+          }
+    }
+    }
+    @media(max-width:576px){
+        #applications{
+            &__table{
+                overflow-x:  scroll;
+            }
+        }
+    }
+  
+  
