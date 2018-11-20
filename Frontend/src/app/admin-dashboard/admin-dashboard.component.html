@@ -1,62 +1,65 @@
+<nav class="navbar navbar-dark admin-dash__header" id="admin-dash__top-nav">
+  <a class="navbar-brand" href="#"
+    ><i class="fa fa-home"></i
+    ><span class="admin-dash__header__title">HR Hunters</span>
+  </a>
 
-<nav class=" navbar navbar-expand-lg navbar-dark bg-dark ">
-  <a class="navbar-brand" href="#"> <i class="fa fa-home"></i> HR Hunters</a>
- 
-  
- 
-  <!-- <a class="navbar-brand" href="#">Hi, Admin <i class="fa fa-user"></i></a> -->
-   
-  <ul class=" nav navbar-nav ml-auto admindashboard-page-container__sidebar-container ">
-      <li class="nav-item active ">
-         <a class="navbar-brand" href="#">Hi, Admin <i class="fa fa-user"></i></a>
-       
-    
-      </li>
-      <li class="admindashboard-page-container__btn-container">
-          <button class="navbar-toggler-left " type="button" data-toggle="collapse" data-target="#sidebarLeft" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-       </li>
-  
-    </ul>
-  
+  <a class="navbar-brand" href="#"
+    ><span class="admin-dash__header__title"
+      >Hi, Admin
+      <span class="admin-dash__header--logout"
+        >| <a href="#">Logout</a></span
+      ></span
+    ><i class="fa fa-user"></i
+  ></a>
 </nav>
 
+<div class="admin-dash__navigation">
+  <nav class="navbar-expand-lg navbar-dark" id="admin-dash__side-nav">
+    <a class="navbar-brand admin-dash__navigation--brand" href="#"
+      ><i class="fa fa-home"></i
+      ><span class="admin-dash__header__title">HR Hunters</span>
+    </a>
+    <button
+      class="navbar-toggler admin-dash__navigation--toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#sidebar-navigation"
+      aria-controls="sidebar-navigation"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="sidebar-navigation">
+      <ul class="nav navbar-nav" id="admin-dash__dropdown-nav">
+        <li
+          class="admin-dash__navigation--link admin-dash__navigation--main"
+          id="admin-dash__dashboard-btn"
+        >
+          <span><i class="fa fa-list-alt" aria-hidden="true"></i></span>
+          Dashboard
+        </li>
+        <li class="admin-dash__navigation--link" (click)="onChangeTab('jobs')" [ngClass]="{'admin-dash__navigation--active': selectedTab.jobs}">
+          Jobs
+        </li>
+        <li class="nav-item admin-dash__navigation--link" (click)="onChangeTab('applications')" [ngClass]="{'admin-dash__navigation--active': selectedTab.applications}">Applications</li>
+        <li class="nav-item admin-dash__navigation--link" (click)="onChangeTab('clients')" [ngClass]="{'admin-dash__navigation--active': selectedTab.clients}">Clients</li>
+        <li class="nav-item admin-dash__navigation--link" (click)="onChangeTab('applicants')" [ngClass]="{'admin-dash__navigation--active': selectedTab.applicants}">Applicants</li>
+        <li
+          class="nav-item admin-dash__navigation--link admin-dash__navigation--auth"
+          id="admin-dash__logout"
+        >
+          Logout
+        </li>
+      </ul>
+    </div>
+  </nav>
 
- <div class="wrapper admindashboard-page-container__wrapper-container">
-      <nav id="sidebarLeft" class="admindashboard-page-container__sidebar-container">
-        <ul class="nav nav-tabs " role="tablist">
-          <li><p><span><i class="fa fa-list-alt" aria-hidden="true"></i></span> Dashboard</p></li>
-          <li *ngFor="let wallet of coinwallet; let first = first;" [ngClass]="{firstItem: first}" role="presentation" type="pills" class="accounts_li" [class.active]="selectedwallet===wallet">
-            <a (click)="selectedwallet = wallet" aria-controls="one" role="tab" data-toggle="tab">{{wallet}}</a>
-          </li>
-        </ul>
-     </nav>
-    
-
-     
   <main>
-    <div class="flex-grid">
-        <div class="tab-content">
-            <div *ngIf="selectedwallet === coinwallet[0]" role="tabpanel" class="tab-pane active" id="one">wallet 1 content</div>
-            <div *ngIf="selectedwallet === coinwallet[1]" role="tabpanel" class="tab-pane active" id="two">wallet 2 content</div>
-            <div *ngIf="selectedwallet === coinwallet[2]" role="tabpanel" class="tab-pane active" id="two">wallet 3 content</div>
-            <div *ngIf="selectedwallet === coinwallet[3]" role="tabpanel" class="tab-pane active" id="two">wallet 4 content</div>
-    <app-applications></app-applications>
-        </div>
-      </div>
-    <div class="flex-grid">
-      <!-- some content -->
-    </div>
-    <div class="flex-grid">
-      <!-- //some content -->
-    </div>
+    <app-job-postings *ngIf="selectedTab.jobs"></app-job-postings>
+    <app-clients *ngIf="selectedTab.clients"></app-clients>
+    <app-applications *ngIf="selectedTab.applications"></app-applications>
+    <app-applicants *ngIf="selectedTab.applicants"></app-applicants>
   </main>
- </div>
-
-
-
-
-     
-
-    
+</div>
