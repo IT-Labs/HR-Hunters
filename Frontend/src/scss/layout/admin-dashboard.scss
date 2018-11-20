@@ -1,4 +1,12 @@
 .admin-dash {
+  &__component-container {
+    width: 100%;
+
+    &--responsive {
+      display: none;
+    }
+  }
+
   &__header {
     height: 4rem;
     background-color: $color-nav-primary-bg;
@@ -80,12 +88,20 @@
       width: 100vw;
     }
     &__dropdown-nav {
-      padding-top: .7rem;
+      position: relative;
+      top: 3.5rem;
+      padding-top: 0.7rem;
       background-color: $color-nav-primary-bg;
     }
   }
 
   .admin-dash {
+    &__component-container {
+      display: none;
+      &--responsive {
+        display: block;
+      }
+    }
     &__navigation {
       height: 3.5rem;
       position: relative;
@@ -95,7 +111,7 @@
       &--toggler {
         position: absolute;
         right: 1rem;
-        top: .3rem;
+        top: 0.3rem;
       }
     }
   }

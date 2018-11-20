@@ -1,22 +1,20 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 
 @Component({
   selector: "app-admin-dashboard",
   templateUrl: "./admin-dashboard.component.html",
   styleUrls: ["./admin-dashboard.component.scss"]
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboardComponent {
   
   selectedTab = {
-    jobs: true,
-    applications: false,
+    jobs: false,
+    applications: true,
     clients: false,
     applicants: false
   };
 
   constructor() {}
-
-  ngOnInit() {}
 
   onChangeTab(event: string) {
     if (event === "jobs") {

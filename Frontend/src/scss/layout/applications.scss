@@ -1,0 +1,70 @@
+.applications-dash {
+  &__container {
+    padding: 2rem;
+    width: 100%;
+  }
+
+  &__heading {
+    h2 {
+      font-size: 3.5rem;
+    }
+  }
+  &__filtering {
+    margin: 1.5rem 0;
+
+    ul {
+      li {
+        border-right: 1px solid lightgrey;
+        padding: 0.3rem 1rem;
+        font-size: 1.4rem;
+        display: inline-block;
+
+        span {
+          margin-left: 0.5rem;
+        }
+
+        span:last-child {
+          border: none;
+        }
+      }
+    }
+  }
+  &__table {
+    font-size: 1.4rem;
+
+    &__header {
+      th {
+        color: $color-heading-table-cell;
+      }
+
+      &--sorting-icon {
+        display: none;
+      }
+    }
+
+    &--dropdown-btn {
+      &__container {
+        button {
+          width: 11rem;
+          font-size: 1.4rem;
+        }
+        span {
+          font-size: 1.4rem;
+        }
+      }
+    }
+  }
+  &__pagination {
+    margin-top: 2rem;
+    ul {
+      justify-content: center;
+    }
+  }
+}
+@media (max-width: 991px) {
+  .applications-dash {
+    &__container {
+      overflow-x: scroll;
+    }
+  }
+}

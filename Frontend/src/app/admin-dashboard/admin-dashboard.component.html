@@ -32,7 +32,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="sidebar-navigation">
-      <ul class="nav navbar-nav" id="admin-dash__dropdown-nav">
+      <ul class="nav navbar-nav" id="admin-dash__dropdown-nav"> 
         <li
           class="admin-dash__navigation--link admin-dash__navigation--main"
           id="admin-dash__dashboard-btn"
@@ -40,12 +40,38 @@
           <span><i class="fa fa-list-alt" aria-hidden="true"></i></span>
           Dashboard
         </li>
-        <li class="admin-dash__navigation--link" (click)="onChangeTab('jobs')" [ngClass]="{'admin-dash__navigation--active': selectedTab.jobs}">
+        <li
+          class="admin-dash__navigation--link"
+          (click)="onChangeTab('jobs')"
+          [ngClass]="{ 'admin-dash__navigation--active': selectedTab.jobs }"
+        >
           Jobs
         </li>
-        <li class="nav-item admin-dash__navigation--link" (click)="onChangeTab('applications')" [ngClass]="{'admin-dash__navigation--active': selectedTab.applications}">Applications</li>
-        <li class="nav-item admin-dash__navigation--link" (click)="onChangeTab('clients')" [ngClass]="{'admin-dash__navigation--active': selectedTab.clients}">Clients</li>
-        <li class="nav-item admin-dash__navigation--link" (click)="onChangeTab('applicants')" [ngClass]="{'admin-dash__navigation--active': selectedTab.applicants}">Applicants</li>
+        <li
+          class="nav-item admin-dash__navigation--link"
+          (click)="onChangeTab('applications')"
+          [ngClass]="{
+            'admin-dash__navigation--active': selectedTab.applications
+          }"
+        >
+          Applications
+        </li>
+        <li
+          class="nav-item admin-dash__navigation--link"
+          (click)="onChangeTab('clients')"
+          [ngClass]="{ 'admin-dash__navigation--active': selectedTab.clients }"
+        >
+          Clients
+        </li>
+        <li
+          class="nav-item admin-dash__navigation--link"
+          (click)="onChangeTab('applicants')"
+          [ngClass]="{
+            'admin-dash__navigation--active': selectedTab.applicants
+          }"
+        >
+          Applicants
+        </li>
         <li
           class="nav-item admin-dash__navigation--link admin-dash__navigation--auth"
           id="admin-dash__logout"
@@ -56,10 +82,17 @@
     </div>
   </nav>
 
-  <main>
+  <div class="admin-dash__component-container">
     <app-job-postings *ngIf="selectedTab.jobs"></app-job-postings>
     <app-clients *ngIf="selectedTab.clients"></app-clients>
     <app-applications *ngIf="selectedTab.applications"></app-applications>
     <app-applicants *ngIf="selectedTab.applicants"></app-applicants>
-  </main>
+  </div>
+</div>
+
+<div class="admin-dash__component-container--responsive">
+  <app-job-postings *ngIf="selectedTab.jobs"></app-job-postings>
+  <app-clients *ngIf="selectedTab.clients"></app-clients>
+  <app-applications *ngIf="selectedTab.applications"></app-applications>
+  <app-applicants *ngIf="selectedTab.applicants"></app-applicants>
 </div>
