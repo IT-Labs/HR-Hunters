@@ -5,6 +5,7 @@ using System.Text;
 using HRHunters.Data.Context;
 using HRHunters.Common.Entities;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace HRHunters.Data.Context
 {
