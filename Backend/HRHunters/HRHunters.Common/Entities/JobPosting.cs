@@ -1,13 +1,13 @@
-﻿using System;
+﻿using HRHunters.Common.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace HRHunters.Common.Entities
 {
-    public class JobPosting
+    public class JobPosting : Entity<int>
     {
-        public int Id { get; set; }
         [Required]
         [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Only alphabet letters are allowed.")]
         public string Title { get; set; }
@@ -30,6 +30,5 @@ namespace HRHunters.Common.Entities
 
         public Client Client { get; set; }
         public ICollection<Application> Applications { get; set; }
-
     }
 }
