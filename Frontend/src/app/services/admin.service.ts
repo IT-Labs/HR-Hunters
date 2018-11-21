@@ -170,8 +170,8 @@ export class AdminService {
   }
 
   // Get all applications
-  getApplications(applicationsPerPage: number, currentPage: number) {
-    const queryParams = `?pagesize=${applicationsPerPage}&page=${currentPage}`;
+  getApplications(applicationsPerPage: number, currentPage: number, sortedBy: string, sortDirection: string, filterBy: string) {
+    const queryParams = `?pagesize=${applicationsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
     this.http
       .get<{ applications: Application[]; maxApplictions: number }>(
         "BACKEND_URL" + queryParams
