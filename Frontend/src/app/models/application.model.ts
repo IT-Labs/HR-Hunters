@@ -4,6 +4,6 @@ export interface Application {
   applicantEmail: string;
   jobTitle: string;
   experience: number;
-  postedOn: number;
+  postedOn: string;
   status: string;
 }

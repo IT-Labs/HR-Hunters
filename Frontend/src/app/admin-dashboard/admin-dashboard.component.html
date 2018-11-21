@@ -83,16 +83,16 @@
   </nav>
 
   <div class="admin-dash__component-container">
-    <app-job-postings *ngIf="selectedTab.jobs"></app-job-postings>
-    <app-clients *ngIf="selectedTab.clients"></app-clients>
-    <app-applications *ngIf="selectedTab.applications"></app-applications>
-    <app-applicants *ngIf="selectedTab.applicants"></app-applicants>
+    <app-ad-job-postings *ngIf="selectedTab.jobs"></app-ad-job-postings>
+    <app-ad-clients *ngIf="selectedTab.clients"></app-ad-clients>
+    <app-ad-applications *ngIf="selectedTab.applications"></app-ad-applications>
+    <app-ad-applicants *ngIf="selectedTab.applicants"></app-ad-applicants>
   </div>
 </div>
 
 <div class="admin-dash__component-container--responsive">
-  <app-job-postings *ngIf="selectedTab.jobs"></app-job-postings>
-  <app-clients *ngIf="selectedTab.clients"></app-clients>
-  <app-applications *ngIf="selectedTab.applications"></app-applications>
-  <app-applicants *ngIf="selectedTab.applicants"></app-applicants>
+  <app-ad-job-postings *ngIf="selectedTab.jobs"></app-ad-job-postings>
+  <app-ad-clients *ngIf="selectedTab.clients"></app-ad-clients>
+  <app-ad-applications *ngIf="selectedTab.applications"></app-ad-applications>
+  <app-ad-applicants *ngIf="selectedTab.applicants"></app-ad-applicants>
 </div>
