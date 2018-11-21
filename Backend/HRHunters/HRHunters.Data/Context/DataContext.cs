@@ -7,6 +7,7 @@ using HRHunters.Common.Entities;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using HRHunters.Common.Interfaces;
 
 namespace HRHunters.Data.Context
 {
@@ -45,14 +46,11 @@ namespace HRHunters.Data.Context
         public DbSet<JobPosting> JobPostings { get; set; }
         //public DbSet<User> Users{ get; set; }
 
-        public class DataContextFactory : IDesignTimeDbContextFactory<DataContext>
+        public class DataContextFactory : DesignTimeDbContextFactoryBase<DataContext>
         {
-            public DataContext CreateDbContext(string[] args)
+            protected override DataContext CreateNewInstance(DbContextOptions<DataContext> options)
             {
-                var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-                optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Username=postgres;Password=password;Database=test");
-
-                return new DataContext(optionsBuilder.Options);
+                return new DataContext(options);
             }
         }
     }
