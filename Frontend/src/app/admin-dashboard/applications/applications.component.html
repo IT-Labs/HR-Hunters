@@ -1,29 +1,31 @@
-<div class="applications-dash__container">
-  <div class="applications-dash__heading">
+<div class="dash__container">
+  <div class="dash__heading">
     <h2>Applications</h2>
-    <div class=" text-muted applications-dash__filtering">
+    <div class=" text-muted dash__filtering">
       <ul>
-        <li>All<span>(0)</span></li>
-        <li>Pending<span>(0)</span></li>
-        <li>Contacted<span>(0)</span></li>
-        <li>Interviewed<span>(0)</span></li>
-        <li>Rejected<span>(0)</span></li>
+        <li (click)="onFilter($event)">
+          All<span>({{ applicationCount.all }})</span>
+        </li>
+        <li (click)="onFilter($event)">Pending<span>({{ applicationCount.pending }})</span></li>
+        <li (click)="onFilter($event)">Contacted<span>({{ applicationCount.contacted }})</span></li>
+        <li (click)="onFilter($event)">Interviewed<span>({{ applicationCount.interviewed }})</span></li>
+        <li (click)="onFilter($event)">Rejected<span>({{ applicationCount.rejected }})</span></li>
       </ul>
     </div>
   </div>
   <!-- table -->
-  <div class="applications-dash__table">
+  <div class="dash__table">
     <table
       class="table table-hover table-responsive-sm table-striped table-bordered"
     >
       <thead>
-        <tr class="applications-dash__table__header">
-          <th scope="col">Applicant Name</th>
-          <th scope="col">Applicant E-mail</th>
-          <th scope="col">Job title</th>
-          <th scope="col">Experience</th>
-          <th scope="col">Posted</th>
-          <th scope="col">Status</th>
+        <tr class="dash__table__header">
+          <th scope="col" (click)="onSort($event)">Applicant Name</th>
+          <th scope="col" (click)="onSort($event)">Applicant E-mail</th>
+          <th scope="col" (click)="onSort($event)">Job title</th>
+          <th scope="col" (click)="onSort($event)">Experience</th>
+          <th scope="col" (click)="onSort($event)">Posted</th>
+          <th scope="col" (click)="onSort($event)">Status</th>
         </tr>
       </thead>
       <tbody>
@@ -35,7 +37,7 @@
           <td>{{ application.postedOn }}</td>
           <td>
             <div
-              class="dropdown applications-dash__table--dropdown-btn__container"
+              class="dropdown dash__table--dropdown-btn__container"
             >
               <button
                 class="btn dropdown-toggle"
@@ -71,7 +73,7 @@
     </table>
   </div>
   <!-- pagination -->
-  <div class="applications-dash__pagination" *ngIf="totalApplications > 10"> 
+  <div class="dash__pagination" *ngIf="applicationCount.all > 10">
     <ul class="pagination">
       <li class="page-item disabled">
         <a class="page-link" tabindex="-1">
@@ -80,13 +82,11 @@
       </li>
       <li class="page-item active"><a class="page-link">1</a></li>
       <li class="page-item">
-        <a class="page-link" 
-          >2 <span class="sr-only">(current)</span></a
-        >
+        <a class="page-link">2 <span class="sr-only">(current)</span></a>
       </li>
-      <li class="page-item"><a class="page-link" >3</a></li>
+      <li class="page-item"><a class="page-link">3</a></li>
       <li class="page-item">
-        <a class="page-link" ><span aria-hidden="true">»</span></a>
+        <a class="page-link"><span aria-hidden="true">»</span></a>
       </li>
     </ul>
   </div>

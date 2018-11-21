@@ -9,106 +9,111 @@ import { Application } from "src/app/models/application.model";
   styleUrls: ["./applications.component.scss"]
 })
 export class ADApplicationsComponent implements OnInit, OnDestroy {
-
   dummyData: Application[] = [
     {
       id: "1",
-      applicantEmail: 'mail',
-      applicantName: 'Kire',
+      applicantEmail: "mail",
+      applicantName: "Kire",
       experience: 1,
-      jobTitle: 'Front',
+      jobTitle: "Front",
       postedOn: Date.now().toString(),
       status: "Pending"
     },
     {
       id: "1",
-      applicantEmail: 'mail',
-      applicantName: 'Pero',
+      applicantEmail: "mail",
+      applicantName: "Pero",
       experience: 9,
-      jobTitle: 'Front',
+      jobTitle: "Front",
       postedOn: Date.now().toString(),
       status: "Hired"
     },
     {
       id: "1",
-      applicantEmail: 'ivo@mail.com',
-      applicantName: 'Ivo',
+      applicantEmail: "ivo@mail.com",
+      applicantName: "Ivo",
       experience: 1,
-      jobTitle: 'Frontend',
+      jobTitle: "Frontend",
       postedOn: Date.now().toString(),
       status: "Interviewed"
     },
     {
       id: "1",
-      applicantEmail: 'tijana@mail.com',
-      applicantName: 'Tijana',
+      applicantEmail: "tijana@mail.com",
+      applicantName: "Tijana",
       experience: 2,
-      jobTitle: 'Frontend',
+      jobTitle: "Frontend",
       postedOn: Date.now().toString(),
       status: "Pending"
     },
     {
       id: "1",
-      applicantEmail: 'tome@mail.com',
-      applicantName: 'Tome',
+      applicantEmail: "tome@mail.com",
+      applicantName: "Tome",
       experience: 1,
-      jobTitle: 'Backend',
+      jobTitle: "Backend",
       postedOn: Date.now().toString(),
       status: "Pending"
     },
     {
       id: "1",
-      applicantEmail: 'mail',
-      applicantName: 'Draga',
+      applicantEmail: "mail",
+      applicantName: "Draga",
       experience: 1,
-      jobTitle: 'QA',
+      jobTitle: "QA",
       postedOn: Date.now().toString(),
       status: "Contacted"
     },
     {
       id: "1",
-      applicantEmail: 'mail',
-      applicantName: 'Marko',
+      applicantEmail: "mail",
+      applicantName: "Marko",
       experience: 1,
-      jobTitle: 'Front',
+      jobTitle: "Front",
       postedOn: Date.now().toString(),
       status: "Pending"
     },
     {
       id: "1",
-      applicantEmail: 'mail',
-      applicantName: 'Viktor',
+      applicantEmail: "mail",
+      applicantName: "Viktor",
       experience: 3,
-      jobTitle: 'Front',
+      jobTitle: "Front",
       postedOn: Date.now().toString(),
       status: "Rejected"
     },
     {
       id: "1",
-      applicantEmail: 'mail',
-      applicantName: 'David',
+      applicantEmail: "mail",
+      applicantName: "David",
       experience: 1,
-      jobTitle: 'Front',
+      jobTitle: "Front",
       postedOn: Date.now().toString(),
       status: "Rejected"
     },
     {
       id: "1",
-      applicantEmail: 'vlatko@mail.com',
-      applicantName: 'Vlatko',
+      applicantEmail: "vlatko@mail.com",
+      applicantName: "Vlatko",
       experience: 2,
-      jobTitle: 'Backend',
+      jobTitle: "Backend",
       postedOn: Date.now().toString(),
       status: "Pending"
     }
-  ]
+  ];
 
-  totalApplications = 11;
+  applicationCount = {
+    all: 11,
+    pending: 1,
+    contacted: 2,
+    interviewed: 3,
+    rejected: 5,
+  };
   applications: Application[] = [];
   postsPerPage = 10;
   currentPage = 1;
-  currentSortBy = 'Posted';
-  currentSortDirection = "Ascending"
+  currentSortBy = "Posted";
+  currentSortDirection = 1;
   currentFilter = "All";
   private applicationsSub: Subscription;
 
@@ -123,7 +128,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     //       applications: Application[];
     //       applicationsCount: number;
     //     }) => {
-    //       this.totalApplications = applicationsData.applicationsCount;
+    //       this.applicationCount.all = applicationsData.applicationsCount;
     //       this.applications = applicationsData.applications;
     //     }
     //   );
@@ -135,7 +140,43 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     this.currentFilter = pageData.filterBy;
     this.currentSortBy = pageData.sortedBy;
     this.currentSortDirection = pageData.sortDirection;
-    this.adminService.getApplications(this.postsPerPage, this.currentPage, this.currentSortBy, this.currentSortDirection, this.currentFilter);
+    this.adminService.getApplications(
+      this.postsPerPage,
+      this.currentPage,
+      this.currentSortBy,
+      this.currentSortDirection,
+      this.currentFilter
+    );
+  }
+
+  onFilter(pageData: any) {
+    this.currentPage = pageData.pageIndex;
+    this.postsPerPage = pageData.pageSize;
+    // this.currentFilter = the cliecked el;
+    this.currentSortBy = pageData.sortedBy;
+    this.currentSortDirection = pageData.sortDirection;
+    this.adminService.getApplications(
+      this.postsPerPage,
+      this.currentPage,
+      this.currentSortBy,
+      this.currentSortDirection,
+      this.currentFilter
+    );
+  }
+
+  onSort(pageData: any) {
+    this.currentPage = pageData.pageIndex;
+    this.postsPerPage = pageData.pageSize;
+    this.currentFilter = pageData.filterBy;
+    // this.currentSortBy = the cliecked el;
+    this.currentSortDirection = pageData.sortDirection + 1;
+    this.adminService.getApplications(
+      this.postsPerPage,
+      this.currentPage,
+      this.currentSortBy,
+      this.currentSortDirection,
+      this.currentFilter
+    );
   }
 
   chooseStatus(event: any) {

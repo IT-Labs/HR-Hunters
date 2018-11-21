@@ -10,8 +10,6 @@ export class ADClientsComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log("clients loaded")
-    console.log("clients loaded")
 
   }
 

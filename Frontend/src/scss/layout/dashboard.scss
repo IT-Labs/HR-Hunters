@@ -1,4 +1,4 @@
-.applications-dash {
+.dash {
   &__container {
     padding: 2rem;
     width: 100%;
@@ -62,7 +62,7 @@
   }
 }
 @media (max-width: 991px) {
-  .applications-dash {
+  .dash {
     &__container {
       overflow-x: scroll;
     }
