@@ -8,8 +8,8 @@ import { Component } from "@angular/core";
 export class AdminDashboardComponent {
   
   selectedTab = {
-    jobs: false,
-    applications: true,
+    jobs: true,
+    applications: false,
     clients: false,
     applicants: false
   };

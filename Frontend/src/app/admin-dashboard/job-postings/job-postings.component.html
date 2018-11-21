@@ -1,3 +1,93 @@
-<p>
-  job-postings works!dasdasdasda
-</p>
+<div class="dash__container">
+  <div class="dash__heading">
+    <h2>Job Postings</h2>
+    <div class="text-muted dash__filtering">
+      <ul>
+        <li (click)="onFilter($event)">
+          All<span>({{ jobPostingsCount.all }})</span>
+        </li>
+        <li (click)="onFilter($event)">Aproved<span>({{ jobPostingsCount.approved }})</span></li>
+        <li (click)="onFilter($event)">Awaiting Approval<span>({{ jobPostingsCount.awaitingApproval }})</span></li>
+        <li (click)="onFilter($event)">Expired<span>({{ jobPostingsCount.expired }})</span></li>
+      </ul>
+    </div>
+  </div>
+  <!-- table -->
+  <div class="dash__table">
+    <table
+      class="table table-hover table-responsive-sm table-striped table-bordered"
+    >
+      <thead>
+        <tr class="dash__table__header">
+          <th scope="col" (click)="onSort($event)">Position Title</th>
+          <th scope="col" (click)="onSort($event)">Company Name</th>
+          <th scope="col" (click)="onSort($event)">Contact Email</th>
+          <th scope="col" (click)="onSort($event)">Location</th>
+          <th scope="col" (click)="onSort($event)">Job Type</th>
+          <th scope="col" (click)="onSort($event)">Cattegory</th>
+          <th scope="col" (click)="onSort($event)">Expires</th>
+          <th scope="col" (click)="onSort($event)">Applications</th>
+          <th scope="col" (click)="onSort($event)">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let jobPosting of dummyData">
+          <td scope="row">{{ jobPosting.applicantName }}</td>
+          <td>{{ jobPosting.positionTitle }}</td>
+          <td>{{ jobPosting.companyName }}</td>
+          <td>{{ jobPosting.contactEmail }}</td>
+          <td>{{ jobPosting.location }}</td>
+          <td>{{ jobPosting.jobType }}</td>
+          <td>{{ jobPosting.cattegory }}</td>
+          <td>{{ jobPosting.expires }}</td>
+          <td>{{ jobPosting.applications }}</td>
+          <td>
+            <div
+              class="dropdown dash__table--dropdown-btn__container"
+            >
+              <button
+                class="btn dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                {{ application.status }}
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <span class="dropdown-item" (click)="chooseStatus($event)"
+                  >Approved</span
+                >
+                <span class="dropdown-item" (click)="chooseStatus($event)"
+                  >Awaiting Approval</span
+                >
+                <span class="dropdown-item" (click)="chooseStatus($event)"
+                  >Expired</span
+                >
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- pagination -->
+  <div class="dash__pagination" *ngIf="jobPostingsCount.all > 10">
+    <ul class="pagination">
+      <li class="page-item disabled">
+        <a class="page-link" tabindex="-1">
+          <span aria-hidden="true">«</span></a
+        >
+      </li>
+      <li class="page-item active"><a class="page-link">1</a></li>
+      <li class="page-item">
+        <a class="page-link">2 <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="page-item"><a class="page-link">3</a></li>
+      <li class="page-item">
+        <a class="page-link"><span aria-hidden="true">»</span></a>
+      </li>
+    </ul>
+  </div>
+</div>
