@@ -4,10 +4,6 @@ using System.Text;
 
 namespace HRHunters.Common.Interfaces
 {
-    public interface IModifiableEntity
-    {
-        string Name { get; set; }
-    }
     public interface IEntity
     {
         object Id { get; }
