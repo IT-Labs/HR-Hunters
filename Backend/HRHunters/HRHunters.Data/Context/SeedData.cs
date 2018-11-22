@@ -1,4 +1,5 @@
 ﻿using HRHunters.Common.Entities;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +9,19 @@ namespace HRHunters.Data.Context
 {
     public class SeedData
     {
-        private readonly DataContext _repo;
-        public SeedData(DataContext repo)
+        private readonly UserManager<User> _userManager;
+        public SeedData(UserManager<User> userManager)
         {
-            _repo = repo;
+            _userManager = userManager;
         }
 
         public void EnsureSeedData()
         {
-            if (!_repo.Users.Any()) { 
+            if (!_userManager.Users.Any())
+            { 
             var entry = new User()
             {
+                
                 UserName = "vlatkozmejkoski",
                 NormalizedUserName = "vlatkozmejkoski",
                 NormalizedEmail = "vlatkozmejkoski@gmail.com",
@@ -35,11 +38,9 @@ namespace HRHunters.Data.Context
                 FirstName = "Vlatko",
                 LastName = "Zmejkoski"                
             };
-                _repo.Add<User>(entry);
-            }
 
-            
-            _repo.SaveChanges();
+                _userManager.CreateAsync(entry, "password").Wait();
+            }
         }
     }
 

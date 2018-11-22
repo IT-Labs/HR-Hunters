@@ -7,6 +7,7 @@ using HRHunters.Data;
 using HRHunters.Data.Context;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace HRHunters.WebAPI.Controllers
 {
     [Route("api/[controller]")]
