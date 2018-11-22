@@ -11,6 +11,7 @@ import { Application } from "src/app/models/application.model";
 export class ADApplicationsComponent implements OnInit, OnDestroy {
   dummyData: Application[] = [
     {
+      id: "1",
       applicantEmail: "mail",
       applicantName: "Kire",
       experience: 1,
@@ -19,6 +20,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       status: "Pending"
     },
     {
+      id: "1",
       applicantEmail: "mail",
       applicantName: "Pero",
       experience: 9,
@@ -27,6 +29,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       status: "Hired"
     },
     {
+      id: "1",
       applicantEmail: "ivo@mail.com",
       applicantName: "Ivo",
       experience: 1,
@@ -35,6 +38,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       status: "Interviewed"
     },
     {
+      id: "1",
       applicantEmail: "tijana@mail.com",
       applicantName: "Tijana",
       experience: 2,
@@ -43,6 +47,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       status: "Pending"
     },
     {
+      id: "1",
       applicantEmail: "tome@mail.com",
       applicantName: "Tome",
       experience: 1,
@@ -51,6 +56,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       status: "Pending"
     },
     {
+      id: "1",
       applicantEmail: "mail",
       applicantName: "Draga",
       experience: 1,
@@ -59,6 +65,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       status: "Contacted"
     },
     {
+      id: "1",
       applicantEmail: "mail",
       applicantName: "Marko",
       experience: 1,
@@ -67,6 +74,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       status: "Pending"
     },
     {
+      id: "1",
       applicantEmail: "mail",
       applicantName: "Viktor",
       experience: 3,
@@ -75,6 +83,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       status: "Rejected"
     },
     {
+      id: "1",
       applicantEmail: "mail",
       applicantName: "David",
       experience: 1,
@@ -83,6 +92,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       status: "Rejected"
     },
     {
+      id: "1",
       applicantEmail: "vlatko@mail.com",
       applicantName: "Vlatko",
       experience: 2,
