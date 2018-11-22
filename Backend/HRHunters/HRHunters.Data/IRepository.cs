@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HRHunters.Data
 {
-    interface IRepository:IReadonlyRepository
+    public interface IRepository:IReadonlyRepository
     {
         void Create<TEntity>(TEntity entity, string createdBy = null)
         where TEntity : class, IEntity;
