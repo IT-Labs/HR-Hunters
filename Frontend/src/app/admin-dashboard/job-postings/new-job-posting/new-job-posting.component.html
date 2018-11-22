@@ -1,7 +1,10 @@
 <div class="dash__container">
   <div class="dash__heading">
     <h2>Add New Job Posting</h2>
-    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <div
+      class="btn-group btn-group-toggle dash__heading--btn-group-toggle"
+      data-toggle="buttons"
+    >
       <label
         class="btn btn-secondary dash__heading--radio-btn"
         (click)="onChangeTab('new')"
@@ -28,20 +31,65 @@
       <div class="dash__form--section">
         <p>Company information</p>
 
-        <label for="dashid__company-name" class="dash__form--label"
-          >Company Name</label
+        <!-- COMPANY NAME -->
+        <label for="dashidCompanyName" class="dash__form--label"
+          >Company Name <span class="u-required-star">*</span></label
         >
         <input
           type="text"
-          id="dashid__company-name"
           class="dash__form--input"
           placeholder="Company name"
           formControlName="companyName"
           maxlength="50"
+          id="dashidCompanyName"
+          aria-haspopup="true"
+          aria-expanded="true"
+          (keyup)="populateCompanySuggestions($event)"
+          (focus)="onFocus('companyName')"
         />
+        <div
+          class="dropdown-container"
+          *ngIf="filteredCompanies && formFocus.companyName"
+        >
+          <div class="dropdown-menu show" aria-labelledby="dashidCompanyName">
+            <span
+              class="dropdown-item"
+              *ngFor="let company of filteredCompanies"
+              (click)="populateCompanyInfo($event)"
+              >{{ company.companyName }}</span
+            >
+          </div>
+        </div>
+        <div
+          *ngIf="
+            !newJobPostingForm.controls['companyName'].valid &&
+            (newJobPostingForm.controls['companyName'].dirty ||
+              newJobPostingForm.controls['companyName'].touched)
+          "
+          class="alert dash__form--alert-msg"
+        >
+          <div
+            *ngIf="newJobPostingForm.controls['companyName'].errors.required"
+          >
+            Company name is required.
+          </div>
+          <div
+            *ngIf="newJobPostingForm.controls['companyName'].errors.minlength"
+          >
+            Company name must be at least 2 characters long.
+          </div>
+          <div
+            *ngIf="newJobPostingForm.controls['companyName'].errors.maxlength"
+          >
+            Company name must be up to 50 characters long.
+          </div>
+        </div>
+
         <div *ngIf="selectedTab.new">
+          <!-- COMAPNY EMAIL -->
+
           <label for="dashid__company-mail" class="dash__form--label"
-            >Company Email</label
+            >Company Email <span class="u-required-star">*</span></label
           >
           <input
             type="text"
@@ -50,9 +98,40 @@
             placeholder="Company email"
             formControlName="companyEmail"
             maxlength="30"
+            (focus)="onFocus('companyEmail')"
           />
+
+          <div
+            *ngIf="
+              !newJobPostingForm.controls['companyEmail'].valid &&
+              (newJobPostingForm.controls['companyEmail'].dirty ||
+                newJobPostingForm.controls['companyEmail'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div
+              *ngIf="newJobPostingForm.controls['companyEmail'].errors.required"
+            >
+              Comapny email is required.
+            </div>
+            <div
+              *ngIf="newJobPostingForm.controls['companyEmail'].errors.email"
+            >
+              Email must be in valid format.
+            </div>
+            <div
+              *ngIf="
+                newJobPostingForm.controls['companyEmail'].errors.maxlength
+              "
+            >
+              Company email must be up to 50 characters long.
+            </div>
+          </div>
+
+          <!-- LOCATION -->
+
           <label for="dashid__location" class="dash__form--label"
-            >Location</label
+            >Location <span class="u-required-star">*</span></label
           >
           <input
             type="text"
@@ -60,14 +139,35 @@
             class="dash__form--input"
             placeholder="Location"
             formControlName="location"
-            maxlength="30"
+            maxlength="50"
+            (focus)="onFocus('location')"
           />
+
+          <div
+            *ngIf="
+              !newJobPostingForm.controls['location'].valid &&
+              (newJobPostingForm.controls['location'].dirty ||
+                newJobPostingForm.controls['location'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div *ngIf="newJobPostingForm.controls['location'].errors.required">
+              Location is required.
+            </div>
+            <div
+              *ngIf="newJobPostingForm.controls['location'].errors.maxlength"
+            >
+              Location must be up to 50 characters long.
+            </div>
+          </div>
+
           <label for="dashid__logo" class="dash__form--label">Logo</label>
           <input
             type="file"
             id="dashid__logo"
             class="dash__form--input"
             formControlName="logo"
+            (focus)="onFocus('logo')"
           />
         </div>
       </div>
@@ -75,14 +175,39 @@
       <div class="dash__form--section">
         <p>Job information</p>
 
-        <label for="dashid__title" class="dash__form--label">Title</label>
+        <!-- TITLE -->
+
+        <label for="dashid__title" class="dash__form--label"
+          >Title <span class="u-required-star">*</span></label
+        >
         <input
           type="text"
           id="dashid__title"
           class="dash__form--input"
           placeholder="Title"
           formControlName="title"
+          maxlength="50"
+          (focus)="onFocus('title')"
         />
+
+        <div
+          *ngIf="
+            !newJobPostingForm.controls['title'].valid &&
+            (newJobPostingForm.controls['title'].dirty ||
+              newJobPostingForm.controls['title'].touched)
+          "
+          class="alert dash__form--alert-msg"
+        >
+          <div *ngIf="newJobPostingForm.controls['title'].errors.required">
+            Title is required.
+          </div>
+          <div *ngIf="newJobPostingForm.controls['title'].errors.maxlength">
+            Title must be up to 50 characters long.
+          </div>
+        </div>
+
+        <!-- DESCRIPTION -->
+
         <label
           for="dashid__description"
           class="dash__form--label"
@@ -96,45 +221,120 @@
           placeholder="Description"
           formControlName="description"
           maxlength="300"
+          (focus)="onFocus('description')"
         ></textarea>
 
-        <label for="dashid__job-type" class="dash__form--label">Job Type</label>
+        <!-- JOB TYPE -->
+
+        <label for="dashid__job-type" class="dash__form--label"
+          >Job Type <span class="u-required-star">*</span></label
+        >
         <select
           id="dashid__job-type"
           class="dash__form--input"
           formControlName="jobType"
+          (focus)="onFocus('jobType')"
         >
-          <option
-            *ngFor="let jobType of jobTypes"
-            [ngValue]="jobType"
+          <option *ngFor="let jobType of jobTypes" [ngValue]="jobType"
             >{{ jobType }}
           </option>
         </select>
 
+        <div
+          *ngIf="
+            !newJobPostingForm.controls['jobType'].valid &&
+            (newJobPostingForm.controls['jobType'].dirty ||
+              newJobPostingForm.controls['jobType'].touched)
+          "
+          class="alert dash__form--alert-msg"
+        >
+          <div *ngIf="newJobPostingForm.controls['jobType'].errors.required">
+            Job type must be selected.
+          </div>
+        </div>
+
+        <!-- EDUCATION -->
+
         <label for="dashid__education" class="dash__form--label"
-          >Education</label
+          >Education <span class="u-required-star">*</span></label
         >
         <select
-          id="dashid__education"
+          id="dashidEducation"
           class="dash__form--input"
           formControlName="education"
+          (focus)="onFocus('education')"
         >
-        <option
-        *ngFor="let edu of education"
-        [ngValue]="edu"
-        >{{ edu }}
-      </option>
+          <option *ngFor="let edu of education" [ngValue]="edu"
+            >{{ edu }}
+          </option>
         </select>
+
+        <div
+          *ngIf="
+            !newJobPostingForm.controls['education'].valid &&
+            (newJobPostingForm.controls['education'].dirty ||
+              newJobPostingForm.controls['education'].touched)
+          "
+          class="alert dash__form--alert-msg"
+        >
+          <div *ngIf="newJobPostingForm.controls['education'].errors.required">
+            Education must be selected.
+          </div>
+        </div>
+
+        <!-- NEEDED EXPERIENCE -->
+
         <label for="dashid__experience" class="dash__form--label"
-          >Needed experience (in years)</label
+          >Needed experience (in years)
+          <span class="u-required-star">*</span></label
         >
         <input
           type="text"
           id="dashid__experience"
           class="dash__form--input"
           formControlName="experience"
+          maxlength="3"
+          (focus)="onFocus('experience')"
+          (keyup)="populateExperienceSuggestions($event)"
+          (change)="checkExperience()"
         />
-        <label for="dashid__duration" class="dash__form--label">Duration</label>
+        
+        <div
+          class="dropdown-container"
+          *ngIf="filteredExperience && formFocus.experience"
+        >
+          <div class="dropdown-menu dropdown-menu--height show" aria-labelledby="dashidExperience">
+            <span
+              class="dropdown-item"
+              *ngFor="let number of filteredExperience"
+              (click)="populateExperience($event)"
+              >{{ number }}</span
+            >
+          </div>
+        </div>
+
+        <div
+          *ngIf="
+            (!newJobPostingForm.controls['experience'].valid &&
+            (newJobPostingForm.controls['experience'].dirty ||
+              newJobPostingForm.controls['experience'].touched)) || !checkExperience()
+          "
+          class="alert dash__form--alert-msg"
+        >
+          <div *ngIf="newJobPostingForm.controls['experience'].errors.required">
+            Experience is required.
+          </div>
+
+          <div *ngIf="newJobPostingForm.controls['title'].errors.maxlength">
+            Experience must be up to 2 characters long.
+          </div>
+        </div>
+
+        <!-- DURATION -->
+
+        <label for="dashid__duration" class="dash__form--label"
+          >Duration <span class="u-required-star">*</span></label
+        >
         <span>From:</span>
         <input
           type="date"
@@ -144,6 +344,7 @@
           min="2018-01-01"
           max="2019-12-31"
           formControlName="durationFrom"
+          (change)="compareTwoDates()"
         />
         <span>To:</span>
         <input
@@ -155,6 +356,32 @@
           max="2019-12-31"
           formControlName="durationTo"
         />
+
+        <div
+          *ngIf="
+            (!newJobPostingForm.controls['durationFrom'].valid &&
+              (newJobPostingForm.controls['durationFrom'].dirty ||
+                newJobPostingForm.controls['durationFrom'].touched)) ||
+            (!newJobPostingForm.controls['durationTo'].valid &&
+              (newJobPostingForm.controls['durationTo'].dirty ||
+                newJobPostingForm.controls['durationTo'].touched)) ||
+            !compareTwoDates()
+          "
+          class="alert dash__form--alert-msg"
+        >
+          <div
+            *ngIf="
+              newJobPostingForm.controls['durationFrom'].errors.required ||
+              newJobPostingForm.controls['durationTo'].errors.required
+            "
+          >
+            Duration is required.
+          </div>
+
+          <div *ngIf="!compareTwoDates()">
+            Start date can't be later nor equal to the end date.
+          </div>
+        </div>
       </div>
 
       <button

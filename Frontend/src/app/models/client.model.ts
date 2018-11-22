@@ -4,5 +4,6 @@ export interface Client {
   logo: string,
   email: string,
   jobs: string,
-  status: string
+  status: string,
+  location: string
 }

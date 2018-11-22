@@ -17,7 +17,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       logo: "mylogo1",
       email: "firma1@gmail.com",
       jobs: "1/1",
-      status: "active"
+      status: "active",
+      location: 'Skopje'
     },
     {
       id: "1",
@@ -25,7 +26,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       logo: "mylogo2",
       email: "firma2@gmail.com",
       jobs: "1/1",
-      status: "inactive"
+      status: "inactive",
+      location: 'Skopje'
     },
     {
       id: "1",
@@ -33,7 +35,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       logo: "mylogo3",
       email: "firma3@gmail.com",
       jobs: "3/1",
-      status: "inactive"
+      status: "inactive",
+      location: 'Skopje'
     },
     {
       id: "1",
@@ -41,7 +44,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       logo: "mylogo3",
       email: "firma3@gmail.com",
       jobs: "3/1",
-      status: "inactive"
+      status: "inactive",
+      location: 'Skopje'
     },
     {
       id: "1",
@@ -49,7 +53,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       logo: "mylogo3",
       email: "firma3@gmail.com",
       jobs: "3/1",
-      status: "inactive"
+      status: "inactive",
+      location: 'Skopje'
     },
     {
       id: "1",
@@ -57,7 +62,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       logo: "mylogo3",
       email: "firma3@gmail.com",
       jobs: "3/1",
-      status: "inactive"
+      status: "inactive",
+      location: 'Skopje'
     },
     {
       id: "1",
@@ -65,7 +71,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       logo: "mylogo3",
       email: "firma3@gmail.com",
       jobs: "3/1",
-      status: "inactive"
+      status: "inactive",
+      location: 'Skopje'
     },
     {
       id: "1",
@@ -73,7 +80,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       logo: "mylogo3",
       email: "firma3@gmail.com",
       jobs: "3/1",
-      status: "inactive"
+      status: "inactive",
+      location: 'Skopje'
     },
     {
       id: "1",
@@ -81,7 +89,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       logo: "mylogo3",
       email: "firma3@gmail.com",
       jobs: "3/1",
-      status: "inactive"
+      status: "inactive",
+      location: 'Skopje'
     },
     {
       id: "1",
@@ -89,7 +98,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       logo: "mylogo3",
       email: "firma3@gmail.com",
       jobs: "3/1",
-      status: "inactive"
+      status: "inactive",
+      location: 'Skopje'
     },
     {
       id: "1",
@@ -97,7 +107,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       logo: "mylogo3",
       email: "firma3@gmail.com",
       jobs: "3/1",
-      status: "inactive"
+      status: "inactive",
+      location: 'Skopje'
     },
    
   ];

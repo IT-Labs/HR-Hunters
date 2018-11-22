@@ -89,83 +89,33 @@
       justify-content: center;
     }
   }
-
-  &__form {
-    &__container {
-      width: 100%;
-      padding: 3rem;
-
-      p {
-        font-weight: bold;
-      }
-    }
-
-    &--label {
-      width: 100%;
-      max-width: 30rem;
-      margin-bottom: 2rem;
-    }
-
-    &--input {
-      width: calc(100% - 30rem);
-      margin-bottom: 2rem;
-      color: inherit;
-      font-style: inherit;
-      font-size: inherit;
-      padding: .1rem .3rem;
-    }
-
-    &--date {
-      border: solid .5px $color-black;
-      color: inherit;
-      font-style: inherit;
-      font-size: inherit;
-      margin: 0 1rem;
-      padding: 0 .5rem;
-    }
-
-    &--textarea {
-      display: inline-block;
-      height: 5rem;
-      width: calc(100% - 30rem);
-      color: inherit;
-      font-size: inherit;
-      font-style: inherit;
-      padding: .1rem .3rem;
-    }
-
-    &--section {
-      width: 100%;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      border: 1px solid rgba($color: $color-black, $alpha: 0.12);
-      box-shadow: 4px 5px 12px 2px rgba($color: $color-black, $alpha: .1);
-      background-color: $color-white;
-    }
-
-    &--btn {
-      border-radius: 0;
-      padding: 0.8rem 1.2rem;
-      border: 1px solid #ccc;
-      border-radius: 2px;
-      background: $color-heading-table-cell;
-      text-shadow: none;
-      font-weight: 500;
-      font-size: 1.5rem;
-      line-height: normal;
-      color: $color-white;
-      cursor: pointer;
-      margin-left: 1rem;
-      display: inline-block;
-      position: relative;
-      transform: translateY(-6px);
-    }
-  }
 }
 @media (max-width: 991px) {
   .dash {
     &__container {
       overflow-x: scroll;
+    }
+  }
+}
+
+@media (max-width: 864px) {
+  .dash {
+    &__heading {
+      h2 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        display: block;
+      }
+      &--btn-group-toggle {
+        display: block;
+        text-align: center;
+        margin: 1rem 0;
+        font-size: 2rem;
+      }
+      &--radio-btn {
+        font-size: 1.3rem;
+      }
     }
   }
 }

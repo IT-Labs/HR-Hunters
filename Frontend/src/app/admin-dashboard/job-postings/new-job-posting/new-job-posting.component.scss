@@ -1,3 +1,16 @@
 #desc-height {
-    position: relative;
+  position: relative;
+}
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-menu {
+  left: 250px;
+  top: -11px;
+
+  &--height {
+    height: 12rem;
+    overflow-y: scroll;
+  }
 }
