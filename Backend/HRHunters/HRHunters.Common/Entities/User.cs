@@ -37,5 +37,7 @@ namespace HRHunters.Common.Entities
         }
 
         public ICollection<UserRole> UserRoles { get; set; }
+
+      
     }
 }

@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HRHunters.Common.Entities;
+using HRHunters.Data;
+using HRHunters.Data.Context;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace HRHunters.WebAPI.Controllers
 {
@@ -10,11 +14,19 @@ namespace HRHunters.WebAPI.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly IRepository _repo;
+
+        public ValuesController(IRepository repo)
+        {
+            _repo = repo;
+        }
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<IEnumerable<User>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var values = _repo.GetAll<User>();
+
+            return Ok(values);
         }
 
         // GET api/values/5

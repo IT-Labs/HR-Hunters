@@ -35,7 +35,7 @@ namespace HRHunters.Data.Context
                 userRole.HasOne(ur => ur.User)
                     .WithMany(r => r.UserRoles)
                     .HasForeignKey(ur => ur.UserId)
-                    .IsRequired();
+                    .IsRequired(); 
             });
         }
 

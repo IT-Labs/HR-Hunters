@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HRHunters.Data
 {
-    interface IReadonlyRepository
+    public interface IReadonlyRepository
     {
         IEnumerable<TEntity> GetAll<TEntity>(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
         string includeProperties = null,

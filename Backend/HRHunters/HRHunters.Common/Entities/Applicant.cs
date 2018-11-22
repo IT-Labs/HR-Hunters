@@ -27,6 +27,7 @@ namespace HRHunters.Common.Entities
         public DateTime? ModifiedDate { get => ((IEntity<int>)User).ModifiedDate; set => ((IEntity<int>)User).ModifiedDate = value; }
         public string CreatedBy { get => ((IEntity<int>)User).CreatedBy; set => ((IEntity<int>)User).CreatedBy = value; }
         public string ModifiedBy { get => ((IEntity<int>)User).ModifiedBy; set => ((IEntity<int>)User).ModifiedBy = value; }
+        
 
         object IEntity.Id => ((IEntity<int>)User).Id;
     }
