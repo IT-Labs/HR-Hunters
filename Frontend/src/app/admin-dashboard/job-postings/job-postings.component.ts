@@ -1,21 +1,26 @@
-import { Component, OnInit } from '@angular/core';
-import { JobPosting } from 'src/app/models/job-posting.model';
-import { Subscription } from 'rxjs';
-import { AdminService } from 'src/app/services/admin.service';
+import { Component, OnInit } from "@angular/core";
+import { JobPosting } from "src/app/models/job-posting.model";
+import { Subscription } from "rxjs";
+import { AdminService } from "src/app/services/admin.service";
 
 @Component({
-  selector: 'app-ad-job-postings',
-  templateUrl: './job-postings.component.html',
-  styleUrls: ['./job-postings.component.scss']
+  selector: "app-ad-job-postings",
+  templateUrl: "./job-postings.component.html",
+  styleUrls: ["./job-postings.component.scss"]
 })
 export class ADJobPostingsComponent implements OnInit {
-
   jobPostingsCount = {
     all: 15,
     approved: 10,
     awaitingApproval: 2,
     expired: 3
   };
+
+  selectedTab = {
+    jobs: false,
+    new: true
+  };
+
   jobPostings: JobPosting[] = [];
   postsPerPage = 10;
   currentPage = 1;
@@ -26,7 +31,16 @@ export class ADJobPostingsComponent implements OnInit {
 
   constructor(private adminService: AdminService) {}
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  onChangeTab(event: string) {
+    if (event === "jobs") {
+      this.selectedTab.jobs = true;
+      this.selectedTab.new = false;
+    } else if (event === "new") {
+      this.selectedTab.jobs = false;
+      this.selectedTab.new = true;
+    }
   }
 
   onChangedPage(pageData: any) {
@@ -77,5 +91,4 @@ export class ADJobPostingsComponent implements OnInit {
   chooseStatus(event: any) {
     const currentStatus = event.target.innerText;
   }
-
 }

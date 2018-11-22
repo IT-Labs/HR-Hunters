@@ -1,6 +1,5 @@
-import { User } from "./user.model";
-
-export interface Applicant extends User {
+export interface Applicant {
+  id: string;
   phoneNumber: string;
   experience: number;
   education: string;

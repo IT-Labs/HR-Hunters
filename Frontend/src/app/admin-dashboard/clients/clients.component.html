@@ -1,4 +1,82 @@
-<p>
-  clients works!dasdsadasddasdsadasdassdasadasdasdas
-</p>
-xzxsaxsscsd
+<div class="dash__container">
+  <div class="dash__heading">
+    <h2>Clients</h2>
+    <div class=" text-muted dash__filtering">
+      <ul>
+        <li (click)="onFilter($event)">
+          All<span>({{ ClientsCount.all }})</span>
+        </li>
+        <li (click)="onFilter($event)">Active<span>({{ClientsCount.active }})</span></li>
+        <li (click)="onFilter($event)">Inactive<span>({{ ClientsCount.inactive }})</span></li>
+      </ul>
+    </div>
+  </div>
+  <!-- table -->
+  <div class="dash__table">
+    <table
+      class="table table-hover table-responsive-sm table-striped table-bordered"
+    >
+      <thead>
+        <tr class="dash__table__header">
+          <th scope="col" (click)="onSort($event)">Company Name</th>
+          <th scope="col" (click)="onSort($event)">Logo</th>
+          <th scope="col" (click)="onSort($event)">E-mail</th>
+          <th scope="col" (click)="onSort($event)">Jobs(active/all)</th>
+          <th scope="col" (click)="onSort($event)">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let Clients of dummyData">
+          <td scope="row">{{ Clients.companyName }}</td>
+          <td>{{ Clients.logo  }}</td>
+          <td>{{ Clients.email  }}</td>
+          <td>{{ Clients.jobs }}</td> 
+          <!-- <td>{{ Clients.status }}</td> -->
+         <td>
+            <div
+              class="dropdown dash__table--dropdown-btn__container"
+            >
+              <button
+                class="btn dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                {{ Clients.status }}
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <span class="dropdown-item" (click)="chooseStatus($event)"
+                  >active</span
+                >
+                <span class="dropdown-item" (click)="chooseStatus($event)"
+                  >inactive</span
+                >
+               
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- pagination -->
+  <div class="dash__pagination" *ngIf="ClientsCount.all > 10">
+    <ul class="pagination">
+      <li class="page-item disabled">
+        <a class="page-link" tabindex="-1">
+          <span aria-hidden="true">«</span></a
+        >
+      </li>
+      <li class="page-item active"><a class="page-link">1</a></li>
+      <li class="page-item">
+        <a class="page-link">2 <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="page-item"><a class="page-link">3</a></li>
+      <li class="page-item">
+        <a class="page-link"><span aria-hidden="true">»</span></a>
+      </li>
+    </ul>
+  </div>
+</div>

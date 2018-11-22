@@ -1,5 +1,8 @@
-import { User } from "./user.model";
-
-export interface Client extends User {
-  phoneNumber: string;
+export interface Client {
+  id: string;
+  companyName: string,
+  logo: string,
+  email: string,
+  jobs: string,
+  status: string
 }

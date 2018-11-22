@@ -1,3 +1,169 @@
-<p>
-  new-job-posting works!
-</p>
+<div class="dash__container">
+  <div class="dash__heading">
+    <h2>Add New Job Posting</h2>
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label
+        class="btn btn-secondary dash__heading--radio-btn"
+        (click)="onChangeTab('new')"
+        [ngClass]="{ active: selectedTab.new }"
+      >
+        <input type="radio" name="options" autocomplete="off" /> Add New Company
+      </label>
+      <label
+        class="btn btn-secondary dash__heading--radio-btn"
+        (click)="onChangeTab('existing')"
+        [ngClass]="{ active: selectedTab.existing }"
+      >
+        <input type="radio" name="options" autocomplete="off" /> Select Existing
+        Company
+      </label>
+    </div>
+  </div>
+  <div class="dash__form__container">
+    <form
+      class="dash__form"
+      [formGroup]="newJobPostingForm"
+      (ngSubmit)="onSubmitNewJobPosting()"
+    >
+      <div class="dash__form--section">
+        <p>Company information</p>
+
+        <label for="dashid__company-name" class="dash__form--label"
+          >Company Name</label
+        >
+        <input
+          type="text"
+          id="dashid__company-name"
+          class="dash__form--input"
+          placeholder="Company name"
+          formControlName="companyName"
+          maxlength="50"
+        />
+        <div *ngIf="selectedTab.new">
+          <label for="dashid__company-mail" class="dash__form--label"
+            >Company Email</label
+          >
+          <input
+            type="text"
+            id="dashid__company-mail"
+            class="dash__form--input"
+            placeholder="Company email"
+            formControlName="companyEmail"
+            maxlength="30"
+          />
+          <label for="dashid__location" class="dash__form--label"
+            >Location</label
+          >
+          <input
+            type="text"
+            id="dashid__location"
+            class="dash__form--input"
+            placeholder="Location"
+            formControlName="location"
+            maxlength="30"
+          />
+          <label for="dashid__logo" class="dash__form--label">Logo</label>
+          <input
+            type="file"
+            id="dashid__logo"
+            class="dash__form--input"
+            formControlName="logo"
+          />
+        </div>
+      </div>
+
+      <div class="dash__form--section">
+        <p>Job information</p>
+
+        <label for="dashid__title" class="dash__form--label">Title</label>
+        <input
+          type="text"
+          id="dashid__title"
+          class="dash__form--input"
+          placeholder="Title"
+          formControlName="title"
+        />
+        <label
+          for="dashid__description"
+          class="dash__form--label"
+          id="desc-height"
+          >Description</label
+        >
+        <textarea
+          type="text"
+          id="dashid__description"
+          class="dash__form--textarea"
+          placeholder="Description"
+          formControlName="description"
+          maxlength="300"
+        ></textarea>
+
+        <label for="dashid__job-type" class="dash__form--label">Job Type</label>
+        <select
+          id="dashid__job-type"
+          class="dash__form--input"
+          formControlName="jobType"
+        >
+          <option
+            *ngFor="let jobType of jobTypes"
+            [ngValue]="jobType"
+            >{{ jobType }}
+          </option>
+        </select>
+
+        <label for="dashid__education" class="dash__form--label"
+          >Education</label
+        >
+        <select
+          id="dashid__education"
+          class="dash__form--input"
+          formControlName="education"
+        >
+        <option
+        *ngFor="let edu of education"
+        [ngValue]="edu"
+        >{{ edu }}
+      </option>
+        </select>
+        <label for="dashid__experience" class="dash__form--label"
+          >Needed experience (in years)</label
+        >
+        <input
+          type="text"
+          id="dashid__experience"
+          class="dash__form--input"
+          formControlName="experience"
+        />
+        <label for="dashid__duration" class="dash__form--label">Duration</label>
+        <span>From:</span>
+        <input
+          type="date"
+          id="dashid__duration-from"
+          class="dash__form--date"
+          value="2018-07-22"
+          min="2018-01-01"
+          max="2019-12-31"
+          formControlName="durationFrom"
+        />
+        <span>To:</span>
+        <input
+          type="date"
+          id="dashid__duration-to"
+          class="dash__form--date"
+          value="2018-07-22"
+          min="2018-01-01"
+          max="2019-12-31"
+          formControlName="durationTo"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="btn dash__form--btn"
+        [disabled]="!newJobPostingForm.valid"
+      >
+        Publish Job
+      </button>
+    </form>
+  </div>
+</div>
