@@ -12,37 +12,37 @@ export class ADApplicantsComponent implements OnInit {
   dummyData: Applicant[] = [
     {
       id: '1',
-      name: "Tijana",
-      photo:"img1",
-      email:"tijana@gmail.com",
-      phone:"078234765"
+      name: 'Tijana',
+      photo: 'img1',
+      email: 'tijana@gmail.com',
+      phone: '078234765'
     },
-   
+
     {
       id: '2',
-      name: "Elena",
-      photo:"img2",
-      email:"elena@gmail.com",
-      phone:"078234333"
+      name: 'Elena',
+      photo: 'img2',
+      email: 'elena@gmail.com',
+      phone: '078234333'
     },
     {
       id: '3',
-      name: "Ana",
-      photo:"img3",
-      email:"ana@gmail.com",
-      phone:"078234335"
+      name: 'Ana',
+      photo: 'img3',
+      email: 'ana@gmail.com',
+      phone: '078234335'
     },
   ];
-// 
+//
   applicantsCount = {
     all: 15
   };
   applicants: Applicant[] = [];
   postsPerPage = 10;
   currentPage = 1;
-  currentSortBy = "Expires";
+  currentSortBy = 'Expires';
   currentSortDirection = 1;
-  currentFilter = "All";
+  currentFilter = 'All';
   private applicationsSub: Subscription;
 
   constructor(private adminService: AdminService) {}
