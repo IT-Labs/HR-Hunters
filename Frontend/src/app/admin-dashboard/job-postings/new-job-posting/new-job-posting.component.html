@@ -7,15 +7,13 @@
     >
       <label
         class="btn btn-secondary dash__heading--radio-btn"
-        (click)="onChangeTab('new')"
-        [ngClass]="{ active: selectedTab.new }"
+        [ngClass]="{ active: !existingCompany }"
       >
         <input type="radio" name="options" autocomplete="off" /> Add New Company
       </label>
       <label
         class="btn btn-secondary dash__heading--radio-btn"
-        (click)="onChangeTab('existing')"
-        [ngClass]="{ active: selectedTab.existing }"
+        [ngClass]="{ active: existingCompany }"
       >
         <input type="radio" name="options" autocomplete="off" /> Select Existing
         Company
@@ -38,9 +36,10 @@
         <input
           type="text"
           class="dash__form--input"
-          placeholder="Company name"
+          placeholder="Enter company name..."
           formControlName="companyName"
           maxlength="50"
+          autocomplete="off"
           id="dashidCompanyName"
           aria-haspopup="true"
           aria-expanded="true"
@@ -49,7 +48,7 @@
         />
         <div
           class="dropdown-container"
-          *ngIf="filteredCompanies && formFocus.companyName"
+          *ngIf="filteredCompanies.length > 0 && formFocus.companyName"
         >
           <div class="dropdown-menu show" aria-labelledby="dashidCompanyName">
             <span
@@ -69,107 +68,99 @@
           class="alert dash__form--alert-msg"
         >
           <div
-            *ngIf="newJobPostingForm.controls['companyName'].errors.required"
+            *ngIf="newJobPostingForm.controls['companyName'].errors?.required"
           >
             Company name is required.
           </div>
           <div
-            *ngIf="newJobPostingForm.controls['companyName'].errors.minlength"
+            *ngIf="newJobPostingForm.controls['companyName'].errors?.minlength"
           >
             Company name must be at least 2 characters long.
           </div>
           <div
-            *ngIf="newJobPostingForm.controls['companyName'].errors.maxlength"
+            *ngIf="newJobPostingForm.controls['companyName'].errors?.maxlength"
           >
             Company name must be up to 50 characters long.
           </div>
         </div>
 
-        <div *ngIf="selectedTab.new">
-          <!-- COMAPNY EMAIL -->
+        <!-- COMPANY EMAIL -->
 
-          <label for="dashid__company-mail" class="dash__form--label"
-            >Company Email <span class="u-required-star">*</span></label
-          >
-          <input
-            type="text"
-            id="dashid__company-mail"
-            class="dash__form--input"
-            placeholder="Company email"
-            formControlName="companyEmail"
-            maxlength="30"
-            (focus)="onFocus('companyEmail')"
-          />
+        <label for="dashid__company-mail" class="dash__form--label"
+          >Company Email <span class="u-required-star">*</span></label
+        >
+        <input
+          type="text"
+          id="dashid__company-mail"
+          class="dash__form--input"
+          placeholder="Enter company email..."
+          formControlName="companyEmail"
+          maxlength="30"
+          (focus)="onFocus('companyEmail')"
+        />
 
+        <div
+          *ngIf="
+            !newJobPostingForm.controls['companyEmail'].valid &&
+            (newJobPostingForm.controls['companyEmail'].dirty ||
+              newJobPostingForm.controls['companyEmail'].touched)
+          "
+          class="alert dash__form--alert-msg"
+        >
           <div
-            *ngIf="
-              !newJobPostingForm.controls['companyEmail'].valid &&
-              (newJobPostingForm.controls['companyEmail'].dirty ||
-                newJobPostingForm.controls['companyEmail'].touched)
-            "
-            class="alert dash__form--alert-msg"
+            *ngIf="newJobPostingForm.controls['companyEmail'].errors?.required"
           >
-            <div
-              *ngIf="newJobPostingForm.controls['companyEmail'].errors.required"
-            >
-              Comapny email is required.
-            </div>
-            <div
-              *ngIf="newJobPostingForm.controls['companyEmail'].errors.email"
-            >
-              Email must be in valid format.
-            </div>
-            <div
-              *ngIf="
-                newJobPostingForm.controls['companyEmail'].errors.maxlength
-              "
-            >
-              Company email must be up to 50 characters long.
-            </div>
+            Company email is required.
           </div>
-
-          <!-- LOCATION -->
-
-          <label for="dashid__location" class="dash__form--label"
-            >Location <span class="u-required-star">*</span></label
-          >
-          <input
-            type="text"
-            id="dashid__location"
-            class="dash__form--input"
-            placeholder="Location"
-            formControlName="location"
-            maxlength="50"
-            (focus)="onFocus('location')"
-          />
-
+          <div *ngIf="newJobPostingForm.controls['companyEmail'].errors?.email">
+            Email must be in valid format.
+          </div>
           <div
-            *ngIf="
-              !newJobPostingForm.controls['location'].valid &&
-              (newJobPostingForm.controls['location'].dirty ||
-                newJobPostingForm.controls['location'].touched)
-            "
-            class="alert dash__form--alert-msg"
+            *ngIf="newJobPostingForm.controls['companyEmail'].errors?.maxlength"
           >
-            <div *ngIf="newJobPostingForm.controls['location'].errors.required">
-              Location is required.
-            </div>
-            <div
-              *ngIf="newJobPostingForm.controls['location'].errors.maxlength"
-            >
-              Location must be up to 50 characters long.
-            </div>
+            Company email must be up to 50 characters long.
           </div>
-
-          <label for="dashid__logo" class="dash__form--label">Logo</label>
-          <input
-            type="file"
-            id="dashid__logo"
-            class="dash__form--input"
-            formControlName="logo"
-            (focus)="onFocus('logo')"
-          />
         </div>
+
+        <!-- LOCATION -->
+
+        <label for="dashid__location" class="dash__form--label"
+          >Location <span class="u-required-star">*</span></label
+        >
+        <input
+          type="text"
+          id="dashid__location"
+          class="dash__form--input"
+          placeholder="Enter location..."
+          formControlName="location"
+          maxlength="50"
+          (focus)="onFocus('location')"
+        />
+
+        <div
+          *ngIf="
+            !newJobPostingForm.controls['location'].valid &&
+            (newJobPostingForm.controls['location'].dirty ||
+              newJobPostingForm.controls['location'].touched)
+          "
+          class="alert dash__form--alert-msg"
+        >
+          <div *ngIf="newJobPostingForm.controls['location'].errors?.required">
+            Location is required.
+          </div>
+          <div *ngIf="newJobPostingForm.controls['location'].errors?.maxlength">
+            Location must be up to 50 characters long.
+          </div>
+        </div>
+
+        <label for="dashid__logo" class="dash__form--label">Logo</label>
+        <input
+          type="file"
+          id="dashid__logo"
+          class="dash__form--input"
+          formControlName="logo"
+          (focus)="onFocus('logo')"
+        />
       </div>
 
       <div class="dash__form--section">
@@ -184,7 +175,7 @@
           type="text"
           id="dashid__title"
           class="dash__form--input"
-          placeholder="Title"
+          placeholder="Enter job title..."
           formControlName="title"
           maxlength="50"
           (focus)="onFocus('title')"
@@ -198,10 +189,10 @@
           "
           class="alert dash__form--alert-msg"
         >
-          <div *ngIf="newJobPostingForm.controls['title'].errors.required">
+          <div *ngIf="newJobPostingForm.controls['title'].errors?.required">
             Title is required.
           </div>
-          <div *ngIf="newJobPostingForm.controls['title'].errors.maxlength">
+          <div *ngIf="newJobPostingForm.controls['title'].errors?.maxlength">
             Title must be up to 50 characters long.
           </div>
         </div>
@@ -218,7 +209,7 @@
           type="text"
           id="dashid__description"
           class="dash__form--textarea"
-          placeholder="Description"
+          placeholder="Enter job description..."
           formControlName="description"
           maxlength="300"
           (focus)="onFocus('description')"
@@ -248,7 +239,7 @@
           "
           class="alert dash__form--alert-msg"
         >
-          <div *ngIf="newJobPostingForm.controls['jobType'].errors.required">
+          <div *ngIf="newJobPostingForm.controls['jobType'].errors?.required">
             Job type must be selected.
           </div>
         </div>
@@ -277,7 +268,7 @@
           "
           class="alert dash__form--alert-msg"
         >
-          <div *ngIf="newJobPostingForm.controls['education'].errors.required">
+          <div *ngIf="newJobPostingForm.controls['education'].errors?.required">
             Education must be selected.
           </div>
         </div>
@@ -294,16 +285,21 @@
           class="dash__form--input"
           formControlName="experience"
           maxlength="3"
+          autocomplete="off"
+          placeholder="Choose needed experience..."
           (focus)="onFocus('experience')"
           (keyup)="populateExperienceSuggestions($event)"
           (change)="checkExperience()"
         />
-        
+
         <div
           class="dropdown-container"
-          *ngIf="filteredExperience && formFocus.experience"
+          *ngIf="filteredExperience.length > 0 && formFocus.experience"
         >
-          <div class="dropdown-menu dropdown-menu--height show" aria-labelledby="dashidExperience">
+          <div
+            class="dropdown-menu dropdown-menu--height show"
+            aria-labelledby="dashidExperience"
+          >
             <span
               class="dropdown-item"
               *ngFor="let number of filteredExperience"
@@ -316,16 +312,19 @@
         <div
           *ngIf="
             (!newJobPostingForm.controls['experience'].valid &&
-            (newJobPostingForm.controls['experience'].dirty ||
-              newJobPostingForm.controls['experience'].touched)) || !checkExperience()
+              (newJobPostingForm.controls['experience'].dirty ||
+                newJobPostingForm.controls['experience'].touched)) ||
+            checkExperience()
           "
           class="alert dash__form--alert-msg"
         >
-          <div *ngIf="newJobPostingForm.controls['experience'].errors.required">
+          <div
+            *ngIf="newJobPostingForm.controls['experience'].errors?.required"
+          >
             Experience is required.
           </div>
 
-          <div *ngIf="newJobPostingForm.controls['title'].errors.maxlength">
+          <div *ngIf="newJobPostingForm.controls['title'].errors?.maxlength">
             Experience must be up to 2 characters long.
           </div>
         </div>
@@ -344,6 +343,7 @@
           min="2018-01-01"
           max="2019-12-31"
           formControlName="durationFrom"
+          (focus)="onFocus('durationFrom')"
           (change)="compareTwoDates()"
         />
         <span>To:</span>
@@ -355,6 +355,7 @@
           min="2018-01-01"
           max="2019-12-31"
           formControlName="durationTo"
+          (focus)="onFocus('durationTo')"
         />
 
         <div
@@ -371,8 +372,8 @@
         >
           <div
             *ngIf="
-              newJobPostingForm.controls['durationFrom'].errors.required ||
-              newJobPostingForm.controls['durationTo'].errors.required
+              newJobPostingForm.controls['durationFrom'].errors?.required ||
+              newJobPostingForm.controls['durationTo'].errors?.required
             "
           >
             Duration is required.
@@ -387,7 +388,6 @@
       <button
         type="submit"
         class="btn dash__form--btn"
-        [disabled]="!newJobPostingForm.valid"
       >
         Publish Job
       </button>

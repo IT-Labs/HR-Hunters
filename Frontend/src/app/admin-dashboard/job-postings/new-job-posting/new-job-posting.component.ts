@@ -8,10 +8,6 @@ import { Client } from "src/app/models/client.model";
   styleUrls: ["./new-job-posting.component.scss"]
 })
 export class ADNewJobPostingComponent implements OnInit {
-  selectedTab = {
-    new: true,
-    existing: false
-  };
 
   jobTypes = ["Full-time", "Part-time", "Intership"];
   education = [
@@ -44,18 +40,7 @@ export class ADNewJobPostingComponent implements OnInit {
     "17",
     "18",
     "19",
-    "20",
-    "21",
-    "22",
-    "23",
-    "24",
-    "25",
-    "26",
-    "27",
-    "28",
-    "29",
-    "30",
-    "30+"
+    "20+"
   ];
 
   filteredExperience = [];
@@ -127,7 +112,6 @@ export class ADNewJobPostingComponent implements OnInit {
   ngOnInit() {
     this.filteredCompanies = this.companies;
     this.filteredExperience = this.experience.slice();
-    console.log(this.filteredExperience);
   }
 
   newJobPostingForm = this.fb.group({
@@ -149,7 +133,7 @@ export class ADNewJobPostingComponent implements OnInit {
       ])
     ],
     location: [
-      "",
+      "", 
       Validators.compose([
         Validators.required,
         Validators.minLength(1),
@@ -188,13 +172,11 @@ export class ADNewJobPostingComponent implements OnInit {
 
   checkExperience() {
     this.experience.map(x => {
-      if (x !== this.newJobPostingForm.controls['experience'].value) {
-        console.log(this.newJobPostingForm.controls['experience'].value)
-        console.log(x)
-        return false
+      if (x === this.newJobPostingForm.controls["experience"].value) {
+        return true;
       }
-    })
-    return true;
+    });
+    return false;
   }
 
   onFocus(event: any) {
@@ -213,15 +195,6 @@ export class ADNewJobPostingComponent implements OnInit {
     this.formFocus[event] = true;
   }
 
-  onChangeTab(event: string) {
-    if (event === "new") {
-      this.selectedTab.new = true;
-      this.selectedTab.existing = false;
-    } else if (event === "existing") {
-      this.selectedTab.new = false;
-      this.selectedTab.existing = true;
-    }
-  }
 
   populateCompanyInfo(event: any) {
     this.onFocus("none");
@@ -246,7 +219,7 @@ export class ADNewJobPostingComponent implements OnInit {
     const experience = event.target.innerText;
     this.experience.map(num => {
       if (num === experience) {
-        this.newJobPostingForm.controls["experience"].setValue(num);
+        this.newJobPostingForm.controls["experience"].setValue(experience);
       }
     });
   }
@@ -266,7 +239,7 @@ export class ADNewJobPostingComponent implements OnInit {
 
   populateExperienceSuggestions(event: any) {
     this.filteredExperience = [];
-    this.experience.filter(num => {
+    this.experience.map(num => {
       if (num.includes(event.target.value)) {
         this.filteredExperience.push(num);
       }

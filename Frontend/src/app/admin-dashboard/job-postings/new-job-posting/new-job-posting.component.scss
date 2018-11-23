@@ -10,7 +10,7 @@
   top: -11px;
 
   &--height {
-    height: 12rem;
+    max-height: 12rem;
     overflow-y: scroll;
   }
 }
