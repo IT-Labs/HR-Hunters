@@ -19,27 +19,29 @@ namespace HRHunters.Data.Context
         {
             if (!_userManager.Users.Any())
             { 
-            var entry = new User()
-            {
-                
-                UserName = "vlatkozmejkoski",
-                NormalizedUserName = "vlatkozmejkoski",
-                NormalizedEmail = "vlatkozmejkoski@gmail.com",
-                PasswordHash = "5f4dcc3b5aa765d61d8327deb882cf99",
-                SecurityStamp = "asdasdas-das-dasdad-asdasd",
-                PhoneNumber = "078691342",
-                PhoneNumberConfirmed = true,
-                TwoFactorEnabled = false,
-                LockoutEnabled = true,
-                AccessFailedCount = 0,
-                Email = "vlatkozmejkoski@gmail.com",
-                CreatedDate = DateTime.UtcNow,
-                CreatedBy = "Vlatko",
-                FirstName = "Vlatko",
-                LastName = "Zmejkoski"                
-            };
+            for(int i = 0; i < 10; i++)
+                {
+                    var user = new User();
+                    //var pass = new PasswordHasher<User>();
+                    //var hashedPass = pass.HashPassword(user, "password12");
+                    user.Email = "vlatkozmejkoski" + i + "@gmail.com";
+                    user.EmailConfirmed = true;
+                    user.UserName = user.Email;
+                    user.NormalizedEmail = user.Email.ToUpper();
+                    user.NormalizedUserName = user.UserName.ToUpper();
+                    user.SecurityStamp = Guid.NewGuid().ToString("D");
+                    user.LockoutEnabled = false;
+                    user.FirstName = "Vlatko" + i;
+                    user.LastName = "Zmejkoski" + i;
+                    //user.PasswordHash = "";
+                    user.PhoneNumber = "078691342";
+                    user.AccessFailedCount = 0;
+                    user.CreatedBy = user.FirstName;
 
-                _userManager.CreateAsync(entry, "password").Wait();
+                    _userManager.CreateAsync(user, "Password").Wait();
+                }
+
+                
             }
         }
     }

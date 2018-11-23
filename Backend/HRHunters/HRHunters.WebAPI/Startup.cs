@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using HRHunters.Common.Entities;
 using HRHunters.Data;
 using HRHunters.Data.Context;
@@ -39,6 +40,9 @@ namespace HRHunters.WebAPI
                 //opt.Password.RequireDigit = true;
                 opt.Password.RequiredLength = 8;
                 opt.User.RequireUniqueEmail = true;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = false;
+                opt.Password.RequireDigit = false;
             });
 
             builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
@@ -47,24 +51,29 @@ namespace HRHunters.WebAPI
             builder.AddRoleManager<RoleManager<Role>>();
             builder.AddSignInManager<SignInManager<User>>();
 
-            /*services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(opt => opt.TokenValidationParameters = new TokenValidationParameters
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opt => opt.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-                    .GetBytes(Configuration.GetSection("AppSettings:Token:").Value)),
+                    .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
                     ValidateIssuer = false,
                     ValidateAudience = false
-                });*/
+                });
 
             services.AddTransient<SeedData>();
             services.AddScoped<IRepository, EFRepository<DataContext>>();
             services.AddScoped<IReadonlyRepository, EFReadOnlyRepository<DataContext>>();           
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddDbContext<DataContext>(x => x.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly(typeof(Startup).Assembly.FullName)));
+            services.AddDbContext<DataContext>(x => x.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDbContext<DbContext>(opt =>
                opt.UseInMemoryDatabase("TodoList"));
+            services.AddAutoMapper();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -90,18 +99,12 @@ namespace HRHunters.WebAPI
 
             //app.UseHttpsRedirection(); 
             seeder.EnsureSeedData();
-            app.UseAuthentication();
-
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-            // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
-
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
