@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HRHunters.Common.Interfaces
 {
-    interface IClientManager
+    public  interface IClientManager
     {
     }
 }
