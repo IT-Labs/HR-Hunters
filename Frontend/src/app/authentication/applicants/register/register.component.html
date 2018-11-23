@@ -1,160 +1,193 @@
 <div class="auth-page__container">
-  <div class="auth-page__container--opacity">
-    <div class="auth-page__logo-container">
-      <img src="../../assets/img/hr-hunters-logo.png" alt="Hr Hunters logo" />
-      <div class="auth-page__logo-container__title">HR Hunters</div>
-    </div>
-    <div class="auth-form__container">
-      <div class="auth-form__container--bg-color">
-        <form [formGroup]="applicantRegisterForm" (ngSubmit)="onApplicantRegister()">
+  <div class="auth-page__container--image">
+    <div class="auth-page__container--opacity">
+      <div class="auth-page__logo-container">
+        <img src="../../assets/img/hr-hunters-logo.png" alt="Hr Hunters logo" />
+        <div class="auth-page__logo-container__title">HR Hunters</div>
+      </div>
+      <div class="auth-form__container">
+        <div class="auth-form__container--bg-color">
+          <form
+            [formGroup]="applicantRegisterForm"
+            (ngSubmit)="onApplicantRegister()"
+          >
+            <!-- NAME INPUT -->
+            <input
+              type="text"
+              class="form-control auth-form__input"
+              placeholder="Full name"
+              formControlName="applicantFullName"
+              maxlength="50"
+            />
+            <div
+              *ngIf="
+                !applicantRegisterForm.controls['applicantFullName'].valid &&
+                (applicantRegisterForm.controls['applicantFullName'].dirty ||
+                  applicantRegisterForm.controls['applicantFullName'].touched)
+              "
+              class="alert alert-warning auth-form__alert"
+            >
+              <div
+                *ngIf="
+                  applicantRegisterForm.controls['applicantFullName'].errors
+                    ?.required
+                "
+              >
+                Full name is required.
+              </div>
+            </div>
 
-<!-- NAME INPUT -->
-          <input
-            type="text"
-            class="form-control auth-form__input"
-            placeholder="Full name"
-            formControlName="applicantFullName"
-            maxlength="50"
-          />
-          <div
-            *ngIf="
-              !applicantRegisterForm.controls['applicantFullName'].valid &&
-              (applicantRegisterForm.controls['applicantFullName'].dirty ||
-                applicantRegisterForm.controls['applicantFullName'].touched)
-            "
-            class="alert alert-warning auth-form__alert"
-          >
+            <!-- EMAIL INPUT -->
+            <input
+              type="email"
+              class="form-control auth-form__input"
+              placeholder="Email"
+              formControlName="applicantEmail"
+              maxlength="30"
+            />
             <div
-              *ngIf="applicantRegisterForm.controls['applicantFullName'].errors.required"
+              *ngIf="
+                !applicantRegisterForm.controls['applicantEmail'].valid &&
+                (applicantRegisterForm.controls['applicantEmail'].dirty ||
+                  applicantRegisterForm.controls['applicantEmail'].touched)
+              "
+              class="alert alert-warning auth-form__alert"
             >
-            Full name is required.
+              <div
+                *ngIf="
+                  applicantRegisterForm.controls['applicantEmail'].errors?.email
+                "
+              >
+                Email must be in valid format.
+              </div>
+              <div
+                *ngIf="
+                  applicantRegisterForm.controls['applicantEmail'].errors
+                    ?.required
+                "
+              >
+                Email is required.
+              </div>
+              <div
+                *ngIf="
+                  applicantRegisterForm.controls['applicantEmail'].errors
+                    ?.minlength
+                "
+              >
+                Email must be at least 6 characters long.
+              </div>
+              <div
+                *ngIf="
+                  applicantRegisterForm.controls['applicantEmail'].errors
+                    ?.maxlength
+                "
+              >
+                Email must be up to 30 characters long.
+              </div>
             </div>
-          </div>
 
-<!-- EMAIL INPUT -->
-          <input
-            type="email"
-            class="form-control auth-form__input"
-            placeholder="Email"
-            formControlName="applicantEmail"
-            maxlength="30"
-          />
-          <div
-            *ngIf="
-              !applicantRegisterForm.controls['applicantEmail'].valid &&
-              (applicantRegisterForm.controls['applicantEmail'].dirty ||
-                applicantRegisterForm.controls['applicantEmail'].touched)
-            "
-            class="alert alert-warning auth-form__alert"
-          >
+            <!-- PASSWORD INPUT -->
+            <input
+              type="password"
+              class="form-control auth-form__input"
+              placeholder="Password"
+              formControlName="applicantPassword"
+              minlength="8"
+              maxlength="20"
+              (keyup)="updatePassword($event)"
+            />
             <div
-              *ngIf="applicantRegisterForm.controls['applicantEmail'].errors.email"
+              *ngIf="
+                !applicantRegisterForm.controls['applicantPassword'].valid &&
+                (applicantRegisterForm.controls['applicantPassword'].dirty ||
+                  applicantRegisterForm.controls['applicantPassword'].touched)
+              "
+              class="alert alert-warning auth-form__alert"
             >
-              Email must be in valid format.
+              <div
+                *ngIf="
+                  applicantRegisterForm.controls['applicantPassword'].errors
+                    ?.required
+                "
+              >
+                Password is required.
+              </div>
+              <div
+                *ngIf="
+                  applicantRegisterForm.controls['applicantPassword'].errors
+                    ?.minlength
+                "
+              >
+                Password must be at least 8 characters long.
+              </div>
+              <div
+                *ngIf="
+                  applicantRegisterForm.controls['applicantPassword'].errors
+                    ?.maxlength
+                "
+              >
+                Password must be up to 20 characters long.
+              </div>
             </div>
-            <div
-              *ngIf="applicantRegisterForm.controls['applicantEmail'].errors.required"
-            >
-              Email is required.
-            </div>
-            <div
-              *ngIf="applicantRegisterForm.controls['applicantEmail'].errors.minlength"
-            >
-              Email must be at least 6 characters long.
-            </div>
-            <div
-              *ngIf="applicantRegisterForm.controls['applicantEmail'].errors.maxlength"
-            >
-              Email must be up to 30 characters long.
-            </div>
-          </div>
 
-<!-- PASSWORD INPUT -->
-          <input
-            type="password"
-            class="form-control auth-form__input"
-            placeholder="Password"
-            formControlName="applicantPassword"
-            minlength="8"
-            maxlength="20"
-          />
-          <div
-            *ngIf="
-              !applicantRegisterForm.controls['applicantPassword'].valid &&
-              (applicantRegisterForm.controls['applicantPassword'].dirty ||
-                applicantRegisterForm.controls['applicantPassword'].touched)
-            "
-            class="alert alert-warning auth-form__alert"
-          >
+            <!-- CONFIRM PASSWORD INPUT -->
+            <input
+              type="password"
+              class="form-control auth-form__input"
+              placeholder="Confirm Password"
+              formControlName="applicantConfirmPassword"
+              minlength="8"
+              maxlength="20"
+              (keyup)="updateConfirmedPassword($event)"
+            />
             <div
-              *ngIf="applicantRegisterForm.controls['applicantPassword'].errors.password"
+              *ngIf="
+                (!applicantRegisterForm.controls['applicantConfirmPassword']
+                  .valid &&
+                  (applicantRegisterForm.controls['applicantConfirmPassword']
+                    .dirty ||
+                    applicantRegisterForm.controls['applicantConfirmPassword']
+                      .touched)) ||
+                !comparePasswords()
+              "
+              class="alert alert-warning auth-form__alert"
             >
-            Password is required.
+              <div
+                *ngIf="
+                  applicantRegisterForm.controls['applicantConfirmPassword']
+                    .errors?.required
+                "
+              >
+                Password is required.
+              </div>
+              <div
+                *ngIf="
+                  applicantRegisterForm.controls['applicantConfirmPassword']
+                    .errors?.minlength
+                "
+              >
+                Password must be at least 8 characters long.
+              </div>
+              <div
+                *ngIf="
+                  applicantRegisterForm.controls['applicantConfirmPassword']
+                    .errors?.maxlength
+                "
+              >
+                Password must be up to 20 characters long.
+              </div>
+              <div *ngIf="!comparePasswords()">Passwords must match!</div>
             </div>
-            <div
-              *ngIf="applicantRegisterForm.controls['applicantPassword'].errors.required"
-            >
-            Password is required.
-            </div>
-            <div
-              *ngIf="applicantRegisterForm.controls['applicantPassword'].errors.minlength"
-            >
-            Password must be at least 8 characters long.
-            </div>
-            <div
-              *ngIf="applicantRegisterForm.controls['applicantPassword'].errors.maxlength"
-            >
-              Password must be up to 20 characters long.
-            </div>
-          </div>
 
-<!-- CONFIRM PASSWORD INPUT -->
-          <input
-            type="password"
-            class="form-control auth-form__input"
-            placeholder="Confirm Password"
-            formControlName="applicantConfirmPassword"
-            minlength="8"
-            maxlength="20"
-          />
-          <div
-            *ngIf="
-              !applicantRegisterForm.controls['applicantConfirmPassword'].valid &&
-              (applicantRegisterForm.controls['applicantConfirmPassword'].dirty ||
-                applicantRegisterForm.controls['applicantConfirmPassword'].touched)
-            "
-            class="alert alert-warning auth-form__alert"
-          >
-            <div
-              *ngIf="applicantRegisterForm.controls['applicantConfirmPassword'].errors.password"
+            <button
+              class="btn btn-auth"
+              type="submit"
+              [disabled]="!applicantRegisterForm.valid || !comparePasswords()"
             >
-            Password is required.
-            </div>
-            <div
-              *ngIf="applicantRegisterForm.controls['applicantConfirmPassword'].errors.required"
-            >
-            Password is required.
-            </div>
-            <div
-              *ngIf="applicantRegisterForm.controls['applicantConfirmPassword'].errors.minlength"
-            >
-            Password must be at least 8 characters long.
-            </div>
-            <div
-              *ngIf="applicantRegisterForm.controls['applicantConfirmPassword'].errors.maxlength"
-            >
-              Password must be up to 20 characters long.
-            </div>
-          </div>
-          
-          <button
-            class="btn btn-auth"
-            type="submit"
-            [disabled]="!applicantRegisterForm.valid"
-          >
-            Register
-          </button>
-        </form>
+              Register
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   </div>

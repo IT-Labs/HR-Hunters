@@ -28,7 +28,7 @@
 
   &__navigation {
     display: flex;
-    height: calc(100vh - 4rem);
+    height: calc(100% - 4rem);
 
     &--brand {
       display: none;
@@ -92,6 +92,7 @@
       top: 3.5rem;
       padding-top: 0.7rem;
       background-color: $color-nav-primary-bg;
+      z-index: 9999;
     }
   }
 

@@ -1,193 +1,179 @@
 <div class="auth-page__container">
-  <div class="auth-page__container--opacity">
-    <div class="auth-page__logo-container">
-      <img src="../../assets/img/hr-hunters-logo.png" alt="Hr Hunters logo" />
-      <div class="auth-page__logo-container__title">HR Hunters</div>
-    </div>
-    <div class="auth-form__container">
-      <div class="auth-form__container--bg-color">
-        <form [formGroup]="clientRegisterForm" (ngSubmit)="onClientRegister()">
-          <!-- NAME INPUT -->
-          <input
-            type="text"
-            class="form-control auth-form__input"
-            placeholder="Company name"
-            formControlName="clientName"
-            maxlength="50"
-          />
-          <div
-            *ngIf="
-              !clientRegisterForm.controls['clientName'].valid &&
-              (clientRegisterForm.controls['clientName'].dirty ||
-                clientRegisterForm.controls['clientName'].touched)
-            "
-            class="alert alert-warning auth-form__alert"
+  <div class="auth-page__container--image">
+    <div class="auth-page__container--opacity">
+      <div class="auth-page__logo-container">
+        <img src="../../assets/img/hr-hunters-logo.png" alt="Hr Hunters logo" />
+        <div class="auth-page__logo-container__title">HR Hunters</div>
+      </div>
+      <div class="auth-form__container">
+        <div class="auth-form__container--bg-color">
+          <form
+            [formGroup]="clientRegisterForm"
+            (ngSubmit)="onClientRegister()"
           >
+            <!-- NAME INPUT -->
+            <input
+              type="text"
+              class="form-control auth-form__input"
+              placeholder="Company name"
+              formControlName="clientName"
+              maxlength="50"
+            />
             <div
               *ngIf="
-                clientRegisterForm.controls['clientName'].errors
-                  .required
+                !clientRegisterForm.controls['clientName'].valid &&
+                (clientRegisterForm.controls['clientName'].dirty ||
+                  clientRegisterForm.controls['clientName'].touched)
               "
+              class="alert alert-warning auth-form__alert"
             >
-              Comapny name is required.
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientName'].errors?.required
+                "
+              >
+                Comapny name is required.
+              </div>
             </div>
-          </div>
 
-          <!-- EMAIL INPUT -->
-          <input
-            type="email"
-            class="form-control auth-form__input"
-            placeholder="Enter email"
-            formControlName="clientEmail"
-            maxlength="30"
-          />
-          <div
-            *ngIf="
-              !clientRegisterForm.controls['clientEmail'].valid &&
-              (clientRegisterForm.controls['clientEmail'].dirty ||
-                clientRegisterForm.controls['clientEmail'].touched)
-            "
-            class="alert alert-warning auth-form__alert"
-          >
-            <div
-              *ngIf="clientRegisterForm.controls['clientEmail'].errors.email"
-            >
-              Email must be in valid format.
-            </div>
-            <div
-              *ngIf="clientRegisterForm.controls['clientEmail'].errors.required"
-            >
-              Email is required.
-            </div>
+            <!-- EMAIL INPUT -->
+            <input
+              type="email"
+              class="form-control auth-form__input"
+              placeholder="Enter email"
+              formControlName="clientEmail"
+              maxlength="30"
+            />
             <div
               *ngIf="
-                clientRegisterForm.controls['clientEmail'].errors.minlength
+                !clientRegisterForm.controls['clientEmail'].valid &&
+                (clientRegisterForm.controls['clientEmail'].dirty ||
+                  clientRegisterForm.controls['clientEmail'].touched)
               "
+              class="alert alert-warning auth-form__alert"
             >
-              Email must be at least 6 characters long.
+              <div
+                *ngIf="clientRegisterForm.controls['clientEmail'].errors?.email"
+              >
+                Email must be in valid format.
+              </div>
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientEmail'].errors?.required
+                "
+              >
+                Email is required.
+              </div>
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientEmail'].errors?.minlength
+                "
+              >
+                Email must be at least 6 characters long.
+              </div>
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientEmail'].errors?.maxlength
+                "
+              >
+                Email must be up to 30 characters long.
+              </div>
             </div>
-            <div
-              *ngIf="
-                clientRegisterForm.controls['clientEmail'].errors.maxlength
-              "
-            >
-              Email must be up to 30 characters long.
-            </div>
-          </div>
 
-          <!-- PASSWORD INPUT -->
-          <input
-            type="password"
-            class="form-control auth-form__input"
-            placeholder="Password"
-            formControlName="clientPassword"
-            minlength="8"
-            maxlength="30"
-          />
-          <div
-            *ngIf="
-              !clientRegisterForm.controls['clientPassword'].valid &&
-              (clientRegisterForm.controls['clientPassword'].dirty ||
-                clientRegisterForm.controls['clientPassword'].touched)
-            "
-            class="alert alert-warning auth-form__alert"
-          >
+            <!-- PASSWORD INPUT -->
+            <input
+              type="password"
+              class="form-control auth-form__input"
+              placeholder="Password"
+              formControlName="clientPassword"
+              minlength="8"
+              maxlength="30"
+              (keyup)="updatePassword($event)"
+            />
             <div
               *ngIf="
-                clientRegisterForm.controls['clientPassword'].errors
-                  .password
+                !clientRegisterForm.controls['clientPassword'].valid &&
+                (clientRegisterForm.controls['clientPassword'].dirty ||
+                  clientRegisterForm.controls['clientPassword'].touched)
               "
+              class="alert alert-warning auth-form__alert"
             >
-              Password is required.
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientPassword'].errors?.required
+                "
+              >
+                Password is required.
+              </div>
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientPassword'].errors?.minlength
+                "
+              >
+                Password must be at least 8 characters long.
+              </div>
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientPassword'].errors?.maxlength
+                "
+              >
+                Password must be up to 20 characters long.
+              </div>
             </div>
-            <div
-              *ngIf="
-                clientRegisterForm.controls['clientPassword'].errors
-                  .required
-              "
-            >
-              Password is required.
-            </div>
-            <div
-              *ngIf="
-                clientRegisterForm.controls['clientPassword'].errors
-                  .minlength
-              "
-            >
-              Password must be at least 8 characters long.
-            </div>
-            <div
-              *ngIf="
-                clientRegisterForm.controls['clientPassword'].errors
-                  .maxlength
-              "
-            >
-              Password must be up to 20 characters long.
-            </div>
-          </div>
 
-          <!-- CONFIRM PASSWORD INPUT -->
-          <input
-            type="password"
-            class="form-control auth-form__input"
-            placeholder="Confirm Password"
-            formControlName="clientConfirmPassword"
-            minlength="8"
-            maxlength="20"
-          />
-          <div
-            *ngIf="
-              !clientRegisterForm.controls['clientConfirmPassword']
-                .valid &&
-              (clientRegisterForm.controls['clientConfirmPassword']
-                .dirty ||
-                clientRegisterForm.controls['clientConfirmPassword']
-                  .touched)
-            "
-            class="alert alert-warning auth-form__alert"
-          >
+            <!-- CONFIRM PASSWORD INPUT -->
+            <input
+              type="password"
+              class="form-control auth-form__input"
+              placeholder="Confirm Password"
+              formControlName="clientConfirmPassword"
+              minlength="8"
+              maxlength="20"
+              (keyup)="updateConfirmedPassword($event)"
+            />
             <div
               *ngIf="
-                clientRegisterForm.controls['clientConfirmPassword']
-                  .errors.password
+                (!clientRegisterForm.controls['clientConfirmPassword'].valid &&
+                  (clientRegisterForm.controls['clientConfirmPassword'].dirty ||
+                    clientRegisterForm.controls['clientConfirmPassword']
+                      .touched)) ||
+                !comparePasswords()
               "
+              class="alert alert-warning auth-form__alert"
             >
-              Password is required.
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientConfirmPassword'].errors?.required
+                "
+              >
+                Password is required.
+              </div>
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientConfirmPassword'].errors?.minlength
+                "
+              >
+                Password must be at least 8 characters long.
+              </div>
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientConfirmPassword'].errors?.maxlength
+                "
+              >
+                Password must be up to 20 characters long.
+              </div>
+              <div *ngIf="!comparePasswords()">Passwords must match!</div>
             </div>
-            <div
-              *ngIf="
-                clientRegisterForm.controls['clientConfirmPassword']
-                  .errors.required
-              "
-            >
-              Password is required.
-            </div>
-            <div
-              *ngIf="
-                clientRegisterForm.controls['clientConfirmPassword']
-                  .errors.minlength
-              "
-            >
-              Password must be at least 8 characters long.
-            </div>
-            <div
-              *ngIf="
-                clientRegisterForm.controls['clientConfirmPassword']
-                  .errors.maxlength
-              "
-            >
-              Password must be up to 20 characters long.
-            </div>
-          </div>
 
-          <button
-            class="btn btn-auth"
-            type="submit"
-            [disabled]="!clientRegisterForm.valid"
-          >
-            Register
-          </button>
-        </form>
+            <button
+              class="btn btn-auth"
+              type="submit"
+              [disabled]="!clientRegisterForm.valid || !comparePasswords()"
+            >
+              Register
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
