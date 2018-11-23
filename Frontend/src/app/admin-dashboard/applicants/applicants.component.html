@@ -23,11 +23,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let jobPosting of dummyData">
-          <td scope="row">{{ applicants.name }}</td>
-          <td>{{ applicants.photo }}</td>
-          <td>{{ applicants.email }}</td>
-          <td>{{ applicants.phone }}</td>
+        <tr *ngFor="let applicant of dummyData">
+          <td scope="row">{{ applicant.name }}</td>
+          <td>{{ applicant.photo }}</td>
+          <td>{{ applicant.email }}</td>
+          <td>{{ applicant.phone }}</td>
         </tr>
       </tbody>
     </table>

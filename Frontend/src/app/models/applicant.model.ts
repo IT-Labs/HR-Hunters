@@ -1,7 +1,7 @@
 export interface Applicant {
   id: string;
-  phoneNumber: string;
-  experience: number;
-  education: string;
-  educationType: string;
+  name: string;
+  photo: string;
+  email: string;
+  phone: string;
 }
