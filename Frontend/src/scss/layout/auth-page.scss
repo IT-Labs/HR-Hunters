@@ -1,16 +1,16 @@
 .auth-page {
   &__container {
-    background-image: url("/../../assets/img/welcome-bg.jpg");
-
-    background-position: center center;
-    background-size: cover;
-    width: 100%;
     height: 100vh;
 
+    &--image {
+      background-image: url("/../../assets/img/welcome-bg.jpg");
+      background-position: center center;
+      background-size: cover;
+      height: 100%;
+    }
     &--opacity {
       background-color: rgba($color-black, 0.6);
-      width: 100%;
-      height: 100vh;
+      height: 100%;
       padding: 3rem;
     }
   }
@@ -48,7 +48,7 @@
 
 // Small devices (portrate phones, up to 576px)
 @media (max-width: 576px) {
-  .auth-page-container {
+  .auth-page {
     &__logo-container {
       img {
         height: 9rem;
@@ -61,7 +61,7 @@
         transform: translateY(0.75rem);
       }
     }
-    &__moto-container {
+    &__moto {
       font-size: 4rem;
       font-weight: 500;
       text-align: center;
@@ -75,7 +75,7 @@
 
 // Small devices (landscape phones, up to 576px)
 @media (min-width: 576px) {
-  .auth-page__container {
+  .auth-page {
     &__logo-container {
       img {
         height: 9rem;
@@ -88,7 +88,7 @@
         transform: translateY(0.75rem);
       }
     }
-    &__moto-container {
+    &__moto {
       font-size: 4rem;
       font-weight: 500;
       text-align: center;
@@ -102,7 +102,7 @@
 
 // Medium devices (tablets, 768px and up)
 @media (min-width: 768px) {
-  .auth-page__container {
+  .auth-page {
     &__logo-container {
       img {
         height: 12rem;
@@ -115,7 +115,7 @@
         transform: translateY(1rem);
       }
     }
-    &__moto-container {
+    &__moto {
       font-size: 6rem;
       font-weight: 500;
       text-align: center;
@@ -129,8 +129,8 @@
 
 // Large devices (desktops, 992px and up)
 @media (min-width: 992px) {
-  .auth-page-container {
-    &__moto-container {
+  .auth-page {
+    &__moto {
       font-size: 7.5rem;
       font-weight: 500;
       text-align: center;
