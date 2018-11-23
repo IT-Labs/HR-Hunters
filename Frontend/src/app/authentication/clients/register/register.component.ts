@@ -7,6 +7,9 @@ import { FormBuilder, Validators } from "@angular/forms";
   styleUrls: ["./register.component.scss"]
 })
 export class ClientRegisterComponent {
+  password: string;
+  confirmedPassword: string;
+
   constructor(private fb: FormBuilder) {}
 
   clientRegisterForm = this.fb.group({
@@ -46,6 +49,24 @@ export class ClientRegisterComponent {
     ]
   });
 
+  updatePassword(event: any) {
+    if (event.target.value) {
+      this.password = event.target.value;
+    }
+  }
+
+  updateConfirmedPassword(event: any) {
+    if (event.target.value !== undefined) {
+      this.confirmedPassword = event.target.value;
+    }
+  }
+
+  comparePasswords() {
+    if (this.password === this.confirmedPassword) {
+      return true;
+    }
+    return false;
+  }
   onClientRegister() {
     console.log(this.clientRegisterForm.value);
 
