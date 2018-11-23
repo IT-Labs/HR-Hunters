@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using HRHunters.Common.Entities;
 using HRHunters.Data;
 using HRHunters.Data.Context;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace HRHunters.WebAPI.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase

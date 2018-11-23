@@ -26,13 +26,13 @@ namespace HRHunters.Data.Context
                     //var hashedPass = pass.HashPassword(user, "password12");
                     user.Email = "vlatkozmejkoski" + i + "@gmail.com";
                     user.EmailConfirmed = true;
-                    user.UserName = user.Email;
                     user.NormalizedEmail = user.Email.ToUpper();
                     user.NormalizedUserName = user.UserName.ToUpper();
                     user.SecurityStamp = Guid.NewGuid().ToString("D");
                     user.LockoutEnabled = false;
                     user.FirstName = "Vlatko" + i;
                     user.LastName = "Zmejkoski" + i;
+                    user.UserName = user.FirstName.ToLower() + user.LastName.ToLower();
                     //user.PasswordHash = "";
                     user.PhoneNumber = "078691342";
                     user.AccessFailedCount = 0;

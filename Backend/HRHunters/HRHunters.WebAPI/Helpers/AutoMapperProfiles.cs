@@ -14,6 +14,8 @@ namespace HRHunters.WebAPI.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<User, UserForLoginDto>();
+            CreateMap<User, UserForRegisterDto>();
+            CreateMap<UserForRegisterDto, User>();
         }
     }
 }

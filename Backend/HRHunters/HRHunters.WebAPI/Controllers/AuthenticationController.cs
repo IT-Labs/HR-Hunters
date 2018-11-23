@@ -23,19 +23,34 @@ namespace HRHunters.WebAPI.Controllers
     //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ApplicantController : ControllerBase
+    public class AuthenticationController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         
-        public ApplicantController(IMapper mapper,UserManager<User> userManager,SignInManager<User> signInManager, IConfiguration configuration)
+        public AuthenticationController(IMapper mapper,UserManager<User> userManager,SignInManager<User> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _mapper = mapper;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
+        {
+            var userToCreate = _mapper.Map<User>(userForRegisterDto);
+            userToCreate.UserName = userToCreate.NormalizedEmail;
+            var result = await _userManager.CreateAsync(userToCreate, userForRegisterDto.Password);
+            var userToReturn = _mapper.Map<UserForRegisterDto>(userToCreate);
+
+            if(result.Succeeded)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result.Errors);
         }
 
         [HttpPost("login")]
@@ -45,8 +60,6 @@ namespace HRHunters.WebAPI.Controllers
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
             
-           
-
             if(result.Succeeded)
             {
                 var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userForLoginDto.Email);
