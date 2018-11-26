@@ -94,7 +94,7 @@ export class AdminService {
 
   // Adding new job posting
   addJobPosting(
-    id: string,
+    id: number,
     jobTitle: string,
     dateFrom: Date,
     dateTo: Date,
@@ -170,7 +170,13 @@ export class AdminService {
   }
 
   // Get all applications
-  getApplications(applicationsPerPage: number, currentPage: number, sortedBy: string, sortDirection: number, filterBy: string) {
+  getApplications(
+    applicationsPerPage: number,
+    currentPage: number,
+    sortedBy: string,
+    sortDirection: number,
+    filterBy: string
+  ) {
     const queryParams = `?pagesize=${applicationsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
     this.http
       .get<{ applications: Application[]; maxApplictions: number }>(
@@ -182,7 +188,8 @@ export class AdminService {
             applications: applicationsData.applications.map(application => {
               return {
                 id: application.id,
-                applicantName: application.applicantName,
+                applicantFirstName: application.applicantFirstName,
+                applicantLastName: application.applicantLastName,
                 applicantEmail: application.applicantEmail,
                 jobTitle: application.jobTitle,
                 experience: application.experience,

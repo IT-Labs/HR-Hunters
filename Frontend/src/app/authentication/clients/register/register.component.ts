@@ -9,8 +9,8 @@ import { AuthService } from "src/app/services/auth.service";
   styleUrls: ["./register.component.scss"]
 })
 export class ClientRegisterComponent {
-  password: string;
-  confirmedPassword: string;
+  private password: string;
+  private confirmedPassword: string;
   registrationError;
   private authStatusSub: Subscription;
   private registerStatusSub: Subscription;
@@ -93,5 +93,10 @@ export class ClientRegisterComponent {
       this.clientRegisterForm.value.applicantEmail,
       this.clientRegisterForm.value.applicantPassword
     );
+  }
+
+  ngOnDestroy() {
+    this.authStatusSub.unsubscribe();
+    this.registerStatusSub.unsubscribe();
   }
 }

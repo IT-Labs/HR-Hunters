@@ -80,6 +80,14 @@
               </div>
             </div>
 
+            <!-- SERVER ERROR -->
+
+            <div
+              *ngIf="registrationError"
+              class="alert alert-warning auth-form__alert"
+            > {{ registrationError.description }}
+            </div>
+
             <!-- PASSWORD INPUT -->
             <input
               type="password"
