@@ -108,5 +108,6 @@ export class ApplicantRegisterComponent implements OnInit {
 
   ngOnDestroy() {
     this.authStatusSub.unsubscribe();
+    this.registerStatusSub.unsubscribe();
   }
 }

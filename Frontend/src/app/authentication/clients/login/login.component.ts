@@ -1,5 +1,7 @@
 import { Component } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
+import { AuthService } from "src/app/services/auth.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-login",
@@ -7,9 +9,16 @@ import { FormBuilder, Validators } from "@angular/forms";
   styleUrls: ["./login.component.scss"]
 })
 export class ClientLoginComponent {
-  screenHeight;
+  role = "client";
+  private authStatusSub: Subscription;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private authService: AuthService) {}
+
+  ngOnInit() {
+    this.authStatusSub = this.authService
+      .getAuthStatusListener()
+      .subscribe(authStatus => {});
+  }
 
   clientLoginForm = this.fb.group({
     clientEmail: [
@@ -34,9 +43,17 @@ export class ClientLoginComponent {
   onClientLogin() {
     console.log(this.clientLoginForm.value);
 
-    if (this.clientLoginForm.valid) {
-      this.clientLoginForm.reset();
+    if (this.clientLoginForm.invalid) {
+      return
     }
+    this.authService.loginUser(
+      this.clientLoginForm.value.clientEmail,
+      this.clientLoginForm.value.clientPassword,
+      this.role
+    );
   }
 
+  ngOnDestroy() {
+    this.authStatusSub.unsubscribe();
+  }
 }

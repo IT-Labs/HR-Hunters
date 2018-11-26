@@ -9,7 +9,11 @@ import { Applicant } from "../models/applicant.model";
 @Injectable({ providedIn: "root" })
 export class AuthService {
   private isAuthenticated = false;
-  private token: string;
+  private user = {
+    id: null,
+    token: "",
+    email: "",
+  }
   private authStatusListener = new Subject<boolean>();
   private registerStatusListener = new Subject<{code: string, description: string}>();
 
@@ -17,7 +21,11 @@ export class AuthService {
 
   // Gets the users token
   getToken() {
-    return this.token;
+    return this.user.token;
+  }
+
+  getuser() {
+    return this.user;
   }
 
   // Checks if the user is authenticated
@@ -34,7 +42,7 @@ export class AuthService {
     return this.registerStatusListener.asObservable();
   }
 
-  // Saves the token to the local storage
+  // Saves the token to the local storage and deletes the old one if there already is a token saved
   private saveAuthData(token: string) {
     const hasToken = localStorage.getItem("token");
     if (hasToken) {
@@ -58,7 +66,7 @@ export class AuthService {
     };
     this.http
       .post<{
-        succeeded: boolean;
+        succeeded: boolean,
         errors: { code: string; description: string };
       }>("BACKEND_URL", authData)
       .subscribe(response => {
@@ -85,7 +93,7 @@ export class AuthService {
       lastName: lastName
     };
     this.http.post<{
-      succeeded: boolean;
+      succeeded: boolean,
       errors: { code: string; description: string };
     }>("", authData).subscribe(response => {
       if (response.succeeded) {
@@ -94,17 +102,18 @@ export class AuthService {
         this.registerStatusListener.next(response.errors[1]) 
       }
     });
-    
   }
 
   // LOGIN
-  loginUser(email: string, password: string) {
-    const authData: User = { email: email, password: password };
+  loginUser(email: string, password: string, role: string) {
+    const authData: User = { email: email, password: password, role: role };
     this.http
-      .post<{ token: string, email: string, id: number }>("BACKEND_URL", authData)
+      .post<{ succeeded: boolean, token: string, email: string, id: number }>("BACKEND_URL", authData)
       .subscribe(response => {
         const token = response.token;
-        this.token = token;
+        this.user.token = token;
+        this.user.id = response.id;
+        this.user.email = response.email;
         if (token) {
           this.isAuthenticated = true;
           this.authStatusListener.next(true);
@@ -135,7 +144,9 @@ export class AuthService {
 
   // LOGOUT
   logout() {
-    this.token = null;
+    this.user.token = null;
+    this.user.email = "";
+    this.user.id = "";
     this.isAuthenticated = false;
     this.authStatusListener.next(false);
     this.clearAuthData();
