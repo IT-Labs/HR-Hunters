@@ -4,7 +4,8 @@ using System.Text;
 
 namespace HRHunters.Common.Interfaces
 {
-   public  interface IApplicantManager
+    public  interface IApplicantManager
     {
+        
     }
 }

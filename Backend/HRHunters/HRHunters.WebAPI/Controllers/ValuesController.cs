@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HRHunters.WebAPI.Controllers
 {
     [AllowAnonymous]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
@@ -27,7 +27,7 @@ namespace HRHunters.WebAPI.Controllers
         public ActionResult<IEnumerable<User>> Get()
         {
             var values = _repo.GetAll<User>();
-
+            
             return Ok(values);
         }
 

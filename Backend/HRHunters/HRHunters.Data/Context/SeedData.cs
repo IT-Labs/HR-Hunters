@@ -59,6 +59,8 @@ namespace HRHunters.Data.Context
                 }
                 
             }
+            var userce = _userManager.FindByEmailAsync("zmejkoski@gmail.com");
+            _userManager.AddToRoleAsync(userce.Result, "Admin").Wait();
         }
     }
 

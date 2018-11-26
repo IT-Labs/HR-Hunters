@@ -21,7 +21,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace HRHunters.WebAPI.Controllers
 {
     //[Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
@@ -42,7 +42,7 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpPost("registerApplicant")]
-        public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
+        public async Task<IActionResult> RegisterApplicant(UserForRegisterDto userForRegisterDto)
         {
             var userToCreate = _mapper.Map<User>(userForRegisterDto);
             userToCreate.UserName = userToCreate.Email;
@@ -56,27 +56,55 @@ namespace HRHunters.WebAPI.Controllers
             return BadRequest(result.Errors);
         }
 
-        [HttpPost("loginApplicant")]
+        [HttpPost("registerClient")]
+        public async Task<IActionResult> RegisterClient(ClientUserForRegisterDto clientUserForRegisterDto)
+        {
+            var userToCreate = _mapper.Map<User>(clientUserForRegisterDto);
+            userToCreate.UserName = userToCreate.Email;
+            var result = await _userManager.CreateAsync(userToCreate, clientUserForRegisterDto.Password);
+            var userToReturn = _mapper.Map<UserForRegisterDto>(userToCreate);
+            await _userManager.AddToRoleAsync(userToCreate, "Client");
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result.Errors);
+        }
+        [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
+            var flag = false;
             var user = await _userManager.FindByEmailAsync(userForLoginDto.Email);
-
-            var result = await _signInManager.CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
-            
-            if(result.Succeeded)
+            if(user != null)
             {
-                var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userForLoginDto.Email);
-                var userToReturn = _mapper.Map<UserForLoginDto>(appUser);
-
-                return Ok(new
+                var roles = _userManager.GetRolesAsync(user);
+                foreach(string role in roles.Result)
                 {
-                    token = GenerateJwtToken(appUser),
-                    user.Email, user.Id
-                });
-                
-            }
+                    if(role == userForLoginDto.Role.ToString())
+                    {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag)
+                {
+                    var result = await _signInManager.CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
+                    if (result.Succeeded)
+                    {
+                        var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userForLoginDto.Email);
+                        var userToReturn = _mapper.Map<UserForLoginDto>(appUser);
 
-            return Unauthorized();
+                        return Ok(new
+                        {
+                            result.Succeeded,
+                            token = GenerateJwtToken(appUser),
+                            user.Email,
+                            user.Id,
+                        });
+                    }
+                }
+            }
+            return  Unauthorized();
         }
 
         private string GenerateJwtToken(User user)

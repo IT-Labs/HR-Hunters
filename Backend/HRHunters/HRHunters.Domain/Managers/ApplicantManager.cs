@@ -5,7 +5,7 @@ using HRHunters.Common.Interfaces;
 
 namespace HRHunters.Domain.Managers
 {
-    class ApplicantManager:IApplicantManager
+    public class ApplicantManager : IApplicantManager
     {
 
     }
