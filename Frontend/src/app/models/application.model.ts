@@ -1,6 +1,7 @@
 export interface Application {
-  id: string;
-  applicantName: string;
+  id: number;
+  applicantFirstName: string;
+  applicantLastName: string;
   applicantEmail: string;
   jobTitle: string;
   experience: number;

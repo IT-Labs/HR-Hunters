@@ -1,19 +1,42 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
+import { AuthService } from "src/app/services/auth.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-register",
   templateUrl: "./register.component.html",
   styleUrls: ["./register.component.scss"]
 })
-export class ApplicantRegisterComponent {
+export class ApplicantRegisterComponent implements OnInit {
   password: string;
   confirmedPassword: string;
+  registrationError;
+  private authStatusSub: Subscription;
+  private registerStatusSub: Subscription;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private authService: AuthService) {}
+
+  ngOnInit() {
+    this.authStatusSub = this.authService
+      .getAuthStatusListener()
+      .subscribe(authStatus => {});
+    this.registerStatusSub = this.authService.getRegisterStatusListener().subscribe(error => {
+      this.registrationError = error;
+    })
+  }
 
   applicantRegisterForm = this.fb.group({
-    applicantFullName: [
+    applicantFirstName: [
+      "",
+      Validators.compose([
+        Validators.required,
+        Validators.minLength(1),
+        Validators.maxLength(50),
+        Validators.pattern("[a-zA-Z ]*")
+      ])
+    ],
+    applicantLastName: [
       "",
       Validators.compose([
         Validators.required,
@@ -71,8 +94,19 @@ export class ApplicantRegisterComponent {
   onApplicantRegister() {
     console.log(this.applicantRegisterForm.value);
 
-    if (this.applicantRegisterForm.valid) {
-      this.applicantRegisterForm.reset();
+    if (this.applicantRegisterForm.invalid) {
+      return;
     }
+
+    this.authService.registerApplicant(
+      this.applicantRegisterForm.value.applicantFirstName,
+      this.applicantRegisterForm.value.applicantLastName,
+      this.applicantRegisterForm.value.applicantEmail,
+      this.applicantRegisterForm.value.applicantPassword
+    );
+  }
+
+  ngOnDestroy() {
+    this.authStatusSub.unsubscribe();
   }
 }

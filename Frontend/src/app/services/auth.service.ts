@@ -3,12 +3,15 @@ import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { User } from "../models/user.model";
 import { Subject } from "rxjs";
+import { Client } from "../models/client.model";
+import { Applicant } from "../models/applicant.model";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
   private isAuthenticated = false;
   private token: string;
   private authStatusListener = new Subject<boolean>();
+  private registerStatusListener = new Subject<{code: string, description: string}>();
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -27,8 +30,16 @@ export class AuthService {
     return this.authStatusListener.asObservable();
   }
 
+  getRegisterStatusListener() {
+    return this.registerStatusListener.asObservable();
+  }
+
   // Saves the token to the local storage
   private saveAuthData(token: string) {
+    const hasToken = localStorage.getItem("token");
+    if (hasToken) {
+      localStorage.removeItem("token");
+    }
     localStorage.setItem("token", token);
   }
 
@@ -37,23 +48,60 @@ export class AuthService {
     localStorage.removeItem("token");
   }
 
-  // REGISTER
-  registerUser(name: string, email: string, password: string) {
-    const authData: User = {
+  // REGISTER CLIENT
+  registerClient(name: string, email: string, password: string) {
+    const authData: Client = {
       id: null,
       email: email,
       password: password,
-      name: name
+      companyName: name
     };
-    this.http.post("BACKEND_URL", authData).subscribe(response => {});
-    this.router.navigate(["/"]);
+    this.http
+      .post<{
+        succeeded: boolean;
+        errors: { code: string; description: string };
+      }>("BACKEND_URL", authData)
+      .subscribe(response => {
+        if (response.succeeded) {
+          this.router.navigate(["client-login"]);
+        } else if (!!response.errors) {
+          this.registerStatusListener.next(response.errors[1]) 
+        }
+      });
+  }
+
+  // REGISTER APPLICANT
+  registerApplicant(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string
+  ) {
+    const authData: Applicant = {
+      id: null,
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName
+    };
+    this.http.post<{
+      succeeded: boolean;
+      errors: { code: string; description: string };
+    }>("", authData).subscribe(response => {
+      if (response.succeeded) {
+        this.router.navigate(["applicant-login"]);
+      } else if (!!response.errors) {
+        this.registerStatusListener.next(response.errors[1]) 
+      }
+    });
+    
   }
 
   // LOGIN
   loginUser(email: string, password: string) {
     const authData: User = { email: email, password: password };
     this.http
-      .post<{ token: string }>("BACKEND_URL", authData)
+      .post<{ token: string, email: string, id: number }>("BACKEND_URL", authData)
       .subscribe(response => {
         const token = response.token;
         this.token = token;
