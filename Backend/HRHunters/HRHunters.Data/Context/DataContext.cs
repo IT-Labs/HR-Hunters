@@ -17,7 +17,6 @@ namespace HRHunters.Data.Context
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -37,6 +36,7 @@ namespace HRHunters.Data.Context
                     .HasForeignKey(ur => ur.UserId)
                     .IsRequired(); 
             });
+            
         }
 
         public DbSet<Admin> Admins { get; set; }
@@ -44,7 +44,6 @@ namespace HRHunters.Data.Context
         public DbSet<Application> Applications { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<JobPosting> JobPostings { get; set; }
-        //public DbSet<User> Users{ get; set; }
 
         public class DataContextFactory : DesignTimeDbContextFactoryBase<DataContext>
         {

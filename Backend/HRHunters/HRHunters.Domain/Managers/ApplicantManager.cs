@@ -7,5 +7,6 @@ namespace HRHunters.Domain.Managers
 {
     class ApplicantManager:IApplicantManager
     {
+
     }
 }
