@@ -1,3 +1,5 @@
 import { User } from "./user.model";
 
-export interface Admin extends User {}
+export interface Admin extends User {
+    name: string;
+}

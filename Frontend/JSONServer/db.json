@@ -1,0 +1,24 @@
+{
+  "registerFalse": {
+    "succeeded": false,
+    "errors": [
+      {
+        "code": "DuplicateUserName",
+        "description": "User name 'vlatkz@gmail.com' is already taken."
+      },
+      {
+        "code": "DuplicateEmail",
+        "description": "Email 'vlatkz@gmail.com' is already taken."
+      }
+    ]
+  },
+  "registerTrue": {
+    "succeeded": true,
+    "errors": []
+  },
+  "login": {
+    "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI3IiwiZW1haWwiOiJ2bGF0a296bWVqa29za2k2QGdtYWlsLmNvbSIsIm5iZiI6MTU0MzIyMjg2NSwiZXhwIjoxNTQzMjI2NDY1LCJpYXQiOjE1NDMyMjI4NjV9.OenmkoonRFiaiNaNzpQ8KhyK4_SyEPH-93NGjvZXZVxMS4mXGjZetUEa2ESZlWckIpi4D1ni-h6dSGqYIEuqQQ",
+    "email": "vlatkozmejkoski6@gmail.com",
+    "id": 7
+  }
+}

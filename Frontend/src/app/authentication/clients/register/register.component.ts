@@ -1,5 +1,7 @@
 import { Component } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
+import { Subscription } from "rxjs";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-register",
@@ -9,8 +11,20 @@ import { FormBuilder, Validators } from "@angular/forms";
 export class ClientRegisterComponent {
   password: string;
   confirmedPassword: string;
+  registrationError;
+  private authStatusSub: Subscription;
+  private registerStatusSub: Subscription;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private authService: AuthService) {}
+
+  ngOnInit() {
+    this.authStatusSub = this.authService
+      .getAuthStatusListener()
+      .subscribe(authStatus => {});
+    this.registerStatusSub = this.authService.getRegisterStatusListener().subscribe(error => {
+      this.registrationError = error;
+    })
+  }
 
   clientRegisterForm = this.fb.group({
     clientName: [
@@ -70,8 +84,14 @@ export class ClientRegisterComponent {
   onClientRegister() {
     console.log(this.clientRegisterForm.value);
 
-    if (this.clientRegisterForm.valid) {
-      this.clientRegisterForm.reset();
+    if (this.clientRegisterForm.invalid) {
+      return;
     }
+
+    this.authService.registerClient(
+      this.clientRegisterForm.value.clientName,
+      this.clientRegisterForm.value.applicantEmail,
+      this.clientRegisterForm.value.applicantPassword
+    );
   }
 }

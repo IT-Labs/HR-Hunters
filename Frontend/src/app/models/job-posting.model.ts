@@ -1,5 +1,5 @@
 export interface JobPosting {
-    id: string;
+    id: number;
     jobTitle: string;
     dateFrom: Date;
     dateTo: Date;

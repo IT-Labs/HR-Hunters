@@ -1,7 +1,8 @@
-export interface Applicant {
-  id: string;
-  name: string;
-  photo: string;
-  email: string;
-  phone: string;
+import { User } from "./user.model";
+
+export interface Applicant extends User {
+  firstName: string;
+  lastName: string;
+  photo?: string;
+  phone?: string;
 }

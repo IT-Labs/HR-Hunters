@@ -11,29 +11,51 @@
             [formGroup]="applicantRegisterForm"
             (ngSubmit)="onApplicantRegister()"
           >
-            <!-- NAME INPUT -->
-            <input
-              type="text"
-              class="form-control auth-form__input"
-              placeholder="Full name"
-              formControlName="applicantFullName"
-              maxlength="50"
-            />
+            <!-- FIRST NAME INPUT -->
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control auth-form__input"
+                placeholder="First name"
+                formControlName="applicantFirstName"
+                maxlength="30"
+              />
+              <input
+                type="text"
+                class="form-control auth-form__input mt-0"
+                placeholder="Last name"
+                formControlName="applicantLastName"
+                maxlength="30"
+              />
+            </div>
             <div
               *ngIf="
-                !applicantRegisterForm.controls['applicantFullName'].valid &&
-                (applicantRegisterForm.controls['applicantFullName'].dirty ||
-                  applicantRegisterForm.controls['applicantFullName'].touched)
+                (!applicantRegisterForm.controls['applicantFirstName'].valid &&
+                  (applicantRegisterForm.controls['applicantFirstName'].dirty ||
+                    applicantRegisterForm.controls['applicantFirstName']
+                      .touched)) ||
+                (!applicantRegisterForm.controls['applicantLastName'].valid &&
+                  (applicantRegisterForm.controls['applicantLastName'].dirty ||
+                    applicantRegisterForm.controls['applicantLastName']
+                      .touched))
               "
               class="alert alert-warning auth-form__alert"
             >
               <div
                 *ngIf="
-                  applicantRegisterForm.controls['applicantFullName'].errors
+                  applicantRegisterForm.controls['applicantFirstName'].errors
                     ?.required
                 "
               >
-                Full name is required.
+                First name is required.
+              </div>
+              <div
+                *ngIf="
+                  applicantRegisterForm.controls['applicantLastName'].errors
+                    ?.required
+                "
+              >
+                Last name is required.
               </div>
             </div>
 
@@ -84,6 +106,14 @@
               >
                 Email must be up to 30 characters long.
               </div>
+            </div>
+
+            <!-- SERVER ERROR -->
+
+            <div
+              *ngIf="registrationError"
+              class="alert alert-warning auth-form__alert"
+            > {{ registrationError.description }}
             </div>
 
             <!-- PASSWORD INPUT -->
