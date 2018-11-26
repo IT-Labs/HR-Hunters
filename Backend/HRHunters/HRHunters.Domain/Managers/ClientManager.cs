@@ -4,7 +4,8 @@ using System.Text;
 using HRHunters.Common.Interfaces;
 namespace HRHunters.Domain.Managers
 {
-    class ClientManager:IClientManager
+    public class ClientManager:IClientManager
     {
+
     }
 }

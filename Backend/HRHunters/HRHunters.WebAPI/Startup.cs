@@ -107,7 +107,10 @@ namespace HRHunters.WebAPI
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute("default", "{controller=Values}/{action=Get}/{id?}");
+            });
         }
     }
 }

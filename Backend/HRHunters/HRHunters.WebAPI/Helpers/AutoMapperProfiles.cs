@@ -16,6 +16,8 @@ namespace HRHunters.WebAPI.Helpers
             CreateMap<User, UserForLoginDto>();
             CreateMap<User, UserForRegisterDto>();
             CreateMap<UserForRegisterDto, User>();
+            CreateMap<User, ClientUserForRegisterDto>().ForMember(dest=> dest.CompanyName, opt => opt.MapFrom(src => src.FirstName));
+            CreateMap<ClientUserForRegisterDto, User>().ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.CompanyName));
         }
     }
 }

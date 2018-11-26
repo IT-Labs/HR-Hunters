@@ -52,9 +52,9 @@ namespace HRHunters.Data
             {
                 context.SaveChanges();
             }
-            catch (DbEntityValidationException e)
+            catch (Exception e)
             {
-               //FIX it later
+               //ToDO
             }
         }
 
