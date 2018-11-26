@@ -29,23 +29,26 @@ namespace HRHunters.WebAPI.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly RoleManager<Role> _roleManager;
         
-        public AuthenticationController(IMapper mapper,UserManager<User> userManager,SignInManager<User> signInManager, IConfiguration configuration)
+        public AuthenticationController(IMapper mapper,RoleManager<Role> roleManager, 
+            UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _mapper = mapper;
+            _roleManager = roleManager;
         }
 
-        [HttpPost("register")]
+        [HttpPost("registerApplicant")]
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
             var userToCreate = _mapper.Map<User>(userForRegisterDto);
-            userToCreate.UserName = userToCreate.NormalizedEmail;
+            userToCreate.UserName = userToCreate.Email;
             var result = await _userManager.CreateAsync(userToCreate, userForRegisterDto.Password);
             var userToReturn = _mapper.Map<UserForRegisterDto>(userToCreate);
-
+            await _userManager.AddToRoleAsync(userToCreate, "Applicant");
             if(result.Succeeded)
             {
                 return Ok(result);
@@ -53,7 +56,7 @@ namespace HRHunters.WebAPI.Controllers
             return BadRequest(result.Errors);
         }
 
-        [HttpPost("login")]
+        [HttpPost("loginApplicant")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
             var user = await _userManager.FindByEmailAsync(userForLoginDto.Email);
@@ -68,7 +71,7 @@ namespace HRHunters.WebAPI.Controllers
                 return Ok(new
                 {
                     token = GenerateJwtToken(appUser),
-                    user = userToReturn
+                    user.Email, user.Id
                 });
                 
             }

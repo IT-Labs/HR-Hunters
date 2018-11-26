@@ -43,7 +43,9 @@ namespace HRHunters.WebAPI
                 opt.Password.RequireNonAlphanumeric = false;
                 opt.Password.RequireUppercase = false;
                 opt.Password.RequireDigit = false;
+                
             });
+            
 
             builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
             builder.AddEntityFrameworkStores<DataContext>();
@@ -71,7 +73,7 @@ namespace HRHunters.WebAPI
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<DataContext>(x => x.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDbContext<DbContext>(opt =>
+            services.AddDbContext<DataContext>(opt =>
                opt.UseInMemoryDatabase("TodoList"));
             services.AddAutoMapper();
             services.AddMvc()

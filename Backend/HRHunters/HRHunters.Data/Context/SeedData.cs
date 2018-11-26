@@ -10,8 +10,10 @@ namespace HRHunters.Data.Context
     public class SeedData
     {
         private readonly UserManager<User> _userManager;
-        public SeedData(UserManager<User> userManager)
+        private readonly RoleManager<Role> _roleManager;
+        public SeedData(UserManager<User> userManager, RoleManager<Role> roleManager)
         {
+            _roleManager = roleManager;
             _userManager = userManager;
         }
 
@@ -41,6 +43,20 @@ namespace HRHunters.Data.Context
                     _userManager.CreateAsync(user, "Password").Wait();
                 }
 
+                
+            }
+            if(!_roleManager.Roles.Any())
+            {
+                var roles = new List<Role>
+                {
+                    new Role { Name = "Applicant" },
+                    new Role { Name = "Client" },
+                    new Role { Name = "Admin" }
+                };
+                foreach(var role in roles)
+                {
+                    _roleManager.CreateAsync(role).Wait();
+                }
                 
             }
         }
