@@ -1,113 +1,101 @@
 <div class="auth-page__container">
-  <div class="auth-page__container--opacity">
-    <div class="auth-page__logo-container">
-      <img src="../../assets/img/hr-hunters-logo.png" alt="Hr Hunters logo" />
-      <div class="auth-page__logo-container__title">HR Hunters</div>
-    </div>
-    <div class="auth-form__container">
-      <div class="auth-form__container--bg-color">
-        <form [formGroup]="adminLoginForm" (ngSubmit)="onAdminLogin()">
-          <!-- EMAIL INPUT -->
-          <input
-            type="email"
-            class="form-control auth-form__input"
-            placeholder="Email"
-            formControlName="adminEmail"
-            maxlength="30"
-          />
-          <div
-            *ngIf="
-              !adminLoginForm.controls['adminEmail'].valid &&
-              (adminLoginForm.controls['adminEmail'].dirty ||
-                adminLoginForm.controls['adminEmail'].touched)
-            "
-            class="alert alert-warning auth-form__alert"
-          >
-            <div
-              *ngIf="adminLoginForm.controls['adminEmail'].errors.email"
-            >
-              Email is required.
-            </div>
+  <div class="auth-page__container--image">
+    <div class="auth-page__container--opacity">
+      <div class="auth-page__logo-container">
+        <img src="../../assets/img/hr-hunters-logo.png" alt="Hr Hunters logo" />
+        <div class="auth-page__logo-container__title">HR Hunters</div>
+      </div>
+      <div class="auth-form__container">
+        <div class="auth-form__container--bg-color">
+          <form [formGroup]="adminLoginForm" (ngSubmit)="onAdminLogin()">
+            <!-- EMAIL INPUT -->
+            <input
+              type="email"
+              class="form-control auth-form__input"
+              placeholder="Email"
+              formControlName="adminEmail"
+              maxlength="30"
+            />
             <div
               *ngIf="
-                adminLoginForm.controls['adminEmail'].errors.required
+                !adminLoginForm.controls['adminEmail'].valid &&
+                (adminLoginForm.controls['adminEmail'].dirty ||
+                  adminLoginForm.controls['adminEmail'].touched)
               "
+              class="alert alert-warning auth-form__alert"
             >
-              Email is required.
+              <div *ngIf="adminLoginForm.controls['adminEmail'].errors.email">
+                Email is required.
+              </div>
+              <div
+                *ngIf="adminLoginForm.controls['adminEmail'].errors.required"
+              >
+                Email is required.
+              </div>
+              <div
+                *ngIf="adminLoginForm.controls['adminEmail'].errors.minlength"
+              >
+                Email must be at least 6 characters long.
+              </div>
+              <div
+                *ngIf="adminLoginForm.controls['adminEmail'].errors.maxlength"
+              >
+                Email must be up to 30 characters long.
+              </div>
             </div>
-            <div
-              *ngIf="
-                adminLoginForm.controls['adminEmail'].errors.minlength
-              "
-            >
-              Email must be at least 6 characters long.
-            </div>
-            <div
-              *ngIf="
-                adminLoginForm.controls['adminEmail'].errors.maxlength
-              "
-            >
-              Email must be up to 30 characters long.
-            </div>
-          </div>
 
-          <!-- PASSWORD INPUT -->
-          <input
-            type="password"
-            class="form-control auth-form__input"
-            placeholder="Password"
-            formControlName="adminPassword"
-            minlength="8"
-            maxlength="20"
-          />
-          <div
-            *ngIf="
-              !adminLoginForm.controls['adminPassword'].valid &&
-              (adminLoginForm.controls['adminPassword'].dirty ||
-                adminLoginForm.controls['adminPassword'].touched)
-            "
-            class="alert alert-warning auth-form__alert"
-          >
+            <!-- PASSWORD INPUT -->
+            <input
+              type="password"
+              class="form-control auth-form__input"
+              placeholder="Password"
+              formControlName="adminPassword"
+              minlength="8"
+              maxlength="20"
+            />
             <div
               *ngIf="
-                adminLoginForm.controls['adminPassword'].errors.password
+                !adminLoginForm.controls['adminPassword'].valid &&
+                (adminLoginForm.controls['adminPassword'].dirty ||
+                  adminLoginForm.controls['adminPassword'].touched)
               "
+              class="alert alert-warning auth-form__alert"
             >
-              Password is required.
+              <div
+                *ngIf="adminLoginForm.controls['adminPassword'].errors.password"
+              >
+                Password is required.
+              </div>
+              <div
+                *ngIf="adminLoginForm.controls['adminPassword'].errors.required"
+              >
+                Password is required.
+              </div>
+              <div
+                *ngIf="
+                  adminLoginForm.controls['adminPassword'].errors.minlength
+                "
+              >
+                Password must be at least 8 characters long.
+              </div>
+              <div
+                *ngIf="
+                  adminLoginForm.controls['adminPassword'].errors.maxlength
+                "
+              >
+                Password must be up to 20 characters long.
+              </div>
             </div>
-            <div
-              *ngIf="
-                adminLoginForm.controls['adminPassword'].errors.required
-              "
-            >
-              Password is required.
-            </div>
-            <div
-              *ngIf="
-                adminLoginForm.controls['adminPassword'].errors
-                  .minlength
-              "
-            >
-              Password must be at least 8 characters long.
-            </div>
-            <div
-              *ngIf="
-                adminLoginForm.controls['adminPassword'].errors
-                  .maxlength
-              "
-            >
-              Password must be up to 20 characters long.
-            </div>
-          </div>
 
-          <button
-            class="btn btn-auth"
-            type="submit"
-            [disabled]="!adminLoginForm.valid"
-          >
-            Login
-          </button>
-        </form>
+            <button
+              class="btn btn-auth"
+              type="submit"
+              [disabled]="!adminLoginForm.valid"
+            >
+              Login
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   </div>

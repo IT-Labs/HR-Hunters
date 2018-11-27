@@ -66,6 +66,13 @@ namespace HRHunters.WebAPI
                     ValidateIssuer = false,
                     ValidateAudience = false
                 });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("RequireApplicantRole", policy => policy.RequireRole("Applicant"));
+                options.AddPolicy("RequireClientRole", policy => policy.RequireRole("Client"));
+
+            });
 
             services.AddTransient<SeedData>();
             services.AddScoped<IRepository, EFRepository<DataContext>>();
@@ -78,7 +85,6 @@ namespace HRHunters.WebAPI
             services.AddAutoMapper();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddCors();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -108,10 +114,9 @@ namespace HRHunters.WebAPI
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
             app.UseAuthentication();
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMvc(routes =>
             {
-                routes.MapRoute("default", "{controller=Home}/{action=Welcome}/{id?}");
+                routes.MapRoute("default", "{controller=Home}/{action=Get}/{id?}");
             });
         }
     }

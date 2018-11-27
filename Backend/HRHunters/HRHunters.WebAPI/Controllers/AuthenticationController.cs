@@ -73,36 +73,27 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
-            var flag = false;
             var user = await _userManager.FindByEmailAsync(userForLoginDto.Email);
             if(user != null)
             {
-                var roles = _userManager.GetRolesAsync(user);
-                foreach(string role in roles.Result)
-                {
-                    if(role == userForLoginDto.Role.ToString())
-                    {
-                        flag = true;
-                        break;
-                    }
-                }
-                if (flag)
-                {
                     var result = await _signInManager.CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
                     if (result.Succeeded)
-                    {
+                     { 
                         var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userForLoginDto.Email);
                         var userToReturn = _mapper.Map<UserForLoginDto>(appUser);
-
-                        return Ok(new
-                        {
-                            result.Succeeded,
-                            token = GenerateJwtToken(appUser),
-                            user.Email,
-                            user.Id,
+                        var roles = _userManager.GetRolesAsync(appUser);
+                        var role = roles.Result;
+                    return Ok(new
+                    {
+                        result.Succeeded,
+                        token = GenerateJwtToken(appUser),
+                        user.Email,
+                        user.Id,
+                        role
+                            
                         });
+                    
                     }
-                }
             }
             return  Unauthorized();
         }

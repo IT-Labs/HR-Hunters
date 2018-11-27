@@ -2,7 +2,7 @@
 
 namespace HRHunters.Data.Migrations
 {
-    public partial class newMig : Migration
+    public partial class initial1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
