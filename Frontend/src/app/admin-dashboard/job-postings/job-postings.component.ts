@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { JobPosting } from "src/app/models/job-posting.model";
 import { Subscription } from "rxjs";
-import { AdminService } from "src/app/services/admin.service";
+import { JobPostingService } from "src/app/services/job-posting.service";
 
 @Component({
   selector: "app-ad-job-postings",
@@ -10,15 +10,15 @@ import { AdminService } from "src/app/services/admin.service";
 })
 export class ADJobPostingsComponent implements OnInit {
   jobPostingsCount = {
-    all: 15,
-    approved: 10,
-    awaitingApproval: 2,
-    expired: 3
+    all: 0,
+    approved: 0,
+    awaitingApproval: 0,
+    expired: 0
   };
 
   selectedTab = {
-    jobs: false,
-    new: true
+    jobs: true,
+    new: false
   };
 
   jobPostings: JobPosting[] = [];
@@ -29,7 +29,7 @@ export class ADJobPostingsComponent implements OnInit {
   currentFilter = "All";
   private applicationsSub: Subscription;
 
-  constructor(private adminService: AdminService) {}
+  constructor(private jobPostingService: JobPostingService) {}
 
   ngOnInit() {}
 
@@ -49,7 +49,7 @@ export class ADJobPostingsComponent implements OnInit {
     this.currentFilter = pageData.filterBy;
     this.currentSortBy = pageData.sortedBy;
     this.currentSortDirection = pageData.sortDirection;
-    this.adminService.getApplications(
+    this.jobPostingService.getJobPostings(
       this.postsPerPage,
       this.currentPage,
       this.currentSortBy,
@@ -64,7 +64,7 @@ export class ADJobPostingsComponent implements OnInit {
     // this.currentFilter = the cliecked el;
     this.currentSortBy = pageData.sortedBy;
     this.currentSortDirection = pageData.sortDirection;
-    this.adminService.getApplications(
+    this.jobPostingService.getJobPostings(
       this.postsPerPage,
       this.currentPage,
       this.currentSortBy,
@@ -79,7 +79,7 @@ export class ADJobPostingsComponent implements OnInit {
     this.currentFilter = pageData.filterBy;
     // this.currentSortBy = the cliecked el;
     this.currentSortDirection = pageData.sortDirection + 1;
-    this.adminService.getApplications(
+    this.jobPostingService.getJobPostings(
       this.postsPerPage,
       this.currentPage,
       this.currentSortBy,

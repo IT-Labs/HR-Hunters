@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { AdminService } from "src/app/services/admin.service";
 import { Subscription } from "rxjs";
 import { Application } from "src/app/models/application.model";
+import { ApplicationService } from "src/app/services/application.service";
 
 @Component({
   selector: "app-ad-applications",
@@ -9,105 +9,14 @@ import { Application } from "src/app/models/application.model";
   styleUrls: ["./applications.component.scss"]
 })
 export class ADApplicationsComponent implements OnInit, OnDestroy {
-  dummyData: Application[] = [
-    {
-      id: "1",
-      applicantEmail: "mail",
-      applicantName: "Kire",
-      experience: 1,
-      jobTitle: "Front",
-      postedOn: Date.now().toString(),
-      status: "Pending"
-    },
-    {
-      id: "1",
-      applicantEmail: "mail",
-      applicantName: "Pero",
-      experience: 9,
-      jobTitle: "Front",
-      postedOn: Date.now().toString(),
-      status: "Hired"
-    },
-    {
-      id: "1",
-      applicantEmail: "ivo@mail.com",
-      applicantName: "Ivo",
-      experience: 1,
-      jobTitle: "Frontend",
-      postedOn: Date.now().toString(),
-      status: "Interviewed"
-    },
-    {
-      id: "1",
-      applicantEmail: "tijana@mail.com",
-      applicantName: "Tijana",
-      experience: 2,
-      jobTitle: "Frontend",
-      postedOn: Date.now().toString(),
-      status: "Pending"
-    },
-    {
-      id: "1",
-      applicantEmail: "tome@mail.com",
-      applicantName: "Tome",
-      experience: 1,
-      jobTitle: "Backend",
-      postedOn: Date.now().toString(),
-      status: "Pending"
-    },
-    {
-      id: "1",
-      applicantEmail: "mail",
-      applicantName: "Draga",
-      experience: 1,
-      jobTitle: "QA",
-      postedOn: Date.now().toString(),
-      status: "Contacted"
-    },
-    {
-      id: "1",
-      applicantEmail: "mail",
-      applicantName: "Marko",
-      experience: 1,
-      jobTitle: "Front",
-      postedOn: Date.now().toString(),
-      status: "Pending"
-    },
-    {
-      id: "1",
-      applicantEmail: "mail",
-      applicantName: "Viktor",
-      experience: 3,
-      jobTitle: "Front",
-      postedOn: Date.now().toString(),
-      status: "Rejected"
-    },
-    {
-      id: "1",
-      applicantEmail: "mail",
-      applicantName: "David",
-      experience: 1,
-      jobTitle: "Front",
-      postedOn: Date.now().toString(),
-      status: "Rejected"
-    },
-    {
-      id: "1",
-      applicantEmail: "vlatko@mail.com",
-      applicantName: "Vlatko",
-      experience: 2,
-      jobTitle: "Backend",
-      postedOn: Date.now().toString(),
-      status: "Pending"
-    }
-  ];
+  
 
   applicationCount = {
-    all: 11,
-    pending: 1,
-    contacted: 2,
-    interviewed: 3,
-    rejected: 5,
+    all: 0,
+    pending: 0,
+    contacted: 0,
+    interviewed: 0,
+    rejected: 0,
   };
   applications: Application[] = [];
   postsPerPage = 10;
@@ -117,7 +26,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   currentFilter = "All";
   private applicationsSub: Subscription;
 
-  constructor(private adminService: AdminService) {}
+  constructor(private applicationService: ApplicationService) {}
 
   ngOnInit() {
     // this.adminService.getApplications(this.postsPerPage, this.currentPage, this.currentSortBy, this.currentSortDirection, this.currentFilter);
@@ -140,7 +49,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     this.currentFilter = pageData.filterBy;
     this.currentSortBy = pageData.sortedBy;
     this.currentSortDirection = pageData.sortDirection;
-    this.adminService.getApplications(
+    this.applicationService.getApplications(
       this.postsPerPage,
       this.currentPage,
       this.currentSortBy,
@@ -155,7 +64,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     // this.currentFilter = the cliecked el;
     this.currentSortBy = pageData.sortedBy;
     this.currentSortDirection = pageData.sortDirection;
-    this.adminService.getApplications(
+    this.applicationService.getApplications(
       this.postsPerPage,
       this.currentPage,
       this.currentSortBy,
@@ -170,7 +79,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     this.currentFilter = pageData.filterBy;
     // this.currentSortBy = the cliecked el;
     this.currentSortDirection = pageData.sortDirection + 1;
-    this.adminService.getApplications(
+    this.applicationService.getApplications(
       this.postsPerPage,
       this.currentPage,
       this.currentSortBy,
