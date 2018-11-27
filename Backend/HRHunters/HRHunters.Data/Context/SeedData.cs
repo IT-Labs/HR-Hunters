@@ -1,4 +1,6 @@
 ﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Interfaces;
+using HRHunters.Domain.Managers;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -11,10 +13,13 @@ namespace HRHunters.Data.Context
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
-        public SeedData(UserManager<User> userManager, RoleManager<Role> roleManager)
+        private readonly IRepository _applicantManager;
+
+        public SeedData(IRepository applicantManager, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
-            _roleManager = roleManager;
+            _applicantManager = applicantManager;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public void EnsureSeedData()
@@ -59,6 +64,7 @@ namespace HRHunters.Data.Context
                 }
                 
             }
+           
 
         }
     }

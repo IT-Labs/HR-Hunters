@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HRHunters.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20181122134651_initial")]
-    partial class initial
+    [Migration("20181127150642_init2")]
+    partial class init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -71,7 +71,7 @@ namespace HRHunters.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Apllicants");
+                    b.ToTable("Applicants");
                 });
 
             modelBuilder.Entity("HRHunters.Common.Entities.Application", b =>

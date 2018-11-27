@@ -5,8 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using HRHunters.Common.Entities;
+using HRHunters.Common.Interfaces;
 using HRHunters.Data;
 using HRHunters.Data.Context;
+using HRHunters.Domain.Managers;
+using HRHunters.WebAPI.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,7 +21,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Tokens;
+using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace HRHunters.WebAPI
@@ -74,9 +79,21 @@ namespace HRHunters.WebAPI
 
             });
 
+            var container = new Container();
+
+            container.Configure(config =>
+            {
+                config.AddRegistry(new StructureMapRegistry());
+                config.Populate(services);
+                
+            });
+            
             services.AddTransient<SeedData>();
             services.AddScoped<IRepository, EFRepository<DataContext>>();
-            services.AddScoped<IReadonlyRepository, EFReadOnlyRepository<DataContext>>();           
+            services.AddScoped<IReadonlyRepository, EFReadOnlyRepository<DataContext>>();
+            services.AddScoped<IBaseManager<Applicant>, BaseManager<Applicant>>();
+            services.AddScoped<IApplicantManager, ApplicantManager>();
+            services.AddScoped<IApplicationManager, ApplicationManager>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<DataContext>(x => x.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -116,7 +133,7 @@ namespace HRHunters.WebAPI
             app.UseAuthentication();
             app.UseMvc(routes =>
             {
-                routes.MapRoute("default", "{controller=Home}/{action=Get}/{id?}");
+                routes.MapRoute("default", "{controller=Admin}/{action=Index}/{id?}");
             });
         }
     }

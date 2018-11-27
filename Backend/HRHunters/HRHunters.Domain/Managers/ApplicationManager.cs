@@ -20,7 +20,8 @@ namespace HRHunters.Domain.Managers
                                                                 $"{nameof(Applicant.User.Email)}," +
                                                                 $"{nameof(JobPosting.Title)}," +
                                                                 $"{nameof(Applicant.Experience)}," +
-                                                                $"{nameof(JobPosting.DateFrom)},");
+                                                                $"{nameof(JobPosting.DateFrom)}," +
+                                                                $"{nameof(JobPosting.Status)}");
         }
         
     }

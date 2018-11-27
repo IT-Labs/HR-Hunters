@@ -69,7 +69,7 @@ namespace HRHunters.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Apllicants");
+                    b.ToTable("Applicants");
                 });
 
             modelBuilder.Entity("HRHunters.Common.Entities.Application", b =>
