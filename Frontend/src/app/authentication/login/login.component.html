@@ -7,40 +7,33 @@
       </div>
       <div class="auth-form__container">
         <div class="auth-form__container--bg-color">
-          <form [formGroup]="clientLoginForm" (ngSubmit)="onClientLogin()">
+          <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
             <!-- EMAIL INPUT -->
             <input
               type="email"
               class="form-control auth-form__input"
               placeholder="Email"
-              formControlName="clientEmail"
+              formControlName="email"
               maxlength="30"
             />
-
             <div
               *ngIf="
-                !clientLoginForm.controls['clientEmail'].valid &&
-                (clientLoginForm.controls['clientEmail'].dirty ||
-                  clientLoginForm.controls['clientEmail'].touched)
+                !loginForm.controls['email'].valid &&
+                (loginForm.controls['email'].dirty ||
+                  loginForm.controls['email'].touched)
               "
               class="alert alert-warning auth-form__alert"
             >
-              <div *ngIf="clientLoginForm.controls['clientEmail'].errors.email">
-                Email must be in valid format.
-              </div>
-              <div
-                *ngIf="clientLoginForm.controls['clientEmail'].errors.required"
-              >
+              <div *ngIf="loginForm.controls['email'].errors.email">
                 Email is required.
               </div>
-              <div
-                *ngIf="clientLoginForm.controls['clientEmail'].errors.minlength"
-              >
+              <div *ngIf="loginForm.controls['email'].errors.required">
+                Email is required.
+              </div>
+              <div *ngIf="loginForm.controls['email'].errors.minlength">
                 Email must be at least 6 characters long.
               </div>
-              <div
-                *ngIf="clientLoginForm.controls['clientEmail'].errors.maxlength"
-              >
+              <div *ngIf="loginForm.controls['email'].errors.maxlength">
                 Email must be up to 30 characters long.
               </div>
             </div>
@@ -50,56 +43,40 @@
               type="password"
               class="form-control auth-form__input"
               placeholder="Password"
-              formControlName="clientPassword"
+              formControlName="password"
               minlength="8"
               maxlength="20"
             />
             <div
               *ngIf="
-                !clientLoginForm.controls['clientPassword'].valid &&
-                (clientLoginForm.controls['clientPassword'].dirty ||
-                  clientLoginForm.controls['clientPassword'].touched)
+                !loginForm.controls['password'].valid &&
+                (loginForm.controls['password'].dirty ||
+                  loginForm.controls['password'].touched)
               "
               class="alert alert-warning auth-form__alert"
             >
-              <div
-                *ngIf="
-                  clientLoginForm.controls['clientPassword'].errors.password
-                "
-              >
+              <div *ngIf="loginForm.controls['password'].errors.password">
                 Password is required.
               </div>
-              <div
-                *ngIf="
-                  clientLoginForm.controls['clientPassword'].errors.required
-                "
-              >
+              <div *ngIf="loginForm.controls['password'].errors.required">
                 Password is required.
               </div>
-              <div
-                *ngIf="
-                  clientLoginForm.controls['clientPassword'].errors.minlength
-                "
-              >
+              <div *ngIf="loginForm.controls['password'].errors.minlength">
                 Password must be at least 8 characters long.
               </div>
-              <div
-                *ngIf="
-                  clientLoginForm.controls['clientPassword'].errors.maxlength
-                "
-              >
+              <div *ngIf="loginForm.controls['password'].errors.maxlength">
                 Password must be up to 20 characters long.
               </div>
             </div>
-
-            <p class="auth-form__text">
+            <p class="auth-form__text" *ngIf="!selectedTab.admin">
               You don't have an account?<br />Register
-              <a routerLink="/client-register">here</a>.
+              <a routerLink="/applicant-register" *ngIf="selectedTab.applicant">here</a>
+              <a routerLink="/client-register" *ngIf="selectedTab.client">here</a>.
             </p>
             <button
               class="btn btn-auth"
               type="submit"
-              [disabled]="!clientLoginForm.valid"
+              [disabled]="!loginForm.valid"
             >
               Login
             </button>

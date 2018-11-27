@@ -7,10 +7,10 @@
       </div>
       <div class="auth-page__moto">Helping you reach your goals</div>
       <div class="auth-page__btn-container">
-        <button routerLink="/applicant-login" class="btn btn-auth">
+        <button routerLink="/login" class="btn btn-auth" (click)="onSelectTab('applicant')">
           I'm looking for a job</button
         ><br />
-        <button routerLink="/client-login" class="btn btn-auth">
+        <button routerLink="/login" class="btn btn-auth" (click)="onSelectTab('client')">
           I'm hiring staff
         </button>
       </div>
