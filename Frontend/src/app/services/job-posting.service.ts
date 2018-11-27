@@ -68,33 +68,44 @@ export class JobPostingService {
 
   // Adding new job posting
   addJobPosting(
-    id: number,
+    companyName: string,
+    companyEmail: string,
+    logo: File,
+    id: number | null,
     jobTitle: string,
     dateFrom: Date,
     dateTo: Date,
     location: string,
     description: string,
-    category: string,
+    jobType: string,
     education: string,
     status: string,
     experience: number
   ) {
-    const jobPostingData: JobPosting = {
+    const clientData = new FormData();
+    clientData.append("companyName", companyName);
+    clientData.append("companyEmail", companyEmail);
+    clientData.append("logo", logo, companyName);
+    const jobPostingData = {
       id: id,
       jobTitle: jobTitle,
       dateFrom: dateFrom,
       dateTo: dateTo,
       location: location,
       description: description,
-      category: category,
+      jobType: jobType,
       education: education,
       status: status,
       experience: experience
     };
+    const newData = {
+      client: clientData,
+      jobPosing: jobPostingData
+    }
     this.http
-      .post<{ jobPosing: JobPosting }>("BACKEND_URL", jobPostingData)
+      .post<{ jobPosing: JobPosting }>("BACKEND_URL", newData)
       .subscribe(response => {
-        this.router.navigate(["/"]);
+        this.router.navigate(["admin-dashboard"]);
       });
   }
 }

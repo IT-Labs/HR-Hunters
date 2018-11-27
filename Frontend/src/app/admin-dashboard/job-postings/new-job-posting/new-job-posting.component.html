@@ -153,14 +153,47 @@
           </div>
         </div>
 
+        <!-- LOGO IMAGE -->
+
         <label for="dashid__logo" class="dash__form--label">Logo</label>
+        <button
+          class="btn dash__heading--btn"
+          type="button"
+          id="browse-btn"
+          (click)="filePicker.click()"
+          (focus)="onFocus('logo')"
+        >
+          Browse
+        </button>
         <input
           type="file"
           id="dashid__logo"
           class="dash__form--input"
-          formControlName="logo"
-          (focus)="onFocus('logo')"
+          #filePicker
+          (change)="onImagePicked($event)"
         />
+
+        <div
+          class="dash__form--img-preview"
+          *ngIf="
+            !imagePreview !== '' &&
+            imagePreview &&
+            newJobPostingForm.controls['logo'].valid
+          "
+        >
+          <img
+            [src]="imagePreview"
+            [alt]="newJobPostingForm.value.companyName"
+          />
+        </div>
+        <div
+          *ngIf="!newJobPostingForm.controls['logo'].valid && imagePreview"
+          class="alert dash__form--alert-msg"
+        >
+          Logo is required.
+
+          Please upload a propper image file in .png or .jpg format.
+        </div>
       </div>
 
       <div class="dash__form--section">
@@ -289,7 +322,7 @@
           placeholder="Choose needed experience..."
           (focus)="onFocus('experience')"
           (keyup)="populateExperienceSuggestions($event)"
-          (change)="checkExperience()"
+          (keyup)="checkExperience()"
         />
 
         <div
@@ -385,12 +418,7 @@
         </div>
       </div>
 
-      <button
-        type="submit"
-        class="btn dash__form--btn"
-      >
-        Publish Job
-      </button>
+      <button type="submit" class="btn dash__form--btn" [disabled]="!newJobPostingForm.valid && validDates && validExperience">Publish Job</button>
     </form>
   </div>
 </div>

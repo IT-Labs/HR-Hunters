@@ -1,6 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { Client } from "src/app/models/client.model";
+import { mimeType } from "../../../validators/mime-type.validator";
+import { JobPostingService } from "src/app/services/job-posting.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-ad-new-job-posting",
@@ -8,7 +11,6 @@ import { Client } from "src/app/models/client.model";
   styleUrls: ["./new-job-posting.component.scss"]
 })
 export class ADNewJobPostingComponent implements OnInit {
-
   jobTypes = ["Full-time", "Part-time", "Intership"];
   education = [
     "High School degree",
@@ -16,6 +18,10 @@ export class ADNewJobPostingComponent implements OnInit {
     "Masters degree",
     "Doctoral degree"
   ];
+
+  private imgUploadStatus: Subscription;
+
+  imagePreview: string | ArrayBuffer;
 
   filteredCompanies: Client[] = [];
 
@@ -71,7 +77,10 @@ export class ADNewJobPostingComponent implements OnInit {
     durationTo: false
   };
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private jobPostingService: JobPostingService
+  ) {}
 
   ngOnInit() {
     this.filteredCompanies = this.companies;
@@ -97,14 +106,17 @@ export class ADNewJobPostingComponent implements OnInit {
       ])
     ],
     location: [
-      "", 
+      "",
       Validators.compose([
         Validators.required,
         Validators.minLength(1),
         Validators.maxLength(50)
       ])
     ],
-    logo: [""],
+    logo: ["", {
+      validators: [Validators.required],
+      asyncValidators: [mimeType]
+    }],
     title: [
       "",
       Validators.compose([
@@ -124,6 +136,18 @@ export class ADNewJobPostingComponent implements OnInit {
     durationTo: ["", Validators.compose([Validators.required])]
   });
 
+  onImagePicked(event: Event) {
+    const file = (event.target as HTMLInputElement).files[0];
+      this.newJobPostingForm.patchValue({ logo: file });
+      this.newJobPostingForm.controls["logo"].updateValueAndValidity();
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result;
+      };
+      reader.readAsDataURL(file);
+    console.log(this.newJobPostingForm);
+  }
+
   compareTwoDates() {
     if (
       new Date(this.newJobPostingForm.controls["durationFrom"].value) >=
@@ -135,11 +159,11 @@ export class ADNewJobPostingComponent implements OnInit {
   }
 
   checkExperience() {
-    this.experience.map(x => {
-      if (x === this.newJobPostingForm.controls["experience"].value) {
-        return true;
+    for (let i = 0; i < this.experience.length; i++) {
+      if (this.experience[i] == this.newJobPostingForm.controls["experience"].value) {
+        return true
       }
-    });
+    }
     return false;
   }
 
@@ -158,7 +182,6 @@ export class ADNewJobPostingComponent implements OnInit {
     };
     this.formFocus[event] = true;
   }
-
 
   populateCompanyInfo(event: any) {
     this.onFocus("none");
@@ -213,8 +236,24 @@ export class ADNewJobPostingComponent implements OnInit {
   onSubmitNewJobPosting() {
     const validDates = this.compareTwoDates();
     const validExperience = this.checkExperience();
+    
     if (this.newJobPostingForm.valid && validDates && validExperience) {
       console.log(this.newJobPostingForm.value);
+      this.jobPostingService.addJobPosting(
+        this.newJobPostingForm.value.companyName,
+        this.newJobPostingForm.value.companyEmail,
+        this.newJobPostingForm.value.logo,
+        null,
+        this.newJobPostingForm.value.title,
+        this.newJobPostingForm.value.DateFrom,
+        this.newJobPostingForm.value.DateTo,
+        this.newJobPostingForm.value.location,
+        this.newJobPostingForm.value.description,
+        this.newJobPostingForm.value.jobType,
+        this.newJobPostingForm.value.education,
+        "Approved",
+        this.newJobPostingForm.value.experience
+      );
     }
   }
 }
