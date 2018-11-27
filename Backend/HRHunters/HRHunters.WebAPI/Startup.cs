@@ -78,6 +78,7 @@ namespace HRHunters.WebAPI
             services.AddAutoMapper();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddCors();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -107,9 +108,10 @@ namespace HRHunters.WebAPI
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
             app.UseAuthentication();
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMvc(routes =>
             {
-                routes.MapRoute("default", "{controller=Values}/{action=Get}/{id?}");
+                routes.MapRoute("default", "{controller=Home}/{action=Welcome}/{id?}");
             });
         }
     }

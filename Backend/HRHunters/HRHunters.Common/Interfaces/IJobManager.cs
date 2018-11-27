@@ -1,10 +1,13 @@
-﻿using System;
+﻿using HRHunters.Common.Entities;
+using HRHunters.Data;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace HRHunters.Common.Interfaces
 {
-    public interface IJobManager
+    public interface IJobManager : IBaseManager<JobPosting>
     {
+        IEnumerable<JobPosting> GetAllJobs();
     }
 }

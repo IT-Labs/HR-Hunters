@@ -1,10 +1,13 @@
-﻿using System;
+﻿using HRHunters.Common.Entities;
+using HRHunters.Data;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace HRHunters.Common.Interfaces
 {
-    public  interface IClientManager
+    public interface IClientManager : IBaseManager<Client>
     {
+        IEnumerable<Client> GetAllClients();
     }
 }

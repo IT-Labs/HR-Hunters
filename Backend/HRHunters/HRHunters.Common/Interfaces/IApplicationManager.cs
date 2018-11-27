@@ -1,4 +1,5 @@
-﻿using HRHunters.Data;
+﻿using HRHunters.Common.Entities;
+using HRHunters.Data;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -7,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace HRHunters.Common.Interfaces
 {
-    public interface IApplicationManager : IReadonlyRepository
+    public interface IApplicationManager : IBaseManager<Application>
     {
-       
+        IEnumerable<Application> GetAllApplications();
     }
 }

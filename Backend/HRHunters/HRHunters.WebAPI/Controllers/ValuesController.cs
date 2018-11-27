@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HRHunters.WebAPI.Controllers
 {
-    [AllowAnonymous]
     [Route("[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
@@ -33,9 +32,9 @@ namespace HRHunters.WebAPI.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public ActionResult<User> Get(int id)
         {
-            return "value";
+            return _repo.GetById<User>(id);
         }
 
         // POST api/values
