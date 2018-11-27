@@ -1,9 +1,6 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { AdminComponent } from "./authentication/admin/admin.component";
-import { ClientLoginComponent } from "./authentication/clients/login/login.component";
 import { ClientRegisterComponent } from "./authentication/clients/register/register.component";
-import { ApplicantLoginComponent } from "./authentication/applicants/login/login.component";
 import { ApplicantRegisterComponent } from "./authentication/applicants/register/register.component";
 import { AddJobPostingComponent } from "./homepage/client/add-job-posting/add-job-posting.component";
 import { ApplicantsComponent } from "./authentication/applicants/applicants.component";
@@ -17,13 +14,12 @@ import { ClientProfileComponent } from "./homepage/client/client-profile/client-
 import { ApplicantProfileComponent } from "./homepage/applicant/applicant-profile/applicant-profile.component";
 import { WelcomeComponent } from "./authentication/welcome.component";
 import { AdminDashboardComponent } from "./admin-dashboard/admin-dashboard.component";
+import { LoginComponent } from './authentication/login/login.component';
 
 const routes: Routes = [
-  { path: "hr-admin", component: AdminComponent },
   { path: "welcome", component: WelcomeComponent },
-  { path: "client-login", component: ClientLoginComponent },
+  { path: "login", component: LoginComponent },
   { path: "client-register", component: ClientRegisterComponent },
-  { path: "applicant-login", component: ApplicantLoginComponent },
   { path: "applicant-register", component: ApplicantRegisterComponent },
   { path: "admin-dashboard",  component: AdminDashboardComponent},
   {

@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 
-import { AdminComponent } from './authentication/admin/admin.component';
 import { ClientsComponent } from './authentication/clients/clients.component';
 import { ApplicantsComponent } from './authentication/applicants/applicants.component';
 import { HeaderComponent } from './header/header.component';
@@ -13,9 +12,7 @@ import { HomepageComponent } from './homepage/homepage.component';
 import { ApplicantComponent } from './homepage/applicant/applicant.component';
 import { ClientJobPostingsComponent } from './homepage/client/client-job-postings/client-job-postings.component';
 import { JobPostingDetailsComponent } from './homepage/applicant/job-posting-details/job-posting-details.component';
-import { ApplicantLoginComponent } from './authentication/applicants/login/login.component';
 import { ApplicantRegisterComponent } from './authentication/applicants/register/register.component';
-import { ClientLoginComponent } from './authentication/clients/login/login.component';
 import { ClientRegisterComponent } from './authentication/clients/register/register.component';
 import { AddJobPostingComponent } from './homepage/client/add-job-posting/add-job-posting.component';
 import { ApplicantApplicationsComponent } from './homepage/applicant/applicant-applications/applicant-applications.component';
@@ -30,10 +27,10 @@ import { ADApplicantsComponent } from './admin-dashboard/applicants/applicants.c
 import { ADApplicationsComponent } from './admin-dashboard/applications/applications.component';
 import { ADJobPostingsComponent } from './admin-dashboard/job-postings/job-postings.component';
 import { ADNewJobPostingComponent } from './admin-dashboard/job-postings/new-job-posting/new-job-posting.component';
+import { LoginComponent } from './authentication/login/login.component';
 
 @NgModule({
     declarations: [
-        AdminComponent,
         ClientsComponent,
         ApplicantsComponent,
         HeaderComponent,
@@ -46,9 +43,7 @@ import { ADNewJobPostingComponent } from './admin-dashboard/job-postings/new-job
         AppicantJobPostingsComponent,
         ApplicantApplicationsComponent,
         JobPostingDetailsComponent,
-        ApplicantLoginComponent,
         ApplicantRegisterComponent,
-        ClientLoginComponent,
         ClientRegisterComponent,
         ErrorComponent,
         ClientProfileComponent,
@@ -58,7 +53,8 @@ import { ADNewJobPostingComponent } from './admin-dashboard/job-postings/new-job
         ADApplicantsComponent,
         ADApplicationsComponent,
         ADJobPostingsComponent,
-        ADNewJobPostingComponent
+        ADNewJobPostingComponent,
+        LoginComponent
     ],
     imports: [
         CommonModule,

@@ -27,11 +27,29 @@ export class ADJobPostingsComponent implements OnInit {
   currentSortBy = "Expires";
   currentSortDirection = 1;
   currentFilter = "All";
-  private applicationsSub: Subscription;
+
+  private jobPostingSub: Subscription;
 
   constructor(private jobPostingService: JobPostingService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.jobPostingService.getJobPostings(
+      this.postsPerPage,
+      this.currentPage,
+      this.currentSortBy,
+      this.currentSortDirection,
+      this.currentFilter
+    );
+    this.jobPostingSub = this.jobPostingService
+      .getJobPostingUpdateListener()
+      .subscribe(jobPostingData => {
+        console.log(jobPostingData)
+        this.jobPostings = jobPostingData.jobPostings;
+        this.jobPostingsCount.all = jobPostingData.jobPostingCount;
+
+      });
+      console.log(this.jobPostings)
+  }
 
   onChangeTab(event: string) {
     if (event === "jobs") {

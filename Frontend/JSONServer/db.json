@@ -1,3 +1,38 @@
 {
-    
+  "data": {
+    "jobPostings": [
+      {
+        "id": "1",
+        "companyName": "dsada",
+        "contactEmail": "dsada",
+        "jobTitle": "string",
+        "jobType": "stdsadasring",
+        "dateFrom": "12/12/2018",
+        "dateTo": "12/12/2018",
+        "location": "string",
+        "description": "string",
+        "category": "string",
+        "education": "string",
+        "status": "string",
+        "experience": "1",
+        "applications": "1"
+      },
+      {
+        "id": "1",
+        "jobTitle": "string",
+        "jobType": "stdsadasring",
+        "contactEmail": "dsada",
+        "dateFrom": "12/12/2018",
+        "dateTo": "12/12/2018",
+        "location": "string",
+        "description": "string",
+        "category": "string",
+        "education": "string",
+        "status": "string",
+        "experience": "1",
+        "applications": "1"
+      }
+    ],
+    "maxJobPosts": 20
+  }
 }

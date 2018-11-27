@@ -79,6 +79,20 @@
       position: relative;
       transform: translateY(-6px);
     }
+
+    &--img-preview {
+      height: 15rem;
+      width: calc(100%-25rem);
+      margin-left: 25rem;
+      margin-top: 2rem;
+      text-align: center;
+      img {
+        height: auto;
+        max-height: 15rem;
+        width: auto;
+        max-width: 15rem;
+      }
+    }
   }
 }
 
@@ -109,6 +123,11 @@
       }
       &--alert-msg {
         margin-left: 0;
+      }
+      &--img-preview {
+        width: 100%;
+        margin-left: 0;
+        
       }
     }
   }

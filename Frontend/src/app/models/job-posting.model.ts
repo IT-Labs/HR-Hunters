@@ -1,11 +1,14 @@
+
 export interface JobPosting {
     id: number;
     jobTitle: string;
+    companyName: string;
+    location: string;
+    jobType: string;
     dateFrom: Date;
     dateTo: Date;
-    location: string;
+    applications: number;
     description: string;
-    category: string;
     education: string;
     status: string;
     experience: number;

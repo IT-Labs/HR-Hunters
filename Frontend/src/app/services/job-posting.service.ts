@@ -29,7 +29,7 @@ export class JobPostingService {
     const queryParams = `?pagesize=${jobPostingsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
     this.http
       .get<{ jobPostings: JobPosting[]; maxJobPosts: number }>(
-        "BACKEND_URL" + queryParams
+        "http://localhost:3000/data"
       )
       .pipe(
         map(jobPostingData => {
@@ -42,7 +42,7 @@ export class JobPostingService {
                 dateTo: jobPost.dateTo,
                 location: jobPost.location,
                 description: jobPost.description,
-                category: jobPost.category,
+                jobType: jobPost.jobType,
                 education: jobPost.education,
                 status: jobPost.status,
                 experience: jobPost.experience
@@ -54,6 +54,7 @@ export class JobPostingService {
       )
       .subscribe(transformedJobPostingData => {
         this.jobPostings = transformedJobPostingData.jobPostings;
+        console.log(this.jobPostings)
         this.jobPostingsUpdated.next({
           jobPostings: [...this.jobPostings],
           jobPostingCount: transformedJobPostingData.maxJobPosts
@@ -68,33 +69,44 @@ export class JobPostingService {
 
   // Adding new job posting
   addJobPosting(
-    id: number,
+    companyName: string,
+    companyEmail: string,
+    logo: File,
+    id: number | null,
     jobTitle: string,
     dateFrom: Date,
     dateTo: Date,
     location: string,
     description: string,
-    category: string,
+    jobType: string,
     education: string,
     status: string,
     experience: number
   ) {
-    const jobPostingData: JobPosting = {
+    const clientData = new FormData();
+    clientData.append("companyName", companyName);
+    clientData.append("companyEmail", companyEmail);
+    clientData.append("logo", logo, companyName);
+    const jobPostingData = {
       id: id,
       jobTitle: jobTitle,
       dateFrom: dateFrom,
       dateTo: dateTo,
       location: location,
       description: description,
-      category: category,
+      jobType: jobType,
       education: education,
       status: status,
       experience: experience
     };
+    const newData = {
+      client: clientData,
+      jobPosing: jobPostingData
+    }
     this.http
-      .post<{ jobPosing: JobPosting }>("BACKEND_URL", jobPostingData)
+      .post<{ jobPosing: JobPosting }>("BACKEND_URL", newData)
       .subscribe(response => {
-        this.router.navigate(["/"]);
+        this.router.navigate(["admin-dashboard"]);
       });
   }
 }

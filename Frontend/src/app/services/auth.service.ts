@@ -14,6 +14,8 @@ export class AuthService {
     token: "",
     email: "",
   }
+  private currentRole;
+  private roleStatusListener = new Subject<{applicant: boolean, client: boolean, admin: boolean}>();
   private authStatusListener = new Subject<boolean>();
   private registerStatusListener = new Subject<{code: string, description: string}>();
 
@@ -40,6 +42,19 @@ export class AuthService {
 
   getRegisterStatusListener() {
     return this.registerStatusListener.asObservable();
+  }
+  
+  getRoleStatusListener() {
+    return this.roleStatusListener.asObservable();
+  }
+
+  getRole() {
+    return this.currentRole;
+  }
+
+  selectRole(role: any) {
+    this.currentRole = role;
+    console.log(role)
   }
 
   // Saves the token to the local storage and deletes the old one if there already is a token saved
@@ -71,7 +86,7 @@ export class AuthService {
       }>("BACKEND_URL", authData)
       .subscribe(response => {
         if (response.succeeded) {
-          this.router.navigate(["client-login"]);
+          this.router.navigate(["login"]);
         } else if (!!response.errors) {
           this.registerStatusListener.next(response.errors[1]) 
         }
@@ -97,7 +112,7 @@ export class AuthService {
       errors: { code: string; description: string };
     }>("", authData).subscribe(response => {
       if (response.succeeded) {
-        this.router.navigate(["applicant-login"]);
+        this.router.navigate(["login"]);
       } else if (!!response.errors) {
         this.registerStatusListener.next(response.errors[1]) 
       }
