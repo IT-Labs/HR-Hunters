@@ -35,27 +35,26 @@
     >
       <thead>
         <tr class="dash__table__header">
+          <th scope="col" (click)="onSort($event)">Applicant Name</th>
           <th scope="col" (click)="onSort($event)">Position Title</th>
           <th scope="col" (click)="onSort($event)">Company Name</th>
           <th scope="col" (click)="onSort($event)">Contact Email</th>
           <th scope="col" (click)="onSort($event)">Location</th>
           <th scope="col" (click)="onSort($event)">Job Type</th>
-          <th scope="col" (click)="onSort($event)">Cattegory</th>
           <th scope="col" (click)="onSort($event)">Expires</th>
           <th scope="col" (click)="onSort($event)">Applications</th>
           <th scope="col" (click)="onSort($event)">Status</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let jobPosting of dummyData">
+        <tr *ngFor="let jobPosting of jobPostings">
           <td scope="row">{{ jobPosting.applicantName }}</td>
-          <td>{{ jobPosting.positionTitle }}</td>
+          <td>{{ jobPosting.jobTitle }}</td>
           <td>{{ jobPosting.companyName }}</td>
           <td>{{ jobPosting.contactEmail }}</td>
           <td>{{ jobPosting.location }}</td>
           <td>{{ jobPosting.jobType }}</td>
-          <td>{{ jobPosting.cattegory }}</td>
-          <td>{{ jobPosting.expires }}</td>
+          <td>{{ jobPosting.dateTo }}</td>
           <td>{{ jobPosting.applications }}</td>
           <td>
             <div class="dropdown dash__table--dropdown-btn__container">
@@ -67,7 +66,7 @@
                 aria-haspopup="true"
                 aria-expanded="false"
               >
-                {{ application.status }}
+                {{ jobPosting.status }}
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <span class="dropdown-item" (click)="chooseStatus($event)"

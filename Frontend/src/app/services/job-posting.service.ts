@@ -29,7 +29,7 @@ export class JobPostingService {
     const queryParams = `?pagesize=${jobPostingsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
     this.http
       .get<{ jobPostings: JobPosting[]; maxJobPosts: number }>(
-        "BACKEND_URL" + queryParams
+        "http://localhost:3000/data"
       )
       .pipe(
         map(jobPostingData => {
@@ -42,7 +42,7 @@ export class JobPostingService {
                 dateTo: jobPost.dateTo,
                 location: jobPost.location,
                 description: jobPost.description,
-                category: jobPost.category,
+                jobType: jobPost.jobType,
                 education: jobPost.education,
                 status: jobPost.status,
                 experience: jobPost.experience
@@ -54,6 +54,7 @@ export class JobPostingService {
       )
       .subscribe(transformedJobPostingData => {
         this.jobPostings = transformedJobPostingData.jobPostings;
+        console.log(this.jobPostings)
         this.jobPostingsUpdated.next({
           jobPostings: [...this.jobPostings],
           jobPostingCount: transformedJobPostingData.maxJobPosts
