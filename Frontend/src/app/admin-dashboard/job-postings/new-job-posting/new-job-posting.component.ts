@@ -45,50 +45,14 @@ export class ADNewJobPostingComponent implements OnInit {
 
   filteredExperience = [];
 
-  companies: Client[] = [
-    {
-      id: "1",
-      companyName: "AMC",
-      email: "amc@email.com",
-      jobs: "1",
-      logo: "img",
-      status: "active",
-      location: "Skopje"
-    },
-    {
-      id: "1",
-      companyName: "IVO",
-      email: "IVO",
-      jobs: "1",
-      logo: "img",
-      status: "active",
-      location: "IVO"
-    },
-    {
-      id: "1",
-      companyName: "Anhoch",
-      email: "amc@email.com",
-      jobs: "1",
-      logo: "img",
-      status: "active",
-      location: "Skopje"
-    },
-    {
-      id: "1",
-      companyName: "Neptun",
-      email: "amc@email.com",
-      jobs: "1",
-      logo: "img",
-      status: "active",
-      location: "Prilep"
-    }
-  ];
+  companies: Client[] = [];
 
   selectedCompany: Client = {
     id: null,
-    companyName: null,
     email: null,
-    jobs: null,
+    companyName: null,
+    activeJobs: null,
+    allJobs: null,
     logo: null,
     status: null,
     location: null
