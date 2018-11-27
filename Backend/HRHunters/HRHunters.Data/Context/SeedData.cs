@@ -29,7 +29,7 @@ namespace HRHunters.Data.Context
                     user.Email = "vlatkozmejkoski" + i + "@gmail.com";
                     user.EmailConfirmed = true;
                     user.NormalizedEmail = user.Email.ToUpper();
-                    user.NormalizedUserName = user.UserName.ToUpper();
+                    //user.NormalizedUserName = user.UserName.ToUpper();
                     user.SecurityStamp = Guid.NewGuid().ToString("D");
                     user.LockoutEnabled = false;
                     user.FirstName = "Vlatko" + i;
@@ -59,8 +59,7 @@ namespace HRHunters.Data.Context
                 }
                 
             }
-            var userce = _userManager.FindByEmailAsync("zmejkoski@gmail.com");
-            _userManager.AddToRoleAsync(userce.Result, "Admin").Wait();
+
         }
     }
 

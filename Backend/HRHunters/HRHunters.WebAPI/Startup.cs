@@ -66,6 +66,13 @@ namespace HRHunters.WebAPI
                     ValidateIssuer = false,
                     ValidateAudience = false
                 });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("RequireApplicantRole", policy => policy.RequireRole("Applicant"));
+                options.AddPolicy("RequireClientRole", policy => policy.RequireRole("Client"));
+
+            });
 
             services.AddTransient<SeedData>();
             services.AddScoped<IRepository, EFRepository<DataContext>>();
@@ -109,7 +116,7 @@ namespace HRHunters.WebAPI
             app.UseAuthentication();
             app.UseMvc(routes =>
             {
-                routes.MapRoute("default", "{controller=Values}/{action=Get}/{id?}");
+                routes.MapRoute("default", "{controller=Home}/{action=Get}/{id?}");
             });
         }
     }
