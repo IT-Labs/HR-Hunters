@@ -23,10 +23,11 @@ export class ADJobPostingsComponent implements OnInit {
 
   jobPostings: JobPosting[] = [];
   postsPerPage = 10;
-  currentPage = 1;
+  currentPage = 9;
   currentSortBy = "Expires";
   currentSortDirection = 1;
   currentFilter = "All";
+  paginationSize: number[] = [];
 
   private jobPostingSub: Subscription;
 
@@ -45,7 +46,37 @@ export class ADJobPostingsComponent implements OnInit {
       .subscribe(jobPostingData => {
         this.jobPostings = jobPostingData.jobPostings;
         this.jobPostingsCount.all = jobPostingData.jobPostingCount;
+        this.calculatePagination(this.jobPostingsCount.all);
       });
+  }
+
+  calculatePagination(jobPostingsCount: number) {
+    this.paginationSize = [];
+    const paginationSum = Math.ceil(jobPostingsCount / 10);
+
+    if (paginationSum > 0 && paginationSum < 11) {
+      for (let i = 1; i < paginationSum + 1; i++) {
+        const num = i;
+        this.paginationSize.push(num);
+      }
+    } else if (paginationSum > 10) {
+      if (this.currentPage - 10 < paginationSum - 10 && this.currentPage < 6) {
+        for (let i = this.currentPage; i < this.currentPage + 10; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      } else if (this.currentPage - 10 < paginationSum - 10) {
+        for (let i = this.currentPage - 5; i < this.currentPage + 5; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      } else {
+        for (let i = paginationSum - 9; i < paginationSum + 1; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      }
+    }
   }
 
   onChangeTab(event: string) {
@@ -58,12 +89,8 @@ export class ADJobPostingsComponent implements OnInit {
     }
   }
 
-  onChangedPage(pageData: any) {
-    this.currentPage = pageData.pageIndex + 1;
-    this.postsPerPage = pageData.pageSize;
-    this.currentFilter = pageData.filterBy;
-    this.currentSortBy = pageData.sortedBy;
-    this.currentSortDirection = pageData.sortDirection;
+  onChangedPage(page: any) {
+    this.currentPage = page;
     this.jobPostingService.getJobPostings(
       this.postsPerPage,
       this.currentPage,
@@ -106,7 +133,7 @@ export class ADJobPostingsComponent implements OnInit {
   chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
     const currentId = id;
-    let currentJobPosting: JobPosting
+    let currentJobPosting: JobPosting;
     for (let i = 0; i < this.jobPostings.length; i++) {
       if (currentId === this.jobPostings[i].id) {
         currentJobPosting = this.jobPostings[i];
@@ -128,5 +155,9 @@ export class ADJobPostingsComponent implements OnInit {
       currentStatus,
       currentJobPosting.experience
     );
+  }
+
+  ngOnDestroy() {
+    this.jobPostingSub.unsubscribe();
   }
 }
