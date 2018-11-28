@@ -38,7 +38,10 @@
         "applicantName": "dsadas"
       }
     ],
-    "maxJobPosts": 479
+    "maxJobPosts": 479,
+    "approved": 100,
+    "pending": 90,
+    "expired": 180
   },
   "dataApplicants": {
     "applicants": [

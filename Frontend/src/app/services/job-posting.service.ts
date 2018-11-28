@@ -14,6 +14,9 @@ export class JobPostingService {
   private jobPostingsUpdated = new Subject<{
     jobPostings: JobPosting[];
     jobPostingCount: number;
+    approved: number;
+    pending: number;
+    expired: number;
   }>();
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -28,7 +31,7 @@ export class JobPostingService {
   ) {
     const queryParams = `?pagesize=${jobPostingsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
     this.http
-      .get<{ jobPostings: JobPosting[]; maxJobPosts: number }>(
+      .get<{ jobPostings: JobPosting[]; maxJobPosts: number; approved: number; pending: number; expired: number }>(
         "http://localhost:3000/dataJP"
       )
       .pipe(
@@ -54,7 +57,10 @@ export class JobPostingService {
                 applicantName: jobPost.applicantName
               };
             }),
-            maxJobPosts: jobPostingData.maxJobPosts
+            maxJobPosts: jobPostingData.maxJobPosts,
+            approved: jobPostingData.approved,
+            pending: jobPostingData.pending,
+            expired: jobPostingData.expired
           };
         })
       )
@@ -62,7 +68,10 @@ export class JobPostingService {
         this.jobPostings = transformedJobPostingData.jobPostings;
         this.jobPostingsUpdated.next({
           jobPostings: this.jobPostings,
-          jobPostingCount: transformedJobPostingData.maxJobPosts
+          jobPostingCount: transformedJobPostingData.maxJobPosts,
+          approved: transformedJobPostingData.approved,
+          pending: transformedJobPostingData.pending,
+          expired: transformedJobPostingData.expired
         });
       });
   }

@@ -11,16 +11,16 @@
     <button class="btn dash__heading--btn" type="button">Import CSV</button>
     <div class="text-muted dash__filtering">
       <ul>
-        <li (click)="onFilter($event)">
+        <li (click)="onFilter('all')">
           All<span>({{ jobPostingsCount.all }})</span>
         </li>
-        <li (click)="onFilter($event)">
+        <li (click)="onFilter('approved')">
           Aproved<span>({{ jobPostingsCount.approved }})</span>
         </li>
-        <li (click)="onFilter($event)">
-          Awaiting Approval<span>({{ jobPostingsCount.pending }})</span>
+        <li (click)="onFilter('pending')">
+          Pending<span>({{ jobPostingsCount.pending }})</span>
         </li>
-        <li (click)="onFilter($event)">
+        <li (click)="onFilter('expired')">
           Expired<span>({{ jobPostingsCount.expired }})</span>
         </li>
       </ul>
@@ -33,15 +33,15 @@
     >
       <thead>
         <tr class="dash__table__header">
-          <th scope="col" (click)="onSort($event)">Applicant Name</th>
-          <th scope="col" (click)="onSort($event)">Position Title</th>
-          <th scope="col" (click)="onSort($event)">Company Name</th>
-          <th scope="col" (click)="onSort($event)">Contact Email</th>
-          <th scope="col" (click)="onSort($event)">Location</th>
-          <th scope="col" (click)="onSort($event)">Job Type</th>
-          <th scope="col" (click)="onSort($event)">Expires</th>
-          <th scope="col" (click)="onSort($event)">Applications</th>
-          <th scope="col" (click)="onSort($event)">Status</th>
+          <th scope="col" (click)="onSort('applicantName')">Applicant Name</th>
+          <th scope="col" (click)="onSort('jobTitle')">Position Title</th>
+          <th scope="col" (click)="onSort('companyName')">Company Name</th>
+          <th scope="col" (click)="onSort('companyEmail')">Contact Email</th>
+          <th scope="col" (click)="onSort('location')">Location</th>
+          <th scope="col" (click)="onSort('jobType')">Job Type</th>
+          <th scope="col" (click)="onSort('dateTo')">Expires</th>
+          <th scope="col" (click)="onSort('allApplicationsCount')">Applications</th>
+          <th scope="col" (click)="onSort('status')">Status</th>
         </tr>
       </thead>
       <tbody>

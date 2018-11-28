@@ -25,6 +25,7 @@ export class ADJobPostingsComponent implements OnInit {
   postsPerPage = 10;
   currentPage = 9;
   currentSortBy = "Expires";
+  lastSortBy = "";
   currentSortDirection = 1;
   currentFilter = "All";
   paginationSize: number[] = [];
@@ -46,6 +47,9 @@ export class ADJobPostingsComponent implements OnInit {
       .subscribe(jobPostingData => {
         this.jobPostings = jobPostingData.jobPostings;
         this.jobPostingsCount.all = jobPostingData.jobPostingCount;
+        this.jobPostingsCount.approved = jobPostingData.approved;
+        this.jobPostingsCount.pending = jobPostingData.pending;
+        this.jobPostingsCount.expired = jobPostingData.expired;
         this.calculatePagination(this.jobPostingsCount.all);
       });
   }
@@ -89,7 +93,7 @@ export class ADJobPostingsComponent implements OnInit {
     }
   }
 
-  onChangedPage(page: any) {
+  onChangedPage(page: number) {
     this.currentPage = page;
     this.jobPostingService.getJobPostings(
       this.postsPerPage,
@@ -100,12 +104,8 @@ export class ADJobPostingsComponent implements OnInit {
     );
   }
 
-  onFilter(pageData: any) {
-    this.currentPage = pageData.pageIndex;
-    this.postsPerPage = pageData.pageSize;
-    // this.currentFilter = the cliecked el;
-    this.currentSortBy = pageData.sortedBy;
-    this.currentSortDirection = pageData.sortDirection;
+  onFilter(filterBy: string) {
+    this.currentFilter = filterBy;
     this.jobPostingService.getJobPostings(
       this.postsPerPage,
       this.currentPage,
@@ -115,12 +115,13 @@ export class ADJobPostingsComponent implements OnInit {
     );
   }
 
-  onSort(pageData: any) {
-    this.currentPage = pageData.pageIndex;
-    this.postsPerPage = pageData.pageSize;
-    this.currentFilter = pageData.filterBy;
-    // this.currentSortBy = the cliecked el;
-    this.currentSortDirection = pageData.sortDirection + 1;
+  onSort(sortBy: any) {
+    if (this.lastSortBy === sortBy) {
+      this.currentSortDirection++;
+    } else {
+      this.lastSortBy = sortBy;
+    }
+    this.currentSortBy = sortBy;
     this.jobPostingService.getJobPostings(
       this.postsPerPage,
       this.currentPage,
