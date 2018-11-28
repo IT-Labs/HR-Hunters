@@ -13,12 +13,12 @@ namespace HRHunters.Common.Entities
         public User User { get; set; }
 
 
-        public int Id { get => ((IEntity<int>)User).Id; set => ((IEntity<int>)User).Id = value; }
-        public DateTime CreatedDate { get => ((IEntity<int>)User).CreatedDate; set => ((IEntity<int>)User).CreatedDate = value; }
-        public DateTime? ModifiedDate { get => ((IEntity<int>)User).ModifiedDate; set => ((IEntity<int>)User).ModifiedDate = value; }
-        public string CreatedBy { get => ((IEntity<int>)User).CreatedBy; set => ((IEntity<int>)User).CreatedBy = value; }
-        public string ModifiedBy { get => ((IEntity<int>)User).ModifiedBy; set => ((IEntity<int>)User).ModifiedBy = value; }
+        public int Id { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+        public string CreatedBy { get; set; }
+        public string ModifiedBy { get; set; }
 
-        object IEntity.Id => ((IEntity<int>)User).Id;
+        object IEntity.Id { get; }
     }
 }

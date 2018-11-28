@@ -17,7 +17,7 @@ namespace HRHunters.WebAPI.Helpers
         {
             For<IRepository>().Use<EFRepository<DataContext>>();
             For<IReadonlyRepository>().Use<EFReadOnlyRepository<DataContext>>();
-            For<IApplicantManager>().Use<ApplicantManager>();
+            For<ApplicantManager>().Use<ApplicantManager>();
             For<IApplicationManager>().Use<ApplicationManager>();
             For<IClientManager>().Use<ClientManager>();
             For<IJobManager>().Use<JobManager>();

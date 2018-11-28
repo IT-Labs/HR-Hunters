@@ -7,8 +7,8 @@ using System.Text;
 
 namespace HRHunters.Common.Interfaces
 {
-    public interface IBaseManager<TEntity> where TEntity : class, IEntity
-    {
+    public interface IBaseManager<TEntity>
+    {       
         void Create(TEntity entity, string createdBy = null);
 
         void Update(TEntity entity, string modifiedBy = null);

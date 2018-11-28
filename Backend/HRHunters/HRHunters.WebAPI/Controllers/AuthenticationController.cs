@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using HRHunters.Common.DTOs;
 using HRHunters.Common.Entities;
+using HRHunters.Common.Interfaces;
 using HRHunters.Data;
 using HRHunters.Data.Context;
 using Microsoft.AspNetCore.Authorization;
@@ -30,15 +31,17 @@ namespace HRHunters.WebAPI.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly RoleManager<Role> _roleManager;
+        private readonly IApplicantManager _applicantManager;
         
         public AuthenticationController(IMapper mapper,RoleManager<Role> roleManager, 
-            UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
+            UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, IApplicantManager applicantManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _mapper = mapper;
             _roleManager = roleManager;
+            _applicantManager = applicantManager;
         }
 
         [HttpPost("registerApplicant")]
@@ -49,6 +52,15 @@ namespace HRHunters.WebAPI.Controllers
             var result = await _userManager.CreateAsync(userToCreate, userForRegisterDto.Password);
             var userToReturn = _mapper.Map<UserForRegisterDto>(userToCreate);
             await _userManager.AddToRoleAsync(userToCreate, "Applicant");
+            var applicant = new Applicant()
+            {
+                User = userToCreate,
+                EducationType = "Bachelor",
+                Experience = "3",
+                SchoolUniversity = "Oxford",
+                Applications = null
+            };
+            _applicantManager.Create(applicant);
             if(result.Succeeded)
             {
                 return Ok(result);

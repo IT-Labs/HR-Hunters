@@ -40,7 +40,7 @@ namespace HRHunters.Data.Context
         }
 
         public DbSet<Admin> Admins { get; set; }
-        public DbSet<Applicant> Apllicants { get; set; }
+        public DbSet<Applicant> Applicants { get; set; }
         public DbSet<Application> Applications { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<JobPosting> JobPostings { get; set; }
