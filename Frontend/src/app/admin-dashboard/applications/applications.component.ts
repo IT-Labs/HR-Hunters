@@ -41,6 +41,19 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     //       this.applications = applicationsData.applications;
     //     }
     //   );
+    this.applicationService.getApplications(
+      this.postsPerPage,
+      this.currentPage,
+      this.currentSortBy,
+      this.currentSortDirection,
+      this.currentFilter
+    );
+    this.applicationsSub = this.applicationService
+      .getApplicationsUpdateListener()
+      .subscribe(applicationsData => {
+        this.applications = applicationsData.applications;
+        this.applicationCount.all = applicationsData.applicationsCount;
+      });
   }
 
   onChangedPage(pageData: any) {

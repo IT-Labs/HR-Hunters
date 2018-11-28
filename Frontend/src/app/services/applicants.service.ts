@@ -34,7 +34,7 @@ export class ApplicantService {
     const queryParams = `?pagesize=${applicantsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
     this.http
       .get<{ applicants: Applicant[]; maxApplicants: number }>(
-        "BACKEND_URL" + queryParams
+        "http://localhost:3000/dataApplicants" 
       )
       .pipe(
         map(applicantsData => {
@@ -56,7 +56,7 @@ export class ApplicantService {
       .subscribe(transformedApplicantsData => {
         this.applicants = transformedApplicantsData.applicants;
         this.applicantsUpdated.next({
-          applicants: [...this.applicants],
+          applicants: this.applicants,
           applicantsCount: transformedApplicantsData.maxApplicants
         });
       });

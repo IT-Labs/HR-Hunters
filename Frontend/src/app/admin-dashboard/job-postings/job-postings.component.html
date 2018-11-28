@@ -19,7 +19,7 @@
         </li>
         <li (click)="onFilter($event)">
           Awaiting Approval<span
-            >({{ jobPostingsCount.awaitingApproval }})</span
+            >({{ jobPostingsCount.pending }})</span
           >
         </li>
         <li (click)="onFilter($event)">
@@ -51,11 +51,11 @@
           <td scope="row">{{ jobPosting.applicantName }}</td>
           <td>{{ jobPosting.jobTitle }}</td>
           <td>{{ jobPosting.companyName }}</td>
-          <td>{{ jobPosting.contactEmail }}</td>
+          <td>{{ jobPosting.companyEmail }}</td>
           <td>{{ jobPosting.location }}</td>
           <td>{{ jobPosting.jobType }}</td>
           <td>{{ jobPosting.dateTo }}</td>
-          <td>{{ jobPosting.applications }}</td>
+          <td>{{ jobPosting.activeApplicationsCount }} | {{ jobPosting.allApplicationsCount }}</td>
           <td>
             <div class="dropdown dash__table--dropdown-btn__container">
               <button
@@ -69,13 +69,13 @@
                 {{ jobPosting.status }}
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <span class="dropdown-item" (click)="chooseStatus($event)"
+                <span class="dropdown-item" (click)="chooseStatus($event, jobPosting.id)"
                   >Approved</span
                 >
-                <span class="dropdown-item" (click)="chooseStatus($event)"
-                  >Awaiting Approval</span
+                <span class="dropdown-item" (click)="chooseStatus($event, jobPosting.id)"
+                  >Pending</span
                 >
-                <span class="dropdown-item" (click)="chooseStatus($event)"
+                <span class="dropdown-item" (click)="chooseStatus($event, jobPosting.id)"
                   >Expired</span
                 >
               </div>
