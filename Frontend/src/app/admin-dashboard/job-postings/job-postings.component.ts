@@ -12,7 +12,7 @@ export class ADJobPostingsComponent implements OnInit {
   jobPostingsCount = {
     all: 0,
     approved: 0,
-    awaitingApproval: 0,
+    pending: 0,
     expired: 0
   };
 
@@ -103,7 +103,30 @@ export class ADJobPostingsComponent implements OnInit {
     );
   }
 
-  chooseStatus(event: any) {
+  chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
+    const currentId = id;
+    let currentJobPosting: JobPosting
+    for (let i = 0; i < this.jobPostings.length; i++) {
+      if (currentId === this.jobPostings[i].id) {
+        currentJobPosting = this.jobPostings[i];
+      }
+    }
+
+    this.jobPostingService.updateJobPosting(
+      currentId,
+      currentJobPosting.companyName,
+      currentJobPosting.companyEmail,
+      currentJobPosting.logo,
+      currentJobPosting.jobTitle,
+      currentJobPosting.dateFrom,
+      currentJobPosting.dateTo,
+      currentJobPosting.location,
+      currentJobPosting.description,
+      currentJobPosting.jobType,
+      currentJobPosting.education,
+      currentStatus,
+      currentJobPosting.experience
+    );
   }
 }

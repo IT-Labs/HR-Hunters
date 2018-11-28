@@ -107,11 +107,63 @@ export class JobPostingService {
     const newData = {
       client: clientData,
       jobPosing: jobPostingData
-    }
+    };
     this.http
       .post<{ jobPosing: JobPosting }>("BACKEND_URL", newData)
       .subscribe(response => {
         this.router.navigate(["admin-dashboard"]);
       });
+  }
+
+  updateJobPosting(
+    id: number,
+    companyName: string,
+    companyEmail: string,
+    logo: File | string,
+    jobTitle: string,
+    dateFrom: Date,
+    dateTo: Date,
+    location: string,
+    description: string,
+    jobType: string,
+    education: string,
+    status: string,
+    experience: number
+  ) {
+    let jobPostingData: JobPosting | FormData;
+    if (typeof logo === "object") {
+      jobPostingData = new FormData();
+      jobPostingData.append("id", id.toString());
+      jobPostingData.append("companyName", companyName);
+      jobPostingData.append("companyEmail", companyEmail);
+      jobPostingData.append("logo", logo, companyName);
+      jobPostingData.append("jobTitle", jobTitle);
+      jobPostingData.append("dateFrom", dateFrom.toDateString());
+      jobPostingData.append("dateTo", dateTo.toDateString());
+      jobPostingData.append("location", location);
+      jobPostingData.append("description", description);
+      jobPostingData.append("jobType", jobType);
+      jobPostingData.append("education", education);
+      jobPostingData.append("status", status);
+      jobPostingData.append("experience", experience.toString());
+    } else {
+      jobPostingData = {
+        id: id,
+        companyName: companyName,
+        companyEmail: companyEmail,
+        logo: logo,
+        jobTitle: jobTitle,
+        dateFrom: dateFrom,
+        dateTo: dateTo,
+        location: location,
+        description: description,
+        jobType: jobType,
+        education: education,
+        status: status,
+        experience: experience
+      };
+    }
+    this.http.put("http://localhost:3000/dataJPupdate" + id, jobPostingData).subscribe(response => {
+    });
   }
 }
