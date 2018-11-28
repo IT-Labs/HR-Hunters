@@ -7,7 +7,6 @@ import { Application } from "../models/application.model";
 
 @Injectable({ providedIn: "root" })
 export class ApplicationService {
-  
   // Local list of applications
   private applications: Application[] = [];
 
@@ -15,6 +14,10 @@ export class ApplicationService {
   private applicationsUpdated = new Subject<{
     applications: Application[];
     applicationsCount: number;
+    pending: number;
+    contacted: number;
+    interviewed: number;
+    rejected: number;
   }>();
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -34,9 +37,14 @@ export class ApplicationService {
   ) {
     const queryParams = `?pagesize=${applicationsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
     this.http
-      .get<{ applications: Application[]; maxApplictions: number }>(
-        "http://localhost:3000/dataApplications" 
-      )
+      .get<{
+        applications: Application[];
+        maxApplications: number;
+        pending: number;
+        contacted: number;
+        interviewed: number;
+        rejected: number;
+      }>("http://localhost:3000/dataApplications")
       .pipe(
         map(applicationsData => {
           return {
@@ -52,7 +60,11 @@ export class ApplicationService {
                 status: application.status
               };
             }),
-            maxApplictions: applicationsData.maxApplictions
+            maxApplictions: applicationsData.maxApplications,
+            pending: applicationsData.pending,
+            contacted: applicationsData.contacted,
+            interviewed: applicationsData.interviewed,
+            rejected: applicationsData.rejected
           };
         })
       )
@@ -60,8 +72,37 @@ export class ApplicationService {
         this.applications = transformedApplicationsData.applications;
         this.applicationsUpdated.next({
           applications: this.applications,
-          applicationsCount: transformedApplicationsData.maxApplictions
+          applicationsCount: transformedApplicationsData.maxApplictions,
+          pending: transformedApplicationsData.pending,
+          contacted: transformedApplicationsData.contacted,
+          interviewed: transformedApplicationsData.interviewed,
+          rejected: transformedApplicationsData.rejected
         });
       });
+  }
+
+  updateApplication(
+    id: number,
+    applicantFirstName: string,
+    applicantLastName: string,
+    applicantEmail: string,
+    jobTitle: string,
+    experience: number,
+    postedOn: Date,
+    status: string
+  ) {
+    let applicationData: Application = {
+      id: id,
+      applicantFirstName: applicantFirstName,
+      applicantLastName: applicantLastName,
+      applicantEmail: applicantEmail,
+      jobTitle: jobTitle,
+      experience: experience,
+      postedOn: postedOn,
+      status: status
+    };
+    this.http
+      .put("http://localhost:3000/dataJPupdate" + id, applicationData)
+      .subscribe(response => {});
   }
 }

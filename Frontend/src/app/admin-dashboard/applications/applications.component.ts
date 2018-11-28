@@ -9,8 +9,6 @@ import { ApplicationService } from "src/app/services/application.service";
   styleUrls: ["./applications.component.scss"]
 })
 export class ADApplicationsComponent implements OnInit, OnDestroy {
-  
-
   applicationCount = {
     all: 0,
     pending: 0,
@@ -22,25 +20,16 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   postsPerPage = 10;
   currentPage = 1;
   currentSortBy = "Posted";
+  lastSortBy = "";
   currentSortDirection = 1;
   currentFilter = "All";
+  paginationSize: number[] = [];
+
   private applicationsSub: Subscription;
 
   constructor(private applicationService: ApplicationService) {}
 
   ngOnInit() {
-    // this.adminService.getApplications(this.postsPerPage, this.currentPage, this.currentSortBy, this.currentSortDirection, this.currentFilter);
-    // this.adminService
-    //   .getApplicationsUpdateListener()
-    //   .subscribe(
-    //     (applicationsData: {
-    //       applications: Application[];
-    //       applicationsCount: number;
-    //     }) => {
-    //       this.applicationCount.all = applicationsData.applicationsCount;
-    //       this.applications = applicationsData.applications;
-    //     }
-    //   );
     this.applicationService.getApplications(
       this.postsPerPage,
       this.currentPage,
@@ -53,15 +42,45 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       .subscribe(applicationsData => {
         this.applications = applicationsData.applications;
         this.applicationCount.all = applicationsData.applicationsCount;
+        this.applicationCount.pending = applicationsData.pending;
+        this.applicationCount.contacted = applicationsData.contacted;
+        this.applicationCount.interviewed = applicationsData.interviewed;
+        this.applicationCount.rejected = applicationsData.rejected
+        this.calculatePagination(this.applicationCount.all);
       });
   }
 
-  onChangedPage(pageData: any) {
-    this.currentPage = pageData.pageIndex + 1;
-    this.postsPerPage = pageData.pageSize;
-    this.currentFilter = pageData.filterBy;
-    this.currentSortBy = pageData.sortedBy;
-    this.currentSortDirection = pageData.sortDirection;
+  calculatePagination(applicationCount: number) {
+    this.paginationSize = [];
+    const paginationSum = Math.ceil(applicationCount / 10);
+
+    if (paginationSum > 0 && paginationSum < 11) {
+      for (let i = 1; i < paginationSum + 1; i++) {
+        const num = i;
+        this.paginationSize.push(num);
+      }
+    } else if (paginationSum > 10) {
+      if (this.currentPage - 10 < paginationSum - 10 && this.currentPage < 6) {
+        for (let i = 1; i < 11; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      } else if (this.currentPage - 10 < paginationSum - 10) {
+        for (let i = this.currentPage - 5; i < this.currentPage + 5; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      } else {
+        for (let i = paginationSum - 9; i < paginationSum + 1; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      }
+    }
+  }
+
+  onChangedPage(page: number) {
+    this.currentPage = page;
     this.applicationService.getApplications(
       this.postsPerPage,
       this.currentPage,
@@ -71,12 +90,8 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     );
   }
 
-  onFilter(pageData: any) {
-    this.currentPage = pageData.pageIndex;
-    this.postsPerPage = pageData.pageSize;
-    // this.currentFilter = the cliecked el;
-    this.currentSortBy = pageData.sortedBy;
-    this.currentSortDirection = pageData.sortDirection;
+  onFilter(filterBy: string) {
+    this.currentFilter = filterBy;
     this.applicationService.getApplications(
       this.postsPerPage,
       this.currentPage,
@@ -86,12 +101,13 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     );
   }
 
-  onSort(pageData: any) {
-    this.currentPage = pageData.pageIndex;
-    this.postsPerPage = pageData.pageSize;
-    this.currentFilter = pageData.filterBy;
-    // this.currentSortBy = the cliecked el;
-    this.currentSortDirection = pageData.sortDirection + 1;
+  onSort(sortBy: any) {
+    if (this.lastSortBy === sortBy) {
+      this.currentSortDirection++;
+    } else {
+      this.lastSortBy = sortBy;
+    }
+    this.currentSortBy = sortBy;
     this.applicationService.getApplications(
       this.postsPerPage,
       this.currentPage,
@@ -101,11 +117,29 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     );
   }
 
-  chooseStatus(event: any) {
+  chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
+    const currentId = id;
+    let currentApplication: Application;
+    for (let i = 0; i < this.applications.length; i++) {
+      if (currentId === this.applications[i].id) {
+        currentApplication = this.applications[i];
+      }
+    }
+
+    this.applicationService.updateApplication(
+      currentId,
+      currentApplication.applicantFirstName,
+      currentApplication.applicantLastName,
+      currentApplication.applicantEmail,
+      currentApplication.jobTitle,
+      currentApplication.experience,
+      currentApplication.postedOn,
+      currentStatus
+    );
   }
 
   ngOnDestroy() {
-    // this.applicationsSub.unsubscribe();
+    this.applicationsSub.unsubscribe();
   }
 }

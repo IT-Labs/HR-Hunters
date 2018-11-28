@@ -40,7 +40,9 @@
           <th scope="col" (click)="onSort('location')">Location</th>
           <th scope="col" (click)="onSort('jobType')">Job Type</th>
           <th scope="col" (click)="onSort('dateTo')">Expires</th>
-          <th scope="col" (click)="onSort('allApplicationsCount')">Applications</th>
+          <th scope="col" (click)="onSort('allApplicationsCount')">
+            Applications
+          </th>
           <th scope="col" (click)="onSort('status')">Status</th>
         </tr>
       </thead>
@@ -100,8 +102,12 @@
           <span aria-hidden="true">«</span></a
         >
       </li>
-      <li class="page-item" *ngFor="let num of paginationSize" [ngClass]="{'active': currentPage == num}">
-       <a class="page-link" (click)="onChangedPage(num)" > {{ num }}</a>
+      <li
+        class="page-item"
+        *ngFor="let num of paginationSize"
+        [ngClass]="{ active: currentPage == num }"
+      >
+        <a class="page-link" (click)="onChangedPage(num)"> {{ num }}</a>
       </li>
       <li class="page-item">
         <a class="page-link"><span aria-hidden="true">»</span></a>

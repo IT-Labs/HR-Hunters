@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { JobPosting } from "src/app/models/job-posting.model";
 import { Subscription } from "rxjs";
 import { JobPostingService } from "src/app/services/job-posting.service";
@@ -8,7 +8,7 @@ import { JobPostingService } from "src/app/services/job-posting.service";
   templateUrl: "./job-postings.component.html",
   styleUrls: ["./job-postings.component.scss"]
 })
-export class ADJobPostingsComponent implements OnInit {
+export class ADJobPostingsComponent implements OnInit, OnDestroy {
   jobPostingsCount = {
     all: 0,
     approved: 0,
@@ -65,7 +65,7 @@ export class ADJobPostingsComponent implements OnInit {
       }
     } else if (paginationSum > 10) {
       if (this.currentPage - 10 < paginationSum - 10 && this.currentPage < 6) {
-        for (let i = this.currentPage; i < this.currentPage + 10; i++) {
+        for (let i = 1; i < 11; i++) {
           const num = i;
           this.paginationSize.push(num);
         }
