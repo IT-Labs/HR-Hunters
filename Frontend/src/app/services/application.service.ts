@@ -35,7 +35,7 @@ export class ApplicationService {
     const queryParams = `?pagesize=${applicationsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
     this.http
       .get<{ applications: Application[]; maxApplictions: number }>(
-        "BACKEND_URL" + queryParams
+        "http://localhost:3000/dataApplications" 
       )
       .pipe(
         map(applicationsData => {
@@ -59,7 +59,7 @@ export class ApplicationService {
       .subscribe(transformedApplicationsData => {
         this.applications = transformedApplicationsData.applications;
         this.applicationsUpdated.next({
-          applications: [...this.applications],
+          applications: this.applications,
           applicationsCount: transformedApplicationsData.maxApplictions
         });
       });

@@ -1,5 +1,5 @@
 {
-  "data": {
+  "dataJP": {
     "jobPostings": [
       {
         "id": "1",
@@ -39,5 +39,94 @@
       }
     ],
     "maxJobPosts": 20
+  },
+  "dataApplicants": {
+    "applicants": [
+      {
+       " id": "1",
+        "email": "tijana@email",
+        "firstName": "Tijana",
+        "lastName": "Tasevska",
+        "photo": "applicant-photo1",
+        "phone": "078234456"
+      },
+      {
+        " id": "1",
+        "email": "ana@email",
+        "firstName": "Ana",
+        "lastName": "Pesevska",
+        "photo": "applicant-photo2",
+        "phone": "078234789"
+      }, 
+     {
+        " id": "1",
+        "email": "ana@email",
+        "firstName": "Ana",
+        "lastName": "Pesevska",
+        "photo": "applicant-photo2",
+        "phone": "078234789"
+      },
+      {
+        " id": "1",
+        "email": "ana@email",
+        "firstName": "Ana",
+        "lastName": "Pesevska",
+        "photo": "applicant-photo2",
+        "phone": "078234789"
+      }
+    ],
+    "maxJobPosts": 20
+  },
+  "dataClients": {
+    "clients": [
+      {
+       " id": "1",
+       "email": "clientemail1@mail",
+      "companyName": "companyName1",
+      "logo": "client.logo1",
+      "activeJobs": "10",
+      "allJobs": "20",
+      "status": "active",
+      "location":" client.location1"
+      },
+      {
+        " id": "2",
+        "email": "clientemail2@mail",
+       "companyName": "companyName2",
+       "logo": "client.logo2",
+       "activeJobs": "5",
+       "allJobs": "10",
+       "status": "inactive",
+       "location":" client.location2"
+      }
+    ],
+    "maxClients": 20
+  },
+  "dataApplications": {
+    "applications": [
+      {
+      " id": "1",
+      "applicantFirstName": "Marija",
+      "applicantLastName": "Georgieva",
+      "applicantEmail": "marija@mail",
+      "jobTitle": "JobTitle1",
+      "experience": "5",
+      "postedOn": "12/09/18",
+      "status": "Interviewed"
+      },
+      {
+        " id": "1",
+        "applicantFirstName": "Elena",
+        "applicantLastName": "Georgieva",
+        "applicantEmail": "elena@mail",
+        "jobTitle": "JobTitle2",
+        "experience": "2",
+        "postedOn": "2/09/18",
+        "status": "Pending"
+      }
+    ],
+    "maxApplications": 15
   }
+
 }
+

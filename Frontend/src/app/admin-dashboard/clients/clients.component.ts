@@ -24,7 +24,22 @@ export class ADClientsComponent implements OnInit, OnDestroy {
 
   constructor(private clientService: ClientService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+
+    this.clientService.getClients(
+      this.postsPerPage,
+      this.currentPage,
+      this.currentSortBy,
+      this.currentSortDirection,
+      this.currentFilter
+    );
+    this.clientsSub = this.clientService
+      .getClientsUpdateListener()
+      .subscribe(clientsData => {
+        this.clients = clientsData.clients;
+        this.clientsCount.all = clientsData.clientsCount;
+      });
+  }
 
   onChangedPage(pageData: any) {
     this.currentPage = pageData.pageIndex + 1;
