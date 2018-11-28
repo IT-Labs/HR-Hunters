@@ -19,7 +19,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   applications: Application[] = [];
   postsPerPage = 10;
   currentPage = 1;
-  currentSortBy = "Posted";
+  currentSortBy = "posted";
   lastSortBy = "";
   currentSortDirection = 1;
   currentFilter = "All";

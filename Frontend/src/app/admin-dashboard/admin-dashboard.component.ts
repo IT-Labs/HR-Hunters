@@ -9,8 +9,8 @@ export class AdminDashboardComponent {
   
   selectedTab = {
     jobs: false,
-    applications: true,
-    clients: false,
+    applications: false,
+    clients: true,
     applicants: false
   };
 
