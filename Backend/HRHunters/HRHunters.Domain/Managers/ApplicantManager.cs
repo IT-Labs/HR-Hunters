@@ -8,7 +8,7 @@ using HRHunters.Data;
 
 namespace HRHunters.Domain.Managers
 {
-    public class ApplicantManager : BaseManager<Applicant>, IApplicantManager
+    public class ApplicantManager : BaseManager, IApplicantManager
     {
         private readonly IRepository _repo;
         public ApplicantManager(IRepository repo) : base(repo)

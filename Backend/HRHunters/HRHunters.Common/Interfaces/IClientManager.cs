@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HRHunters.Common.Interfaces
 {
-    public interface IClientManager : IBaseManager<Client>
+    public interface IClientManager : IBaseManager
     {
         IEnumerable<Client> GetAllClients();
     }

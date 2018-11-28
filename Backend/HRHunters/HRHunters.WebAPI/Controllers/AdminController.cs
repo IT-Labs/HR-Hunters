@@ -17,15 +17,17 @@ namespace HRHunters.WebAPI.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IApplicationManager _applicationManager;
-        public AdminController(IApplicationManager applicationManager)
+        private readonly IApplicantManager _applicantManager;
+        public AdminController(IApplicationManager applicationManager, IApplicantManager applicantManager)
         {
             _applicationManager = applicationManager;
+            _applicantManager = applicantManager;
         }
         //Test methods
         [HttpGet]
-        public ActionResult<IEnumerable<Application>> Index()
+        public ActionResult<IEnumerable<Applicant>> Index()
         {
-            return Ok(_applicationManager.GetAllApplications());
+            return Ok(_applicantManager.GetAllApplicants());
         }
 
         [HttpGet("{id}")]
