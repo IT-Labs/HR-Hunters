@@ -43,12 +43,9 @@ export class ADJobPostingsComponent implements OnInit {
     this.jobPostingSub = this.jobPostingService
       .getJobPostingUpdateListener()
       .subscribe(jobPostingData => {
-        console.log(jobPostingData)
         this.jobPostings = jobPostingData.jobPostings;
         this.jobPostingsCount.all = jobPostingData.jobPostingCount;
-
       });
-      console.log(this.jobPostings)
   }
 
   onChangeTab(event: string) {

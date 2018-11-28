@@ -38,14 +38,20 @@ export class JobPostingService {
               return {
                 id: jobPost.id,
                 jobTitle: jobPost.jobTitle,
+                jobType: jobPost.jobType,
                 dateFrom: jobPost.dateFrom,
                 dateTo: jobPost.dateTo,
-                location: jobPost.location,
                 description: jobPost.description,
-                jobType: jobPost.jobType,
                 education: jobPost.education,
                 status: jobPost.status,
-                experience: jobPost.experience
+                experience: jobPost.experience,
+                companyName: jobPost.companyName,
+                companyEmail: jobPost.companyEmail,
+                location: jobPost.location,
+                logo: jobPost.logo,
+                allApplicationsCount: jobPost.allApplicationsCount,
+                activeApplicationsCount: jobPost.activeApplicationsCount,
+                applicantName: jobPost.applicantName
               };
             }),
             maxJobPosts: jobPostingData.maxJobPosts
@@ -54,9 +60,8 @@ export class JobPostingService {
       )
       .subscribe(transformedJobPostingData => {
         this.jobPostings = transformedJobPostingData.jobPostings;
-        console.log(this.jobPostings)
         this.jobPostingsUpdated.next({
-          jobPostings: [...this.jobPostings],
+          jobPostings: this.jobPostings,
           jobPostingCount: transformedJobPostingData.maxJobPosts
         });
       });
