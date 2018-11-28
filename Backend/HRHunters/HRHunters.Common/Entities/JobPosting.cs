@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HRHunters.Common.Entities
 {
-    public class JobPosting : Entity<int>
+    public class JobPosting : Entity
     {
         [Required]
         [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Only alphabet letters are allowed.")]

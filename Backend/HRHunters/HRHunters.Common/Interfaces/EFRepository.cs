@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using HRHunters.Common.Entities;
 using HRHunters.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,7 @@ namespace HRHunters.Data
         public EFRepository(TContext context) : base(context) { }
 
         public virtual void Create<TEntity>(TEntity entity, string createdBy = null)
-        where TEntity : class, IEntity
+        where TEntity : Entity
         {
             entity.CreatedDate = DateTime.UtcNow;
             entity.CreatedBy = createdBy;
@@ -20,7 +21,7 @@ namespace HRHunters.Data
         }
 
         public virtual void Update<TEntity>(TEntity entity, string modifiedBy = null)
-            where TEntity : class, IEntity
+            where TEntity : Entity
         {
             entity.ModifiedDate = DateTime.UtcNow;
             entity.ModifiedBy = modifiedBy;
@@ -29,14 +30,14 @@ namespace HRHunters.Data
         }
 
         public virtual void Delete<TEntity>(object id)
-            where TEntity : class, IEntity
+            where TEntity : Entity
         {
             TEntity entity = context.Set<TEntity>().Find(id);
             Delete(entity);
         }
 
         public virtual void Delete<TEntity>(TEntity entity)
-            where TEntity : class, IEntity
+            where TEntity : Entity
         {
             var dbSet = context.Set<TEntity>();
             if (context.Entry(entity).State == EntityState.Detached)

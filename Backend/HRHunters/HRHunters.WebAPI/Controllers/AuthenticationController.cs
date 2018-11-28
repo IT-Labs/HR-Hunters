@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,10 +7,7 @@ using AutoMapper;
 using HRHunters.Common.DTOs;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Interfaces;
-using HRHunters.Data;
-using HRHunters.Data.Context;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using HRHunters.Common.Requests;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,46 +39,50 @@ namespace HRHunters.WebAPI.Controllers
             _applicantManager = applicantManager;
         }
 
-        [HttpPost("registerApplicant")]
-        public async Task<IActionResult> RegisterApplicant(UserForRegisterDto userForRegisterDto)
+        //[HttpPut("/")]
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(UserRegisterModel modelRegister)
         {
-            var userToCreate = _mapper.Map<User>(userForRegisterDto);
-            userToCreate.UserName = userToCreate.Email;
-            var result = await _userManager.CreateAsync(userToCreate, userForRegisterDto.Password);
-            var userToReturn = _mapper.Map<UserForRegisterDto>(userToCreate);
-            await _userManager.AddToRoleAsync(userToCreate, "Applicant");
-            var applicant = new Applicant()
-            {
-                Id = 1,
-                EducationType = "Bachelor",
-                Experience = "3",
-                SchoolUniversity = "Oxford",
-            };
-            //Console.WriteLine(applicant);
-            _applicantManager.Create(applicant, userToReturn.FirstName);
-            _applicantManager.Save();
-            if (result.Succeeded)
-            {
+            if (ModelState.IsValid) {
+                if (modelRegister.CompanyName == null)
+                {
+                    var userToCreate = _mapper.Map<User>(modelRegister);
+                    userToCreate.UserName = userToCreate.Email;
+                    var result = await _userManager.CreateAsync(userToCreate, modelRegister.Password);
+                    if (result.Succeeded)
+                    {
+                        await _userManager.AddToRoleAsync(userToCreate, "Applicant");
+                        return Ok(result);
+                    }else
+                    {
+                        return BadRequest(result.Errors);
+                    }
+
+                }else if(modelRegister.FirstName == null && modelRegister.LastName == null)
+                {
+                    var userToCreate = _mapper.Map<User>(modelRegister);
+                    userToCreate.UserName = userToCreate.Email;
+                    userToCreate.FirstName = modelRegister.CompanyName;
+                    var result = await _userManager.CreateAsync(userToCreate, modelRegister.Password);
+                    if (result.Succeeded)
+                    {
+                        await _userManager.AddToRoleAsync(userToCreate, "Client");
+                        return Ok(result);
+                    }
+                    else
+                    {
+                        return BadRequest(result.Errors);
+                    }
+                }else
+                {
+                    return BadRequest();
+                }
                 
-                return Ok(result);
             }
-            return BadRequest(result.Errors);
+            return BadRequest();
         }
 
-        [HttpPost("registerClient")]
-        public async Task<IActionResult> RegisterClient(ClientUserForRegisterDto clientUserForRegisterDto)
-        {
-            var userToCreate = _mapper.Map<User>(clientUserForRegisterDto);
-            userToCreate.UserName = userToCreate.Email;
-            var result = await _userManager.CreateAsync(userToCreate, clientUserForRegisterDto.Password);
-            var userToReturn = _mapper.Map<UserForRegisterDto>(userToCreate);
-            await _userManager.AddToRoleAsync(userToCreate, "Client");
-            if (result.Succeeded)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result.Errors);
-        }
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {

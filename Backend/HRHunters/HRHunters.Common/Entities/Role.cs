@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HRHunters.Common.Entities
 {
-    public class Role : IdentityRole<int>, IEntity<int>
+    public class Role : IdentityRole<int>, IEntity
     {
         public ICollection<UserRole> UserRoles { get; set; }
         private DateTime? createdDate;
@@ -24,9 +24,5 @@ namespace HRHunters.Common.Entities
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
 
-        object IEntity.Id
-        {
-            get { return Id; }
-        }
     }
 }

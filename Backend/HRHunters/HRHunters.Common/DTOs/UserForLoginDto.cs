@@ -1,4 +1,5 @@
 ﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;

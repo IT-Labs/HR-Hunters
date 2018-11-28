@@ -23,18 +23,18 @@ namespace HRHunters.WebAPI.Controllers
         }
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<User>> Get()
+        public ActionResult<IEnumerable<Applicant>> Get()
         {
-            var values = _repo.GetAll<User>();
+            var values = _repo.GetAll<Applicant>();
             
             return Ok(values);
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<User> Get(int id)
+        public ActionResult<Applicant> Get(int id)
         {
-            return _repo.GetById<User>(id);
+            return _repo.GetById<Applicant>(id);
         }
 
         // POST api/values

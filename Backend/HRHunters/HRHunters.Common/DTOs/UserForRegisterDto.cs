@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HRHunters.Common.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,5 +11,6 @@ namespace HRHunters.Common.DTOs
         public string Password { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public UserType UserType { get; set; }
     }
 }

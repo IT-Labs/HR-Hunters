@@ -1,4 +1,5 @@
-﻿using HRHunters.Common.Interfaces;
+﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace HRHunters.Data
         string includeProperties = null,
         int? skip = null,
         int? take = null)
-        where TEntity : class, IEntity
+        where TEntity : Entity
         {
             includeProperties = includeProperties ?? string.Empty;
             IQueryable<TEntity> query = context.Set<TEntity>();
@@ -67,7 +68,7 @@ namespace HRHunters.Data
         string includeProperties = null,
         int? skip = null,
         int? take = null)
-        where TEntity : class, IEntity
+        where TEntity : Entity
         {
            return GetQueryable<TEntity>(filter, orderBy, includeProperties, skip, take).ToList();
         }
@@ -77,25 +78,25 @@ namespace HRHunters.Data
         string includeProperties = null,
         int? skip = null,
         int? take = null)
-        where TEntity : class, IEntity
+        where TEntity : Entity
         {
             return GetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).ToList();
         }
 
         public virtual TEntity GetById<TEntity>(object id)
-        where TEntity : class, IEntity
+        where TEntity : Entity
         {
             return context.Set<TEntity>().Find(id);
         }
 
         public virtual int GetCount<TEntity>(Expression<Func<TEntity, bool>> filter = null)
-        where TEntity : class, IEntity
+        where TEntity : Entity
         {
             return GetQueryable<TEntity>(filter).Count();
         }
 
         public virtual bool GetExists<TEntity>(Expression<Func<TEntity, bool>> filter = null)
-       where TEntity : class, IEntity
+       where TEntity : Entity
         {
             return GetQueryable<TEntity>(filter).Any();
         }
@@ -103,7 +104,7 @@ namespace HRHunters.Data
         public virtual TEntity GetOne<TEntity>(
         Expression<Func<TEntity, bool>> filter = null,
         string includeProperties = "")
-        where TEntity : class, IEntity
+        where TEntity : Entity
         {
             return GetQueryable<TEntity>(filter, null, includeProperties).SingleOrDefault();
         }

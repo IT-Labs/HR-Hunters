@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HRHunters.Common.Entities
 {
-    public class Admin : IEntity<int>
+    public class Admin : Entity
     {
         public int UserId { get; set; }
         public User User { get; set; }
@@ -19,6 +19,5 @@ namespace HRHunters.Common.Entities
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
 
-        object IEntity.Id { get; }
     }
 }

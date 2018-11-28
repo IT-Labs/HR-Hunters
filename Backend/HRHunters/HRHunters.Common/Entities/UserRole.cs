@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HRHunters.Common.Entities
 {
-    public class UserRole : IdentityUserRole<int>, IEntity<int>
+    public class UserRole : IdentityUserRole<int>, IEntity
     {
         public User User { get; set; }
         public Role Role { get; set; }
@@ -26,10 +26,7 @@ namespace HRHunters.Common.Entities
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
 
-        object IEntity.Id
-        {
-            get { return Id; }
-        }
+        
 
         public int Id { get; set; }
     } 

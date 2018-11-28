@@ -1,4 +1,5 @@
-﻿using HRHunters.Common.Interfaces;
+﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Interfaces;
 using HRHunters.Data;
 using System;
 using System.Collections.Generic;
@@ -15,47 +16,47 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public void Create<TEntity>(TEntity entity, string createdBy = null) where TEntity : class, IEntity
+        public void Create<TEntity>(TEntity entity, string createdBy = null) where TEntity : Entity
         {
             _repo.Create(entity, createdBy);
         }
 
-        public void Delete<TEntity>(object id) where TEntity : class, IEntity
+        public void Delete<TEntity>(object id) where TEntity : Entity
         {
             _repo.Delete<TEntity>(id);
         }
 
-        public void Delete<TEntity>(TEntity entity) where TEntity : class, IEntity
+        public void Delete<TEntity>(TEntity entity) where TEntity : Entity
         {
             _repo.Delete(entity);
         }
 
-        public IEnumerable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null) where TEntity : class, IEntity
+        public IEnumerable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null) where TEntity : Entity
         {
             return _repo.Get(filter, orderBy, includeProperties, skip, take);
         }
 
-        public IEnumerable<TEntity> GetAll<TEntity>(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null) where TEntity : class, IEntity
+        public IEnumerable<TEntity> GetAll<TEntity>(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null) where TEntity : Entity
         {
             return _repo.GetAll(orderBy, includeProperties, skip, take);
         }
 
-        public TEntity GetById<TEntity>(object id) where TEntity : class, IEntity
+        public TEntity GetById<TEntity>(object id) where TEntity : Entity
         {
             return _repo.GetById<TEntity>(id);
         }
 
-        public int GetCount<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : class, IEntity
+        public int GetCount<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : Entity
         {
             return _repo.GetCount(filter);
         }
 
-        public bool GetExists<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : class, IEntity
+        public bool GetExists<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : Entity
         {
             return _repo.GetExists(filter);
         }
 
-        public TEntity GetOne<TEntity>(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null) where TEntity : class, IEntity
+        public TEntity GetOne<TEntity>(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null) where TEntity : Entity
         {
             return _repo.GetOne(filter, includeProperties);
         }
@@ -65,7 +66,7 @@ namespace HRHunters.Domain.Managers
             _repo.Save();
         }
 
-        public void Update<TEntity>(TEntity entity, string modifiedBy = null) where TEntity : class, IEntity
+        public void Update<TEntity>(TEntity entity, string modifiedBy = null) where TEntity : Entity
         {
             _repo.Update(entity, modifiedBy);
         }

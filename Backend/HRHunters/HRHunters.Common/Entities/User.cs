@@ -8,7 +8,7 @@ using System.Text;
 
 namespace HRHunters.Common.Entities
 {
-    public class User : IdentityUser<int>, IEntity<int>
+    public class User : IdentityUser<int>, IEntity
     {
         [Required]
         [EmailAddress]
@@ -35,10 +35,6 @@ namespace HRHunters.Common.Entities
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
 
-        object IEntity.Id
-        {
-            get { return Id; }
-        }
 
         public ICollection<UserRole> UserRoles { get; set; }
 

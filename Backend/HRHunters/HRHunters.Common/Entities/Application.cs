@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HRHunters.Common.Entities
 {
-    public class Application : Entity<int>
+    public class Application : Entity
     {
         public DateTime Date { get; set; }
         [DisplayName("Status")]

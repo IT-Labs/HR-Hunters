@@ -7,15 +7,11 @@ using System.Text;
 
 namespace HRHunters.Common.Entities
 {
-    public abstract class Entity<T> : IEntity<T>
+    public abstract class Entity : IEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public T Id { get; set; }
-        object IEntity.Id
-        {
-            get { return this.Id; }
-        }
+        public int Id { get; set; }
 
         private DateTime? createdDate;
         [DataType(DataType.DateTime)]
