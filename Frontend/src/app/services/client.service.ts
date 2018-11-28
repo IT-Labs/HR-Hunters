@@ -34,7 +34,7 @@ export class ClientService {
     const queryParams = `?pagesize=${clientsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
     this.http
       .get<{ clients: Client[]; maxClients: number }>(
-        "BACKEND_URL" + queryParams
+        "http://localhost:3000/dataClients"
       )
       .pipe(
         map(clientsData => {
@@ -58,7 +58,7 @@ export class ClientService {
       .subscribe(transformedClientsData => {
         this.clients = transformedClientsData.clients;
         this.clientsUpdated.next({
-          clients: [...this.clients],
+          clients: this.clients,
           clientsCount: transformedClientsData.maxClients
         });
       });

@@ -29,7 +29,7 @@ export class JobPostingService {
     const queryParams = `?pagesize=${jobPostingsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
     this.http
       .get<{ jobPostings: JobPosting[]; maxJobPosts: number }>(
-        "http://localhost:3000/data"
+        "http://localhost:3000/dataJP"
       )
       .pipe(
         map(jobPostingData => {

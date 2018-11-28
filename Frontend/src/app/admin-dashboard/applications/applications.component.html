@@ -29,8 +29,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let application of dummyData">
-          <td scope="row">{{ application.applicantName }}</td>
+        <tr *ngFor="let application of applications">
+          <td scope="row">{{ application.applicantFirstName }} {{ application.applicantLastName }}</td>
           <td>{{ application.applicantEmail }}</td>
           <td>{{ application.jobTitle }}</td>
           <td>{{ application.experience }}</td>
