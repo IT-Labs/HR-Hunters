@@ -38,11 +38,10 @@ namespace HRHunters.WebAPI
         public IConfiguration Configuration { get; }
 
         //  This method gets called by the runtime.Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             IdentityBuilder builder = services.AddIdentityCore<User>(opt =>
             {
-                //opt.Password.RequireDigit = true;
                 opt.Password.RequiredLength = 8;
                 opt.User.RequireUniqueEmail = true;
                 opt.Password.RequireNonAlphanumeric = false;
@@ -79,26 +78,10 @@ namespace HRHunters.WebAPI
 
             });
 
-            var container = new Container();
-
-            container.Configure(config =>
-            {
-                config.AddRegistry(new StructureMapRegistry());
-                config.Populate(services);
-                
-            });
-            
             services.AddTransient<SeedData>();
-            services.AddScoped<IRepository, EFRepository<DataContext>>();
-            services.AddScoped<IReadonlyRepository, EFReadOnlyRepository<DataContext>>();
-            services.AddScoped<IBaseManager<Applicant>, BaseManager<Applicant>>();
-            services.AddScoped<IApplicantManager, ApplicantManager>();
-            services.AddScoped<IApplicationManager, ApplicationManager>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<DataContext>(x => x.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDbContext<DataContext>(opt =>
-               opt.UseInMemoryDatabase("TodoList"));
             services.AddAutoMapper();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -108,6 +91,16 @@ namespace HRHunters.WebAPI
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
             });
+            var container = new Container();
+
+            container.Configure(config =>
+            {
+                config.AddRegistry(new StructureMapRegistry());
+                config.Populate(services);
+
+            });
+
+            return container.GetInstance<IServiceProvider>();
 
         }
 

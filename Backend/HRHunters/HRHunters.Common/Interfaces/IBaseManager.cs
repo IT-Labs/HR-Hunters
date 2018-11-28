@@ -7,36 +7,36 @@ using System.Text;
 
 namespace HRHunters.Common.Interfaces
 {
-    public interface IBaseManager<TEntity>
+    public interface IBaseManager
     {       
-        void Create(TEntity entity, string createdBy = null);
+        void Create<TEntity>(TEntity entity, string createdBy = null) where TEntity : class, IEntity; 
 
-        void Update(TEntity entity, string modifiedBy = null);
+        void Update<TEntity>(TEntity entity, string modifiedBy = null) where TEntity : class, IEntity;
 
-        void Delete(object id);
+        void Delete<TEntity>(object id) where TEntity : class, IEntity;
 
-        void Delete(TEntity entity);
+        void Delete<TEntity>(TEntity entity) where TEntity : class, IEntity;
 
         void Save();
 
-        IEnumerable<TEntity> GetAll(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+        IEnumerable<TEntity> GetAll<TEntity>(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
         string includeProperties = null,
         int? skip = null,
-        int? take = null);
+        int? take = null) where TEntity : class, IEntity;
 
-        IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+        IEnumerable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
         string includeProperties = null,
         int? skip = null,
-        int? take = null);
+        int? take = null) where TEntity : class, IEntity;
 
-        TEntity GetOne(
+        TEntity GetOne<TEntity>(
         Expression<Func<TEntity, bool>> filter = null,
-        string includeProperties = null);
+        string includeProperties = null) where TEntity : class, IEntity;
 
-        TEntity GetById(object id);
+        TEntity GetById<TEntity>(object id) where TEntity : class, IEntity;
 
-        int GetCount(Expression<Func<TEntity, bool>> filter = null);
+        int GetCount<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : class, IEntity;
 
-        bool GetExists(Expression<Func<TEntity, bool>> filter = null);
+        bool GetExists<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : class, IEntity;
     }
 }

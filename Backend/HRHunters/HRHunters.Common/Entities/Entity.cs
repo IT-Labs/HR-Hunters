@@ -17,8 +17,6 @@ namespace HRHunters.Common.Entities
             get { return this.Id; }
         }
 
-        public string Name { get; set; }
-
         private DateTime? createdDate;
         [DataType(DataType.DateTime)]
         public DateTime CreatedDate

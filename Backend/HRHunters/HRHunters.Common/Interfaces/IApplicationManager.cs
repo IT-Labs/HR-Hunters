@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HRHunters.Common.Interfaces
 {
-    public interface IApplicationManager : IBaseManager<Application>
+    public interface IApplicationManager : IBaseManager
     {
         IEnumerable<Application> GetAllApplications();
     }

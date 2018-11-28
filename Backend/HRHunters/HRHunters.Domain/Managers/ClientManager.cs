@@ -7,7 +7,7 @@ using HRHunters.Data;
 
 namespace HRHunters.Domain.Managers
 {
-    public class ClientManager : BaseManager<Client>, IClientManager
+    public class ClientManager : BaseManager, IClientManager
     {
         private readonly IRepository _repo;
         public ClientManager(IRepository repo) : base(repo)

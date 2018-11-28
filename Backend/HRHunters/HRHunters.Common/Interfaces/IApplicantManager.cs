@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HRHunters.Common.Interfaces
 {
-    public  interface IApplicantManager : IBaseManager<Applicant>
+    public  interface IApplicantManager : IBaseManager
     {
         IEnumerable<Applicant> GetAllApplicants();
     }

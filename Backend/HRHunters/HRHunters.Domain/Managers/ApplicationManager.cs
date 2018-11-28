@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HRHunters.Domain.Managers
 {
-    public class ApplicationManager : BaseManager<Application>, IApplicationManager
+    public class ApplicationManager : BaseManager, IApplicationManager
     {
         private readonly IRepository _repo;
         public ApplicationManager(IRepository repo) : base (repo)
@@ -16,12 +16,7 @@ namespace HRHunters.Domain.Managers
         }
         public IEnumerable<Application> GetAllApplications()
         {
-            return _repo.GetAll<Application>(includeProperties: $"{nameof(Applicant.User.FirstName) + nameof(Applicant.User.LastName)}," +
-                                                                $"{nameof(Applicant.User.Email)}," +
-                                                                $"{nameof(JobPosting.Title)}," +
-                                                                $"{nameof(Applicant.Experience)}," +
-                                                                $"{nameof(JobPosting.DateFrom)}," +
-                                                                $"{nameof(JobPosting.Status)}");
+            return _repo.GetAll<Application>();
         }
         
     }

@@ -54,15 +54,17 @@ namespace HRHunters.WebAPI.Controllers
             await _userManager.AddToRoleAsync(userToCreate, "Applicant");
             var applicant = new Applicant()
             {
-                User = userToCreate,
+                Id = 1,
                 EducationType = "Bachelor",
                 Experience = "3",
                 SchoolUniversity = "Oxford",
-                Applications = null
             };
-            _applicantManager.Create(applicant);
-            if(result.Succeeded)
+            //Console.WriteLine(applicant);
+            _applicantManager.Create(applicant, userToReturn.FirstName);
+            _applicantManager.Save();
+            if (result.Succeeded)
             {
+                
                 return Ok(result);
             }
             return BadRequest(result.Errors);

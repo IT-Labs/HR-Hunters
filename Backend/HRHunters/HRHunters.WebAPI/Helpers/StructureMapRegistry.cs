@@ -4,6 +4,7 @@ using HRHunters.Data;
 using HRHunters.Data.Context;
 using HRHunters.Domain.Managers;
 using StructureMap;
+using StructureMap.Pipeline;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,13 @@ namespace HRHunters.WebAPI.Helpers
     {
         public StructureMapRegistry()
         {
-            For<IRepository>().Use<EFRepository<DataContext>>();
-            For<IReadonlyRepository>().Use<EFReadOnlyRepository<DataContext>>();
-            For<ApplicantManager>().Use<ApplicantManager>();
-            For<IApplicationManager>().Use<ApplicationManager>();
-            For<IClientManager>().Use<ClientManager>();
-            For<IJobManager>().Use<JobManager>();
+            For<IRepository>().LifecycleIs(Lifecycles.Container).Use<EFRepository<DataContext>>();
+            For<IReadonlyRepository>().LifecycleIs(Lifecycles.Container).Use<EFReadOnlyRepository<DataContext>>();
+            For<IBaseManager>().LifecycleIs(Lifecycles.Container).Use<BaseManager>();
+            For<IApplicantManager>().LifecycleIs(Lifecycles.Container).Use<ApplicantManager>();
+            For<IApplicationManager>().LifecycleIs(Lifecycles.Container).Use<ApplicationManager>();
+            For<IClientManager>().LifecycleIs(Lifecycles.Container).Use<ClientManager>();
+            For<IJobManager>().LifecycleIs(Lifecycles.Container).Use<JobManager>();
         }
     }
 }

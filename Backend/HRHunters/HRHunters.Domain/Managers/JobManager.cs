@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HRHunters.Domain.Managers
 {
-    public class JobManager : BaseManager<JobPosting>, IJobManager
+    public class JobManager : BaseManager, IJobManager
     {
         private readonly IRepository _repo;
         public JobManager(IRepository repo) : base(repo)

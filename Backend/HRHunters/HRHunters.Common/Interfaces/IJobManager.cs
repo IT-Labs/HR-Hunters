@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HRHunters.Common.Interfaces
 {
-    public interface IJobManager : IBaseManager<JobPosting>
+    public interface IJobManager : IBaseManager
     {
         IEnumerable<JobPosting> GetAllJobs();
     }

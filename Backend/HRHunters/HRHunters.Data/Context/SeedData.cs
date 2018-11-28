@@ -13,9 +13,9 @@ namespace HRHunters.Data.Context
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
-        private readonly IRepository _applicantManager;
+        private readonly IApplicationManager _applicantManager;
 
-        public SeedData(IRepository applicantManager, UserManager<User> userManager, RoleManager<Role> roleManager)
+        public SeedData(IApplicationManager applicantManager, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             _applicantManager = applicantManager;
             _userManager = userManager;
@@ -64,8 +64,15 @@ namespace HRHunters.Data.Context
                 }
                 
             }
-           
 
+            var application = new Application()
+            {
+                Date = DateTime.UtcNow,
+                Status = "Approved"
+            };
+
+            _applicantManager.Create(application);
+            _applicantManager.Save();
         }
     }
 
