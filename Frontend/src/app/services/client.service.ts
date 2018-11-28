@@ -14,6 +14,8 @@ export class ClientService {
   private clientsUpdated = new Subject<{
     clients: Client[];
     clientsCount: number;
+    active: number;
+    inactive: number;
   }>();
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -33,7 +35,7 @@ export class ClientService {
   ) {
     const queryParams = `?pagesize=${clientsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
     this.http
-      .get<{ clients: Client[]; maxClients: number }>(
+      .get<{ clients: Client[]; maxClients: number; active: number; inactive: number }>(
         "http://localhost:3000/dataClients"
       )
       .pipe(
@@ -51,7 +53,9 @@ export class ClientService {
                 location: client.location
               };
             }),
-            maxClients: clientsData.maxClients
+            maxClients: clientsData.maxClients,
+            active: clientsData.active,
+            inactive: clientsData.inactive
           };
         })
       )
@@ -59,8 +63,47 @@ export class ClientService {
         this.clients = transformedClientsData.clients;
         this.clientsUpdated.next({
           clients: this.clients,
-          clientsCount: transformedClientsData.maxClients
+          clientsCount: transformedClientsData.maxClients,
+          active: transformedClientsData.active,
+          inactive: transformedClientsData.inactive
         });
       });
+  }
+
+  updateClient(
+    id: number,
+    email: string,
+    companyName: string,
+    logo: File | string,
+    activeJobs: number,
+    allJobs: number,
+    status: string,
+    location: string
+  ) {
+    let clientData: Client | FormData;
+    if (typeof logo === "object") {
+      clientData = new FormData();
+      clientData.append("id", id.toString());
+      clientData.append("email", email);
+      clientData.append("companyName", companyName);
+      clientData.append("logo", logo, companyName);
+      clientData.append("activeJobs", activeJobs.toString());
+      clientData.append("allJobs", allJobs.toString());
+      clientData.append("status", status);
+      clientData.append("location", location);
+    } else {
+      clientData = {
+        id: id,
+        email: email,
+        companyName: companyName,
+        logo: logo,
+        activeJobs: activeJobs,
+        allJobs: allJobs,
+        status: status,
+        location: location
+      }
+    }
+    this.http.put("http://localhost:3000/dataJPupdate" + id, clientData).subscribe(response => {
+    });
   }
 }

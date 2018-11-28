@@ -8,9 +8,9 @@ import { Component } from "@angular/core";
 export class AdminDashboardComponent {
   
   selectedTab = {
-    jobs: true,
+    jobs: false,
     applications: false,
-    clients: false,
+    clients: true,
     applicants: false
   };
 

@@ -3,11 +3,15 @@
     <h2>Clients</h2>
     <div class=" text-muted dash__filtering">
       <ul>
-        <li (click)="onFilter($event)">
+        <li (click)="onFilter('all')">
           All<span>({{ clientsCount.all }})</span>
         </li>
-        <li (click)="onFilter($event)">Active<span>({{clientsCount.active }})</span></li>
-        <li (click)="onFilter($event)">Inactive<span>({{ clientsCount.inactive }})</span></li>
+        <li (click)="onFilter('active')">
+          Active<span>({{ clientsCount.active }})</span>
+        </li>
+        <li (click)="onFilter('inactive')">
+          Inactive<span>({{ clientsCount.inactive }})</span>
+        </li>
       </ul>
     </div>
   </div>
@@ -18,23 +22,21 @@
     >
       <thead>
         <tr class="dash__table__header">
-          <th scope="col" (click)="onSort($event)">Company Name</th>
-          <th scope="col" (click)="onSort($event)">Logo</th>
-          <th scope="col" (click)="onSort($event)">E-mail</th>
-          <th scope="col" (click)="onSort($event)">Jobs(active/all)</th>
-          <th scope="col" (click)="onSort($event)">Status</th>
+          <th scope="col" (click)="onSort('companyName')">Company Name</th>
+          <th scope="col" (click)="onSort('logo')">Logo</th>
+          <th scope="col" (click)="onSort('email')">E-mail</th>
+          <th scope="col" (click)="onSort('allJobs')">Jobs(active/all)</th>
+          <th scope="col" (click)="onSort('status')">Status</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let client of clients">
           <td scope="row">{{ client.companyName }}</td>
-          <td>{{ client.logo  }}</td>
-          <td>{{ client.email  }}</td>
-          <td>{{ client.activeJobs }} / {{ client.allJobs }}</td> 
-         <td>
-            <div
-              class="dropdown dash__table--dropdown-btn__container"
-            >
+          <td>{{ client.logo }}</td>
+          <td>{{ client.email }}</td>
+          <td>{{ client.activeJobs }} / {{ client.allJobs }}</td>
+          <td>
+            <div class="dropdown dash__table--dropdown-btn__container">
               <button
                 class="btn dropdown-toggle"
                 type="button"
@@ -46,13 +48,12 @@
                 {{ client.status }}
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <span class="dropdown-item" (click)="chooseStatus($event)"
+                <span class="dropdown-item" (click)="chooseStatus($event, client.id)"
                   >active</span
                 >
-                <span class="dropdown-item" (click)="chooseStatus($event)"
+                <span class="dropdown-item" (click)="chooseStatus($event, client.id)"
                   >inactive</span
                 >
-               
               </div>
             </div>
           </td>
@@ -68,11 +69,13 @@
           <span aria-hidden="true">«</span></a
         >
       </li>
-      <li class="page-item active"><a class="page-link">1</a></li>
-      <li class="page-item">
-        <a class="page-link">2 <span class="sr-only">(current)</span></a>
+      <li
+        class="page-item"
+        *ngFor="let num of paginationSize"
+        [ngClass]="{ active: currentPage == num }"
+      >
+        <a class="page-link" (click)="onChangedPage(num)"> {{ num }}</a>
       </li>
-      <li class="page-item"><a class="page-link">3</a></li>
       <li class="page-item">
         <a class="page-link"><span aria-hidden="true">»</span></a>
       </li>

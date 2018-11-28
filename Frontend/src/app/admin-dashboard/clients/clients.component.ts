@@ -17,9 +17,12 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
   postsPerPage = 10;
   currentPage = 1;
-  currentSortBy = "Posted";
+  currentSortBy = "companyName";
   currentSortDirection = 1;
+  lastSortBy = "";
   currentFilter = "All";
+  paginationSize: number[] = [];
+
   private clientsSub: Subscription;
 
   constructor(private clientService: ClientService) {}
@@ -38,15 +41,43 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       .subscribe(clientsData => {
         this.clients = clientsData.clients;
         this.clientsCount.all = clientsData.clientsCount;
+        this.clientsCount.active = clientsData.active;
+        this.clientsCount.inactive = clientsData.inactive;
+        this.calculatePagination(this.clientsCount.all)
       });
   }
 
-  onChangedPage(pageData: any) {
-    this.currentPage = pageData.pageIndex + 1;
-    this.postsPerPage = pageData.pageSize;
-    this.currentFilter = pageData.filterBy;
-    this.currentSortBy = pageData.sortedBy;
-    this.currentSortDirection = pageData.sortDirection;
+  calculatePagination(applicationCount: number) {
+    this.paginationSize = [];
+    const paginationSum = Math.ceil(applicationCount / 10);
+
+    if (paginationSum > 0 && paginationSum < 11) {
+      for (let i = 1; i < paginationSum + 1; i++) {
+        const num = i;
+        this.paginationSize.push(num);
+      }
+    } else if (paginationSum > 10) {
+      if (this.currentPage - 10 < paginationSum - 10 && this.currentPage < 6) {
+        for (let i = 1; i < 11; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      } else if (this.currentPage - 10 < paginationSum - 10) {
+        for (let i = this.currentPage - 5; i < this.currentPage + 5; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      } else {
+        for (let i = paginationSum - 9; i < paginationSum + 1; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      }
+    }
+  }
+
+  onChangedPage(page: number) {
+    this.currentPage = page;
     this.clientService.getClients(
       this.postsPerPage,
       this.currentPage,
@@ -55,12 +86,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       this.currentFilter
     );
   }
-  onFilter(pageData: any) {
-    this.currentPage = pageData.pageIndex;
-    this.postsPerPage = pageData.pageSize;
-    // this.currentFilter = the cliecked el;
-    this.currentSortBy = pageData.sortedBy;
-    this.currentSortDirection = pageData.sortDirection;
+  onFilter(filterBy: string) {
+    this.currentFilter = filterBy;
     this.clientService.getClients(
       this.postsPerPage,
       this.currentPage,
@@ -70,12 +97,13 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     );
   }
 
-  onSort(pageData: any) {
-    this.currentPage = pageData.pageIndex;
-    this.postsPerPage = pageData.pageSize;
-    this.currentFilter = pageData.filterBy;
-    // this.currentSortBy = the cliecked el;
-    this.currentSortDirection = pageData.sortDirection + 1;
+  onSort(sortBy: any) {
+    if (this.lastSortBy === sortBy) {
+      this.currentSortDirection++;
+    } else {
+      this.lastSortBy = sortBy;
+    }
+    this.currentSortBy = sortBy;
     this.clientService.getClients(
       this.postsPerPage,
       this.currentPage,
@@ -85,9 +113,28 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     );
   }
 
-  chooseStatus(event: any) {
+  chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
+    const currentId = id;
+    let currentClient: Client;
+    for (let i = 0; i < this.clients.length; i++) {
+      if (currentId === this.clients[i].id) {
+        currentClient = this.clients[i];
+      }
+    }
+
+    this.clientService.updateClient(
+      currentId,
+      currentClient.email,
+      currentClient.companyName,
+      currentClient.logo,
+      currentClient.activeJobs,
+      currentClient.allJobs,
+      currentStatus,
+      currentClient.location
+    );
   }
+
   ngOnDestroy() {
     this.clientsSub.unsubscribe();
   }

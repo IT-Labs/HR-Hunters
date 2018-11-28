@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { JobPosting } from "src/app/models/job-posting.model";
 import { Subscription } from "rxjs";
 import { JobPostingService } from "src/app/services/job-posting.service";
@@ -8,7 +8,7 @@ import { JobPostingService } from "src/app/services/job-posting.service";
   templateUrl: "./job-postings.component.html",
   styleUrls: ["./job-postings.component.scss"]
 })
-export class ADJobPostingsComponent implements OnInit {
+export class ADJobPostingsComponent implements OnInit, OnDestroy {
   jobPostingsCount = {
     all: 0,
     approved: 0,
@@ -23,10 +23,12 @@ export class ADJobPostingsComponent implements OnInit {
 
   jobPostings: JobPosting[] = [];
   postsPerPage = 10;
-  currentPage = 1;
+  currentPage = 9;
   currentSortBy = "Expires";
+  lastSortBy = "";
   currentSortDirection = 1;
   currentFilter = "All";
+  paginationSize: number[] = [];
 
   private jobPostingSub: Subscription;
 
@@ -45,7 +47,40 @@ export class ADJobPostingsComponent implements OnInit {
       .subscribe(jobPostingData => {
         this.jobPostings = jobPostingData.jobPostings;
         this.jobPostingsCount.all = jobPostingData.jobPostingCount;
+        this.jobPostingsCount.approved = jobPostingData.approved;
+        this.jobPostingsCount.pending = jobPostingData.pending;
+        this.jobPostingsCount.expired = jobPostingData.expired;
+        this.calculatePagination(this.jobPostingsCount.all);
       });
+  }
+
+  calculatePagination(jobPostingsCount: number) {
+    this.paginationSize = [];
+    const paginationSum = Math.ceil(jobPostingsCount / 10);
+
+    if (paginationSum > 0 && paginationSum < 11) {
+      for (let i = 1; i < paginationSum + 1; i++) {
+        const num = i;
+        this.paginationSize.push(num);
+      }
+    } else if (paginationSum > 10) {
+      if (this.currentPage - 10 < paginationSum - 10 && this.currentPage < 6) {
+        for (let i = 1; i < 11; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      } else if (this.currentPage - 10 < paginationSum - 10) {
+        for (let i = this.currentPage - 5; i < this.currentPage + 5; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      } else {
+        for (let i = paginationSum - 9; i < paginationSum + 1; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      }
+    }
   }
 
   onChangeTab(event: string) {
@@ -58,12 +93,8 @@ export class ADJobPostingsComponent implements OnInit {
     }
   }
 
-  onChangedPage(pageData: any) {
-    this.currentPage = pageData.pageIndex + 1;
-    this.postsPerPage = pageData.pageSize;
-    this.currentFilter = pageData.filterBy;
-    this.currentSortBy = pageData.sortedBy;
-    this.currentSortDirection = pageData.sortDirection;
+  onChangedPage(page: number) {
+    this.currentPage = page;
     this.jobPostingService.getJobPostings(
       this.postsPerPage,
       this.currentPage,
@@ -73,12 +104,8 @@ export class ADJobPostingsComponent implements OnInit {
     );
   }
 
-  onFilter(pageData: any) {
-    this.currentPage = pageData.pageIndex;
-    this.postsPerPage = pageData.pageSize;
-    // this.currentFilter = the cliecked el;
-    this.currentSortBy = pageData.sortedBy;
-    this.currentSortDirection = pageData.sortDirection;
+  onFilter(filterBy: string) {
+    this.currentFilter = filterBy;
     this.jobPostingService.getJobPostings(
       this.postsPerPage,
       this.currentPage,
@@ -88,12 +115,13 @@ export class ADJobPostingsComponent implements OnInit {
     );
   }
 
-  onSort(pageData: any) {
-    this.currentPage = pageData.pageIndex;
-    this.postsPerPage = pageData.pageSize;
-    this.currentFilter = pageData.filterBy;
-    // this.currentSortBy = the cliecked el;
-    this.currentSortDirection = pageData.sortDirection + 1;
+  onSort(sortBy: any) {
+    if (this.lastSortBy === sortBy) {
+      this.currentSortDirection++;
+    } else {
+      this.lastSortBy = sortBy;
+    }
+    this.currentSortBy = sortBy;
     this.jobPostingService.getJobPostings(
       this.postsPerPage,
       this.currentPage,
@@ -106,7 +134,7 @@ export class ADJobPostingsComponent implements OnInit {
   chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
     const currentId = id;
-    let currentJobPosting: JobPosting
+    let currentJobPosting: JobPosting;
     for (let i = 0; i < this.jobPostings.length; i++) {
       if (currentId === this.jobPostings[i].id) {
         currentJobPosting = this.jobPostings[i];
@@ -128,5 +156,9 @@ export class ADJobPostingsComponent implements OnInit {
       currentStatus,
       currentJobPosting.experience
     );
+  }
+
+  ngOnDestroy() {
+    this.jobPostingSub.unsubscribe();
   }
 }
