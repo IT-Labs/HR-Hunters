@@ -22,11 +22,12 @@ import { ADJobPostingsComponent } from "./admin-dashboard/job-postings/job-posti
 import { ADNewJobPostingComponent } from "./admin-dashboard/job-postings/new-job-posting/new-job-posting.component";
 
 const routes: Routes = [
+  { path: "", redirectTo: 'welcome', pathMatch: 'full' },
   { path: "welcome", component: WelcomeComponent },
   { path: "login", component: LoginComponent },
   { path: "client-register", component: ClientRegisterComponent },
   { path: "applicant-register", component: ApplicantRegisterComponent },
-  { path: "admin-dashboard",  component: AdminDashboardComponent, children: [
+  { path: "admin-dashboard", component: AdminDashboardComponent, children: [
     { path: "applicants", component: ADApplicantsComponent },
     { path: "applications", component: ADApplicationsComponent },
     { path: "clients", component: ADClientsComponent },
