@@ -23,6 +23,7 @@ namespace HRHunters.WebAPI.Helpers
             For<IApplicationManager>().LifecycleIs(Lifecycles.Container).Use<ApplicationManager>();
             For<IClientManager>().LifecycleIs(Lifecycles.Container).Use<ClientManager>();
             For<IJobManager>().LifecycleIs(Lifecycles.Container).Use<JobManager>();
+            For<IExtensionMethods>().LifecycleIs(Lifecycles.Container).Use<ExtensionMethods>();
         }
     }
 }

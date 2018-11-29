@@ -27,8 +27,9 @@ namespace HRHunters.WebAPI.Controllers
         private readonly IMapper _mapper;
         private readonly RoleManager<Role> _roleManager;
         private readonly IApplicantManager _applicantManager;
-        
-        public AuthenticationController(IMapper mapper,RoleManager<Role> roleManager, 
+        private readonly IExtensionMethods _extensionMethods;
+
+        public AuthenticationController(IExtensionMethods extensionMethods,IMapper mapper,RoleManager<Role> roleManager, 
             UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, IApplicantManager applicantManager)
         {
             _userManager = userManager;
@@ -37,6 +38,7 @@ namespace HRHunters.WebAPI.Controllers
             _mapper = mapper;
             _roleManager = roleManager;
             _applicantManager = applicantManager;
+            _extensionMethods = extensionMethods;
         }
 
         //[HttpPut("/")]
@@ -99,7 +101,7 @@ namespace HRHunters.WebAPI.Controllers
                     return Ok(new
                     {
                         result.Succeeded,
-                        token = GenerateJwtToken(appUser),
+                        token = _extensionMethods.GenerateJwtToken(appUser),
                         user.Email,
                         user.Id,
                         role
@@ -109,32 +111,6 @@ namespace HRHunters.WebAPI.Controllers
                     }
             }
             return  Unauthorized();
-        }
-
-        private string GenerateJwtToken(User user)
-        {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddHours(1),
-                SigningCredentials = creds
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
         }
 
     }
