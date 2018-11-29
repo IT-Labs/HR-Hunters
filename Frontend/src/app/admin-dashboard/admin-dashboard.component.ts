@@ -7,36 +7,5 @@ import { Component } from "@angular/core";
 })
 export class AdminDashboardComponent {
   
-  selectedTab = {
-    jobs: false,
-    applications: false,
-    clients: true,
-    applicants: false
-  };
-
   constructor() {}
-
-  onChangeTab(event: string) {
-    if (event === "jobs") {
-      this.selectedTab.jobs = true;
-      this.selectedTab.applications = false;
-      this.selectedTab.clients = false;
-      this.selectedTab.applicants = false;
-    } else if (event === "applications") {
-      this.selectedTab.jobs = false;
-      this.selectedTab.applications = true;
-      this.selectedTab.clients = false;
-      this.selectedTab.applicants = false;
-    } else if (event === "clients") {
-      this.selectedTab.jobs = false;
-      this.selectedTab.applications = false;
-      this.selectedTab.clients = true;
-      this.selectedTab.applicants = false;
-    } else if (event === "applicants") {
-      this.selectedTab.jobs = false;
-      this.selectedTab.applications = false;
-      this.selectedTab.clients = false;
-      this.selectedTab.applicants = true;
-    }
-  }
 }

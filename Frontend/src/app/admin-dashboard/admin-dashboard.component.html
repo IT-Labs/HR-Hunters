@@ -42,33 +42,29 @@
         </li>
         <li
           class="admin-dash__navigation--link"
-          (click)="onChangeTab('jobs')"
-          [ngClass]="{ 'admin-dash__navigation--active': selectedTab.jobs }"
+          routerLink="job-postings"
+          routerLinkActive="admin-dash__navigation--active"
         >
           Jobs
         </li>
         <li
           class="nav-item admin-dash__navigation--link"
-          (click)="onChangeTab('applications')"
-          [ngClass]="{
-            'admin-dash__navigation--active': selectedTab.applications
-          }"
+          routerLink="applications"
+          routerLinkActive="admin-dash__navigation--active"
         >
           Applications
         </li>
         <li
           class="nav-item admin-dash__navigation--link"
-          (click)="onChangeTab('clients')"
-          [ngClass]="{ 'admin-dash__navigation--active': selectedTab.clients }"
+          routerLink="clients"
+          routerLinkActive="admin-dash__navigation--active"
         >
           Clients
         </li>
         <li
           class="nav-item admin-dash__navigation--link"
-          (click)="onChangeTab('applicants')"
-          [ngClass]="{
-            'admin-dash__navigation--active': selectedTab.applicants
-          }"
+          routerLink="applicants"
+          routerLinkActive="admin-dash__navigation--active"
         >
           Applicants
         </li>
@@ -83,16 +79,9 @@
   </nav>
 
   <div class="admin-dash__component-container">
-    <app-ad-job-postings *ngIf="selectedTab.jobs"></app-ad-job-postings>
-    <app-ad-clients *ngIf="selectedTab.clients"></app-ad-clients>
-    <app-ad-applications *ngIf="selectedTab.applications"></app-ad-applications>
-    <app-ad-applicants *ngIf="selectedTab.applicants"></app-ad-applicants>
+    <router-outlet></router-outlet>
   </div>
 </div>
 
 <div class="admin-dash__component-container--responsive">
-  <app-ad-job-postings *ngIf="selectedTab.jobs"></app-ad-job-postings>
-  <app-ad-clients *ngIf="selectedTab.clients"></app-ad-clients>
-  <app-ad-applications *ngIf="selectedTab.applications"></app-ad-applications>
-  <app-ad-applicants *ngIf="selectedTab.applicants"></app-ad-applicants>
 </div>
