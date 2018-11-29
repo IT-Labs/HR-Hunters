@@ -107,27 +107,6 @@ export class ADApplicantsComponent implements OnInit,OnDestroy {
       this.currentFilter
     );
   }
-
-  chooseStatus(event: any,  id: number) {
-    const currentStatus = event.target.innerText;
-    const currentId = id;
-    let currentApplicant: Applicant;
-    for (let i = 0; i < this.applicants.length; i++) {
-      if (currentId === this.applicants[i].id) {
-        currentApplicant = this.applicants[i];
-      }
-  }
-
-  this.applicantService.updateApplicant(
-    currentId,
-    currentApplicant.email,
-    currentApplicant.firstName,
-    currentApplicant.lastName,
-    currentApplicant.photo,
-    currentApplicant.phone
-
-  );
-}
 ngOnDestroy() {
   this.applicantsSub.unsubscribe();
 }
