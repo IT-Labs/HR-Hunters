@@ -8,6 +8,6 @@ namespace HRHunters.Common.Interfaces
 {
     public  interface IApplicantManager : IBaseManager
     {
-        IEnumerable<Applicant> GetAllApplicants();
+        IEnumerable<Applicant> GetMultiple();
     }
 }

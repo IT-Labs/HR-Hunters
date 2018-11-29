@@ -11,23 +11,45 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HRHunters.WebAPI.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     //[Authorize(Policy = "RequireAdminRole")]
     public class AdminController : ControllerBase
     {
         private readonly IApplicationManager _applicationManager;
         private readonly IApplicantManager _applicantManager;
-        public AdminController(IApplicationManager applicationManager, IApplicantManager applicantManager)
+        private readonly IJobManager _jobManager;
+        private readonly IClientManager _clientManager;
+        public AdminController(IApplicationManager applicationManager, IClientManager clientManager, IApplicantManager applicantManager, IJobManager jobManager)
         {
             _applicationManager = applicationManager;
             _applicantManager = applicantManager;
+            _jobManager = jobManager;
+            _clientManager = clientManager;
         }
         //Test methods
-        [HttpGet]
-        public ActionResult<IEnumerable<Applicant>> Index()
+        [HttpGet("applicants")]
+        public ActionResult<IEnumerable<Applicant>> GetMultipleApplicants()
         {
-            return Ok(_applicantManager.GetAllApplicants());
+            return Ok(_applicantManager.GetMultiple());
+        }
+
+        [HttpGet("applications")]
+        public ActionResult<IEnumerable<Application>> GetMultipleApplications()
+        {
+            return Ok(_applicationManager.GetMultiple());
+        }
+
+        [HttpGet("jobs")]
+        public ActionResult<IEnumerable<JobPosting>> GetMultipleJobPosting()
+        {
+            return Ok(_jobManager.GetMultiple());
+        }
+
+        [HttpGet("clients")]
+        public ActionResult<IEnumerable<Client>> GetMultipleClients()
+        {
+            return Ok(_clientManager.GetMultiple());
         }
 
         [HttpGet("{id}")]

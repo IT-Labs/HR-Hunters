@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HRHunters.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20181127150411_init")]
-    partial class init
+    [Migration("20181129140025_initialMigration")]
+    partial class initialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -52,15 +52,15 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<DateTime>("CreatedDate");
 
-                    b.Property<string>("EducationType")
-                        .IsRequired();
+                    b.Property<string>("EducationType");
 
-                    b.Property<string>("Experience")
-                        .IsRequired();
+                    b.Property<string>("Experience");
 
                     b.Property<string>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("PhoneNumber");
 
                     b.Property<string>("SchoolUniversity")
                         .IsRequired();
@@ -71,7 +71,7 @@ namespace HRHunters.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Apllicants");
+                    b.ToTable("Applicants");
                 });
 
             modelBuilder.Entity("HRHunters.Common.Entities.Application", b =>
@@ -94,8 +94,6 @@ namespace HRHunters.Data.Migrations
                     b.Property<string>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
-
-                    b.Property<string>("Name");
 
                     b.Property<string>("Status");
 
@@ -120,6 +118,8 @@ namespace HRHunters.Data.Migrations
                     b.Property<string>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("PhoneNumber");
 
                     b.Property<int>("UserId");
 
@@ -160,8 +160,6 @@ namespace HRHunters.Data.Migrations
                     b.Property<string>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
-
-                    b.Property<string>("Name");
 
                     b.Property<string>("NeededExperience")
                         .IsRequired();

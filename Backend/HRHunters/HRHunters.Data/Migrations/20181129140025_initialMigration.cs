@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HRHunters.Data.Migrations
 {
-    public partial class init : Migration
+    public partial class initialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -84,13 +84,13 @@ namespace HRHunters.Data.Migrations
                 name: "Admins",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     CreatedBy = table.Column<string>(nullable: true),
-                    ModifiedBy = table.Column<string>(nullable: true)
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    UserId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -104,25 +104,26 @@ namespace HRHunters.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Apllicants",
+                name: "Applicants",
                 columns: table => new
                 {
-                    Experience = table.Column<string>(nullable: false),
-                    EducationType = table.Column<string>(nullable: false),
-                    SchoolUniversity = table.Column<string>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     CreatedBy = table.Column<string>(nullable: true),
-                    ModifiedBy = table.Column<string>(nullable: true)
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    Experience = table.Column<string>(nullable: true),
+                    EducationType = table.Column<string>(nullable: true),
+                    SchoolUniversity = table.Column<string>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Apllicants", x => x.Id);
+                    table.PrimaryKey("PK_Applicants", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Apllicants_AspNetUsers_UserId",
+                        name: "FK_Applicants_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -223,13 +224,14 @@ namespace HRHunters.Data.Migrations
                 name: "Clients",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     CreatedBy = table.Column<string>(nullable: true),
-                    ModifiedBy = table.Column<string>(nullable: true)
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    UserId = table.Column<int>(nullable: false),
+                    PhoneNumber = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -248,7 +250,6 @@ namespace HRHunters.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    Name = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     CreatedBy = table.Column<string>(nullable: true),
@@ -281,7 +282,6 @@ namespace HRHunters.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    Name = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     CreatedBy = table.Column<string>(nullable: true),
@@ -296,9 +296,9 @@ namespace HRHunters.Data.Migrations
                 {
                     table.PrimaryKey("PK_Applications", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Applications_Apllicants_ApplicantId",
+                        name: "FK_Applications_Applicants_ApplicantId",
                         column: x => x.ApplicantId,
-                        principalTable: "Apllicants",
+                        principalTable: "Applicants",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -315,8 +315,8 @@ namespace HRHunters.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Apllicants_UserId",
-                table: "Apllicants",
+                name: "IX_Applicants_UserId",
+                table: "Applicants",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -401,7 +401,7 @@ namespace HRHunters.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Apllicants");
+                name: "Applicants");
 
             migrationBuilder.DropTable(
                 name: "JobPostings");
