@@ -88,10 +88,12 @@ export class ClientRegisterComponent {
       return;
     }
 
-    this.authService.registerClient(
+    this.authService.registerUser(
       this.clientRegisterForm.value.clientName,
+      null, null,
       this.clientRegisterForm.value.applicantEmail,
-      this.clientRegisterForm.value.applicantPassword
+      this.clientRegisterForm.value.applicantPassword,
+      1
     );
   }
 

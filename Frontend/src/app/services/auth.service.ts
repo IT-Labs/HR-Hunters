@@ -12,12 +12,19 @@ export class AuthService {
   private user = {
     id: null,
     token: "",
-    email: "",
-  }
+    email: ""
+  };
   private currentRole;
-  private roleStatusListener = new Subject<{applicant: boolean, client: boolean, admin: boolean}>();
+  private roleStatusListener = new Subject<{
+    applicant: boolean;
+    client: boolean;
+    admin: boolean;
+  }>();
   private authStatusListener = new Subject<boolean>();
-  private registerStatusListener = new Subject<{code: string, description: string}>();
+  private registerStatusListener = new Subject<{
+    code: string;
+    description: string;
+  }>();
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -43,7 +50,7 @@ export class AuthService {
   getRegisterStatusListener() {
     return this.registerStatusListener.asObservable();
   }
-  
+
   getRoleStatusListener() {
     return this.roleStatusListener.asObservable();
   }
@@ -54,7 +61,7 @@ export class AuthService {
 
   selectRole(role: any) {
     this.currentRole = role;
-    console.log(role)
+    console.log(role);
   }
 
   // Saves the token to the local storage and deletes the old one if there already is a token saved
@@ -71,59 +78,56 @@ export class AuthService {
     localStorage.removeItem("token");
   }
 
-  // REGISTER CLIENT
-  registerClient(name: string, email: string, password: string) {
-    const authData: Client = {
-      id: null,
-      email: email,
-      password: password,
-      companyName: name
-    };
+  // REGISTER
+  registerUser(
+    companyName: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+    role: number
+  ) {
+    let authData: Client | Applicant;
+    if (companyName === null) {
+      authData = {
+        id: null,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+        role: role
+      };
+    } else if (firstName === null) {
+      authData = {
+        id: null,
+        companyName: companyName,
+        email: email,
+        password: password,
+        role: role
+      };
+    }
     this.http
       .post<{
-        succeeded: boolean,
+        succeeded: boolean;
         errors: { code: string; description: string };
       }>("BACKEND_URL", authData)
       .subscribe(response => {
         if (response.succeeded) {
           this.router.navigate(["login"]);
         } else if (!!response.errors) {
-          this.registerStatusListener.next(response.errors[1]) 
+          this.registerStatusListener.next(response.errors[1]);
         }
       });
   }
 
-  // REGISTER APPLICANT
-  registerApplicant(
-    firstName: string,
-    lastName: string,
-    email: string,
-    password: string
-  ) {
-    const authData: Applicant = {
-      id: null,
-      email: email,
-      password: password,
-      firstName: firstName,
-      lastName: lastName
-    };
-    this.http.post<{
-      succeeded: boolean,
-      errors: { code: string; description: string };
-    }>("", authData).subscribe(response => {
-      if (response.succeeded) {
-        this.router.navigate(["login"]);
-      } else if (!!response.errors) {
-        this.registerStatusListener.next(response.errors[1]) 
-      }
-    });
-  }
-
   // LOGIN
-  loginUser(email: string, password: string, role: string) {
+  loginUser(email: string, password: string, role: number) {
     const authData: User = { email: email, password: password, role: role };
     this.http
-      .post<{ succeeded: boolean, token: string, email: string, id: number }>("BACKEND_URL", authData)
+      .post<{ succeeded: boolean; token: string; email: string; id: number }>(
+        "BACKEND_URL",
+        authData
+      )
       .subscribe(response => {
         const token = response.token;
         this.user.token = token;

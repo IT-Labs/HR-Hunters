@@ -98,11 +98,10 @@ export class ApplicantRegisterComponent implements OnInit {
       return;
     }
 
-    this.authService.registerApplicant(
-      this.applicantRegisterForm.value.applicantFirstName,
+    this.authService.registerUser( null, this.applicantRegisterForm.value.applicantFirstName,
       this.applicantRegisterForm.value.applicantLastName,
       this.applicantRegisterForm.value.applicantEmail,
-      this.applicantRegisterForm.value.applicantPassword
+      this.applicantRegisterForm.value.applicantPassword, 0
     );
   }
 
