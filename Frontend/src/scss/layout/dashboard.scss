@@ -40,13 +40,14 @@
   }
   &__filtering {
     margin: 1.5rem 0;
-
+    
     ul {
       li {
         border-right: 1px solid lightgrey;
         padding: 0.3rem 1rem;
         font-size: 1.4rem;
         display: inline-block;
+        cursor: pointer;
 
         span {
           margin-left: 0.5rem;
@@ -64,11 +65,18 @@
     &__header {
       th {
         color: $color-heading-table-cell;
+        cursor: pointer;
       }
 
       &--sorting-icon {
         display: none;
       }
+    }
+
+    &--image {
+      height: 100px;
+      width: auto;
+      max-width: 100px;
     }
 
     &--dropdown-btn {

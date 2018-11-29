@@ -20,6 +20,7 @@ import { ADApplicationsComponent } from "./admin-dashboard/applications/applicat
 import { ADClientsComponent } from "./admin-dashboard/clients/clients.component";
 import { ADJobPostingsComponent } from "./admin-dashboard/job-postings/job-postings.component";
 import { ADNewJobPostingComponent } from "./admin-dashboard/job-postings/new-job-posting/new-job-posting.component";
+import { AuthGuard } from "./authentication/auth.guard";
 
 const routes: Routes = [
   { path: "", redirectTo: 'welcome', pathMatch: 'full' },
@@ -59,6 +60,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [AuthGuard]
 })
 export class AppRoutingModule {}

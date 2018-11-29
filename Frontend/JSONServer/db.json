@@ -50,7 +50,7 @@
         "email": "tijana@email",
         "firstName": "Tijana",
         "lastName": "Tasevska",
-        "photo": "applicant-photo1",
+        "photo": "https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg",
         "phone": "078234456"
       },
       {
@@ -58,7 +58,7 @@
         "email": "ana@email",
         "firstName": "Ana",
         "lastName": "Pesevska",
-        "photo": "applicant-photo2",
+        "photo": "https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg",
         "phone": "078234789"
       }, 
      {
@@ -66,7 +66,7 @@
         "email": "ana@email",
         "firstName": "Ana",
         "lastName": "Pesevska",
-        "photo": "applicant-photo2",
+        "photo": "https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg",
         "phone": "078234789"
       },
       {
@@ -74,7 +74,7 @@
         "email": "ana@email",
         "firstName": "Ana",
         "lastName": "Pesevska",
-        "photo": "applicant-photo2",
+        "photo": "https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg",
         "phone": "078234789"
       }
     ],
@@ -86,7 +86,7 @@
        " id": "1",
        "email": "clientemail1@mail",
       "companyName": "companyName1",
-      "logo": "client.logo1",
+      "logo": "https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg",
       "activeJobs": "10",
       "allJobs": "20",
       "status": "active",
@@ -96,7 +96,7 @@
         " id": "2",
         "email": "clientemail2@mail",
        "companyName": "companyName2",
-       "logo": "client.logo2",
+       "logo": "https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg",
        "activeJobs": "5",
        "allJobs": "10",
        "status": "inactive",

@@ -136,9 +136,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     const currentId = id;
     let currentJobPosting: JobPosting;
     for (let i = 0; i < this.jobPostings.length; i++) {
-      if (currentId === this.jobPostings[i].id) {
-        currentJobPosting = this.jobPostings[i];
-      }
+      (currentId === this.jobPostings[i].id) && (currentJobPosting = this.jobPostings[i]);
     }
 
     this.jobPostingService.updateJobPosting(

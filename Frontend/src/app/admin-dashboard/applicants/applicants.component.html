@@ -25,7 +25,7 @@
       <tbody>
         <tr *ngFor="let applicant of applicants">
           <td scope="row">{{ applicant.firstName }} {{ applicant.lastName }}</td>
-          <td>{{ applicant.photo }}</td>
+          <td><img class="dash__table--image" src="{{ applicant.photo }}" alt="{{ applicant.firstName }}"></td>
           <td>{{ applicant.email }}</td>
           <td>{{ applicant.phone }}</td>
         </tr>

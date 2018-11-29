@@ -13,7 +13,7 @@
 
     &__title {
       padding: 0 0.5rem;
-      a {
+      &--link {
         color: $color-link;
         &:hover {
           color: $color-link-hover;

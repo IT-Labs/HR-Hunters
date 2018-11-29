@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthService } from "../services/auth.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-welcome",
@@ -7,6 +8,9 @@ import { AuthService } from "../services/auth.service";
   styleUrls: ["./welcome.component.scss"]
 })
 export class WelcomeComponent implements OnInit {
+
+  private userIsAuthenticated = false;
+  private authStatusSub: Subscription;
 
   selectedTab = {
     applicant: false,
@@ -16,7 +20,14 @@ export class WelcomeComponent implements OnInit {
 
   constructor(private authService: AuthService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.userIsAuthenticated = this.authService.getIsAuth();
+    this.authStatusSub = this.authService
+      .getAuthStatusListener()
+      .subscribe(isAuthenticated => {
+        this.userIsAuthenticated = isAuthenticated;
+      });
+  }
 
   onSelectTab(input: string) {
     if (input === "applicant") {

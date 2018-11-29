@@ -34,7 +34,7 @@ export class ApplicantService {
     const queryParams = `?pagesize=${applicantsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
     this.http
       .get<{ applicants: Applicant[]; maxApplicants: number }>(
-        "http://localhost:3000/dataApplicants" 
+        "http://localhost:3000/dataApplicants" + queryParams
       )
       .pipe(
         map(applicantsData => {

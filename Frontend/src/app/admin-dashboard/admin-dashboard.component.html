@@ -1,22 +1,22 @@
 <nav class="navbar navbar-dark admin-dash__header" id="admin-dash__top-nav">
-  <a class="navbar-brand" href="#"
+  <a class="navbar-brand" routerLink="/admin-dashboard/job-postings"
     ><i class="fa fa-home"></i
     ><span class="admin-dash__header__title">HR Hunters</span>
   </a>
 
-  <a class="navbar-brand" href="#"
-    ><span class="admin-dash__header__title"
+  <a class="navbar-brand" 
+    ><span class="admin-dash__header__title text-white"
       >Hi, Admin
       <span class="admin-dash__header--logout"
-        >| <a href="#">Logout</a></span
+        >| <span class="admin-dash__header__title--link" (click)="onLogout()">Logout</span></span
       ></span
-    ><i class="fa fa-user"></i
+    ><i class="fa fa-user text-white"></i
   ></a>
 </nav>
 
 <div class="admin-dash__navigation">
   <nav class="navbar-expand-lg navbar-dark" id="admin-dash__side-nav">
-    <a class="navbar-brand admin-dash__navigation--brand" href="#"
+    <a class="navbar-brand admin-dash__navigation--brand"
       ><i class="fa fa-home"></i
       ><span class="admin-dash__header__title">HR Hunters</span>
     </a>
@@ -84,4 +84,5 @@
 </div>
 
 <div class="admin-dash__component-container--responsive">
+  
 </div>
