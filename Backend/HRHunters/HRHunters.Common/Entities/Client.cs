@@ -13,8 +13,6 @@ namespace HRHunters.Common.Entities
 
         public User User { get; set; }
         public ICollection<JobPosting> JobPostings { get; set; }
-
-        
-
+        public string PhoneNumber { get; set; }
     }
 }

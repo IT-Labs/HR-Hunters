@@ -21,7 +21,7 @@ namespace HRHunters.WebAPI.Controllers
         {
             _repo = repo;
         }
-        // GET api/values
+        // GET admins/jobpostings
         [HttpGet]
         public ActionResult<IEnumerable<Applicant>> Get()
         {
@@ -30,7 +30,7 @@ namespace HRHunters.WebAPI.Controllers
             return Ok(values);
         }
 
-        // GET api/values/5
+        // GET admins/jobpostings/id
         [HttpGet("{id}")]
         public ActionResult<Applicant> Get(int id)
         {

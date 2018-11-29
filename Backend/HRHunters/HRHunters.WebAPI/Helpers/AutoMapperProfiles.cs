@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HRHunters.Common;
-using HRHunters.Common.DTOs;
-using HRHunters.Common.Requests;
+using HRHunters.Common.Requests.Users;
 
 namespace HRHunters.WebAPI.Helpers
 {
@@ -14,7 +13,7 @@ namespace HRHunters.WebAPI.Helpers
     {
         public AutoMapperProfiles()
         {
-            CreateMap<User, UserForLoginDto>();
+            CreateMap<User, UserLoginModel>();
             CreateMap<User, UserRegisterModel>().ForMember(x => x.CompanyName, opt => opt.Ignore());
             CreateMap<UserRegisterModel, User>();
         }

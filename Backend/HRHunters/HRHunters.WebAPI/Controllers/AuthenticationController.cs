@@ -4,10 +4,10 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using HRHunters.Common.DTOs;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
+using HRHunters.Common.Requests.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,96 +21,43 @@ namespace HRHunters.WebAPI.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        private readonly RoleManager<Role> _roleManager;
-        private readonly IApplicantManager _applicantManager;
-        private readonly IExtensionMethods _extensionMethods;
+        private readonly IUsersManager _usersManager;
 
-        public AuthenticationController(IExtensionMethods extensionMethods,IMapper mapper,RoleManager<Role> roleManager, 
-            UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, IApplicantManager applicantManager)
+        public AuthenticationController(IUsersManager usersManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _configuration = configuration;
-            _mapper = mapper;
-            _roleManager = roleManager;
-            _applicantManager = applicantManager;
-            _extensionMethods = extensionMethods;
+            _usersManager = usersManager;
         }
 
         //[HttpPut("/")]
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserRegisterModel modelRegister)
+        public async Task<IActionResult> Register(UserRegisterModel userRegisterModel)
         {
             if (ModelState.IsValid) {
-                if (modelRegister.CompanyName == null)
+                var result = await _usersManager.Register(userRegisterModel);
+                if(result.Succeeded)
                 {
-                    var userToCreate = _mapper.Map<User>(modelRegister);
-                    userToCreate.UserName = userToCreate.Email;
-                    var result = await _userManager.CreateAsync(userToCreate, modelRegister.Password);
-                    if (result.Succeeded)
-                    {
-                        await _userManager.AddToRoleAsync(userToCreate, "Applicant");
-                        return Ok(result);
-                    }else
-                    {
-                        return BadRequest(result.Errors);
-                    }
-
-                }else if(modelRegister.FirstName == null && modelRegister.LastName == null)
-                {
-                    var userToCreate = _mapper.Map<User>(modelRegister);
-                    userToCreate.UserName = userToCreate.Email;
-                    userToCreate.FirstName = modelRegister.CompanyName;
-                    var result = await _userManager.CreateAsync(userToCreate, modelRegister.Password);
-                    if (result.Succeeded)
-                    {
-                        await _userManager.AddToRoleAsync(userToCreate, "Client");
-                        return Ok(result);
-                    }
-                    else
-                    {
-                        return BadRequest(result.Errors);
-                    }
-                }else
-                {
-                    return BadRequest();
+                    return Ok(result);
                 }
-                
+                return BadRequest(result.Errors);
             }
             return BadRequest();
+
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
+        public async Task<IActionResult> Login(UserLoginModel userLoginModel)
         {
-            var user = await _userManager.FindByEmailAsync(userForLoginDto.Email);
-            if(user != null)
+            if(ModelState.IsValid)
             {
-                    var result = await _signInManager.CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
-                    if (result.Succeeded)
-                     { 
-                        var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userForLoginDto.Email);
-                        var userToReturn = _mapper.Map<UserForLoginDto>(appUser);
-                        var roles = _userManager.GetRolesAsync(appUser);
-                        var role = roles.Result;
-                    return Ok(new
-                    {
-                        result.Succeeded,
-                        token = _extensionMethods.GenerateJwtToken(appUser),
-                        user.Email,
-                        user.Id,
-                        role
-                            
-                        });
-                    
-                    }
+                var result = await _usersManager.Login(userLoginModel);
+                if(!result.Value.Equals("Unauthorized"))
+                {
+                    return Ok(result);
+                }
+                
             }
-            return  Unauthorized();
+            return BadRequest("Incorrect username or password."); 
         }
 
     }
