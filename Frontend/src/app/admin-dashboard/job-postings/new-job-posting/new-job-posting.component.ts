@@ -4,6 +4,7 @@ import { Client } from "src/app/models/client.model";
 import { mimeType } from "../../../validators/mime-type.validator";
 import { JobPostingService } from "src/app/services/job-posting.service";
 import { Subscription } from "rxjs";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-ad-new-job-posting",
@@ -79,7 +80,8 @@ export class ADNewJobPostingComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private jobPostingService: JobPostingService
+    private jobPostingService: JobPostingService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -254,6 +256,7 @@ export class ADNewJobPostingComponent implements OnInit {
         "Approved",
         this.newJobPostingForm.value.experience
       );
+      this.router.navigate(['/admin-dashboard/job-postings'])
     }
   }
 }

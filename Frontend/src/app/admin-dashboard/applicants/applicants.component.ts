@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Applicant } from "src/app/models/applicant.model";
 import { Subscription } from "rxjs";
 import { ApplicantService } from "src/app/services/applicants.service";
@@ -8,7 +8,7 @@ import { ApplicantService } from "src/app/services/applicants.service";
   templateUrl: "./applicants.component.html",
   styleUrls: ["./applicants.component.scss"]
 })
-export class ADApplicantsComponent implements OnInit {
+export class ADApplicantsComponent implements OnInit,OnDestroy {
   applicantsCount = {
     all: 0
   };
@@ -18,7 +18,9 @@ export class ADApplicantsComponent implements OnInit {
   currentSortBy = "Expires";
   currentSortDirection = 1;
   currentFilter = "All";
-  private applicationsSub: Subscription;
+  lastSortBy = "";
+  paginationSize: number[] = [];
+  private applicantsSub: Subscription;
 
   constructor(private applicantService: ApplicantService) {}
 
@@ -30,20 +32,46 @@ export class ADApplicantsComponent implements OnInit {
       this.currentSortDirection,
       this.currentFilter
     );
-    this.applicationsSub = this.applicantService
+    this.applicantsSub = this.applicantService
       .getApplicantsUpdateListener()
       .subscribe(applicantData => {
         this.applicants = applicantData.applicants;
         this.applicantsCount.all = applicantData.applicantsCount;
+        this.calculatePagination(this.applicantsCount.all)
       });
   }
 
-  onChangedPage(pageData: any) {
-    this.currentPage = pageData.pageIndex + 1;
-    this.postsPerPage = pageData.pageSize;
-    this.currentFilter = pageData.filterBy;
-    this.currentSortBy = pageData.sortedBy;
-    this.currentSortDirection = pageData.sortDirection;
+  calculatePagination(applicantsCount: number) {
+    this.paginationSize = [];
+    const paginationSum = Math.ceil(applicantsCount / 10);
+
+    if (paginationSum > 0 && paginationSum < 11) {
+      for (let i = 1; i < paginationSum + 1; i++) {
+        const num = i;
+        this.paginationSize.push(num);
+      }
+    } else if (paginationSum > 10) {
+      if (this.currentPage - 10 < paginationSum - 10 && this.currentPage < 6) {
+        for (let i = 1; i < 11; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      } else if (this.currentPage - 10 < paginationSum - 10) {
+        for (let i = this.currentPage - 5; i < this.currentPage + 5; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      } else {
+        for (let i = paginationSum - 9; i < paginationSum + 1; i++) {
+          const num = i;
+          this.paginationSize.push(num);
+        }
+      }
+    }
+  }
+
+  onChangedPage(page: number) {
+    this.currentPage = page;
     this.applicantService.getApplicants(
       this.postsPerPage,
       this.currentPage,
@@ -53,12 +81,8 @@ export class ADApplicantsComponent implements OnInit {
     );
   }
 
-  onFilter(pageData: any) {
-    this.currentPage = pageData.pageIndex;
-    this.postsPerPage = pageData.pageSize;
-    // this.currentFilter = the cliecked el;
-    this.currentSortBy = pageData.sortedBy;
-    this.currentSortDirection = pageData.sortDirection;
+  onFilter(filterBy: string) {
+    this.currentFilter = filterBy;
     this.applicantService.getApplicants(
       this.postsPerPage,
       this.currentPage,
@@ -68,12 +92,13 @@ export class ADApplicantsComponent implements OnInit {
     );
   }
 
-  onSort(pageData: any) {
-    this.currentPage = pageData.pageIndex;
-    this.postsPerPage = pageData.pageSize;
-    this.currentFilter = pageData.filterBy;
-    // this.currentSortBy = the cliecked el;
-    this.currentSortDirection = pageData.sortDirection + 1;
+  onSort(sortBy: any) {
+    if (this.lastSortBy === sortBy) {
+      this.currentSortDirection++;
+    } else {
+      this.lastSortBy = sortBy;
+    }
+    this.currentSortBy = sortBy;
     this.applicantService.getApplicants(
       this.postsPerPage,
       this.currentPage,
@@ -82,12 +107,7 @@ export class ADApplicantsComponent implements OnInit {
       this.currentFilter
     );
   }
-
-  chooseStatus(event: any) {
-    const currentStatus = event.target.innerText;
-  }
-
-  ngOnDestroy() {
-    this.applicationsSub.unsubscribe();
-  }
+ngOnDestroy() {
+  this.applicantsSub.unsubscribe();
+}
 }
