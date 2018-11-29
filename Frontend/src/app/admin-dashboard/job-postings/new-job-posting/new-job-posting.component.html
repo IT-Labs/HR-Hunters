@@ -187,12 +187,12 @@
           />
         </div>
         <div
-          *ngIf="!newJobPostingForm.controls['logo'].valid && imagePreview"
+          *ngIf="!newJobPostingForm.controls['logo'].valid && !imageValid"
           class="alert dash__form--alert-msg"
         >
-          Logo is required.
+          Logo is required.<br><br>
 
-          Please upload a propper image file in .png or .jpg format.
+          Please upload a propper image file in .png or .jpg format. Maximum size for the image is 600px x 600px
         </div>
       </div>
 

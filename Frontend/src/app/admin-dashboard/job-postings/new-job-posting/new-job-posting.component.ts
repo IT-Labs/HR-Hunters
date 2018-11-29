@@ -23,9 +23,8 @@ export class ADNewJobPostingComponent implements OnInit {
   private imgUploadStatus: Subscription;
 
   imagePreview: string | ArrayBuffer;
-
+  imageValid = true;
   filteredCompanies: Client[] = [];
-
   experience = [
     "<1",
     "1",
@@ -49,11 +48,8 @@ export class ADNewJobPostingComponent implements OnInit {
     "19",
     "20+"
   ];
-
   filteredExperience = [];
-
   companies: Client[] = [];
-
   selectedCompany: Client = {
     id: null,
     email: null,
@@ -64,7 +60,6 @@ export class ADNewJobPostingComponent implements OnInit {
     status: null,
     location: null
   };
-
   formFocus = {
     companyName: false,
     companyEmail: false,
@@ -140,14 +135,22 @@ export class ADNewJobPostingComponent implements OnInit {
 
   onImagePicked(event: Event) {
     const file = (event.target as HTMLInputElement).files[0];
-      this.newJobPostingForm.patchValue({ logo: file });
-      this.newJobPostingForm.controls["logo"].updateValueAndValidity();
       const reader = new FileReader();
       reader.onload = () => {
-        this.imagePreview = reader.result;
+        let img = new Image;
+        img.src = reader.result.toString();
+        setTimeout(() => {
+          if (img.height < 600 || img.width < 600) {
+            this.newJobPostingForm.patchValue({ logo: file });
+            this.newJobPostingForm.controls["logo"].updateValueAndValidity();
+            this.imagePreview = reader.result;
+            this.imageValid = true;
+          }  else {
+            this.imageValid = false;
+          }
+        }, 1000)
       };
       reader.readAsDataURL(file);
-    console.log(this.newJobPostingForm);
   }
 
   compareTwoDates() {
@@ -238,25 +241,29 @@ export class ADNewJobPostingComponent implements OnInit {
   onSubmitNewJobPosting() {
     const validDates = this.compareTwoDates();
     const validExperience = this.checkExperience();
-    
-    if (this.newJobPostingForm.valid && validDates && validExperience) {
-      console.log(this.newJobPostingForm.value);
-      this.jobPostingService.addJobPosting(
-        this.newJobPostingForm.value.companyName,
-        this.newJobPostingForm.value.companyEmail,
-        this.newJobPostingForm.value.logo,
-        null,
-        this.newJobPostingForm.value.title,
-        this.newJobPostingForm.value.DateFrom,
-        this.newJobPostingForm.value.DateTo,
-        this.newJobPostingForm.value.location,
-        this.newJobPostingForm.value.description,
-        this.newJobPostingForm.value.jobType,
-        this.newJobPostingForm.value.education,
-        "Approved",
-        this.newJobPostingForm.value.experience
-      );
-      this.router.navigate(['/admin-dashboard/job-postings'])
-    }
+
+    if (this.imagePreview === undefined) {
+      this.imageValid = false;
+    } else {
+      if (this.newJobPostingForm.valid && validDates && validExperience) {
+        console.log(this.newJobPostingForm.value);
+        this.jobPostingService.addJobPosting(
+          this.newJobPostingForm.value.companyName,
+          this.newJobPostingForm.value.companyEmail,
+          this.newJobPostingForm.value.logo,
+          null,
+          this.newJobPostingForm.value.title,
+          this.newJobPostingForm.value.DateFrom,
+          this.newJobPostingForm.value.DateTo,
+          this.newJobPostingForm.value.location,
+          this.newJobPostingForm.value.description,
+          this.newJobPostingForm.value.jobType,
+          this.newJobPostingForm.value.education,
+          "Approved",
+          this.newJobPostingForm.value.experience
+        );
+        this.router.navigate(['/admin-dashboard/job-postings'])
+      }
+    }    
   }
 }
