@@ -61,4 +61,38 @@ export class ApplicantService {
         });
       });
   }
+
+  updateApplicant(
+    id: number,
+    email: string,
+    firstName: string,
+    lastName: string,
+    photo: File | string,
+    phone: string
+   
+  ) {
+    let applicantData: Applicant | FormData;
+    if (typeof photo === "object") {
+      applicantData = new FormData();
+      applicantData.append("id", id.toString());
+      applicantData.append("email", email);
+      applicantData.append("firstName",firstName);
+      applicantData.append("lastName",lastName);
+      applicantData.append("photo", photo);
+      applicantData.append("phone", phone);
+    
+    } else {
+      applicantData = {
+        id: id,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        photo: photo,
+        phone: phone
+     
+      }
+    }
+    this.http.put("http://localhost:3000/dataApplicantsUpdate" + id, applicantData).subscribe(response => {
+    });
+  }
 }
