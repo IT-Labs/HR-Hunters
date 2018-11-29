@@ -133,6 +133,9 @@
     "contacted": "2",
     "interviewed": "3",
     "rejected": "5"
+  },
+  "dataApplicantsUpdate:id": {
+
   }
 
 }
