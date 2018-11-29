@@ -10,6 +10,6 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IApplicationManager : IBaseManager
     {
-        IEnumerable<Application> GetAllApplications();
+        IEnumerable<Application> GetMultiple();
     }
 }

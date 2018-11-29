@@ -16,7 +16,7 @@ namespace HRHunters.Domain.Managers
             _repo = repo;
         }
 
-        public IEnumerable<Applicant> GetAllApplicants()
+        public IEnumerable<Applicant> GetMultiple()
         {
             
             return _repo.Get<Applicant>(filter: x => x.User.Id == x.Id);

@@ -27,8 +27,4 @@
     <PackageReference Include="Swashbuckle.OData" Version="3.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Responses\" />
-  </ItemGroup>
-
 </Project>

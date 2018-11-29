@@ -8,22 +8,25 @@ using HRHunters.Common.Entities;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
 using HRHunters.Common.Requests.Users;
+using HRHunters.Common.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 
 namespace HRHunters.WebAPI.Controllers
 {
     //[Authorize]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
+        
         private readonly IUsersManager _usersManager;
 
-        public AuthenticationController(IUsersManager usersManager)
+        public AuthenticationController( IUsersManager usersManager)
         {
             _usersManager = usersManager;
         }
@@ -50,14 +53,14 @@ namespace HRHunters.WebAPI.Controllers
         {
             if(ModelState.IsValid)
             {
-                var result = await _usersManager.Login(userLoginModel);
-                if(!result.Value.Equals("Unauthorized"))
+                var user = await _usersManager.Login(userLoginModel);
+                if(user.Succedeed)
                 {
-                    return Ok(result);
+                    return Ok(user);
                 }
-                
+                return BadRequest(user);
             }
-            return BadRequest("Incorrect username or password."); 
+            return BadRequest();
         }
 
     }

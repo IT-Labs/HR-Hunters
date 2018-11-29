@@ -8,6 +8,6 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IClientManager : IBaseManager
     {
-        IEnumerable<Client> GetAllClients();
+        IEnumerable<Client> GetMultiple();
     }
 }

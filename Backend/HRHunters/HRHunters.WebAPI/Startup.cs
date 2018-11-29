@@ -83,6 +83,17 @@ namespace HRHunters.WebAPI
             services.AddDbContext<DataContext>(x => x.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddAutoMapper();
+            services.AddCors(opt =>
+            {
+            opt.AddPolicy("AllowAll",
+                buildr =>
+                {
+                    buildr.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
+            });
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -117,6 +128,7 @@ namespace HRHunters.WebAPI
             }
 
             //app.UseHttpsRedirection(); 
+            
             seeder.EnsureSeedData();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -124,9 +136,10 @@ namespace HRHunters.WebAPI
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
             app.UseAuthentication();
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMvc(routes =>
             {
-                routes.MapRoute("default", "{controller=Admin}/{action=Index}/{id?}");
+                routes.MapRoute("default", "{controller=Admin}/{action=Jobs}/{id?}");
             });
         }
     }

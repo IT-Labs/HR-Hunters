@@ -1,5 +1,6 @@
 ﻿using HRHunters.Common.Requests;
 using HRHunters.Common.Requests.Users;
+using HRHunters.Common.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,6 +13,6 @@ namespace HRHunters.Common.Interfaces
     public interface IUsersManager
     {
         Task<IdentityResult> Register(UserRegisterModel userRegisterModel);
-        Task<JsonResult> Login(UserLoginModel userLoginModel);
+        Task<UserToReturnModel> Login(UserLoginModel userLoginModel);
     }
 }

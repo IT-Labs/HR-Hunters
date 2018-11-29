@@ -2,6 +2,7 @@
 using HRHunters.Common.Entities;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests.Users;
+using HRHunters.Common.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,31 +27,30 @@ namespace HRHunters.Domain.Managers
             _mapper = mapper;
             _signInManager = signInManager;
         }
-        public async Task<JsonResult> Login(UserLoginModel userLoginModel)
+        public async Task<UserToReturnModel> Login(UserLoginModel userLoginModel)
         {
             var user = await _userManager.FindByEmailAsync(userLoginModel.Email);
+            var userToReturn = new UserToReturnModel() {
+                Succedeed = false
+            };
             if (user != null)
             {
                 var result = await _signInManager.CheckPasswordSignInAsync(user, userLoginModel.Password, false);
                 if (result.Succeeded)
                 {
                     var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userLoginModel.Email);
-                    var userToReturn = _mapper.Map<UserLoginModel>(appUser);
-                    var roles = _userManager.GetRolesAsync(appUser);
-                    var role = roles.Result;
-                    return new JsonResult(new {
-                        result.Succeeded,
-                        token = _extensionMethods.GenerateJwtToken(appUser),
-                        user.Email,
-                        user.Id,
-                        role
-                    });
+                    userToReturn = _mapper.Map<UserToReturnModel>(appUser);
+                    var roles = await _userManager.GetRolesAsync(appUser);
+                    userToReturn.Succedeed = true;
+                    userToReturn.Token = _extensionMethods.GenerateJwtToken(appUser);
+                    userToReturn.CompanyName = appUser.FirstName;
+                    if(roles[0].Equals("Applicant"))
+                        userToReturn.Role = 0;
+                    userToReturn.Role = 1;
+                    return userToReturn;
                 }
             }
-            return new JsonResult(new
-            {
-                error = "Unauthorized"
-            });
+            return userToReturn;
         }
 
         public async Task<IdentityResult> Register(UserRegisterModel userRegisterModel)

@@ -14,7 +14,7 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public IEnumerable<Application> GetAllApplications()
+        public IEnumerable<Application> GetMultiple()
         {
             return _repo.GetAll<Application>();
         }
