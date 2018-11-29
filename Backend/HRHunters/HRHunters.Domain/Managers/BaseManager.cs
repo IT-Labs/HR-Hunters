@@ -19,16 +19,19 @@ namespace HRHunters.Domain.Managers
         public void Create<TEntity>(TEntity entity, string createdBy = null) where TEntity : Entity
         {
             _repo.Create(entity, createdBy);
+            Save();
         }
 
         public void Delete<TEntity>(object id) where TEntity : Entity
         {
             _repo.Delete<TEntity>(id);
+            Save();
         }
 
         public void Delete<TEntity>(TEntity entity) where TEntity : Entity
         {
             _repo.Delete(entity);
+            Save();
         }
 
         public IEnumerable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null) where TEntity : Entity
@@ -69,6 +72,7 @@ namespace HRHunters.Domain.Managers
         public void Update<TEntity>(TEntity entity, string modifiedBy = null) where TEntity : Entity
         {
             _repo.Update(entity, modifiedBy);
+            Save();
         }
     }
 }

@@ -18,6 +18,7 @@ namespace HRHunters.Data
             entity.CreatedDate = DateTime.UtcNow;
             entity.CreatedBy = createdBy;
             context.Set<TEntity>().Add(entity);
+            Save();
         }
 
         public virtual void Update<TEntity>(TEntity entity, string modifiedBy = null)
@@ -27,6 +28,7 @@ namespace HRHunters.Data
             entity.ModifiedBy = modifiedBy;
             context.Set<TEntity>().Attach(entity);
             context.Entry(entity).State = EntityState.Modified;
+            Save();
         }
 
         public virtual void Delete<TEntity>(object id)
@@ -34,6 +36,7 @@ namespace HRHunters.Data
         {
             TEntity entity = context.Set<TEntity>().Find(id);
             Delete(entity);
+            Save();
         }
 
         public virtual void Delete<TEntity>(TEntity entity)
@@ -43,8 +46,10 @@ namespace HRHunters.Data
             if (context.Entry(entity).State == EntityState.Detached)
             {
                 dbSet.Attach(entity);
+                Save();
             }
             dbSet.Remove(entity);
+            Save();
         }
 
         public virtual void Save()
@@ -55,7 +60,7 @@ namespace HRHunters.Data
             }
             catch (Exception e)
             {
-               //ToDO
+                
             }
         }
 

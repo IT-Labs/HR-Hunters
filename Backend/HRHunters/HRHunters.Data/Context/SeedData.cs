@@ -65,14 +65,6 @@ namespace HRHunters.Data.Context
                 
             }
 
-            var application = new Application()
-            {
-                Date = DateTime.UtcNow,
-                Status = "Approved"
-            };
-
-            _applicantManager.Create(application);
-            _applicantManager.Save();
         }
     }
 
