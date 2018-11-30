@@ -12,6 +12,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   adminIsAuthenticated = false;
 
+  dropdownOpen = false;
+
   private authListenerSubs: Subscription;
   
   constructor(private authService: AuthService, private router: Router) { }
@@ -24,8 +26,18 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin-dashboard/job-postings'])
   }
 
+  // Closing the dropdown on click on link
+  onDropdownClick() {
+    const dropdown = document.getElementById('sidebar-navigation');
+
+    if (dropdown.classList.contains('show')) {
+      dropdown.classList.remove('show');
+    }
+  }
+
   onLogout() {
     this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   ngOnDestroy() {

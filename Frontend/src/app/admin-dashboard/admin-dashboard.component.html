@@ -44,6 +44,7 @@
           class="admin-dash__navigation--link"
           routerLink="job-postings"
           routerLinkActive="admin-dash__navigation--active"
+          (click)="onDropdownClick()"
         >
           Jobs
         </li>
@@ -51,6 +52,7 @@
           class="nav-item admin-dash__navigation--link"
           routerLink="applications"
           routerLinkActive="admin-dash__navigation--active"
+          (click)="onDropdownClick()"
         >
           Applications
         </li>
@@ -58,6 +60,7 @@
           class="nav-item admin-dash__navigation--link"
           routerLink="clients"
           routerLinkActive="admin-dash__navigation--active"
+          (click)="onDropdownClick()"
         >
           Clients
         </li>
@@ -65,12 +68,14 @@
           class="nav-item admin-dash__navigation--link"
           routerLink="applicants"
           routerLinkActive="admin-dash__navigation--active"
+          (click)="onDropdownClick()"
         >
           Applicants
         </li>
         <li
           class="nav-item admin-dash__navigation--link admin-dash__navigation--auth"
           id="admin-dash__logout"
+          (click)="onLogout()"
         >
           Logout
         </li>
@@ -81,8 +86,4 @@
   <div class="admin-dash__component-container">
     <router-outlet></router-outlet>
   </div>
-</div>
-
-<div class="admin-dash__component-container--responsive">
-  
 </div>
