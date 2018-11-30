@@ -16,7 +16,13 @@ namespace HRHunters.Domain.Managers
         }
         public IEnumerable<Application> GetMultiple()
         {
-            return _repo.GetAll<Application>();
+            return _repo.Get<Application>(includeProperties: $"{nameof(Application.Applicant.User.FirstName)}," +
+                                                                $"{nameof(Application.Applicant.User.LastName)}," +
+                                                                $"{nameof(Application.Applicant.User.Email)}," +
+                                                                $"{nameof(Application.JobPosting.Title)}," +
+                                                                $"{nameof(Application.Applicant.Experience)}," +
+                                                                $"{nameof(Application.Date)}," +
+                                                                $"{nameof(Application.Status)}");
         }
         
     }

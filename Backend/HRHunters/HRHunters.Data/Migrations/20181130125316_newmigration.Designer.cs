@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HRHunters.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20181129140025_initialMigration")]
-    partial class initialMigration
+    [Migration("20181130125316_newmigration")]
+    partial class newmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -120,6 +120,8 @@ namespace HRHunters.Data.Migrations
                     b.Property<DateTime?>("ModifiedDate");
 
                     b.Property<string>("PhoneNumber");
+
+                    b.Property<string>("Status");
 
                     b.Property<int>("UserId");
 

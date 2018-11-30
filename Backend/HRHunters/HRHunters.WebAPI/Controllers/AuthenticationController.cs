@@ -36,16 +36,19 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterModel userRegisterModel)
         {
+            var mStateErrors = new ModelStateErrors();
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                mStateErrors.Succeeded = false;
+                
+                
             }
 
             var result = await _usersManager.Register(userRegisterModel);
 
             if (!result.Succeeded)
             {
-                return BadRequest(result.Errors);
+                return BadRequest(result);
             }
             return Ok(result);
 

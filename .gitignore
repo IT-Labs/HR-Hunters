@@ -261,3 +261,4 @@ paket-files/
 __pycache__/
 *.pyc
 /Backend/HRHunters/HRHunters.Common
+/Backend/HRHunters/HRHunters.Data/customAppSettings.json

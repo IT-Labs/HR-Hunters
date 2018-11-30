@@ -19,7 +19,7 @@ namespace HRHunters.Domain.Managers
         public IEnumerable<Applicant> GetMultiple()
         {
             
-            return _repo.Get<Applicant>(filter: x => x.User.Id == x.Id);
+            return _repo.Get<Applicant>();
         }
     }
 }

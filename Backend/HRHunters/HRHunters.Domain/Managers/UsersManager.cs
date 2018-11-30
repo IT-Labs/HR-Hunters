@@ -44,7 +44,6 @@ namespace HRHunters.Domain.Managers
                 userToReturn.Token = _extensionMethods.GenerateJwtToken(appUser);
                 userToReturn.CompanyName = roles.Contains("Client") ? userToReturn.FirstName : null;
                 userToReturn.Role = roles.Contains("Applicant") ? 0 : 1;
-
             }
             return userToReturn;
 
@@ -65,6 +64,7 @@ namespace HRHunters.Domain.Managers
             {
                 await _userManager.AddToRoleAsync(userToCreate, role);
             }
+
             return result;
         }
     }
