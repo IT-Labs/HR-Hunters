@@ -21,6 +21,8 @@ export class ADNewJobPostingComponent implements OnInit {
   ];
 
   existingCompany = false;
+  validDates: boolean;
+  validExperience: boolean;
 
   private imgUploadStatus: Subscription;
 
@@ -261,13 +263,13 @@ export class ADNewJobPostingComponent implements OnInit {
   }
 
   onSubmitNewJobPosting() {
-    const validDates = this.compareTwoDates();
-    const validExperience = this.checkExperience();
+    this.validDates = this.compareTwoDates();
+    this.validExperience = this.checkExperience();
 
     if (this.imagePreview === undefined) {
       this.imageValid = false;
     } else {
-      if (this.newJobPostingForm.valid && validDates && validExperience) {
+      if (this.newJobPostingForm.valid && this.validDates && this.validExperience) {
         console.log(this.newJobPostingForm.value);
         this.jobPostingService.addJobPosting(
           this.newJobPostingForm.value.companyName,
