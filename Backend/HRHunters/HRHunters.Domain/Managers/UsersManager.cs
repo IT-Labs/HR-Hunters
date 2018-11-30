@@ -5,13 +5,8 @@ using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web.Http.ModelBinding;
 
 namespace HRHunters.Domain.Managers
 {
@@ -47,7 +42,7 @@ namespace HRHunters.Domain.Managers
                 var roles = await _userManager.GetRolesAsync(appUser);
                 userToReturn.Succedeed = true;
                 userToReturn.Token = _extensionMethods.GenerateJwtToken(appUser);
-                userToReturn.CompanyName = appUser.FirstName;
+                userToReturn.CompanyName = roles.Contains("Client") ? userToReturn.FirstName : null;
                 userToReturn.Role = roles.Contains("Applicant") ? 0 : 1;
 
             }
