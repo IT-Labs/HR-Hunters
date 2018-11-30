@@ -8,12 +8,14 @@
       <label
         class="btn btn-secondary dash__heading--radio-btn"
         [ngClass]="{ active: !existingCompany }"
+        (click)="onCompanyRadioBtnClick('new')"
       >
         <input type="radio" name="options" autocomplete="off" /> Add New Company
       </label>
       <label
         class="btn btn-secondary dash__heading--radio-btn"
         [ngClass]="{ active: existingCompany }"
+        (click)="onCompanyRadioBtnClick('existing')"
       >
         <input type="radio" name="options" autocomplete="off" /> Select Existing
         Company
@@ -135,6 +137,7 @@
           formControlName="location"
           maxlength="50"
           (focus)="onFocus('location')"
+          autocomplete="off"
         />
 
         <div

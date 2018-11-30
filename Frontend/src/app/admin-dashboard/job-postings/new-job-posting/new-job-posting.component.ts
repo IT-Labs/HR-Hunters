@@ -20,6 +20,8 @@ export class ADNewJobPostingComponent implements OnInit {
     "Doctoral degree"
   ];
 
+  existingCompany = false;
+
   private imgUploadStatus: Subscription;
 
   imagePreview: string | ArrayBuffer;
@@ -110,10 +112,13 @@ export class ADNewJobPostingComponent implements OnInit {
         Validators.maxLength(50)
       ])
     ],
-    logo: ["", {
-      validators: [Validators.required],
-      asyncValidators: [mimeType]
-    }],
+    logo: [
+      "",
+      {
+        validators: [Validators.required],
+        asyncValidators: [mimeType]
+      }
+    ],
     title: [
       "",
       Validators.compose([
@@ -133,24 +138,38 @@ export class ADNewJobPostingComponent implements OnInit {
     durationTo: ["", Validators.compose([Validators.required])]
   });
 
+  onCompanyRadioBtnClick(company: string) {
+    if (company === "existing") {
+      this.existingCompany = true;
+      this.newJobPostingForm.controls["companyEmail"].disable()
+      this.newJobPostingForm.controls["location"].disable()
+      this.newJobPostingForm.controls["logo"].disable()
+    } else if (company === "new") {
+      this.existingCompany = false;
+      this.newJobPostingForm.controls["companyEmail"].enable()
+      this.newJobPostingForm.controls["location"].enable()
+      this.newJobPostingForm.controls["logo"].enable()
+    }
+  }
+
   onImagePicked(event: Event) {
     const file = (event.target as HTMLInputElement).files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        let img = new Image;
-        img.src = reader.result.toString();
-        setTimeout(() => {
-          if (img.height < 600 || img.width < 600) {
-            this.newJobPostingForm.patchValue({ logo: file });
-            this.newJobPostingForm.controls["logo"].updateValueAndValidity();
-            this.imagePreview = reader.result;
-            this.imageValid = true;
-          }  else {
-            this.imageValid = false;
-          }
-        }, 1000)
-      };
-      reader.readAsDataURL(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      let img = new Image();
+      img.src = reader.result.toString();
+      setTimeout(() => {
+        if (img.height < 600 || img.width < 600) {
+          this.newJobPostingForm.patchValue({ logo: file });
+          this.newJobPostingForm.controls["logo"].updateValueAndValidity();
+          this.imagePreview = reader.result;
+          this.imageValid = true;
+        } else {
+          this.imageValid = false;
+        }
+      }, 1000);
+    };
+    reader.readAsDataURL(file);
   }
 
   compareTwoDates() {
@@ -165,8 +184,11 @@ export class ADNewJobPostingComponent implements OnInit {
 
   checkExperience() {
     for (let i = 0; i < this.experience.length; i++) {
-      if (this.experience[i] == this.newJobPostingForm.controls["experience"].value) {
-        return true
+      if (
+        this.experience[i] ==
+        this.newJobPostingForm.controls["experience"].value
+      ) {
+        return true;
       }
     }
     return false;
@@ -262,8 +284,8 @@ export class ADNewJobPostingComponent implements OnInit {
           "Approved",
           this.newJobPostingForm.value.experience
         );
-        this.router.navigate(['/admin-dashboard/job-postings'])
+        this.router.navigate(["/admin-dashboard/job-postings"]);
       }
-    }    
+    }
   }
 }
