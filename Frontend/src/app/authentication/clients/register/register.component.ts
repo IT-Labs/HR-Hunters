@@ -11,9 +11,9 @@ import { AuthService } from "src/app/services/auth.service";
 export class ClientRegisterComponent {
   private password: string;
   private confirmedPassword: string;
-  registrationError;
+  authError;
+  private authErrorStatusSub: Subscription;
   private authStatusSub: Subscription;
-  private registerStatusSub: Subscription;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {}
 
@@ -21,8 +21,8 @@ export class ClientRegisterComponent {
     this.authStatusSub = this.authService
       .getAuthStatusListener()
       .subscribe(authStatus => {});
-    this.registerStatusSub = this.authService.getRegisterStatusListener().subscribe(error => {
-      this.registrationError = error;
+    this.authErrorStatusSub = this.authService.getAuthErrorStatusListener().subscribe(error => {
+      this.authError = error;
     })
   }
 
@@ -82,7 +82,6 @@ export class ClientRegisterComponent {
     return false;
   }
   onClientRegister() {
-    console.log(this.clientRegisterForm.value);
 
     if (this.clientRegisterForm.invalid) {
       return;
@@ -99,6 +98,6 @@ export class ClientRegisterComponent {
 
   ngOnDestroy() {
     this.authStatusSub.unsubscribe();
-    this.registerStatusSub.unsubscribe();
+    this.authErrorStatusSub.unsubscribe();
   }
 }

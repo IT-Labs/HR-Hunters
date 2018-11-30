@@ -29,13 +29,9 @@ export class ApplicationService {
 
   // Get all applications
   getApplications(
-    applicationsPerPage: number,
-    currentPage: number,
-    sortedBy: string,
-    sortDirection: number,
-    filterBy: string
+    applicationQP
   ) {
-    const queryParams = `?pagesize=${applicationsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
+    const queryParams = `?pagesize=${applicationQP.applicationsPerPage}&page=${applicationQP.currentPage}&sort=${applicationQP.sortedBy}&sortDir=${applicationQP.sortDirection}&filter=${applicationQP.filterBy}`;
     this.http
       .get<{
         applications: Application[];

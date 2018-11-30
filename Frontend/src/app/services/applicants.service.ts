@@ -25,13 +25,9 @@ export class ApplicantService {
 
   // Get all applicants
   getApplicants(
-    applicantsPerPage: number,
-    currentPage: number,
-    sortedBy: string,
-    sortDirection: number,
-    filterBy: string
+    applicantsQP
   ) {
-    const queryParams = `?pagesize=${applicantsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
+    const queryParams = `?pagesize=${applicantsQP.applicantsPerPage}&page=${applicantsQP.currentPage}&sort=${applicantsQP.sortedBy}&sortDir=${applicantsQP.sortDirection}&filter=${applicantsQP.filterBy}`;
     this.http
       .get<{ applicants: Applicant[]; maxApplicants: number }>(
         "http://localhost:3000/dataApplicants" + queryParams

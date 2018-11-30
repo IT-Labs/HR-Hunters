@@ -11,9 +11,9 @@ import { Subscription } from "rxjs";
 export class ApplicantRegisterComponent implements OnInit {
   password: string;
   confirmedPassword: string;
-  registrationError;
+  authError;
   private authStatusSub: Subscription;
-  private registerStatusSub: Subscription;
+  private authErrorStatusSub: Subscription;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {}
 
@@ -21,8 +21,8 @@ export class ApplicantRegisterComponent implements OnInit {
     this.authStatusSub = this.authService
       .getAuthStatusListener()
       .subscribe(authStatus => {});
-    this.registerStatusSub = this.authService.getRegisterStatusListener().subscribe(error => {
-      this.registrationError = error;
+    this.authErrorStatusSub = this.authService.getAuthErrorStatusListener().subscribe(error => {
+      this.authError = error;
     })
   }
 
@@ -92,7 +92,6 @@ export class ApplicantRegisterComponent implements OnInit {
   }
 
   onApplicantRegister() {
-    console.log(this.applicantRegisterForm.value);
 
     if (this.applicantRegisterForm.invalid) {
       return;
@@ -107,6 +106,6 @@ export class ApplicantRegisterComponent implements OnInit {
 
   ngOnDestroy() {
     this.authStatusSub.unsubscribe();
-    this.registerStatusSub.unsubscribe();
+    this.authErrorStatusSub.unsubscribe();
   }
 }

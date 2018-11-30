@@ -11,6 +11,6 @@ export class AppComponent {
   constructor(private authService: AuthService) {}
   
   ngOnInit() {
-    this.authService.autoAuthUser();
+    //this.authService.autoAuthUser();
   }
 }

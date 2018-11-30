@@ -22,18 +22,18 @@ export class JobPostingService {
   constructor(private http: HttpClient, private router: Router) {}
 
   // Get all job postings
-  getJobPostings(
-    jobPostingsPerPage: number,
-    currentPage: number,
-    sortedBy: string,
-    sortDirection: number,
-    filterBy: string
-  ) {
-    const queryParams = `?pagesize=${jobPostingsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
+  getJobPostings(jobPostingQP) {
+    const queryParams = `?pagesize=${jobPostingQP.jobPostingsPerPage}&page=${
+      jobPostingQP.currentPage
+    }&sort=${jobPostingQP.sortedBy}&sortDir=${jobPostingQP.sortDirection}&filter=${jobPostingQP.filterBy}`;
     this.http
-      .get<{ jobPostings: JobPosting[]; maxJobPosts: number; approved: number; pending: number; expired: number }>(
-        "http://localhost:3000/dataJP"
-      )
+      .get<{
+        jobPostings: JobPosting[];
+        maxJobPosts: number;
+        approved: number;
+        pending: number;
+        expired: number;
+      }>("http://localhost:3000/dataJP")
       .pipe(
         map(jobPostingData => {
           return {
@@ -172,7 +172,8 @@ export class JobPostingService {
         experience: experience
       };
     }
-    this.http.put("http://localhost:3000/dataJPupdate" + id, jobPostingData).subscribe(response => {
-    });
+    this.http
+      .put("http://localhost:3000/dataJPupdate" + id, jobPostingData)
+      .subscribe(response => {});
   }
 }

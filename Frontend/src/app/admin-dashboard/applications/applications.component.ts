@@ -14,15 +14,18 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     pending: 0,
     contacted: 0,
     interviewed: 0,
-    rejected: 0,
+    rejected: 0
   };
   applications: Application[] = [];
-  postsPerPage = 10;
-  currentPage = 1;
-  currentSortBy = "posted";
-  lastSortBy = "";
-  currentSortDirection = 1;
-  currentFilter = "All";
+
+  applicationQP = {
+    postsPerPage: 10,
+    currentPage: 1,
+    currentSortBy: "posted",
+    lastSortBy: "",
+    currentSortDirection: 1,
+    currentFilter: "All"
+  };
   paginationSize: number[] = [];
 
   private applicationsSub: Subscription;
@@ -30,13 +33,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   constructor(private applicationService: ApplicationService) {}
 
   ngOnInit() {
-    this.applicationService.getApplications(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
-    );
+    this.applicationService.getApplications(this.applicationQP);
     this.applicationsSub = this.applicationService
       .getApplicationsUpdateListener()
       .subscribe(applicationsData => {
@@ -45,7 +42,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
         this.applicationCount.pending = applicationsData.pending;
         this.applicationCount.contacted = applicationsData.contacted;
         this.applicationCount.interviewed = applicationsData.interviewed;
-        this.applicationCount.rejected = applicationsData.rejected
+        this.applicationCount.rejected = applicationsData.rejected;
         this.calculatePagination(this.applicationCount.all);
       });
   }
@@ -60,13 +57,20 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
         this.paginationSize.push(num);
       }
     } else if (paginationSum > 10) {
-      if (this.currentPage - 10 < paginationSum - 10 && this.currentPage < 6) {
+      if (
+        this.applicationQP.currentPage - 10 < paginationSum - 10 &&
+        this.applicationQP.currentPage < 6
+      ) {
         for (let i = 1; i < 11; i++) {
           const num = i;
           this.paginationSize.push(num);
         }
-      } else if (this.currentPage - 10 < paginationSum - 10) {
-        for (let i = this.currentPage - 5; i < this.currentPage + 5; i++) {
+      } else if (this.applicationQP.currentPage - 10 < paginationSum - 10) {
+        for (
+          let i = this.applicationQP.currentPage - 5;
+          i < this.applicationQP.currentPage + 5;
+          i++
+        ) {
           const num = i;
           this.paginationSize.push(num);
         }
@@ -80,41 +84,23 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   }
 
   onChangedPage(page: number) {
-    this.currentPage = page;
-    this.applicationService.getApplications(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
-    );
+    this.applicationQP.currentPage = page;
+    this.applicationService.getApplications(this.applicationQP);
   }
 
   onFilter(filterBy: string) {
-    this.currentFilter = filterBy;
-    this.applicationService.getApplications(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
-    );
+    this.applicationQP.currentFilter = filterBy;
+    this.applicationService.getApplications(this.applicationQP);
   }
 
   onSort(sortBy: any) {
-    if (this.lastSortBy === sortBy) {
-      this.currentSortDirection++;
+    if (this.applicationQP.lastSortBy === sortBy) {
+      this.applicationQP.currentSortDirection++;
     } else {
-      this.lastSortBy = sortBy;
+      this.applicationQP.lastSortBy = sortBy;
     }
-    this.currentSortBy = sortBy;
-    this.applicationService.getApplications(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
-    );
+    this.applicationQP.currentSortBy = sortBy;
+    this.applicationService.getApplications(this.applicationQP);
   }
 
   chooseStatus(event: any, id: number) {

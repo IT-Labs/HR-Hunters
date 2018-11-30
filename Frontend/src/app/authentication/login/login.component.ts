@@ -16,6 +16,8 @@ export class LoginComponent implements OnInit {
     admin: true
   }
 
+  authError;
+  private authErrorStatusSub: Subscription;
   private roleStatusSub: Subscription;
 
   constructor(private fb: FormBuilder, private authService: AuthService) { }
@@ -40,6 +42,10 @@ export class LoginComponent implements OnInit {
         }
       }
     }
+
+    this.authErrorStatusSub = this.authService.getAuthErrorStatusListener().subscribe(error => {
+      this.authError = error;
+    })
   }
 
   loginForm = this.fb.group({
@@ -48,7 +54,6 @@ export class LoginComponent implements OnInit {
   })
 
   onLogin() {
-    console.log(this.loginForm.value);
 
     if (this.loginForm.invalid) {
       return
@@ -58,5 +63,10 @@ export class LoginComponent implements OnInit {
       this.loginForm.value.password,
       null
     );
+  }
+
+
+  ngOnDestroy() {
+    this.authErrorStatusSub.unsubscribe();
   }
 }

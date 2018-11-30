@@ -15,13 +15,18 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     inactive: 0
   };
   clients: Client[] = [];
-  postsPerPage = 10;
-  currentPage = 1;
-  currentSortBy = "companyName";
-  currentSortDirection = 1;
-  lastSortBy = "";
-  currentFilter = "All";
+
+  clientQP = {
+    postsPerPage: 10,
+    currentPage: 1,
+    currentSortBy: "companyName",
+    currentSortDirection: 1,
+    currentFilter: "All"
+  }
+
+  lastSortBy: "";
   paginationSize: number[] = [];
+
 
   private clientsSub: Subscription;
 
@@ -30,11 +35,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.clientService.getClients(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
+      this.clientQP
     );
     this.clientsSub = this.clientService
       .getClientsUpdateListener()
@@ -57,13 +58,13 @@ export class ADClientsComponent implements OnInit, OnDestroy {
         this.paginationSize.push(num);
       }
     } else if (paginationSum > 10) {
-      if (this.currentPage - 10 < paginationSum - 10 && this.currentPage < 6) {
+      if (this.clientQP.currentPage - 10 < paginationSum - 10 && this.clientQP.currentPage < 6) {
         for (let i = 1; i < 11; i++) {
           const num = i;
           this.paginationSize.push(num);
         }
-      } else if (this.currentPage - 10 < paginationSum - 10) {
-        for (let i = this.currentPage - 5; i < this.currentPage + 5; i++) {
+      } else if (this.clientQP.currentPage - 10 < paginationSum - 10) {
+        for (let i = this.clientQP.currentPage - 5; i < this.clientQP.currentPage + 5; i++) {
           const num = i;
           this.paginationSize.push(num);
         }
@@ -77,39 +78,27 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   }
 
   onChangedPage(page: number) {
-    this.currentPage = page;
+    this.clientQP.currentPage = page;
     this.clientService.getClients(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
+      this.clientQP
     );
   }
   onFilter(filterBy: string) {
-    this.currentFilter = filterBy;
+    this.clientQP.currentFilter = filterBy;
     this.clientService.getClients(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
+      this.clientQP
     );
   }
 
   onSort(sortBy: any) {
     if (this.lastSortBy === sortBy) {
-      this.currentSortDirection++;
+      this.clientQP.currentSortDirection++;
     } else {
       this.lastSortBy = sortBy;
     }
-    this.currentSortBy = sortBy;
+    this.clientQP.currentSortBy = sortBy;
     this.clientService.getClients(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
+      this.clientQP
     );
   }
 

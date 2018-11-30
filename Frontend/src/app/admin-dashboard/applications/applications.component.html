@@ -104,7 +104,7 @@
       <li
         class="page-item"
         *ngFor="let num of paginationSize"
-        [ngClass]="{ active: currentPage == num }"
+        [ngClass]="{ active: applicationQP.currentPage == num }"
       >
         <a class="page-link" (click)="onChangedPage(num)"> {{ num }}</a>
       </li>

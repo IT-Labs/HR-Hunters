@@ -19,7 +19,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
-    this.adminIsAuthenticated = this.authService.getIsAuth();
+    //this.adminIsAuthenticated = this.authService.getIsAuth();
     this.authListenerSubs = this.authService.getAuthStatusListener().subscribe(isAuthenticated => {
       this.adminIsAuthenticated = isAuthenticated;
     })

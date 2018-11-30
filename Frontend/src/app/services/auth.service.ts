@@ -25,8 +25,7 @@ export class AuthService {
     admin: boolean;
   }>();
   private authStatusListener = new Subject<boolean>();
-  private registerStatusListener = new Subject<{
-    code: string;
+  private authErrorStatusListener = new Subject<{
     description: string;
   }>();
 
@@ -52,8 +51,8 @@ export class AuthService {
     return this.authStatusListener.asObservable();
   }
 
-  getRegisterStatusListener() {
-    return this.registerStatusListener.asObservable();
+  getAuthErrorStatusListener() {
+    return this.authErrorStatusListener.asObservable();
   }
 
   getRoleStatusListener() {
@@ -66,7 +65,6 @@ export class AuthService {
 
   selectRole(role: any) {
     this.currentRole = role;
-    console.log(role);
   }
 
   // Saves the token to the local storage and deletes the old one if there already is a token saved
@@ -115,15 +113,17 @@ export class AuthService {
       };
     }
     this.http
-      .post<{
-        succeeded: boolean;
-        errors: { code: string; description: string };
+      .post<{ 
+        succedeed: boolean,
+        errors: []
       }>(this.baseUrl + '/Authentication/register', authData)
       .subscribe(response => {
-        if (response.succeeded) {
+        if (response.succedeed) {
           this.router.navigate(["login"]);
-        } else if (!!response.errors) {
-          this.registerStatusListener.next(response.errors[1]);
+        } 
+      }, error => {
+        if (error) {
+          this.authErrorStatusListener.next({description: "Username is already taken"});
         }
       });
   }
@@ -132,26 +132,34 @@ export class AuthService {
   loginUser(email: string, password: string, role: number) {
     const authData: User = { email: email, password: password, role: role };
     this.http
-      .post<{
-        succeeded: boolean;
-        firstName: string;
-        lastName: string;
-        companyName: string;
-        token: string;
-        email: string;
-        id: number;
+      .post<{ 
+        succedeed: boolean,
+        firstName: string | null,
+        lastName: string | null;
+        companyName: string | null;
+        token: string | null;
+        email: string | null;
+        id: number | null;
         role: number;
       }>(this.baseUrl + '/Authentication/login', authData)
       .subscribe(response => {
-        const token = response.token;
-        this.user.token = token;
-        this.user.id = response.id;
-        this.user.email = response.email;
-        if (token) {
-          this.isAuthenticated = true;
-          this.authStatusListener.next(true);
-          this.saveAuthData(token);
-          this.router.navigate(["/admin-dashboard/job-postings"]);
+        if (response.succedeed) {
+          const token = response.token;
+          this.user.token = token;
+          this.user.id = response.id;
+          this.user.email = response.email;
+          if (token) {
+            this.isAuthenticated = true;
+            this.authStatusListener.next(true);
+            this.saveAuthData(token);
+            this.router.navigate(["/admin-dashboard/job-postings"]);
+          }
+        } else if (!response.succedeed) {
+          this.authErrorStatusListener.next({description: "Email or password incorrect or does not exist"})
+        }
+      }, error => {
+        if (error) {
+          this.authErrorStatusListener.next({description: error[1].description})
         }
       });
   }

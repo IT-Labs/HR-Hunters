@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { map } from "rxjs/operators";
 import { Subject } from "rxjs";
@@ -26,18 +26,37 @@ export class ClientService {
   }
 
   // Get all applications
-  getClients(
-    clientsPerPage: number,
-    currentPage: number,
-    sortedBy: string,
-    sortDirection: number,
-    filterBy: string
-  ) {
-    const queryParams = `?pagesize=${clientsPerPage}&page=${currentPage}&sort=${sortedBy}&sortDir=${sortDirection}&filter=${filterBy}`;
+  getClients(clientQP) {
+    const queryParams = {
+      params: new HttpParams()
+        .append("pageSize", clientQP.postsPerPage)
+        .append("currentPage", clientQP.currentPage)
+        .append("sort", clientQP.currentSortBy)
+        .append("sortDir", clientQP.currentSortDirection)
+        .append("filter", clientQP.currentFilter)
+    };
+
+    const paramssss = {
+      queryParams: {
+        pageSize: clientQP.postsPerPage,
+        currentPage: clientQP.currentPage,
+        sort: clientQP.currentSortBy,
+        sortDir: clientQP.currentSortDirection,
+        filter: clientQP.currentFilter
+      }
+    };
+    const queryParams1 = `?pagesize=${clientQP.clientsPerPage}&page=${
+      clientQP.currentPage
+    }&sort=${clientQP.sortedBy}&sortDir=${clientQP.sortDirection}&filter=${
+      clientQP.filterBy
+    }`;
     this.http
-      .get<{ clients: Client[]; maxClients: number; active: number; inactive: number }>(
-        "http://localhost:3000/dataClients"
-      )
+      .get<{
+        clients: Client[];
+        maxClients: number;
+        active: number;
+        inactive: number;
+      }>("http://localhost:3000/dataClients")
       .pipe(
         map(clientsData => {
           return {
@@ -101,9 +120,10 @@ export class ClientService {
         allJobs: allJobs,
         status: status,
         location: location
-      }
+      };
     }
-    this.http.put("http://localhost:3000/dataJPupdate" + id, clientData).subscribe(response => {
-    });
+    this.http
+      .put("http://localhost:3000/dataJPupdate" + id, clientData)
+      .subscribe(response => {});
   }
 }

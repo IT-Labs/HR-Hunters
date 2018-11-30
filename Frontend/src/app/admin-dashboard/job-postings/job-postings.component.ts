@@ -21,13 +21,16 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     new: false
   };
 
+  jobPostingQP = {
+    postsPerPage: 10,
+    currentPage: 9,
+    currentSortBy: "Expires",
+    lastSortBy: "",
+    currentSortDirection: 1,
+    currentFilter: "All"
+  }
+
   jobPostings: JobPosting[] = [];
-  postsPerPage = 10;
-  currentPage = 9;
-  currentSortBy = "Expires";
-  lastSortBy = "";
-  currentSortDirection = 1;
-  currentFilter = "All";
   paginationSize: number[] = [];
 
   private jobPostingSub: Subscription;
@@ -35,13 +38,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   constructor(private jobPostingService: JobPostingService) {}
 
   ngOnInit() {
-    this.jobPostingService.getJobPostings(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
-    );
+    this.jobPostingService.getJobPostings( this.jobPostingQP );
     this.jobPostingSub = this.jobPostingService
       .getJobPostingUpdateListener()
       .subscribe(jobPostingData => {
@@ -64,13 +61,13 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
         this.paginationSize.push(num);
       }
     } else if (paginationSum > 10) {
-      if (this.currentPage - 10 < paginationSum - 10 && this.currentPage < 6) {
+      if (this.jobPostingQP.currentPage - 10 < paginationSum - 10 && this.jobPostingQP.currentPage < 6) {
         for (let i = 1; i < 11; i++) {
           const num = i;
           this.paginationSize.push(num);
         }
-      } else if (this.currentPage - 10 < paginationSum - 10) {
-        for (let i = this.currentPage - 5; i < this.currentPage + 5; i++) {
+      } else if (this.jobPostingQP.currentPage - 10 < paginationSum - 10) {
+        for (let i = this.jobPostingQP.currentPage - 5; i < this.jobPostingQP.currentPage + 5; i++) {
           const num = i;
           this.paginationSize.push(num);
         }
@@ -94,40 +91,28 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   }
 
   onChangedPage(page: number) {
-    this.currentPage = page;
+    this.jobPostingQP.currentPage = page;
     this.jobPostingService.getJobPostings(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
+      this.jobPostingQP
     );
   }
 
   onFilter(filterBy: string) {
-    this.currentFilter = filterBy;
+    this.jobPostingQP.currentFilter = filterBy;
     this.jobPostingService.getJobPostings(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
+      this.jobPostingQP
     );
   }
 
   onSort(sortBy: any) {
-    if (this.lastSortBy === sortBy) {
-      this.currentSortDirection++;
+    if (this.jobPostingQP.lastSortBy === sortBy) {
+      this.jobPostingQP.currentSortDirection++;
     } else {
-      this.lastSortBy = sortBy;
+      this.jobPostingQP.lastSortBy = sortBy;
     }
-    this.currentSortBy = sortBy;
+    this.jobPostingQP.currentSortBy = sortBy;
     this.jobPostingService.getJobPostings(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
+      this.jobPostingQP
     );
   }
 

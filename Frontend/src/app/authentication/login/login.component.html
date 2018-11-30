@@ -38,6 +38,14 @@
               </div>
             </div>
 
+            <!-- SERVER ERROR -->
+
+            <div
+              *ngIf="authError"
+              class="alert alert-warning auth-form__alert"
+            > {{ authError.description }}
+            </div>
+
             <!-- PASSWORD INPUT -->
             <input
               type="password"

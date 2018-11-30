@@ -270,7 +270,6 @@ export class ADNewJobPostingComponent implements OnInit {
       this.imageValid = false;
     } else {
       if (this.newJobPostingForm.valid && this.validDates && this.validExperience) {
-        console.log(this.newJobPostingForm.value);
         this.jobPostingService.addJobPosting(
           this.newJobPostingForm.value.companyName,
           this.newJobPostingForm.value.companyEmail,

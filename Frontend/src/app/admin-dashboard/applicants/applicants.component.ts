@@ -13,12 +13,15 @@ export class ADApplicantsComponent implements OnInit,OnDestroy {
     all: 0
   };
   applicants: Applicant[] = [];
-  postsPerPage = 10;
-  currentPage = 1;
-  currentSortBy = "Expires";
-  currentSortDirection = 1;
-  currentFilter = "All";
-  lastSortBy = "";
+
+  applicantsQP = {
+    postsPerPage: 10,
+    currentPage: 1,
+    currentSortBy: "Expires",
+    currentSortDirection: 1,
+    currentFilter: "All",
+    lastSortBy: ""
+  }
   paginationSize: number[] = [];
   private applicantsSub: Subscription;
 
@@ -26,11 +29,7 @@ export class ADApplicantsComponent implements OnInit,OnDestroy {
 
   ngOnInit() {
     this.applicantService.getApplicants(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
+      this.applicantsQP
     );
     this.applicantsSub = this.applicantService
       .getApplicantsUpdateListener()
@@ -51,13 +50,13 @@ export class ADApplicantsComponent implements OnInit,OnDestroy {
         this.paginationSize.push(num);
       }
     } else if (paginationSum > 10) {
-      if (this.currentPage - 10 < paginationSum - 10 && this.currentPage < 6) {
+      if (this.applicantsQP.currentPage - 10 < paginationSum - 10 && this.applicantsQP.currentPage < 6) {
         for (let i = 1; i < 11; i++) {
           const num = i;
           this.paginationSize.push(num);
         }
-      } else if (this.currentPage - 10 < paginationSum - 10) {
-        for (let i = this.currentPage - 5; i < this.currentPage + 5; i++) {
+      } else if (this.applicantsQP.currentPage - 10 < paginationSum - 10) {
+        for (let i = this.applicantsQP.currentPage - 5; i < this.applicantsQP.currentPage + 5; i++) {
           const num = i;
           this.paginationSize.push(num);
         }
@@ -71,40 +70,28 @@ export class ADApplicantsComponent implements OnInit,OnDestroy {
   }
 
   onChangedPage(page: number) {
-    this.currentPage = page;
+    this.applicantsQP.currentPage = page;
     this.applicantService.getApplicants(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
+      this.applicantsQP
     );
   }
 
   onFilter(filterBy: string) {
-    this.currentFilter = filterBy;
+    this.applicantsQP.currentFilter = filterBy;
     this.applicantService.getApplicants(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
+      this.applicantsQP
     );
   }
 
   onSort(sortBy: any) {
-    if (this.lastSortBy === sortBy) {
-      this.currentSortDirection++;
+    if (this.applicantsQP.lastSortBy === sortBy) {
+      this.applicantsQP.currentSortDirection++;
     } else {
-      this.lastSortBy = sortBy;
+      this.applicantsQP.lastSortBy = sortBy;
     }
-    this.currentSortBy = sortBy;
+    this.applicantsQP.currentSortBy = sortBy;
     this.applicantService.getApplicants(
-      this.postsPerPage,
-      this.currentPage,
-      this.currentSortBy,
-      this.currentSortDirection,
-      this.currentFilter
+      this.applicantsQP
     );
   }
 ngOnDestroy() {
