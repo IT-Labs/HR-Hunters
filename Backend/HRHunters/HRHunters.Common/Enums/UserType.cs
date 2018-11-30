@@ -6,7 +6,7 @@ namespace HRHunters.Common.Enums
 {
     public enum UserType
     {
-        Applicant = 0,
-        Client = 1
+        APPLICANT = 0,
+        CLIENT = 1
     }
 }

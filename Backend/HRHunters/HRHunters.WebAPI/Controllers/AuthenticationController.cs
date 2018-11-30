@@ -23,10 +23,10 @@ namespace HRHunters.WebAPI.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        
+
         private readonly IUsersManager _usersManager;
 
-        public AuthenticationController( IUsersManager usersManager)
+        public AuthenticationController(IUsersManager usersManager)
         {
             _usersManager = usersManager;
         }
@@ -36,31 +36,38 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterModel userRegisterModel)
         {
-            if (ModelState.IsValid) {
-                var result = await _usersManager.Register(userRegisterModel);
-                if(result.Succeeded)
-                {
-                    return Ok(result);
-                }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var result = await _usersManager.Register(userRegisterModel);
+
+            if (!result.Succeeded)
+            {
                 return BadRequest(result.Errors);
             }
-            return BadRequest();
+            return Ok(result);
+
+
 
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserLoginModel userLoginModel)
         {
-            if(ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = await _usersManager.Login(userLoginModel);
-                if(user.Succedeed)
-                {
-                    return Ok(user);
-                }
-                return BadRequest(user);
+                return BadRequest();
             }
-            return BadRequest();
+            var user = await _usersManager.Login(userLoginModel);
+            if (!user.Succedeed)
+            {
+                return BadRequest(user);
+
+            }
+            return Ok(user);
+
         }
 
     }
