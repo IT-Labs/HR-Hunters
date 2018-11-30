@@ -5,9 +5,13 @@ import { User } from "../models/user.model";
 import { Subject } from "rxjs";
 import { Client } from "../models/client.model";
 import { Applicant } from "../models/applicant.model";
+import { environment } from "../../environments/environment"
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
+
+  baseUrl = environment.baseUrl;
+
   private isAuthenticated = false;
   private user = {
     id: null,
@@ -114,7 +118,7 @@ export class AuthService {
       .post<{
         succeeded: boolean;
         errors: { code: string; description: string };
-      }>("BACKEND_URL", authData)
+      }>(this.baseUrl + '/Authentication/register', authData)
       .subscribe(response => {
         if (response.succeeded) {
           this.router.navigate(["login"]);
@@ -137,7 +141,7 @@ export class AuthService {
         email: string;
         id: number;
         role: number;
-      }>("BACKEND_URL", authData)
+      }>(this.baseUrl + '/Authentication/login', authData)
       .subscribe(response => {
         const token = response.token;
         this.user.token = token;
