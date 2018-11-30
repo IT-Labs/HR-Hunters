@@ -115,7 +115,7 @@ export class AuthService {
     this.http
       .post<{ 
         succedeed: boolean,
-        errors: []
+        errors: string[]
       }>(this.baseUrl + '/Authentication/register', authData)
       .subscribe(response => {
         if (response.succedeed) {
@@ -123,7 +123,7 @@ export class AuthService {
         } 
       }, error => {
         if (error) {
-          this.authErrorStatusListener.next({description: "Username is already taken"});
+          this.authErrorStatusListener.next({description: error[1].description});
         }
       });
   }
