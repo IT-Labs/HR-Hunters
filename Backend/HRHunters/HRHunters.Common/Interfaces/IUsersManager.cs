@@ -12,7 +12,7 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IUsersManager
     {
-        Task<IdentityResult> Register(UserRegisterModel userRegisterModel);
-        Task<UserToReturnModel> Login(UserLoginModel userLoginModel);
+        Task<UserRegisterReturnModel> Register(UserRegisterModel userRegisterModel);
+        Task<UserLoginReturnModel> Login(UserLoginModel userLoginModel);
     }
 }

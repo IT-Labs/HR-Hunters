@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,43 +33,24 @@ namespace HRHunters.WebAPI.Controllers
             _usersManager = usersManager;
         }
 
-        //[HttpPut("/")]
-
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterModel userRegisterModel)
         {
-            var mStateErrors = new ModelStateErrors();
-            if (!ModelState.IsValid)
-            {
-                mStateErrors.Succeeded = false;
-                
-                
-            }
-
             var result = await _usersManager.Register(userRegisterModel);
-
             if (!result.Succeeded)
             {
                 return BadRequest(result);
             }
             return Ok(result);
-
-
-
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserLoginModel userLoginModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
             var user = await _usersManager.Login(userLoginModel);
             if (!user.Succedeed)
             {
                 return BadRequest(user);
-
             }
             return Ok(user);
 
