@@ -17,7 +17,8 @@ namespace HRHunters.WebAPI.Helpers
             CreateMap<User, UserLoginModel>();
             CreateMap<User, UserRegisterModel>();
             CreateMap<UserRegisterModel, User>();
-            CreateMap<User, UserToReturnModel>();
+            CreateMap<User, UserLoginReturnModel>();
+            CreateMap<UserLoginModel, User>();
         }
     }
 }

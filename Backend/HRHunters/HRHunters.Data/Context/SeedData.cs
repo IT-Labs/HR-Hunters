@@ -13,11 +13,11 @@ namespace HRHunters.Data.Context
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
-        private readonly IApplicationManager _applicantManager;
+        private readonly IClientManager _clientManager;
 
-        public SeedData(IApplicationManager applicantManager, UserManager<User> userManager, RoleManager<Role> roleManager)
+        public SeedData(IClientManager clientManager, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
-            _applicantManager = applicantManager;
+            _clientManager = clientManager;
             _userManager = userManager;
             _roleManager = roleManager;
         }
@@ -46,9 +46,26 @@ namespace HRHunters.Data.Context
                     user.CreatedBy = user.FirstName;
 
                     _userManager.CreateAsync(user, "Password").Wait();
-                }
 
-                
+                    if (i % 2 == 0)
+                    {
+                        var client = new Client()
+                        {
+                            User = user,
+                        };
+                        _clientManager.Create(client);
+                    }
+                    else
+                    {
+                        var applicant = new Applicant()
+                        {
+                            User = user,
+                            SchoolUniversity = "school" + i,
+                            EducationType = "B"
+                        };
+                        _clientManager.Create(applicant);
+                    }
+                }
             }
             if(!_roleManager.Roles.Any())
             {

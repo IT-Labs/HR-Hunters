@@ -119,6 +119,8 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<string>("PhoneNumber");
 
+                    b.Property<string>("Status");
+
                     b.Property<int>("UserId");
 
                     b.HasKey("Id");
