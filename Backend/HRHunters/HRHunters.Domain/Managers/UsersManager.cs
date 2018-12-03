@@ -26,7 +26,8 @@ namespace HRHunters.Domain.Managers
         }
         public async Task<UserLoginReturnModel> Login(UserLoginModel userLoginModel)
         {
-            var user = await _userManager.FindByEmailAsync(userLoginModel.Email);
+            var user = await _userManager.FindByEmailAsync(userLoginModel.Email.ToLower());
+            
             var userToReturn = new UserLoginReturnModel()
             {
                 Succeeded = false,
@@ -52,12 +53,11 @@ namespace HRHunters.Domain.Managers
                 return userToReturn;
             }
             //If OK sign in user
-            var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userLoginModel.Email);
+            var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userLoginModel.Email.ToLower());
             userToReturn = _mapper.Map<UserLoginReturnModel>(appUser);
             var roles = await _userManager.GetRolesAsync(appUser);
             userToReturn.Succeeded = true;
             userToReturn.Token = _extensionMethods.GenerateJwtToken(appUser);
-            userToReturn.CompanyName = roles.Contains("Client") ? userToReturn.FirstName : null;
             userToReturn.Role = roles.Contains("Applicant") ? 0 : 1;
             return userToReturn;
         }
@@ -65,23 +65,32 @@ namespace HRHunters.Domain.Managers
         public async Task<UserRegisterReturnModel> Register(UserRegisterModel userRegisterModel)
         {
             var userToCreate = _mapper.Map<User>(userRegisterModel);
-            userToCreate.UserName = userToCreate.Email;
+            userToCreate.UserName = userToCreate.Email.ToLower();
             var role = userRegisterModel.UserType == UserType.APPLICANT ? "Applicant" : "Client";
-            if (userRegisterModel.UserType == UserType.CLIENT)
-            {
-                userToCreate.FirstName = userRegisterModel.CompanyName;
-            }
-            var result = await _userManager.CreateAsync(userToCreate, userRegisterModel.Password);
             var userToReturn = new UserRegisterReturnModel()
             {
-                Succeeded = true
+                Succeeded = false,
+                Errors= new Dictionary<string, List<string>>(),
             };
-            if (result.Succeeded)
+
+            if (string.IsNullOrEmpty(userRegisterModel.LastName) && role=="Applicant")
             {
-                await _userManager.AddToRoleAsync(userToCreate, role);
+                userToReturn.Errors.Add("LastName", new List<string>() { "Last name is required" });
                 return userToReturn;
             }
-            userToReturn.Succeeded = false;
+            var result = await _userManager.CreateAsync(userToCreate, userRegisterModel.Password);
+           
+            if (!result.Succeeded)
+            {
+                userToReturn.Errors.Add("Email", new List<string>() { "Email already exists" });
+                return userToReturn;
+            }
+            if (role == "Client")
+            {
+                userToCreate.LastName = null;
+            }
+            await _userManager.AddToRoleAsync(userToCreate, role);
+            userToReturn.Succeeded = true;
             return userToReturn;
         }
     }
