@@ -50,7 +50,7 @@ namespace HRHunters.WebAPI.Controllers
         public async Task<IActionResult> Login(UserLoginModel userLoginModel)
         {
             var user = await _usersManager.Login(userLoginModel);
-            if (!user.Succedeed)
+            if (!user.Succeeded)
             {
                 return BadRequest(user);
             }

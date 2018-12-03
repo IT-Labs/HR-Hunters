@@ -29,7 +29,7 @@ namespace HRHunters.Domain.Managers
             var user = await _userManager.FindByEmailAsync(userLoginModel.Email);
             var userToReturn = new UserLoginReturnModel()
             {
-                Succedeed = false,
+                Succeeded = false,
                 Errors = new Dictionary<string, List<string>>()
             };
             //Error message for invalid username or password 
@@ -55,7 +55,7 @@ namespace HRHunters.Domain.Managers
             var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userLoginModel.Email);
             userToReturn = _mapper.Map<UserLoginReturnModel>(appUser);
             var roles = await _userManager.GetRolesAsync(appUser);
-            userToReturn.Succedeed = true;
+            userToReturn.Succeeded = true;
             userToReturn.Token = _extensionMethods.GenerateJwtToken(appUser);
             userToReturn.CompanyName = roles.Contains("Client") ? userToReturn.FirstName : null;
             userToReturn.Role = roles.Contains("Applicant") ? 0 : 1;
