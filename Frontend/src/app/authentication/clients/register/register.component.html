@@ -32,7 +32,7 @@
                   clientRegisterForm.controls['clientName'].errors?.required
                 "
               >
-                Comapny name is required.
+                Company name is required.
               </div>
             </div>
 
@@ -53,7 +53,7 @@
               class="alert alert-warning auth-form__alert"
             >
               <div
-                *ngIf="clientRegisterForm.controls['clientEmail'].errors?.email"
+                *ngIf="clientRegisterForm.controls['clientEmail'].errors?.pattern"
               >
                 Email must be in valid format.
               </div>
@@ -83,9 +83,9 @@
             <!-- SERVER ERROR -->
 
             <div
-              *ngIf="authError?.email"
+              *ngIf="authEmailError"
               class="alert alert-warning auth-form__alert"
-            > {{ authError?.email }}
+            > {{ authEmailError }}
             </div>
 
             <!-- PASSWORD INPUT -->
@@ -129,7 +129,7 @@
               </div>
               <div
                 *ngIf="
-                  clientRegisterForm.controls['clientPassword'].errors
+                  clientRegisterForm.controls['clientPassword'].errors?.pattern
                 "
               >
                 Password must contain at least 1 lowercase, 1 uppercase alphabetical character, 1 numeric character and one special character.
@@ -139,9 +139,9 @@
              <!-- SERVER ERROR -->
 
              <div
-             *ngIf="authError?.password"
+             *ngIf="authPasswordError"
              class="alert alert-warning auth-form__alert"
-           > {{ authError?.password }}
+           > {{ authPasswordError }}
            </div>
 
             <!-- CONFIRM PASSWORD INPUT -->
@@ -169,21 +169,7 @@
                   clientRegisterForm.controls['clientConfirmPassword'].errors?.required
                 "
               >
-                Password is required.
-              </div>
-              <div
-                *ngIf="
-                  clientRegisterForm.controls['clientConfirmPassword'].errors?.minlength
-                "
-              >
-                Password must be at least 8 characters long.
-              </div>
-              <div
-                *ngIf="
-                  clientRegisterForm.controls['clientConfirmPassword'].errors?.maxlength
-                "
-              >
-                Password must be up to 20 characters long.
+                Confirm password is required.
               </div>
               <div *ngIf="!comparePasswords()">Passwords must match!</div>
             </div>
