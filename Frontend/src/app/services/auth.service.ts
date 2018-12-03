@@ -26,7 +26,8 @@ export class AuthService {
   }>();
   private authStatusListener = new Subject<boolean>();
   private authErrorStatusListener = new Subject<{
-    description: string;
+    email: string,
+    password: string
   }>();
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -91,21 +92,21 @@ export class AuthService {
     role: number
   ) {
     let authData: Client | Applicant;
+    // FOR APPLICANTS
     if (companyName === null) {
       authData = {
         id: null,
-        companyName: companyName,
         firstName: firstName,
         lastName: lastName,
         email: email,
         password: password,
         role: role
       };
+      // FOR CLIENTS
     } else if (firstName === null) {
       authData = {
         id: null,
-        companyName: companyName,
-        firstName: firstName,
+        firstName: companyName,
         lastName: lastName,
         email: email,
         password: password,
@@ -113,17 +114,26 @@ export class AuthService {
       };
     }
     this.http
-      .post<{ 
-        succedeed: boolean,
-        errors: string[]
-      }>(this.baseUrl + '/Authentication/register', authData)
+      .post<{
+        succeeded: false,
+        errors: {
+          Email: string[] | null,
+          Password: string[] | null
+        }
+       }>(this.baseUrl + '/Authentication/register', authData)
       .subscribe(response => {
-        if (response.succedeed) {
+        if (response.succeeded) {
           this.router.navigate(["login"]);
-        } 
+        } if (!response.succeeded) {
+          if (response.errors.Email) {
+            this.authErrorStatusListener.next({email: response.errors.Email[0], password: null})
+          } else if (response.errors.Password) (
+            this.authErrorStatusListener.next({email: null, password: response.errors.Password[0]})
+          )
+        }
       }, error => {
         if (error) {
-          this.authErrorStatusListener.next({description: error[1].description});
+          this.authErrorStatusListener.next({email: "Uknown error occured", password: null});
         }
       });
   }
@@ -132,16 +142,18 @@ export class AuthService {
   loginUser(email: string, password: string, role: number) {
     const authData: User = { email: email, password: password, role: role };
     this.http
-      .post<{ 
+      .post<{
         succedeed: boolean,
         firstName: string | null,
-        lastName: string | null;
-        companyName: string | null;
-        token: string | null;
-        email: string | null;
-        id: number | null;
-        role: number;
-      }>(this.baseUrl + '/Authentication/login', authData)
+        lastName: string | null,
+        token: string | null,
+        email: string | null,
+        id: number | null,
+        role: number,
+        errors: {
+          Error: string[] | null
+        }
+       }>(this.baseUrl + '/Authentication/login', authData)
       .subscribe(response => {
         if (response.succedeed) {
           const token = response.token;
@@ -155,11 +167,13 @@ export class AuthService {
             this.router.navigate(["/admin-dashboard/job-postings"]);
           }
         } else if (!response.succedeed) {
-          this.authErrorStatusListener.next({description: "Email or password incorrect or does not exist"})
+          if (response.errors) {
+            this.authErrorStatusListener.next({email: response.errors.Error[0], password: null})
+          }
         }
       }, error => {
         if (error) {
-          this.authErrorStatusListener.next({description: error[1].description})
+          this.authErrorStatusListener.next({email: "Uknown error occured", password: null})
         }
       });
   }
