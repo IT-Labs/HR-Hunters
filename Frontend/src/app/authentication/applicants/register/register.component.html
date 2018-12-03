@@ -108,12 +108,13 @@
               </div>
             </div>
 
-            <!-- SERVER ERROR -->
+            <!-- SERVER EMAIL ERROR -->
 
             <div
               *ngIf="authError"
               class="alert alert-warning auth-form__alert"
-            > {{ authError.description }}
+            >
+              {{ authError.email }}
             </div>
 
             <!-- PASSWORD INPUT -->
@@ -158,6 +159,15 @@
               >
                 Password must be up to 20 characters long.
               </div>
+            </div>
+
+            <!-- SERVER EMAIL ERROR -->
+
+            <div
+              *ngIf="authError"
+              class="alert alert-warning auth-form__alert"
+            >
+              {{ authError.password }}
             </div>
 
             <!-- CONFIRM PASSWORD INPUT -->

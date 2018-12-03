@@ -11,18 +11,24 @@ import { Subscription } from "rxjs";
 export class ApplicantRegisterComponent implements OnInit {
   password: string;
   confirmedPassword: string;
-  authError;
+  authError: {
+    email: string,
+    passsword: string
+  };
   private authStatusSub: Subscription;
   private authErrorStatusSub: Subscription;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {}
 
   ngOnInit() {
+    this.authError.email = "";
+    this.authError.passsword = "";
     this.authStatusSub = this.authService
       .getAuthStatusListener()
       .subscribe(authStatus => {});
     this.authErrorStatusSub = this.authService.getAuthErrorStatusListener().subscribe(error => {
-      this.authError = error;
+      this.authError.email = error.email;
+      this.authError.passsword = error.password
     })
   }
 

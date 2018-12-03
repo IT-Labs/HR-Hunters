@@ -83,9 +83,9 @@
             <!-- SERVER ERROR -->
 
             <div
-              *ngIf="authError"
+              *ngIf="authError?.email"
               class="alert alert-warning auth-form__alert"
-            > {{ authError.description }}
+            > {{ authError?.email }}
             </div>
 
             <!-- PASSWORD INPUT -->
@@ -127,7 +127,22 @@
               >
                 Password must be up to 20 characters long.
               </div>
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientPassword'].errors
+                "
+              >
+                Password must contain at least 1 lowercase, 1 uppercase alphabetical character, 1 numeric character and one special character.
+              </div>
             </div>
+
+             <!-- SERVER ERROR -->
+
+             <div
+             *ngIf="authError?.password"
+             class="alert alert-warning auth-form__alert"
+           > {{ authError?.password }}
+           </div>
 
             <!-- CONFIRM PASSWORD INPUT -->
             <input

@@ -11,7 +11,8 @@ import { AuthService } from "src/app/services/auth.service";
 export class ClientRegisterComponent {
   private password: string;
   private confirmedPassword: string;
-  authError;
+  authEmailError: string;
+  authPasswordError: string;
   private authErrorStatusSub: Subscription;
   private authStatusSub: Subscription;
 
@@ -19,10 +20,13 @@ export class ClientRegisterComponent {
 
   ngOnInit() {
     this.authStatusSub = this.authService
-      .getAuthStatusListener()
-      .subscribe(authStatus => {});
+    .getAuthStatusListener()
+    .subscribe(authStatus => {});
     this.authErrorStatusSub = this.authService.getAuthErrorStatusListener().subscribe(error => {
-      this.authError = error;
+      if (error) {
+        this.authEmailError = error.email;
+        this.authPasswordError = error.password
+      }
     })
   }
 
@@ -50,7 +54,8 @@ export class ClientRegisterComponent {
       Validators.compose([
         Validators.required,
         Validators.minLength(8),
-        Validators.maxLength(20)
+        Validators.maxLength(20),
+        Validators.pattern("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})")
       ])
     ],
     clientConfirmPassword: [
