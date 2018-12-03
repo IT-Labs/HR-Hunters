@@ -1,6 +1,12 @@
-FROM nginx:1.13.3-alpine
-## Remove default nginx website
-RUN rm -rf /usr/share/nginx/html/*
-## From 'builder' stage copy over the artifacts in dist folder to default nginx public folder
-COPY /dist/hr-hunters /usr/share/nginx/html
-CMD ["nginx", "-g", "daemon off;"]
+FROM johnpapa/angular-cli as angular-built
+WORKDIR /usr/src/app
+COPY package.json package.json
+RUN npm install --silent
+COPY . .
+RUN ng build --prod --build-optimizer
+
+FROM nginx:alpine
+LABEL author="John Papa"
+COPY --from=angular-built /usr/src/app/dist /usr/share/nginx/html
+EXPOSE 80 443
+CMD [ "nginx", "-g", "daemon off;" ]
