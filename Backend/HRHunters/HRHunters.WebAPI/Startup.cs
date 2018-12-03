@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Responses;
 using HRHunters.Data;
 using HRHunters.Data.Context;
 using HRHunters.Domain.Managers;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +42,7 @@ namespace HRHunters.WebAPI
         //  This method gets called by the runtime.Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            
             IdentityBuilder builder = services.AddIdentityCore<User>(opt =>
             {
                 opt.Password.RequiredLength = 8;
@@ -79,9 +82,8 @@ namespace HRHunters.WebAPI
             });
 
             services.AddTransient<SeedData>();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<DataContext>(x => x.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-
+            
             services.AddAutoMapper();
             services.AddCors(opt =>
             {
@@ -96,7 +98,16 @@ namespace HRHunters.WebAPI
             });
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+            services.Configure<ApiBehaviorOptions>(options => {
+                //Custom ModelState validations through [ApiController] attribute, to match the client's expected response
+                options.InvalidModelStateResponseFactory = actionContext =>
+                {
+                    //We always know the first keyvalue pair in RouteData is the "action", the second is the "controller"
+                    if(actionContext.RouteData.Values["action"].Equals("Login"))
+                        return new BadRequestObjectResult(new UserLoginReturnModel(actionContext.ModelState));
+                    return new BadRequestObjectResult(new UserRegisterReturnModel(actionContext.ModelState));
+                };
+            });
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
