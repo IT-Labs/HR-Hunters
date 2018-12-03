@@ -5,11 +5,10 @@ import { User } from "../models/user.model";
 import { Subject } from "rxjs";
 import { Client } from "../models/client.model";
 import { Applicant } from "../models/applicant.model";
-import { environment } from "../../environments/environment"
+import { environment } from "../../environments/environment";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
-
   baseUrl = environment.baseUrl;
 
   private isAuthenticated = false;
@@ -26,8 +25,8 @@ export class AuthService {
   }>();
   private authStatusListener = new Subject<boolean>();
   private authErrorStatusListener = new Subject<{
-    email: string,
-    password: string
+    email: string;
+    password: string;
   }>();
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -43,7 +42,7 @@ export class AuthService {
 
   // Checks if the user is authenticated
   getIsAuth() {
-    this.autoAuthUser()
+    this.autoAuthUser();
     return this.isAuthenticated;
   }
 
@@ -89,93 +88,112 @@ export class AuthService {
     lastName: string,
     email: string,
     password: string,
-    role: number
+    userType: number
   ) {
     let authData: Client | Applicant;
     // FOR APPLICANTS
     if (companyName === null) {
       authData = {
-        id: null,
         firstName: firstName,
         lastName: lastName,
         email: email,
         password: password,
-        role: role
+        userType: userType
       };
       // FOR CLIENTS
     } else if (firstName === null) {
       authData = {
-        id: null,
         firstName: companyName,
         lastName: lastName,
         email: email,
         password: password,
-        role: role
+        userType: userType
       };
     }
     this.http
       .post<{
-        succeeded: false,
+        succeeded: false;
         errors: {
-          Email: string[] | null,
-          Password: string[] | null
+          Email: string[] | null;
+          Password: string[] | null;
+        };
+      }>(this.baseUrl + "/Authentication/register", authData)
+      .subscribe(
+        response => {
+          if (response.succeeded) {
+            this.router.navigate(["login"]);
+          }
+          if (!response.succeeded) {
+            if (response.errors.Email) {
+              this.authErrorStatusListener.next({
+                email: response.errors.Email[0],
+                password: null
+              });
+            } else if (response.errors.Password)
+              this.authErrorStatusListener.next({
+                email: null,
+                password: response.errors.Password[0]
+              });
+          }
+        },
+        error => {
+          if (error) {
+            this.authErrorStatusListener.next({
+              email: "Uknown error occured",
+              password: null
+            });
+          }
         }
-       }>(this.baseUrl + '/Authentication/register', authData)
-      .subscribe(response => {
-        if (response.succeeded) {
-          this.router.navigate(["login"]);
-        } if (!response.succeeded) {
-          if (response.errors.Email) {
-            this.authErrorStatusListener.next({email: response.errors.Email[0], password: null})
-          } else if (response.errors.Password) (
-            this.authErrorStatusListener.next({email: null, password: response.errors.Password[0]})
-          )
-        }
-      }, error => {
-        if (error) {
-          this.authErrorStatusListener.next({email: "Uknown error occured", password: null});
-        }
-      });
+      );
   }
 
   // LOGIN
-  loginUser(email: string, password: string, role: number) {
-    const authData: User = { email: email, password: password, role: role };
+  loginUser(email: string, password: string, userType: number) {
+    const authData: User = { email: email, password: password, userType: userType };
     this.http
       .post<{
-        succedeed: boolean,
-        firstName: string | null,
-        lastName: string | null,
-        token: string | null,
-        email: string | null,
-        id: number | null,
-        role: number,
+        succedeed: boolean;
+        firstName: string | null;
+        lastName: string | null;
+        token: string | null;
+        email: string | null;
+        id: number | null;
+        role: number;
         errors: {
-          Error: string[] | null
-        }
-       }>(this.baseUrl + '/Authentication/login', authData)
-      .subscribe(response => {
-        if (response.succedeed) {
-          const token = response.token;
-          this.user.token = token;
-          this.user.id = response.id;
-          this.user.email = response.email;
-          if (token) {
-            this.isAuthenticated = true;
-            this.authStatusListener.next(true);
-            this.saveAuthData(token);
-            this.router.navigate(["/admin-dashboard/job-postings"]);
+          Error: string[] | null;
+        };
+      }>(this.baseUrl + "/Authentication/login", authData)
+      .subscribe(
+        response => {
+          if (response.succedeed) {
+            const token = response.token;
+            this.user.token = token;
+            this.user.id = response.id;
+            this.user.email = response.email;
+            if (token) {
+              this.isAuthenticated = true;
+              this.authStatusListener.next(true);
+              this.saveAuthData(token);
+              this.router.navigate(["/admin-dashboard/job-postings"]);
+            }
+          } else if (!response.succedeed) {
+            if (response.errors) {
+              this.authErrorStatusListener.next({
+                email: response.errors.Error[0],
+                password: null
+              });
+            }
           }
-        } else if (!response.succedeed) {
-          if (response.errors) {
-            this.authErrorStatusListener.next({email: response.errors.Error[0], password: null})
+        },
+        error => {
+          if (error) {
+            this.authErrorStatusListener.next({
+              email: "Uknown error occured",
+              password: null
+            });
           }
         }
-      }, error => {
-        if (error) {
-          this.authErrorStatusListener.next({email: "Uknown error occured", password: null})
-        }
-      });
+      );
   }
 
   checkTokenValidity(token: string) {
@@ -187,16 +205,15 @@ export class AuthService {
       }>("BACKEND_URL", token)
       .subscribe(response => {
         if (!response.isValid) {
-          return {isvalid: false, token: ''}
+          return { isvalid: false, token: "" };
         }
         this.user.token = response.token;
         this.isAuthenticated = true;
         this.authStatusListener.next(true);
         this.saveAuthData(token);
         validToken = response.token;
-        }
-      );
-      return {isvalid: true, token: validToken};
+      });
+    return { isvalid: true, token: validToken };
   }
 
   // Call the func for getting the token from local storage on when user comes back to website
@@ -205,7 +222,6 @@ export class AuthService {
     if (!token) {
       return;
     } else if (token) {
-
     }
     this.isAuthenticated = true;
     this.user.token = token.token;
@@ -219,9 +235,9 @@ export class AuthService {
       return;
     }
     if (!this.checkTokenValidity(token).isvalid) {
-      return
+      return;
     }
-    token = this.checkTokenValidity(token).token
+    token = this.checkTokenValidity(token).token;
     return {
       token: token
     };
