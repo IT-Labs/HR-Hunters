@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -45,6 +46,7 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpPost("login")]
+        
         public async Task<IActionResult> Login(UserLoginModel userLoginModel)
         {
             var user = await _usersManager.Login(userLoginModel);

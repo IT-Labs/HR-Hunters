@@ -103,7 +103,7 @@ namespace HRHunters.WebAPI
                 options.InvalidModelStateResponseFactory = actionContext =>
                 {
                     //We always know the first keyvalue pair in RouteData is the "action", the second is the "controller"
-                    if(actionContext.RouteData.Values.First().Equals("login"))
+                    if(actionContext.RouteData.Values["action"].Equals("Login"))
                         return new BadRequestObjectResult(new UserLoginReturnModel(actionContext.ModelState));
                     return new BadRequestObjectResult(new UserRegisterReturnModel(actionContext.ModelState));
                 };
