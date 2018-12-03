@@ -15,13 +15,13 @@ namespace HRHunters.Common.Responses
         public UserRegisterReturnModel(ModelStateDictionary modelState)
         {
             Errors = new Dictionary<string, List<string>>();
-            foreach(var property in modelState.Keys)
+            foreach (var property in modelState.Keys)
             {
                 var value = modelState[property];
                 var listOfErrors = new List<string>();
-                if(value.Errors.Any())
+                if (value.Errors.Any())
                 {
-                    foreach(var error in value.Errors)
+                    foreach (var error in value.Errors)
                     {
                         listOfErrors.Add(error.ErrorMessage);
                     }

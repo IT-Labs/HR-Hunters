@@ -3,8 +3,6 @@ import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 
-import { ClientsComponent } from './authentication/clients/clients.component';
-import { ApplicantsComponent } from './authentication/applicants/applicants.component';
 import { HeaderComponent } from './header/header.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { ClientComponent } from './homepage/client/client.component';
@@ -31,8 +29,6 @@ import { LoginComponent } from './authentication/login/login.component';
 
 @NgModule({
     declarations: [
-        ClientsComponent,
-        ApplicantsComponent,
         HeaderComponent,
         AdminDashboardComponent,
         AddJobPostingComponent,
