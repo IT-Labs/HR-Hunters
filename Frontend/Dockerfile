@@ -3,7 +3,7 @@ WORKDIR /usr/src/app
 COPY package.json package.json
 RUN npm install --silent
 COPY . .
-RUN ng build --prod --build-optimizer
+RUN ng build --prod
 
 FROM nginx:alpine
 LABEL author="John Papa"
