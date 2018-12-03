@@ -158,7 +158,7 @@ export class AuthService {
         token: string | null;
         email: string | null;
         id: number | null;
-        role: number;
+        userType: number;
         errors: {
           Error: string[] | null;
         };
