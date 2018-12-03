@@ -27,25 +27,7 @@ export class ClientService {
 
   // Get all applications
   getClients(clientQP) {
-    const queryParams = {
-      params: new HttpParams()
-        .append("pageSize", clientQP.postsPerPage)
-        .append("currentPage", clientQP.currentPage)
-        .append("sort", clientQP.currentSortBy)
-        .append("sortDir", clientQP.currentSortDirection)
-        .append("filter", clientQP.currentFilter)
-    };
-
-    const paramssss = {
-      queryParams: {
-        pageSize: clientQP.postsPerPage,
-        currentPage: clientQP.currentPage,
-        sort: clientQP.currentSortBy,
-        sortDir: clientQP.currentSortDirection,
-        filter: clientQP.currentFilter
-      }
-    };
-    const queryParams1 = `?pagesize=${clientQP.clientsPerPage}&page=${
+    const queryParams = `?pagesize=${clientQP.clientsPerPage}&page=${
       clientQP.currentPage
     }&sort=${clientQP.sortedBy}&sortDir=${clientQP.sortDirection}&filter=${
       clientQP.filterBy
