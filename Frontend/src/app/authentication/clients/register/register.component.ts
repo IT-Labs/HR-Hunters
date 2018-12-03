@@ -13,6 +13,8 @@ export class ClientRegisterComponent {
   private confirmedPassword: string;
   authEmailError: string;
   authPasswordError: string;
+  strongPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+  validEmail = new RegExp("[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}");
   private authErrorStatusSub: Subscription;
   private authStatusSub: Subscription;
 
@@ -46,7 +48,7 @@ export class ClientRegisterComponent {
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(30),
-        Validators.email
+        Validators.pattern(this.validEmail)
       ])
     ],
     clientPassword: [
@@ -55,7 +57,7 @@ export class ClientRegisterComponent {
         Validators.required,
         Validators.minLength(8),
         Validators.maxLength(20),
-        Validators.pattern("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})")
+        Validators.pattern(this.strongPassword)
       ])
     ],
     clientConfirmPassword: [
