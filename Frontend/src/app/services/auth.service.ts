@@ -141,13 +141,13 @@ export class AuthService {
           if (error) {
             if (error.errors.Email) {
               this.authErrorStatusListener.next({
-                email: error.errors.Email[0],
+                email: error.error.errors.Email[0],
                 password: null
               });
             } else if (error.errors.Password) {
               this.authErrorStatusListener.next({
                 email: null,
-                password: error.errors.Password[0]
+                password: error.error.errors.Password[0]
               });
             }
           }
