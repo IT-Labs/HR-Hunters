@@ -11,7 +11,10 @@ import { Subscription } from "rxjs";
 export class ApplicantRegisterComponent implements OnInit {
   password: string;
   confirmedPassword: string;
-  authError;
+  authEmailError: string;
+  authPasswordError: string;
+  strongPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+  validEmail = new RegExp("[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}");
   private authStatusSub: Subscription;
   private authErrorStatusSub: Subscription;
 
@@ -22,7 +25,8 @@ export class ApplicantRegisterComponent implements OnInit {
       .getAuthStatusListener()
       .subscribe(authStatus => {});
     this.authErrorStatusSub = this.authService.getAuthErrorStatusListener().subscribe(error => {
-      this.authError = error;
+      this.authEmailError = error.email;
+      this.authPasswordError = error.password
     })
   }
 
@@ -51,7 +55,7 @@ export class ApplicantRegisterComponent implements OnInit {
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(30),
-        Validators.email
+        Validators.pattern(this.validEmail)
       ])
     ],
     applicantPassword: [
@@ -59,7 +63,8 @@ export class ApplicantRegisterComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.minLength(8),
-        Validators.maxLength(20)
+        Validators.maxLength(20),
+        Validators.pattern(this.strongPassword)
       ])
     ],
     applicantConfirmPassword: [
