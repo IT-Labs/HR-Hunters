@@ -6,6 +6,7 @@ using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace HRHunters.Domain.Managers
@@ -23,49 +24,65 @@ namespace HRHunters.Domain.Managers
             _mapper = mapper;
             _signInManager = signInManager;
         }
-        public async Task<UserToReturnModel> Login(UserLoginModel userLoginModel)
+        public async Task<UserLoginReturnModel> Login(UserLoginModel userLoginModel)
         {
             var user = await _userManager.FindByEmailAsync(userLoginModel.Email);
-            var userToReturn = new UserToReturnModel()
+            var userToReturn = new UserLoginReturnModel()
             {
-                Succedeed = false
+                Succeeded = false,
+                Errors = new Dictionary<string, List<string>>()
             };
+            //Error message for invalid username or password 
+            var list = new List<string>()
+            {
+                "Invalid username or password"
+            };
+            //User not found by email
             if (user == null)
             {
+                userToReturn.Errors.Add("Error", list);
                 return userToReturn;
             }
+            //If user exists, check password
             var result = await _signInManager.CheckPasswordSignInAsync(user, userLoginModel.Password, false);
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userLoginModel.Email);
-                userToReturn = _mapper.Map<UserToReturnModel>(appUser);
-                var roles = await _userManager.GetRolesAsync(appUser);
-                userToReturn.Succedeed = true;
-                userToReturn.Token = _extensionMethods.GenerateJwtToken(appUser);
-                userToReturn.CompanyName = roles.Contains("Client") ? userToReturn.FirstName : null;
-                userToReturn.Role = roles.Contains("Applicant") ? 0 : 1;
-
+                //Wrong password, return error
+                userToReturn.Errors.Add("Error", list);
+                return userToReturn;
             }
+            //If OK sign in user
+            var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userLoginModel.Email);
+            userToReturn = _mapper.Map<UserLoginReturnModel>(appUser);
+            var roles = await _userManager.GetRolesAsync(appUser);
+            userToReturn.Succeeded = true;
+            userToReturn.Token = _extensionMethods.GenerateJwtToken(appUser);
+            userToReturn.CompanyName = roles.Contains("Client") ? userToReturn.FirstName : null;
+            userToReturn.Role = roles.Contains("Applicant") ? 0 : 1;
             return userToReturn;
-
         }
 
-        public async Task<IdentityResult> Register(UserRegisterModel userRegisterModel)
+        public async Task<UserRegisterReturnModel> Register(UserRegisterModel userRegisterModel)
         {
             var userToCreate = _mapper.Map<User>(userRegisterModel);
             userToCreate.UserName = userToCreate.Email;
-            var result = new IdentityResult();
             var role = userRegisterModel.UserType == UserType.APPLICANT ? "Applicant" : "Client";
             if (userRegisterModel.UserType == UserType.CLIENT)
             {
                 userToCreate.FirstName = userRegisterModel.CompanyName;
             }
-            result = await _userManager.CreateAsync(userToCreate, userRegisterModel.Password);
+            var result = await _userManager.CreateAsync(userToCreate, userRegisterModel.Password);
+            var userToReturn = new UserRegisterReturnModel()
+            {
+                Succeeded = true
+            };
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(userToCreate, role);
+                return userToReturn;
             }
-            return result;
+            userToReturn.Succeeded = false;
+            return userToReturn;
         }
     }
 }

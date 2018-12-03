@@ -17,6 +17,7 @@ namespace HRHunters.Common.Requests.Users
         [Required]
         [StringLength(maximumLength: 20, ErrorMessage = "Password cannot contain more than 20 characters.")]
         [MinLength(8, ErrorMessage = "Password cannot be shorter than 8 characters.")]
+        [RegularExpression("^[a-zA-Z0-9!@#$%^&*]*$", ErrorMessage = "The password can only contain alphanumeric characters and the special characters !@#$%^&*")]
         public string Password { get; set; }
         public UserType UserType { get; set; }
     }
