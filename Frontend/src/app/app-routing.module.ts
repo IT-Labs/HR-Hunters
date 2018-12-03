@@ -20,6 +20,8 @@ import { ADApplicationsComponent } from "./admin-dashboard/applications/applicat
 import { ADClientsComponent } from "./admin-dashboard/clients/clients.component";
 import { ADJobPostingsComponent } from "./admin-dashboard/job-postings/job-postings.component";
 import { ADNewJobPostingComponent } from "./admin-dashboard/job-postings/new-job-posting/new-job-posting.component";
+import {HomepageComponent} from "./homepage/homepage.component";
+import {HeaderComponent} from "./header/header.component";
 import { AuthGuard } from "./authentication/auth.guard";
 
 const routes: Routes = [
@@ -34,6 +36,10 @@ const routes: Routes = [
     { path: "clients", component: ADClientsComponent },
     { path: "job-postings", component: ADJobPostingsComponent },
     { path: "new-job-posting", component: ADNewJobPostingComponent }
+  ]},
+  { path: "homepage", component:HomepageComponent, children: [
+    { path: "header", component: HeaderComponent }
+   
   ]},
   {
     path: "client",

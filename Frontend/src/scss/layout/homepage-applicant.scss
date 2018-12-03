@@ -1,0 +1,132 @@
+.home-applicant {
+    &__component-container {
+      width: 100%;
+      margin-top: 0rem;
+  
+      &--responsive {
+        display: none;
+      }
+    }
+  
+    &__header {
+      height: 4rem;
+      background-color:$color-nav-primary-bg;
+      margin-top: 0rem;
+       
+    &__nav-horizontal{
+        height: 100%;
+        margin: 0rem 1rem;
+        padding-top: 0rem;
+        ul{
+          width: 100%;
+          margin: 0rem 0.5rem;
+          li{
+            margin: -0.5rem 0.5rem;
+          }
+        }
+
+    }
+
+    &__nav-horizontal-list{
+      margin: 0rem 0.5rem;
+
+    }
+      &__title {
+        // padding: 0 1rem;
+
+        &--link {
+          color: $color-link-active;
+          background:$bg-color-navlink;
+     
+     
+          &:hover {
+            color: $color-link-hover;
+            text-decoration: none;
+            background:$bg-color-hover;
+          }
+          &:active {
+            color: $color-link-active;
+            background:$color-nav-li-bg-active;
+          }
+        }
+      }
+
+      &__breadcrumb{
+      
+        list-style: none;
+      
+        // margin: 2rem 0rem;
+
+        li {
+            display: inline;
+            font-size: 1.8rem;
+        }
+
+        // li+li:before {
+        //     padding: 10px;
+        //     color: black;
+        //     content: "|\00a0";
+        // }
+      }
+    }
+  
+    &__navigation {
+      display: flex;
+      height: calc(100% - 4rem);
+      min-height: calc(100vh - 4rem);
+  
+  
+      &--brand {
+        // display: none;
+      }
+  
+      nav {
+        // width: 15rem;
+        background: $bg-color-breadcrumb;
+      }
+  
+      &--link {
+        width: 100%;
+        padding: 1rem 0.5rem;
+        color: $color-link-active;
+        font-size: 1.3rem;
+        width: 100%;
+        background-color: $color-nav-li-bg;
+        cursor: pointer;
+  
+        &:hover {
+          color: $color-nav-link;
+        }
+  
+        &:focus {
+          outline: none;
+        }
+        &:active {
+          outline: none;
+        }
+      }
+  
+
+    }
+  }
+  
+  @media (max-width: 991px) {
+    #home-applicant {
+      
+    
+      &__nav-horizontal {
+        position: relative;
+        top: 3.5rem;
+        padding-top: 0.7rem;
+        background-color: $color-nav-primary-bg;
+        z-index: 9999;
+      }
+    }
+  
+ 
+  }
+  
+  @media (min-width: 992px) {
+ 
+  }
+  
