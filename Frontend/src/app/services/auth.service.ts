@@ -170,7 +170,7 @@ export class AuthService {
         errors: {
           Error: string[] | null;
         };
-      }>("http://dev-docker:9013/api/Authentication/login", authData)
+      }>(this.baseUrl + "/Authentication/login", authData)
       .subscribe(
         response => {
           console.log(response);
