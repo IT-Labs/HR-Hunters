@@ -84,7 +84,7 @@ export class JobPostingService {
   addJobPosting(
     companyName: string,
     companyEmail: string,
-    logo: File,
+    logo: string | File,
     id: number | null,
     jobTitle: string,
     dateFrom: string,
