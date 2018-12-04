@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HRHunters.Common.Responses.Applicants
+namespace HRHunters.Common.Responses.AdminDashboard
 {
     public class ApplicantInfo
     {
