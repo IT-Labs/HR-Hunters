@@ -9,7 +9,9 @@ namespace HRHunters.Common.Requests.Users
     public class UserRegisterModel
     {
         [Required]
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "First name can only contain letters.")]
         public string FirstName { get; set; }
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Last name can only contain letters.")]
         public string LastName { get; set; }
         [Required, EmailAddress]
         public string Email { get; set; }

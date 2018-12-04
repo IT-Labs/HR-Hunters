@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Responses.Applicants;
 using HRHunters.Data;
 
 namespace HRHunters.Domain.Managers
@@ -16,10 +17,16 @@ namespace HRHunters.Domain.Managers
             _repo = repo;
         }
 
-        public IEnumerable<Applicant> GetMultiple()
+        public IEnumerable<ApplicantInfo> GetMultiple()
         {
-            
-            return _repo.Get<Applicant>();
+
+            return _repo.Get<Applicant>(includeProperties: $"{nameof(Applicant.User)}")
+                .Select(
+                x => new ApplicantInfo {
+                    FirstName = x.User.FirstName,
+                    LastName = x.User.LastName,
+                    Email = x.User.Email,
+                    PhoneNumber = x.PhoneNumber});
         }
     }
 }

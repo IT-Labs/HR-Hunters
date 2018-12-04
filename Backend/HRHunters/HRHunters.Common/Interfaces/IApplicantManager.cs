@@ -1,4 +1,5 @@
 ﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Responses.Applicants;
 using HRHunters.Data;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,6 @@ namespace HRHunters.Common.Interfaces
 {
     public  interface IApplicantManager : IBaseManager
     {
-        IEnumerable<Applicant> GetMultiple();
+        IEnumerable<ApplicantInfo> GetMultiple();
     }
 }
