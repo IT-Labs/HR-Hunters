@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 
 import { HeaderComponent } from './header/header.component';
+import { NavigationComponent } from './header/navigation/navigation.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { ClientComponent } from './homepage/client/client.component';
 import { HomepageComponent } from './homepage/homepage.component';
@@ -30,6 +31,7 @@ import { LoginComponent } from './authentication/login/login.component';
 @NgModule({
     declarations: [
         HeaderComponent,
+        NavigationComponent,
         AdminDashboardComponent,
         AddJobPostingComponent,
         ClientComponent,
