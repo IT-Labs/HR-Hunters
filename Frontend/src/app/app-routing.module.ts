@@ -8,7 +8,7 @@ import { ClientJobPostingsComponent } from "./homepage/client/client-job-posting
 import { JobPostingDetailsComponent } from "./homepage/applicant/job-posting-details/job-posting-details.component";
 import { ApplicantApplicationsComponent } from "./homepage/applicant/applicant-applications/applicant-applications.component";
 import { ErrorComponent } from "./error/error.component";
-import { AppicantJobPostingsComponent } from "./homepage/applicant/applicant-job-postings/applicant-job-postings.component";
+import { JobPostingsListComponent } from "./homepage/applicant/job-postings-list/job-postings-list.component";
 import { ClientProfileComponent } from "./homepage/client/client-profile/client-profile.component";
 import { ApplicantProfileComponent } from "./homepage/applicant/applicant-profile/applicant-profile.component";
 import { WelcomeComponent } from "./authentication/welcome.component";
@@ -54,7 +54,7 @@ const routes: Routes = [
     component: ApplicantComponent,
     children: [
       { path: "profile", component: ApplicantProfileComponent },
-      { path: "job-postings", component: AppicantJobPostingsComponent },
+      { path: "job-postings", component: JobPostingsListComponent },
       { path: "job-posting/:id", component: JobPostingDetailsComponent },
       { path: "applications/:id", component: ApplicantApplicationsComponent }
     ]

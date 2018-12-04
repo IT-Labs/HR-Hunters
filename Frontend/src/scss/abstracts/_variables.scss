@@ -13,10 +13,21 @@ $color-btn-auth-bg: #37b3ad;
 $color-btn-auth-active: #53cac4;
 $color-btn-auth-hover: #2b8c87;
 
-// BTN Primary
+//BTN Primary
 $color-btn-primary-bg: #37b3ad;
 $color-btn-primary-active: #53cac4;
 $color-btn-primary-hover: #2b8c87;
+
+//BTN Success
+$color-btn-success-bg: #7cc576;
+$color-btn-success-active: #9ed49a;
+$color-btn-success-hover: #4ea847;
+
+//BTN Danger
+$color-btn-danger-bg: #ff7070;
+$color-btn-danger-active: #ffa3a3;
+$color-btn-danger-hover: #ff2424;
+
 
 //Admin dashboard navigation
 $color-nav-primary-bg: #23282d;
@@ -35,6 +46,7 @@ $placeholder-font-size: 1.4rem;
 
 //FONT
 $default-font-size: 1.6rem;
+$content-font-size: 1.4rem;
 
 // admin tables
 $color-heading-table-cell: #2276dd;

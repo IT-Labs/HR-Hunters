@@ -3,8 +3,8 @@ export interface JobPosting {
     id: number;
     jobTitle: string;
     jobType: string;
-    dateFrom: Date;
-    dateTo: Date;
+    dateFrom: string;
+    dateTo: string;
     description: string;
     education: string;
     status: string;

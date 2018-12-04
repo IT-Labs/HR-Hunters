@@ -17,7 +17,7 @@ export class ADApplicantsComponent implements OnInit,OnDestroy {
   applicantsQP = {
     postsPerPage: 10,
     currentPage: 1,
-    currentSortBy: "Expires",
+    currentSortBy: "firstName",
     currentSortDirection: 1,
     currentFilter: "All",
     lastSortBy: ""

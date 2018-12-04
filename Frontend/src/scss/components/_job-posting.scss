@@ -3,22 +3,24 @@
         width: 100%;
     }
 
-    &__heading {
-    }
+    // &__heading {
+    // }
 
     &__sub-heading {
         color: $color-text-secondary;
+        font-size: $content-font-size;
     }
 
     &__content {
-
+        font-size: $content-font-size;
     }
 
     &__meta {
         color: $color-text-secondary;
+        font-size: $content-font-size;
     }
 
     &__btn-container {
-        
+        text-align: right;
     }
 }

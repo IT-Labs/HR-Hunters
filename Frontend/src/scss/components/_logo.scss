@@ -1,0 +1,35 @@
+.company-logo {
+  height: 15rem;
+  width: 15rem;
+  background-color: gray;
+  border-radius: 50%;
+  position: relative;
+  margin: auto;
+  overflow: hidden;
+
+  &:hover &__text {
+    opacity: 1;
+  }
+
+  &:hover &__img {
+    filter: blur(5px) brightness(20%);
+  }
+
+  &__img {
+    height: 100%;
+    transition: all 0.5s;
+  }
+
+  &__text {
+    color: $color-white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    line-height: 2.2rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 1s;
+  }
+}
