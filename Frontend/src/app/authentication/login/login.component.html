@@ -76,10 +76,10 @@
                 Password must be up to 20 characters long.
               </div>
             </div>
-            <p class="auth-form__text" *ngIf="!currentRole.admin">
+            <p class="auth-form__text" *ngIf="!role.admin">
               You don't have an account?<br />Register
-              <a routerLink="/applicant-register" *ngIf="currentRole.applicant">here</a>
-              <a routerLink="/client-register" *ngIf="currentRole.client">here</a>.
+              <a routerLink="/applicant-register" *ngIf="role.applicant">here</a>
+              <a routerLink="/client-register" *ngIf="role.client">here</a>.
             </p>
             <button
               class="btn btn-auth"
