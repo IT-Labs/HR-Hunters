@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
     }
 
     this.authErrorStatusSub = this.authService.getAuthErrorStatusListener().subscribe(error => {
-      this.authError = error;
+      this.authError = error.email;
     })
   }
 
@@ -60,8 +60,7 @@ export class LoginComponent implements OnInit {
     }
     this.authService.loginUser(
       this.loginForm.value.email,
-      this.loginForm.value.password,
-      null
+      this.loginForm.value.password
     );
   }
 

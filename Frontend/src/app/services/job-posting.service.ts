@@ -53,8 +53,7 @@ export class JobPostingService {
                 location: jobPost.location,
                 logo: jobPost.logo,
                 allApplicationsCount: jobPost.allApplicationsCount,
-                activeApplicationsCount: jobPost.activeApplicationsCount,
-                applicantName: jobPost.applicantName
+                activeApplicationsCount: jobPost.activeApplicationsCount
               };
             }),
             maxJobPosts: jobPostingData.maxJobPosts,
@@ -88,8 +87,8 @@ export class JobPostingService {
     logo: File,
     id: number | null,
     jobTitle: string,
-    dateFrom: Date,
-    dateTo: Date,
+    dateFrom: string,
+    dateTo: string,
     location: string,
     description: string,
     jobType: string,
@@ -130,8 +129,8 @@ export class JobPostingService {
     companyEmail: string,
     logo: File | string,
     jobTitle: string,
-    dateFrom: Date,
-    dateTo: Date,
+    dateFrom: string,
+    dateTo: string,
     location: string,
     description: string,
     jobType: string,
@@ -147,8 +146,8 @@ export class JobPostingService {
       jobPostingData.append("companyEmail", companyEmail);
       jobPostingData.append("logo", logo, companyName);
       jobPostingData.append("jobTitle", jobTitle);
-      jobPostingData.append("dateFrom", dateFrom.toDateString());
-      jobPostingData.append("dateTo", dateTo.toDateString());
+      jobPostingData.append("dateFrom", dateFrom);
+      jobPostingData.append("dateTo", dateTo);
       jobPostingData.append("location", location);
       jobPostingData.append("description", description);
       jobPostingData.append("jobType", jobType);

@@ -34,7 +34,6 @@
     >
       <thead>
         <tr class="dash__table__header">
-          <th scope="col" (click)="onSort('applicantName')">Applicant Name</th>
           <th scope="col" (click)="onSort('jobTitle')">Position Title</th>
           <th scope="col" (click)="onSort('companyName')">Company Name</th>
           <th scope="col" (click)="onSort('companyEmail')">Contact Email</th>
@@ -49,8 +48,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let jobPosting of jobPostings">
-          <td scope="row">{{ jobPosting.applicantName }}</td>
-          <td>{{ jobPosting.jobTitle }}</td>
+          <td scope="row">{{ jobPosting.jobTitle }}</td>
           <td>{{ jobPosting.companyName }}</td>
           <td>{{ jobPosting.companyEmail }}</td>
           <td>{{ jobPosting.location }}</td>
