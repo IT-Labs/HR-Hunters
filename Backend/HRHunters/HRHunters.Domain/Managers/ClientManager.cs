@@ -33,6 +33,7 @@ namespace HRHunters.Domain.Managers
                     Id = x.UserId,
                     FirstName = x.User.FirstName,
                     Email = x.User.Email,
+                    Location=x.Location,
                     Active = _active,
                     All = 7,
                     Photo = "Nati foto"
