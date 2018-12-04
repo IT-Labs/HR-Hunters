@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -17,6 +18,7 @@ namespace HRHunters.Common.Entities
         public int UserId { get; set; }
         public string PhoneNumber { get; set; }
         public new int Id { get { return UserId; } set => Id = value;  }
+        [DisplayName("User")]
         public User User { get; set; }
         public virtual ICollection<Application> Applications { get; set; }
     }

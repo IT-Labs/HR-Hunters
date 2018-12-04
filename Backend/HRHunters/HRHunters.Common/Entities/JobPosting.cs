@@ -1,4 +1,5 @@
-﻿using HRHunters.Common.Interfaces;
+﻿using HRHunters.Common.Enums;
+using HRHunters.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,7 +28,7 @@ namespace HRHunters.Common.Entities
         [Required]
         public string Education { get; set; }
         [DisplayName("Status")]
-        public string Status { get; set; }
+        public JobPostingStatus Status { get; set; }
         [Required]
         public string NeededExperience { get; set; }
         public int ClientId { get; set; }

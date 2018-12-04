@@ -17,7 +17,7 @@ namespace HRHunters.Domain.Managers
 
         public IEnumerable<JobPosting> GetMultiple()
         {
-           return _repo.GetAll<JobPosting>();
+           return _repo.Get<JobPosting>();
         }
     }
 }

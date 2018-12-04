@@ -14,8 +14,10 @@ namespace HRHunters.Data.Context
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly IClientManager _clientManager;
+        private readonly IApplicantManager _applicantManager;
+        private readonly IApplicationManager _applicationManager;
 
-        public SeedData(IClientManager clientManager, UserManager<User> userManager, RoleManager<Role> roleManager)
+        public SeedData(IClientManager clientManager,IApplicationManager applicationManager, IApplicantManager applicantManager, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             _clientManager = clientManager;
             _userManager = userManager;
@@ -29,18 +31,14 @@ namespace HRHunters.Data.Context
             for(int i = 0; i < 10; i++)
                 {
                     var user = new User();
-                    //var pass = new PasswordHasher<User>();
-                    //var hashedPass = pass.HashPassword(user, "password12");
                     user.Email = "vlatkozmejkoski" + i + "@gmail.com";
                     user.EmailConfirmed = true;
                     user.NormalizedEmail = user.Email.ToUpper();
-                    //user.NormalizedUserName = user.UserName.ToUpper();
                     user.SecurityStamp = Guid.NewGuid().ToString("D");
                     user.LockoutEnabled = false;
                     user.FirstName = "Vlatko" + i;
                     user.LastName = "Zmejkoski" + i;
                     user.UserName = user.FirstName.ToLower() + user.LastName.ToLower();
-                    //user.PasswordHash = "";
                     user.PhoneNumber = "078691342";
                     user.AccessFailedCount = 0;
                     user.CreatedBy = user.FirstName;
@@ -54,6 +52,19 @@ namespace HRHunters.Data.Context
                             User = user,
                         };
                         _clientManager.Create(client);
+                        var jobPost = new JobPosting()
+                        {
+                            Client = client,
+                            DateFrom = DateTime.UtcNow,
+                            DateTo = DateTime.UtcNow.AddDays(4),
+                            Title = "Backend developer" + i,
+                            Education = "Bachelor degree",
+                            Description = "Lorem ipsum bruh...",
+                            EmpCategory = "Full-time",
+                            Location = "Skopje, Macedonia",
+                            Status = "Approved",
+                        };
+
                     }
                     else
                     {
@@ -63,7 +74,14 @@ namespace HRHunters.Data.Context
                             SchoolUniversity = "school" + i,
                             EducationType = "B"
                         };
-                        _clientManager.Create(applicant);
+                        _applicantManager.Create(applicant);
+                        var application = new Application()
+                        {
+                            Applicant = applicant,
+                            Date = DateTime.UtcNow,
+                            JobPosting = _clientManager.GetById<Client>(i).JobPostings.FirstOrDefault(),
+                        };
+                        _applicationManager.Create(application);
                     }
                 }
             }

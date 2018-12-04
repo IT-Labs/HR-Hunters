@@ -7,6 +7,7 @@ using HRHunters.Common.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HRHunters.Domain.Managers
@@ -70,7 +71,7 @@ namespace HRHunters.Domain.Managers
             var userToReturn = new UserRegisterReturnModel()
             {
                 Succeeded = false,
-                Errors= new Dictionary<string, List<string>>(),
+                Errors= new Dictionary<string, List<string>>()
             };
 
             if (string.IsNullOrEmpty(userRegisterModel.LastName) && role=="Applicant")
@@ -82,7 +83,12 @@ namespace HRHunters.Domain.Managers
            
             if (!result.Succeeded)
             {
-                userToReturn.Errors.Add("Email", new List<string>() { "Email already exists" });
+                var list = new List<string>();
+                foreach(var error in result.Errors)
+                {
+                    list.Add(error.Description);
+                    userToReturn.Errors.Add(error.Code, list);
+                }
                 return userToReturn;
             }
             if (role == "Client")

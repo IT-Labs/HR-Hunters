@@ -1,4 +1,5 @@
-﻿using HRHunters.Common.Interfaces;
+﻿using HRHunters.Common.Enums;
+using HRHunters.Common.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,8 @@ namespace HRHunters.Common.Entities
 {
     public class Client : Entity
     {
-        public string Status { get; set; }
+        public ClientStatus Status { get; set; }
+        public string Location { get; set; }
         public int UserId { get; set; }
 
         public User User { get; set; }

@@ -10,16 +10,8 @@ namespace HRHunters.Common.Entities
 {
     public class User : IdentityUser<int>, IEntity
     {
-        [Required]
-        [EmailAddress]
-        [MaxLength(30)]
-        [DisplayName("Email")]
         public override string Email { get; set; }
-        [DisplayName("FirstName")]
-        [Required]
-        [StringLength(50)]
         public string FirstName { get; set; }
-        [DisplayName("LastName")]
         public string LastName { get; set; }
 
 
