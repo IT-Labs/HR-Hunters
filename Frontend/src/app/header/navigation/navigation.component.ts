@@ -8,5 +8,7 @@ export class NavigationComponent {
 
   constructor() { }
 
-
+  onLogout() {
+    
+  }
 }

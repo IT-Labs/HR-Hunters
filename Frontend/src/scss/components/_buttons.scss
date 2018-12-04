@@ -17,18 +17,18 @@
 }
 
 .btn {
-  font-family: 'Roboto';
-  font-weight: 400;
-  font-size: 1.6rem;
-  padding: .7rem;
-  margin: 1rem;
-  width: 12rem;
-  border-radius: 1.2rem;
-  font-weight: 500;
-
+  
   &__primary {
     background-color: $color-btn-primary-bg;
     color: $color-white;
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 1.6rem;
+    padding: .7rem;
+    margin: 1rem;
+    width: 12rem;
+    border-radius: 1.2rem;
+    font-weight: 500;
 
     &:hover {
       background-color: $color-btn-primary-hover;
@@ -42,6 +42,14 @@
     background-color: $color-white;
     color: $color-btn-primary-bg;
     border: 2px solid $color-btn-primary-bg;
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 1.6rem;
+    padding: .7rem;
+    margin: 1rem;
+    width: 12rem;
+    border-radius: 1.2rem;
+    font-weight: 500;
 
     &:hover {
       color: $color-btn-primary-hover;
@@ -56,6 +64,14 @@
   &__success {
     background-color: $color-btn-success-bg;
     color: $color-white;
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 1.6rem;
+    padding: .7rem;
+    margin: 1rem;
+    width: 12rem;
+    border-radius: 1.2rem;
+    font-weight: 500;
 
     &:hover {
       background-color: $color-btn-success-hover;
@@ -69,6 +85,14 @@
     background-color: $color-white;
     color: $color-btn-danger-bg;
     border: 2px solid $color-btn-danger-bg;
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 1.6rem;
+    padding: .7rem;
+    margin: 1rem;
+    width: 12rem;
+    border-radius: 1.2rem;
+    font-weight: 500;
 
     &:hover {
       color: $color-btn-danger-hover;

@@ -17,8 +17,10 @@ export class AddJobPostingComponent implements OnInit {
     "Masters degree",
     "Doctoral degree"
   ];
-  imagePreview: string | ArrayBuffer;
-  imageValid = true;
+
+  validDates: boolean;
+  validExperience: boolean;
+
   experience = [
     "<1",
     "1",
@@ -43,6 +45,16 @@ export class AddJobPostingComponent implements OnInit {
     "20+"
   ];
   filteredExperience = [];
+
+  formFocus = {
+    title: false,
+    description: false,
+    jobType: false,
+    education: false,
+    experience: false,
+    durationFrom: false,
+    durationTo: false
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -79,13 +91,89 @@ export class AddJobPostingComponent implements OnInit {
       Validators.compose([Validators.required, Validators.maxLength(3)])
     ],
     jobType: ["", Validators.compose([Validators.required])],
-    description: ["", Validators.compose([Validators.maxLength(300)])],
-    logo: [
-      "",
-      {
-        validators: [Validators.required],
-        asyncValidators: [mimeType]
-      }
-    ]
+    description: ["", Validators.compose([Validators.maxLength(300)])]
   });
+
+  compareTwoDates() {
+    if (
+      new Date(this.newJobPostingFormHP.controls["durationFrom"].value) >=
+      new Date(this.newJobPostingFormHP.controls["durationTo"].value)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  checkExperience() {
+    for (let i = 0; i < this.experience.length; i++) {
+      if (
+        this.experience[i] ==
+        this.newJobPostingFormHP.controls["experience"].value
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  onFocus(event: any) {
+    this.formFocus = {
+      title: false,
+      description: false,
+      jobType: false,
+      education: false,
+      experience: false,
+      durationFrom: false,
+      durationTo: false
+    };
+    this.formFocus[event] = true;
+  }
+
+  populateExperience(event: any) {
+    this.onFocus("none");
+    const experience = event.target.innerText;
+    this.experience.map(num => {
+      if (num === experience) {
+        this.newJobPostingFormHP.controls["experience"].setValue(experience);
+      }
+    });
+  }
+
+  populateExperienceSuggestions(event: any) {
+    this.filteredExperience = [];
+    this.experience.map(num => {
+      if (num.includes(event.target.value)) {
+        this.filteredExperience.push(num);
+      }
+    });
+  }
+
+  onSubmitNewJobPosting() {
+    this.validDates = this.compareTwoDates();
+    this.validExperience = this.checkExperience();
+    console.log(this.newJobPostingFormHP.value)
+
+    if (
+      this.newJobPostingFormHP.valid &&
+      this.validDates &&
+      this.validExperience
+    ) {
+      this.jobPostingService.addJobPosting(
+        'company name',
+        'company mail',
+        'company logo',
+        1,
+        this.newJobPostingFormHP.value.title,
+        this.newJobPostingFormHP.value.DateFrom,
+        this.newJobPostingFormHP.value.DateTo,
+        this.newJobPostingFormHP.value.location,
+        this.newJobPostingFormHP.value.description,
+        this.newJobPostingFormHP.value.jobType,
+        this.newJobPostingFormHP.value.education,
+        "Approved",
+        this.newJobPostingFormHP.value.experience
+      );
+      this.router.navigate(["/client"]);
+    }
+  }
 }
