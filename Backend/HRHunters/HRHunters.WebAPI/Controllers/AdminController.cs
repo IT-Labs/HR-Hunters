@@ -29,9 +29,9 @@ namespace HRHunters.WebAPI.Controllers
         }
         //Test methods
         [HttpGet("applicants")]
-        public ActionResult<IEnumerable<Applicant>> GetMultipleApplicants()
+        public ActionResult<IEnumerable<Applicant>> GetMultipleApplicants(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
         {
-            return Ok(_applicantManager.GetMultiple());
+            return Ok(_applicantManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
         }
 
         [HttpGet("applications")]
@@ -52,7 +52,7 @@ namespace HRHunters.WebAPI.Controllers
             return Ok(_clientManager.GetMultiple());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("jobs/{id}")]
         public ActionResult<string> Index2(int id)
         {
             return "value";

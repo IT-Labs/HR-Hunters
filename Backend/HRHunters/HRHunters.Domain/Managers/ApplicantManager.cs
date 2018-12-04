@@ -17,16 +17,19 @@ namespace HRHunters.Domain.Managers
             _repo = repo;
         }
 
-        public IEnumerable<ApplicantInfo> GetMultiple()
+        public IEnumerable<ApplicantInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
         {
-
-            return _repo.Get<Applicant>(includeProperties: $"{nameof(Applicant.User)}")
+            var sortDirection = sortDir % 2 == 0 ? true : false;
+            return _repo.Get<Applicant>(orderBy: x => (!sortDirection) ? x.OrderBy(y => y.User.FirstName) : x.OrderByDescending(y => y.User.FirstName),
+                includeProperties: $"{nameof(Applicant.User)}", skip: (currentPage-1)*pageSize, take: pageSize)
                 .Select(
                 x => new ApplicantInfo {
+                    Id = x.UserId,
                     FirstName = x.User.FirstName,
                     LastName = x.User.LastName,
                     Email = x.User.Email,
-                    PhoneNumber = x.PhoneNumber});
+                    PhoneNumber = x.PhoneNumber,
+                    Photo = "Nati foto"});
         }
     }
 }
