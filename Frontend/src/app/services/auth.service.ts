@@ -184,7 +184,13 @@ export class AuthService {
               this.isAuthenticated = true;
               this.authStatusListener.next(true);
               this.saveAuthData(token);
-              this.router.navigate(["/admin-dashboard/job-postings"]);
+              if (response.userType === 0) {
+                this.router.navigate(['applicant'])
+              } else if (response.userType === 1) {
+                this.router.navigate(['client'])
+              } else if (response.userType === 2) {
+                this.router.navigate(['admin-dashboard'])
+              }
             }
           } else if (!response.succeeded) {
             if (response.errors) {

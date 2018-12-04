@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -10,32 +11,33 @@ import { Subscription } from 'rxjs';
 })
 export class LoginComponent implements OnInit {
 
-  selectedTab = {
+  role = {
     applicant: false,
     client: false,
     admin: true
   }
 
+
   authError;
   private authErrorStatusSub: Subscription;
   private roleStatusSub: Subscription;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
-    if (this.selectedTab === undefined) {
-      this.selectedTab = {
+    if (this.role === undefined) {
+      this.role = {
         applicant: false,
         client: false,
         admin: true
       }
     }
-    const role = this.authService.getRole();
-    if (role) {
-      if (!role.admin && (role.applicant || role.client)) {
-        this.selectedTab = this.authService.getRole();
+    const currentRole = this.authService.getRole();
+    if (currentRole) {
+      if (!currentRole.admin && (currentRole.applicant || currentRole.client)) {
+        this.role = this.authService.getRole();
       } else {
-        this.selectedTab = {
+        this.role = {
           applicant: false,
           client: false,
           admin: true
@@ -63,7 +65,6 @@ export class LoginComponent implements OnInit {
       this.loginForm.value.password
     );
   }
-
 
   ngOnDestroy() {
     this.authErrorStatusSub.unsubscribe();

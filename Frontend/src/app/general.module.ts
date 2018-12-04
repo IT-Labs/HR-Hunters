@@ -7,7 +7,6 @@ import { HeaderComponent } from './header/header.component';
 import { NavigationComponent } from './header/navigation/navigation.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { ClientComponent } from './homepage/client/client.component';
-import { HomepageComponent } from './homepage/homepage.component';
 import { ApplicantComponent } from './homepage/applicant/applicant.component';
 import { ClientJobPostingsComponent } from './homepage/client/client-job-postings/client-job-postings.component';
 import { JobPostingDetailsComponent } from './homepage/applicant/job-posting-details/job-posting-details.component';
@@ -35,7 +34,6 @@ import { LoginComponent } from './authentication/login/login.component';
         AdminDashboardComponent,
         AddJobPostingComponent,
         ClientComponent,
-        HomepageComponent,
         ApplicantComponent,
         ClientJobPostingsComponent,
         JobPostingsListComponent,
