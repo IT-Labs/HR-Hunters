@@ -1,5 +1,5 @@
 ﻿using HRHunters.Common.Entities;
-using HRHunters.Common.Responses.Applicants;
+using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
 using System;
 using System.Collections.Generic;

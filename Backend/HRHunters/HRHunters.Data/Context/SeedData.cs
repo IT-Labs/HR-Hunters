@@ -19,6 +19,8 @@ namespace HRHunters.Data.Context
 
         public SeedData(IClientManager clientManager,IApplicationManager applicationManager, IApplicantManager applicantManager, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
+            _applicantManager = applicantManager;
+            _applicationManager = applicationManager;
             _clientManager = clientManager;
             _userManager = userManager;
             _roleManager = roleManager;
@@ -62,7 +64,7 @@ namespace HRHunters.Data.Context
                             Description = "Lorem ipsum bruh...",
                             EmpCategory = "Full-time",
                             Location = "Skopje, Macedonia",
-                            Status = "Approved",
+                            Status = 0,
                         };
 
                     }

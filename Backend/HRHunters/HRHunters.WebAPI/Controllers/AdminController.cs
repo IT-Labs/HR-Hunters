@@ -47,9 +47,9 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpGet("clients")]
-        public ActionResult<IEnumerable<Client>> GetMultipleClients()
+        public ActionResult<IEnumerable<Client>> GetMultipleClients(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
         {
-            return Ok(_clientManager.GetMultiple());
+            return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
         }
 
         [HttpGet("jobs/{id}")]
