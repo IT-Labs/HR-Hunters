@@ -1,3 +1,175 @@
-<p>
-  client-profile works!
-</p>
+<div class="container">
+  <div class="row">
+    <!-- LEFT SIDEBAR -->
+    <div class="col-xs-12 col-md-3">
+      <div class="company-logo">
+        <img
+          src="https://www.bluepointstore.be/wp-content/uploads/2015/05/final-adi.jpg"
+          class="company-logo__img"
+          alt="logo"
+        />
+        <div class="company-logo__text" (click)="filePicker.click()">
+          <i class="fa fa-camera u-color-dark" aria-hidden="true"></i>Company
+          logo
+          <input
+            type="file"
+            id="hpid__logo"
+            class="dash__form--input"
+            #filePicker
+            (change)="onImagePicked($event)"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div class="col-xs-12 col-md-9">
+      <div class="hp__form__container">
+        <form
+          class="hp__form"
+          [formGroup]="clientProfileFormHP"
+          (ngSubmit)="onSubmitNewJobPosting()"
+        >
+          <div class="hp__form--section">
+
+            <!-- da se koregira metodot onsubmit -->
+            <!--COMPANY NAME-->
+
+            <label for="hpid__title" class="hp__form--label"
+              >Company name <span class="u-required-star">*</span></label
+            >
+            <input
+              type="text"
+              id="hpid__title"
+              class="hp__form--input"
+              placeholder="Enter company name..."
+              formControlName="companyname"
+              maxlength="50"
+              (focus)="onFocus('companyname')"
+            />
+
+            <div
+              *ngIf="
+                !clientProfileFormHP.controls['companyname'].valid &&
+                (clientProfileFormHP.controls['companyname'].dirty ||
+                clientProfileFormHP.controls['companyname'].touched)
+              "
+              class="alert hp__form--alert-msg"
+            >
+              <div
+                *ngIf="clientProfileFormHP.controls['companyname'].errors?.required"
+              >
+               Company name is required.
+              </div>
+              <div
+                *ngIf="clientProfileFormHP.controls['companyname'].errors?.maxlength"
+              >
+                Company name  must be up to 50 characters long.
+              </div>
+            </div>
+
+          <!-- E-mail start-->
+          <label for="hpid__title" class="hp__form--label"
+          >E-mail <span class="u-required-star">*</span></label
+        >
+        <input
+          type="text"
+          id="hpid__title"
+          class="hp__form--input"
+          placeholder="Enter email..."
+          formControlName="email"
+          maxlength="30"
+          (focus)="onFocus('email')"
+        />
+
+        <div
+        *ngIf="
+          !loginForm.controls['email'].valid &&
+          (loginForm.controls['email'].dirty ||
+            loginForm.controls['email'].touched)
+        "
+        class="alert alert-warning auth-form__alert"
+      >
+        <div *ngIf="loginForm.controls['email'].errors.email">
+          Email is required.
+        </div>
+        <div *ngIf="loginForm.controls['email'].errors.required">
+          Email is required.
+        </div>
+        <div *ngIf="loginForm.controls['email'].errors.minlength">
+          Email must be at least 6 characters long.
+        </div>
+        <div *ngIf="loginForm.controls['email'].errors.maxlength">
+          Email must be up to 30 characters long.
+        </div>
+      </div>
+            
+          
+            <!-- E-mail end -->  
+
+            <!-- Phone-number start -->
+            <label for="hpid__title" class="hp__form--label"
+            >Phone number <span class="u-required-star">*</span></label
+          >
+          <input
+            type="text"
+            id="hpid__title"
+            class="hp__form--input"
+            placeholder="Enter phone number..."
+            formControlName="title"
+            maxlength="50"
+            (focus)="onFocus('phonenumber')"
+          />
+  
+          <div
+            *ngIf="
+              !clientProfileFormHP.controls['phonenumber'].valid &&
+              (clientProfileFormHP.controls['phonenumber'].dirty ||
+              clientProfileFormHP.controls['phonenumber'].touched)
+            "
+            class="alert hp__form--alert-msg"
+          >
+            <div
+              *ngIf="clientProfileFormHP.controls['phonenumber'].errors?.required"
+            >
+             Phone number is required.
+            </div>
+            <div
+              *ngIf="clientProfileFormHP.controls['phonenumber'].errors?.maxlength"
+            >
+            Phone number  must be E.164 format.
+            </div>
+          </div>
+
+            <!-- Phone-number end -->
+
+          
+        
+          </div>
+
+          <div class="hp__form--btn-container">
+            <button
+              type="reset"
+              class="btn btn__danger"
+              [disabled]="
+                !clientProfileFormHP.valid && !loginForm.valid 
+              "
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn__success"
+              [disabled]="
+                !clientProfileFormHP.valid && !loginForm.valid
+              "
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
