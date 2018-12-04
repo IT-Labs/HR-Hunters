@@ -2,7 +2,15 @@
     &__component-container {
       width: 100%;
       margin-top: 0rem;
-  
+
+      &__ul-container{
+        margin:-0.4rem 1rem;
+   
+      li{
+        padding: 0rem 0.5rem;
+       }
+      }
+   
       &--responsive {
         display: none;
       }
@@ -13,32 +21,17 @@
       background-color:$color-nav-primary-bg;
       margin-top: 0rem;
        
-    &__nav-horizontal{
-        height: 100%;
-        margin: 0rem 1rem;
-        padding-top: 0rem;
-        ul{
-          width: 100%;
-          margin: 0rem 0.5rem;
-          li{
-            margin: -0.5rem 0.5rem;
-          }
-        }
-
-    }
-
+  
     &__nav-horizontal-list{
       margin: 0rem 0.5rem;
 
     }
       &__title {
-        // padding: 0 1rem;
-
+      
         &--link {
           color: $color-link-active;
           background:$bg-color-navlink;
-     
-     
+         
           &:hover {
             color: $color-link-hover;
             text-decoration: none;
@@ -51,23 +44,23 @@
         }
       }
 
-      &__breadcrumb{
+      // &__breadcrumb{
       
-        list-style: none;
+      //   list-style: none;
       
-        // margin: 2rem 0rem;
+      //   // margin: 2rem 0rem;
 
-        li {
-            display: inline;
-            font-size: 1.8rem;
-        }
+      //   li {
+      //       display: inline;
+      //       font-size: 1.8rem;
+      //   }
 
-        // li+li:before {
-        //     padding: 10px;
-        //     color: black;
-        //     content: "|\00a0";
-        // }
-      }
+      //   // li+li:before {
+      //   //     padding: 10px;
+      //   //     color: black;
+      //   //     content: "|\00a0";
+      //   // }
+      // }
     }
   
     &__navigation {
@@ -80,17 +73,14 @@
         // display: none;
       }
   
-      nav {
-        // width: 15rem;
-        background: $bg-color-breadcrumb;
-      }
+   
   
       &--link {
         width: 100%;
-        padding: 1rem 0.5rem;
+        padding: 0.4rem 0.6rem;
         color: $color-link-active;
         font-size: 1.3rem;
-        width: 100%;
+       height: 100%;
         background-color: $color-nav-li-bg;
         cursor: pointer;
   
@@ -108,6 +98,10 @@
   
 
     }
+
+    &__logout{
+      cursor:pointer;
+    }
   }
   
   @media (max-width: 991px) {
@@ -121,8 +115,20 @@
         background-color: $color-nav-primary-bg;
         z-index: 9999;
       }
+
     }
-  
+    #navbarSupportedContent{
+      .navbar-nav{
+        margin-top:16px;
+
+        li{
+          margin:0.5rem 0.3rem;
+         a{
+          padding-left: 10px;
+         } 
+        }
+       }
+    }
  
   }
   

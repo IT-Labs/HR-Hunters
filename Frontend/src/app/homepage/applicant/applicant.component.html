@@ -1,9 +1,9 @@
 
 <app-header></app-header>
-<div class="container">
+<!-- <div class="container">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark home-applicant__component-container" id="home-applicant">
-        <!-- <a class="navbar-brand" href="#">HR Hunters</a> -->
-  
+        <a class="navbar-brand" href="#">HR Hunters</a> -->
+<!--   
         <div class="collapse navbar-collapse home-applicant__header__nav-horizontal" id="navbarNav">
           <ul class="navbar-nav home-applicant__header__nav-horizontal ">
             <li class="nav-item ">
@@ -35,6 +35,50 @@
           </button>
       </nav>
 
+</div>  -->
+
+<div class="container">
+
+  <!--Main Navigation-->
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark scrolling-navbar home-applicant">
+    <a class="navbar-brand" href="#"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse home-applicant__component-container__ul-container" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item ">
+          <a class="nav-link  home-applicant__header__title--link"   routerLink="applicant/job-postings"
+          routerLinkActive="header-applicant__navigation--active">Job postings </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link  home-applicant__header__title--link"  routerLink="applicant/applications"
+          routerLinkActive="header-applicant__navigation--active">My applications</a>
+        </li>
+        <li class="nav-item ">
+          <a class="nav-link  home-applicant__header__title--link"   routerLink="applicant/profile"
+          routerLinkActive="header-applicant__navigation--active">My profile</a>
+        </li>
+    
+      </ul>
+      <ul class="navbar-nav nav-flex-icons home-applicant__logout">
+        <li class="nav-item  header">
+          <a class="nav-link"> <span class="home-applicant__header__title text-white"
+            >Hi, John
+            <span class="home-applicant__header--logout"
+              >| <span class="admin-dash__header__title--link" (click)="onLogout()">Logout</span></span
+            ></span
+          ></a>
+        </li>
+   
+      </ul>
+    </div>
+  </nav>
+
+
+<!--Main Navigation-->
 </div>
 
 
