@@ -266,6 +266,17 @@ export class ADNewJobPostingComponent implements OnInit {
     this.validDates = this.compareTwoDates();
     this.validExperience = this.checkExperience();
 
+    this.newJobPostingForm.controls['companyName'].markAsTouched();
+    this.newJobPostingForm.controls['companyEmail'].markAsTouched();
+    this.newJobPostingForm.controls['location'].markAsTouched();
+    this.newJobPostingForm.controls['logo'].markAsTouched();
+    this.newJobPostingForm.controls['title'].markAsTouched();
+    this.newJobPostingForm.controls['jobType'].markAsTouched();
+    this.newJobPostingForm.controls['education'].markAsTouched();
+    this.newJobPostingForm.controls['experience'].markAsTouched();
+    this.newJobPostingForm.controls['durationFrom'].markAsTouched();
+    this.newJobPostingForm.controls['durationTo'].markAsTouched();
+
     if (this.imagePreview === undefined) {
       this.imageValid = false;
     } else {
