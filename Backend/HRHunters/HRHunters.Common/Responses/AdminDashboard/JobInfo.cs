@@ -4,8 +4,9 @@ using System.Text;
 
 namespace HRHunters.Common.Responses.AdminDashboard
 {
-    class JobInfo
+    public class JobInfo
     {
+        public int Id { get; set; }
         public string PositionTitle { get; set; }
         public string CompanyName { get; set; }
         public string ContactEmail { get; set; }

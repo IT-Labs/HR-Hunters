@@ -11,6 +11,7 @@ namespace HRHunters.Common.Responses.AdminDashboard
         public string FirstName { get; set; }
         public string Photo { get; set; }
         public string Email { get; set; }
+        public string Location { get; set; }
         public int Active { get; set; }
         public int All { get; set; }
         public ClientStatus Status { get; set; }

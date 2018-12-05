@@ -1,4 +1,5 @@
 ﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,6 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IJobManager : IBaseManager
     {
-        IEnumerable<JobPosting> GetMultiple();
+        IEnumerable<JobInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy);
     }
 }

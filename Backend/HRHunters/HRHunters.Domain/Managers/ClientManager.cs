@@ -18,25 +18,26 @@ namespace HRHunters.Domain.Managers
         }
         public IEnumerable<ClientInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
         {
-            var sortDirection = sortDir % 2 == 0 ? true : false;
-
+            var sortDirection = sortDir % 2 == 0 ? true : false; // true -asc, false -desc
+            var propertyInfo = typeof(Client).GetProperty(sortedBy) ?? typeof(User).GetProperty(sortedBy);
             var _active = GetCount<Client>();
 
-
-
-
-            return _repo.Get<Client>(orderBy: x => (!sortDirection) ? x.OrderBy(y => y.User.FirstName) : x.OrderByDescending(y => y.User.FirstName),
-                includeProperties: $"{nameof(Client.User)}", skip: (currentPage - 1) * pageSize, take: pageSize)
-                .Select(
-                x => new ClientInfo
-                {
-                    Id = x.UserId,
-                    FirstName = x.User.FirstName,
-                    Email = x.User.Email,
-                    Active = _active,
-                    All = 7,
-                    Photo = "Nati foto"
-                });
+            return _repo.Get<Client>(orderBy: x => (sortDirection) ? x.OrderBy(y => propertyInfo.GetValue(x, null)) : x.OrderByDescending(y => propertyInfo.GetValue(x, null)),
+                                    includeProperties: $"{nameof(Client.User)}", 
+                                    skip: (currentPage - 1) * pageSize, 
+                                    take: pageSize
+                                    )
+                                    .Select(
+                                    x => new ClientInfo
+                                    {
+                                        Id = x.UserId,
+                                        FirstName = x.User.FirstName,
+                                        Email = x.User.Email,
+                                        Location=x.Location,
+                                        Active = _active,
+                                        All = 7,
+                                        Photo = "Nati foto"
+                                    });
         }
     }
 }

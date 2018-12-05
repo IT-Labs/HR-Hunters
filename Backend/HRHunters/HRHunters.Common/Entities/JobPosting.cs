@@ -28,7 +28,7 @@ namespace HRHunters.Common.Entities
         [Required]
         public string Education { get; set; }
         [DisplayName("Status")]
-        public JobPostingStatus Status { get; set; }
+        public string Status { get; set; }
         [Required]
         public string NeededExperience { get; set; }
         public int ClientId { get; set; }
