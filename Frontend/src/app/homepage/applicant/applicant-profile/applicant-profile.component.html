@@ -41,10 +41,10 @@
       <div class="col-xs-12 col-md-9">
         <div class="hp__form__container">
           <div class="hp__form--section">
-            <!-- APPLICANT FULL NAME -->
+            <!-- APPLICANT First name -->
 
             <label for="hpid__title" class="hp__form--label"
-              >Full name <span class="u-required-star">*</span></label
+              >First name <span class="u-required-star">*</span></label
             >
             <input
               type="text"
@@ -68,16 +68,56 @@
                 applicantProfileFormHP.controls['firstName'].errors?.required
                 "
               >
-                Full name is required.
+                First name is required.
               </div>
               <div
                 *ngIf="
                 applicantProfileFormHP.controls['firstName'].errors?.maxlength
                 "
               >
-                Full name must be up to 50 characters long.
+                First name must be up to 30 characters long.
               </div>
             </div>
+
+            <!-- Applicant last name -->
+
+                
+
+            <label for="hpid__title" class="hp__form--label"
+            >Last name <span class="u-required-star">*</span></label
+          >
+          <input
+            type="text"
+            id="hpid__title"
+            class="hp__form--input"
+            placeholder="Enter lastName..."
+            formControlName="lastName"
+            maxlength="30"
+          />
+
+          <div
+            *ngIf="
+              !applicantProfileFormHP.controls['lastName'].valid &&
+              (applicantProfileFormHP.controls['lastName'].dirty ||
+              applicantProfileFormHP.controls['lastName'].touched)
+            "
+            class="alert hp__form--alert-msg"
+          >
+            <div
+              *ngIf="
+              applicantProfileFormHP.controls['lastName'].errors?.required
+              "
+            >
+              Last name is required.
+            </div>
+            <div
+              *ngIf="
+              applicantProfileFormHP.controls['lastName'].errors?.maxlength
+              "
+            >
+              Last name must be up to 30 characters long.
+            </div>
+          </div>
 
             <!-- E-mail start -->
             <label for="hpid__title" class="hp__form--label"

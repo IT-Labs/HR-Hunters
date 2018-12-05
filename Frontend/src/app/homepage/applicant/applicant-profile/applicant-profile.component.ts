@@ -74,7 +74,16 @@ export class ApplicantProfileComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.minLength(1),
-        Validators.maxLength(50),
+        Validators.maxLength(30),
+        Validators.pattern("[a-zA-Z0-9]*")
+      ])
+    ],
+    lastName: [
+      "",
+      Validators.compose([
+        Validators.required,
+        Validators.minLength(1),
+        Validators.maxLength(30),
         Validators.pattern("[a-zA-Z0-9]*")
       ])
     ],
