@@ -151,13 +151,20 @@ export class AddJobPostingComponent implements OnInit {
   onSubmitNewJobPosting() {
     this.validDates = this.compareTwoDates();
     this.validExperience = this.checkExperience();
-    console.log(this.newJobPostingFormHP.value)
-
+    this.newJobPostingFormHP.controls['title'].markAsTouched();
+    this.newJobPostingFormHP.controls['durationFrom'].markAsTouched();
+    this.newJobPostingFormHP.controls['durationTo'].markAsTouched();
+    this.newJobPostingFormHP.controls['location'].markAsTouched();
+    this.newJobPostingFormHP.controls['education'].markAsTouched();
+    this.newJobPostingFormHP.controls['experience'].markAsTouched();
+    this.newJobPostingFormHP.controls['jobType'].markAsTouched();
+    console.log(this.newJobPostingFormHP)
+    
     if (
       this.newJobPostingFormHP.valid &&
       this.validDates &&
       this.validExperience
-    ) {
+      ) {
       this.jobPostingService.addJobPosting(
         'company name',
         'company mail',

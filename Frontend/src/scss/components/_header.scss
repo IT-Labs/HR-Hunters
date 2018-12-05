@@ -1,20 +1,19 @@
-.header-page {
+.header {
     &__container {
       height: 20%;
-  
-      &--image {
-        background-image: url("/../../assets/img/home-header-bg.jpg");
-        background-position: center center;
-        background-size: cover;
-        height:20%;
-        min-height: 20vh;
-      }
-      &--opacity {
-        background-color: rgba($color-black, 0.6);
-        height: 20%;
-        min-height: 20vh;
-        padding: 3rem;
-      }
+    }
+    &__image {
+      background-image: url("/../../assets/img/home-header-bg.jpg");
+      background-position: center center;
+      background-size: cover;
+      height:20%;
+      min-height: 20vh;
+    }
+    &__opacity {
+      background-color: rgba($color-black, 0.6);
+      height: 20%;
+      min-height: 20vh;
+      padding: 3rem;
     }
     &__logo-container {
       img {
@@ -34,7 +33,7 @@
   
   // Small devices (portrate phones, up to 576px)
   @media (max-width: 576px) {
-    .header-page {
+    .header {
       &__logo-container {
         img {
           height: 5rem;
@@ -53,7 +52,7 @@
   
   // Small devices (landscape phones, up to 576px)
   @media (min-width: 576px) {
-    .header-page {
+    .header {
       &__logo-container {
         img {
           height: 8rem;
@@ -87,16 +86,5 @@
       }
  
     }
-  }
-  
-  // Large devices (desktops, 992px and up)
-  @media (min-width: 992px) {
-    .header-page {
- 
-    }
-  }
-  
-  // Extra large devices (large desktops, 1200px and up)
-  @media (min-width: 1200px) {
   }
   

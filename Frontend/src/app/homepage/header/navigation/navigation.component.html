@@ -1,0 +1,145 @@
+<div class="container">
+  <nav class="navbar navbar-expand-lg navbar-dark hp-nav--bg">
+    <button
+      class="navbar-toggler ml-auto m-2"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <!-- APPLICANT -->
+        <li class="nav-item active hp-nav__item" *ngIf="activeApplicant">
+          <a class="nav-link">Job postings</a>
+        </li>
+        <li class="nav-item active hp-nav__item" *ngIf="activeApplicant">
+          <a class="nav-link">My applications</a>
+        </li>
+        <li class="nav-item active hp-nav__item" *ngIf="activeApplicant">
+          <a class="nav-link">My profile</a>
+        </li>
+
+        <!-- CLIENT -->
+        <li class="nav-item active hp-nav__item" *ngIf="!activeApplicant">
+          <a class="nav-link">My postings</a>
+        </li>
+        <li class="nav-item active hp-nav__item" *ngIf="!activeApplicant">
+          <a class="nav-link">Add new job posting</a>
+        </li>
+        <li class="nav-item active hp-nav__item" *ngIf="!activeApplicant">
+          <a class="nav-link">Company profile</a>
+        </li>
+        <hr />
+        <li
+          class="nav-item active hp-nav__item"
+          id="hp-nav__logout-mob"
+          *ngIf="!activeApplicant"
+          (click)="onLogout()"
+        >
+          <a class="nav-link">Logout</a>
+        </li>
+      </ul>
+      <a class="navbar-brand" id="hp-nav__logout-desk"
+        ><span class="hp-nav__name text-white"
+          >Hi, "ADD DYNAMIC NAME"
+          <span class="hp-nav__logout"
+            >|
+            <span class="hp-nav__logout--color" (click)="onLogout()"
+              >Logout</span
+            ></span
+          ></span
+        ></a
+      >
+    </div>
+  </nav>
+  <div class="breadcrumbs">
+    
+  </div>
+
+  <!-- Main Navigation -->
+
+  <!--
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-dark scrolling-navbar navigation"
+    >
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div
+        class="collapse navbar-collapse home-applicant__component-container__ul-container"
+        id="navbarSupportedContent"
+      >
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item ">
+            <a
+              class="nav-link  home-applicant__header__title--link"
+              routerLink="applicant/job-postings"
+              routerLinkActive="header-applicant__navigation--active"
+              >Job postings
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link  home-applicant__header__title--link"
+              routerLink="applicant/applications"
+              routerLinkActive="header-applicant__navigation--active"
+              >My applications</a
+            >
+          </li>
+          <li class="nav-item ">
+            <a
+              class="nav-link  home-applicant__header__title--link"
+              routerLink="applicant/profile"
+              routerLinkActive="header-applicant__navigation--active"
+              >My profile</a
+            >
+          </li>
+        </ul>
+        <ul class="navbar-nav nav-flex-icons home-applicant__logout">
+          <li class="nav-item  header">
+            <a class="nav-link">
+              <span class="home-applicant__header__title text-white"
+                >Hi, John
+                <span class="home-applicant__header--logout"
+                  >|
+                  <span
+                    class="admin-dash__header__title--link"
+                    (click)="onLogout()"
+                    >Logout</span
+                  ></span
+                ></span
+              ></a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <nav
+      aria-label="Breadcrumb"
+      class="navbar-nav breadcrumb "
+      id="breadcrumbMenu"
+    >
+      <ol>
+        <li><a href="../../"> Job postings </a></li>
+        <li><a href="../../"> My applications </a></li>
+
+        <li><a href="" aria-current="page"> My profile </a></li>
+      </ol>
+    </nav>
+  -->
+</div>
