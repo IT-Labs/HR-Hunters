@@ -45,8 +45,8 @@ const routes: Routes = [
     component: ClientComponent,
     children: [
       { path: "profile", component: ClientProfileComponent },
-      { path: "job-postings/:id", component: ClientJobPostingsComponent },
-      { path: "job-posting/:id", component: JobPostingDetailsComponent },
+      { path: "job-postings", component: ClientJobPostingsComponent },
+      { path: "job-postings/:id", component: JobPostingDetailsComponent },
       { path: "add-job-posting", component: AddJobPostingComponent }
     ]
   },
@@ -56,8 +56,8 @@ const routes: Routes = [
     children: [
       { path: "profile", component: ApplicantProfileComponent },
       { path: "job-postings", component: JobPostingsListComponent },
-      { path: "job-posting/:id", component: JobPostingDetailsComponent },
-      { path: "applications/:id", component: ApplicantApplicationsComponent }
+      { path: "job-postings/:id", component: JobPostingDetailsComponent },
+      { path: "my-applications", component: ApplicantApplicationsComponent }
     ]
   },
   { path: "**", component: ErrorComponent }
