@@ -3,7 +3,6 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { Client } from "src/app/models/client.model";
 import { mimeType } from "../../../validators/mime-type.validator";
 import { JobPostingService } from "src/app/services/job-posting.service";
-import { Subscription } from "rxjs";
 import { Router } from "@angular/router";
 
 @Component({
@@ -23,8 +22,6 @@ export class ADNewJobPostingComponent implements OnInit {
   existingCompany = false;
   validDates: boolean;
   validExperience: boolean;
-
-  private imgUploadStatus: Subscription;
 
   imagePreview: string | ArrayBuffer;
   imageValid = true;
