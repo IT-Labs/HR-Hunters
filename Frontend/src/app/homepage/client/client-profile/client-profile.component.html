@@ -16,8 +16,25 @@
             id="hpid__logo"
             class="dash__form--input"
             #filePicker
+            formControlName="logo"
             (change)="onImagePicked($event)"
           />
+
+          <div
+          *ngIf="
+            !clientProfileFormHP.controls['logo'].valid &&
+            (clientProfileFormHP.controls['logo'].dirty ||
+            clientProfileFormHP.controls['logo'].touched)
+          "
+          class="alert hp__form--alert-msg"
+        >
+          <div
+            *ngIf="clientProfileFormHP.controls['logo'].errors?.required"
+          >
+            Picture is not in a propriate format.
+          </div>
+      
+        </div>
         </div>
       </div>
     </div>
@@ -27,12 +44,13 @@
       <div class="hp__form__container">
         <form
           class="hp__form"
-          [formGroup]="clientProfileFormHP"
+          [formGroup]="clientProfileFormHP && loginForm"
           (ngSubmit)="onSubmitNewJobPosting()"
         >
           <div class="hp__form--section">
 
-            <!-- da se koregira metodot onsubmit -->
+            <!-- da se koregira metodot ngSubmit -->
+
             <!--COMPANY NAME-->
 
             <label for="hpid__title" class="hp__form--label"
@@ -43,26 +61,26 @@
               id="hpid__title"
               class="hp__form--input"
               placeholder="Enter company name..."
-              formControlName="companyname"
+              formControlName="companyName"
               maxlength="50"
-              (focus)="onFocus('companyname')"
+              (focus)="onFocus('companyName')"
             />
 
             <div
               *ngIf="
-                !clientProfileFormHP.controls['companyname'].valid &&
-                (clientProfileFormHP.controls['companyname'].dirty ||
-                clientProfileFormHP.controls['companyname'].touched)
+                !clientProfileFormHP.controls['companyName'].valid &&
+                (clientProfileFormHP.controls['companyName'].dirty ||
+                clientProfileFormHP.controls['companyName'].touched)
               "
               class="alert hp__form--alert-msg"
             >
               <div
-                *ngIf="clientProfileFormHP.controls['companyname'].errors?.required"
+                *ngIf="clientProfileFormHP.controls['companyName'].errors?.required"
               >
                Company name is required.
               </div>
               <div
-                *ngIf="clientProfileFormHP.controls['companyname'].errors?.maxlength"
+                *ngIf="clientProfileFormHP.controls['companyName'].errors?.maxlength"
               >
                 Company name  must be up to 50 characters long.
               </div>
@@ -116,8 +134,7 @@
             id="hpid__title"
             class="hp__form--input"
             placeholder="Enter phone number..."
-            formControlName="title"
-            maxlength="50"
+            formControlName="phonenumber"
             (focus)="onFocus('phonenumber')"
           />
   

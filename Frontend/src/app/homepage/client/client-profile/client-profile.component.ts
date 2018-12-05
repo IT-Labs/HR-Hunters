@@ -14,7 +14,7 @@ export class ClientProfileComponent implements OnInit {
   authError;
   private authErrorStatusSub: Subscription;
 
-  validPhonenumber = new RegExp("^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$");
+  validPhonenumber = new RegExp("^(\+\s?)?((?<!\+.*)\(\+?\d+([\s\-\.]?\d+)?\)|\d+)([\s\-\.]?(\(\d+([\s\-\.]?\d+)?\)|\d+))*(\s?(x|ext\.?)\s?\d+)?$");
 
   constructor(private fb: FormBuilder, private authService: AuthService,  private router: Router) { }
  
@@ -26,7 +26,7 @@ export class ClientProfileComponent implements OnInit {
 }
 
 clientProfileFormHP = this.fb.group({
-  companyname: [
+  companyName: [
     "",
     Validators.compose([
       Validators.required,
@@ -40,11 +40,16 @@ clientProfileFormHP = this.fb.group({
     "",
     Validators.compose([
       Validators.required,
-      Validators.minLength(1),
-      Validators.maxLength(50),
       Validators.pattern(this.validPhonenumber)
      
     ]) 
+  ],
+  logo: [
+    "",
+    {
+      validators: [Validators.required],
+      asyncValidators: [mimeType]
+    }
   ]
 
  })
