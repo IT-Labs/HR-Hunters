@@ -44,12 +44,14 @@
       <div class="hp__form__container">
         <form
           class="hp__form"
-          [formGroup]="clientProfileFormHP && loginForm"
-          (ngSubmit)="onSubmitNewJobPosting()"
+          [formGroup]="clientProfileFormHP"
+     
+          (ngSubmit)="onSubmitClientProfile()"
         >
           <div class="hp__form--section">
 
             <!-- da se koregira metodot ngSubmit -->
+            <!--  [formGroup]="clientProfileFormHP && loginForm" -->
 
             <!--COMPANY NAME-->
 

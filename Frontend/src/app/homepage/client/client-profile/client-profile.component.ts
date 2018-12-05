@@ -59,6 +59,14 @@ loginForm = this.fb.group({
   
 })
 
+onSubmitClientProfile() {
+  if (this.clientProfileFormHP.valid) {
+    // da se prati formata
+    console.log("Form Submitted!");
+    this.clientProfileFormHP.reset();
+  }
+}
+
 
 ngOnDestroy() {
   this.authErrorStatusSub.unsubscribe();
