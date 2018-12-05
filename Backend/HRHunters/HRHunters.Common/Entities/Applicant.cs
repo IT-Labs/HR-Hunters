@@ -17,7 +17,7 @@ namespace HRHunters.Common.Entities
         public string SchoolUniversity { get; set; }
         public int UserId { get; set; }
         public string PhoneNumber { get; set; }
-        public new int Id { get { return UserId; } set => Id = value;  }
+        public new int Id { get { return UserId; } set { Id = value; } }
         [DisplayName("User")]
         public User User { get; set; }
         public virtual ICollection<Application> Applications { get; set; }

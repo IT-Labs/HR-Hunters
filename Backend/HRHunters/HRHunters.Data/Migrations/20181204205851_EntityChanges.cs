@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HRHunters.Data.Migrations
 {
-    public partial class newmigration : Migration
+    public partial class EntityChanges : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,8 +46,8 @@ namespace HRHunters.Data.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    Email = table.Column<string>(maxLength: 256, nullable: false),
-                    FirstName = table.Column<string>(maxLength: 50, nullable: false),
+                    Email = table.Column<string>(maxLength: 256, nullable: true),
+                    FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
@@ -230,7 +230,8 @@ namespace HRHunters.Data.Migrations
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     CreatedBy = table.Column<string>(nullable: true),
                     ModifiedBy = table.Column<string>(nullable: true),
-                    Status = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
+                    Location = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false),
                     PhoneNumber = table.Column<string>(nullable: true)
                 },
@@ -262,7 +263,7 @@ namespace HRHunters.Data.Migrations
                     Description = table.Column<string>(maxLength: 800, nullable: true),
                     EmpCategory = table.Column<string>(nullable: false),
                     Education = table.Column<string>(nullable: false),
-                    Status = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
                     NeededExperience = table.Column<string>(nullable: false),
                     ClientId = table.Column<int>(nullable: false)
                 },

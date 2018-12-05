@@ -14,13 +14,9 @@ namespace HRHunters.Data.Context
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly IClientManager _clientManager;
-        private readonly IApplicantManager _applicantManager;
-        private readonly IApplicationManager _applicationManager;
 
         public SeedData(IClientManager clientManager,IApplicationManager applicationManager, IApplicantManager applicantManager, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
-            _applicantManager = applicantManager;
-            _applicationManager = applicationManager;
             _clientManager = clientManager;
             _userManager = userManager;
             _roleManager = roleManager;
@@ -28,6 +24,21 @@ namespace HRHunters.Data.Context
 
         public void EnsureSeedData()
         {
+            if (!_roleManager.Roles.Any())
+            {
+                var roles = new List<Role>
+                {
+                    new Role { Name = "Applicant" },
+                    new Role { Name = "Client" },
+                    new Role { Name = "Admin" }
+                };
+                foreach (var role in roles)
+                {
+                    _roleManager.CreateAsync(role).Wait();
+                }
+
+            }
+
             if (!_userManager.Users.Any())
             { 
             for(int i = 0; i < 10; i++)
@@ -64,9 +75,10 @@ namespace HRHunters.Data.Context
                             Description = "Lorem ipsum bruh...",
                             EmpCategory = "Full-time",
                             Location = "Skopje, Macedonia",
-                            Status = 0,
+                            Status = "Approved",
+                            NeededExperience = "3"
                         };
-
+                        _clientManager.Create(jobPost, "Admin");
                     }
                     else
                     {
@@ -76,31 +88,18 @@ namespace HRHunters.Data.Context
                             SchoolUniversity = "school" + i,
                             EducationType = "B"
                         };
-                        _applicantManager.Create(applicant);
+                        _clientManager.Create(applicant, "Admin");
                         var application = new Application()
                         {
                             Applicant = applicant,
                             Date = DateTime.UtcNow,
                             JobPosting = _clientManager.GetById<Client>(i).JobPostings.FirstOrDefault(),
                         };
-                        _applicationManager.Create(application);
+                        _clientManager.Create(application, "Admin");
                     }
                 }
             }
-            if(!_roleManager.Roles.Any())
-            {
-                var roles = new List<Role>
-                {
-                    new Role { Name = "Applicant" },
-                    new Role { Name = "Client" },
-                    new Role { Name = "Admin" }
-                };
-                foreach(var role in roles)
-                {
-                    _roleManager.CreateAsync(role).Wait();
-                }
-                
-            }
+            
 
         }
     }

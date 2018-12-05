@@ -35,15 +35,15 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpGet("applications")]
-        public ActionResult<IEnumerable<Application>> GetMultipleApplications()
+        public ActionResult<IEnumerable<Application>> GetMultipleApplications(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
         {
-            return Ok(_applicationManager.GetMultiple());
+            return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
         }
 
         [HttpGet("jobs")]
-        public ActionResult<IEnumerable<JobPosting>> GetMultipleJobPosting()
+        public ActionResult<IEnumerable<JobPosting>> GetMultipleJobPosting(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
         {
-            return Ok(_jobManager.GetMultiple());
+            return Ok(_jobManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
         }
 
         [HttpGet("clients")]

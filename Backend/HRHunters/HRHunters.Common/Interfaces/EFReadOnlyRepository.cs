@@ -25,7 +25,7 @@ namespace HRHunters.Data
         string includeProperties = null,
         int? skip = null,
         int? take = null)
-        where TEntity : class
+        where TEntity : Entity
         {
             includeProperties = includeProperties ?? string.Empty;
             IQueryable<TEntity> query = context.Set<TEntity>();
