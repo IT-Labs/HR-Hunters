@@ -3,8 +3,8 @@ import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 
-import { HeaderComponent } from './header/header.component';
-import { NavigationComponent } from './header/navigation/navigation.component';
+import { HeaderComponent } from './homepage/header/header.component';
+import { NavigationComponent } from './homepage/header/navigation/navigation.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { ClientComponent } from './homepage/client/client.component';
 import { ApplicantComponent } from './homepage/applicant/applicant.component';
