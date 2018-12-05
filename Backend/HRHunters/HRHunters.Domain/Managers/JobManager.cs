@@ -23,7 +23,7 @@ namespace HRHunters.Domain.Managers
             var propertyInfo = typeof(JobPosting).GetProperty(sortedBy) 
                                     ?? typeof(Client).GetProperty(sortedBy) 
                                             ?? typeof(User).GetProperty(sortedBy);
-            return _repo.Get<JobPosting>(orderBy: x => (sortDirection) ? x.OrderBy(y => propertyInfo.GetValue(x, null)) : x.OrderByDescending(y => propertyInfo.GetValue(x, null)),
+            return _repo.Get<JobPosting>(orderBy: sortedBy,
                                          includeProperties: $"{nameof(JobPosting.Client)}", 
                                          skip: (currentPage - 1) * pageSize, 
                                          take: pageSize)

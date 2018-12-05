@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HRHunters.Common.Entities;
+using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
@@ -16,21 +17,21 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public IEnumerable<ApplicantInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
+        public IEnumerable<ApplicantInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, string filterBy)
         {
-            var sortDirection = sortDir % 2 == 0 ? true : false; // true -asc, false -desc
-            var propertyInfo = typeof(Applicant).GetProperty(sortedBy) ?? typeof(User).GetProperty(sortedBy);
-            return _repo.Get<Applicant>(orderBy: x => (sortDirection) ? x.OrderBy(y => propertyInfo.GetValue(y, null)) : x.OrderByDescending(y => propertyInfo.GetValue(y, null)),
-                                        includeProperties: $"{nameof(Applicant.User)}", skip: (currentPage-1)*pageSize, take: pageSize)
+            var sortDirection = sortDir.Equals(SortDirection.ASC) ? true : false; 
+           
+            return _repo.Get<Applicant>(orderBy: sortedBy,
+                                        includeProperties: $"{nameof(Applicant.User)}", skip: (currentPage-1)*pageSize, take: pageSize, sortDirection: sortDir)
                                         .Select(
                                         x => new ApplicantInfo
                                         {
-                                            Id = x.UserId,
+                                            Id = x.Id,
                                             FirstName = x.User.FirstName,
                                             LastName = x.User.LastName,
                                             Email = x.User.Email,
                                             PhoneNumber = x.PhoneNumber,
-                                            Photo = "Nati foto"
+                                            Photo = "Nati foto",
                                         });
         }
     }

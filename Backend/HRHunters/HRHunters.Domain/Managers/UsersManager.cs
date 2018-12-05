@@ -17,10 +17,10 @@ namespace HRHunters.Domain.Managers
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly SignInManager<User> _signInManager;
-        private readonly IExtensionMethods _extensionMethods;
-        public UsersManager(UserManager<User> userManager, IMapper mapper, SignInManager<User> signInManager, IExtensionMethods extensionMethods)
+        private readonly ITokenGeneration _tokenGeneration;
+        public UsersManager(UserManager<User> userManager, IMapper mapper, SignInManager<User> signInManager, ITokenGeneration tokenGeneration)
         {
-            _extensionMethods = extensionMethods;
+            _tokenGeneration = tokenGeneration;
             _userManager = userManager;
             _mapper = mapper;
             _signInManager = signInManager;
@@ -58,7 +58,7 @@ namespace HRHunters.Domain.Managers
             userToReturn = _mapper.Map<UserLoginReturnModel>(appUser);
             var roles = await _userManager.GetRolesAsync(appUser);
             userToReturn.Succeeded = true;
-            userToReturn.Token = _extensionMethods.GenerateJwtToken(appUser);
+            userToReturn.Token = _tokenGeneration.GenerateJwtToken(appUser);
             userToReturn.Role = roles.Contains("Applicant") ? 0 : 1;
             return userToReturn;
         }

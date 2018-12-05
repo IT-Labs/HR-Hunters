@@ -19,11 +19,7 @@ namespace HRHunters.Domain.Managers
         public IEnumerable<ApplicationInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
         {
             var sortDirection = sortDir % 2 == 0 ? true : false; // true -asc, false -desc
-            var propertyInfo = typeof(Application).GetProperty(sortedBy)
-                                    ?? typeof(Applicant).GetProperty(sortedBy) 
-                                            ?? typeof(User).GetProperty(sortedBy) 
-                                                    ?? typeof(JobPosting).GetProperty(sortedBy);
-            return _repo.Get<Application>(orderBy: x => (sortDirection) ? x.OrderBy(y => propertyInfo.GetValue(x, null)) : x.OrderByDescending(y => propertyInfo.GetValue(x, null)),
+            return _repo.Get<Application>(orderBy: "PhoneNumber",
                                           includeProperties: $"{nameof(Application.Applicant)}," +
                                                              $"{nameof(Application.Applicant.User)}," +
                                                              $"{nameof(Application.JobPosting)}",

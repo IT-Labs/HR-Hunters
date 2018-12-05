@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HRHunters.Data.Migrations
 {
-    public partial class EntityChanges : Migration
+    public partial class newMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -224,15 +224,15 @@ namespace HRHunters.Data.Migrations
                 name: "Clients",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     CreatedBy = table.Column<string>(nullable: true),
                     ModifiedBy = table.Column<string>(nullable: true),
-                    Status = table.Column<int>(nullable: false),
+                    Status = table.Column<string>(nullable: true),
                     Location = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     PhoneNumber = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -263,7 +263,7 @@ namespace HRHunters.Data.Migrations
                     Description = table.Column<string>(maxLength: 800, nullable: true),
                     EmpCategory = table.Column<string>(nullable: false),
                     Education = table.Column<string>(nullable: false),
-                    Status = table.Column<int>(nullable: false),
+                    Status = table.Column<string>(nullable: true),
                     NeededExperience = table.Column<string>(nullable: false),
                     ClientId = table.Column<int>(nullable: false)
                 },

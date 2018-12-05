@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HRHunters.Common.Interfaces
 {
-    public interface IExtensionMethods
+    public interface ITokenGeneration
     {
         string GenerateJwtToken(User user);
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HRHunters.Common.Entities;
+using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Data;
 using HRHunters.Domain.Managers;
@@ -29,7 +30,7 @@ namespace HRHunters.WebAPI.Controllers
         }
         //Test methods
         [HttpGet("applicants")]
-        public ActionResult<IEnumerable<Applicant>> GetMultipleApplicants(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
+        public ActionResult<IEnumerable<Applicant>> GetMultipleApplicants(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, string filterBy)
         {
             return Ok(_applicantManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
         }
