@@ -22,7 +22,7 @@ namespace HRHunters.Domain.Managers
             var propertyInfo = typeof(Client).GetProperty(sortedBy) 
                                     ?? typeof(User).GetProperty(sortedBy);
            
-            return _repo.Get<Client>(orderBy: sortedBy,
+            return _repo.Get<Client>(orderBy: propertyInfo.ReflectedType.Equals(typeof(User)) ? "User." + sortedBy : sortedBy,
                                     includeProperties: $"{nameof(Client.User)}", 
                                     skip: (currentPage - 1) * pageSize, 
                                     take: pageSize
