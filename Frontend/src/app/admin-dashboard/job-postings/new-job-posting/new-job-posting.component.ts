@@ -3,7 +3,6 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { Client } from "src/app/models/client.model";
 import { mimeType } from "../../../validators/mime-type.validator";
 import { JobPostingService } from "src/app/services/job-posting.service";
-import { Subscription } from "rxjs";
 import { Router } from "@angular/router";
 
 @Component({
@@ -23,8 +22,6 @@ export class ADNewJobPostingComponent implements OnInit {
   existingCompany = false;
   validDates: boolean;
   validExperience: boolean;
-
-  private imgUploadStatus: Subscription;
 
   imagePreview: string | ArrayBuffer;
   imageValid = true;
@@ -265,6 +262,17 @@ export class ADNewJobPostingComponent implements OnInit {
   onSubmitNewJobPosting() {
     this.validDates = this.compareTwoDates();
     this.validExperience = this.checkExperience();
+
+    this.newJobPostingForm.controls['companyName'].markAsTouched();
+    this.newJobPostingForm.controls['companyEmail'].markAsTouched();
+    this.newJobPostingForm.controls['location'].markAsTouched();
+    this.newJobPostingForm.controls['logo'].markAsTouched();
+    this.newJobPostingForm.controls['title'].markAsTouched();
+    this.newJobPostingForm.controls['jobType'].markAsTouched();
+    this.newJobPostingForm.controls['education'].markAsTouched();
+    this.newJobPostingForm.controls['experience'].markAsTouched();
+    this.newJobPostingForm.controls['durationFrom'].markAsTouched();
+    this.newJobPostingForm.controls['durationTo'].markAsTouched();
 
     if (this.imagePreview === undefined) {
       this.imageValid = false;

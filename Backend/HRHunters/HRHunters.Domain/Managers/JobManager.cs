@@ -20,12 +20,15 @@ namespace HRHunters.Domain.Managers
 
         public IEnumerable<JobInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
         {
-            var sortDirection = sortDir % 2 == 0 ? true : false; // true -asc, false -desc
+            if (string.IsNullOrEmpty(sortedBy))
+                sortedBy = "Id";
             var propertyInfo = typeof(JobPosting).GetProperty(sortedBy) 
                                     ?? typeof(Client).GetProperty(sortedBy) 
                                             ?? typeof(User).GetProperty(sortedBy);
-            return _repo.Get<JobPosting>(orderBy: sortedBy,
-                                         includeProperties: $"{nameof(JobPosting.Client)}", 
+            var reflectedType = propertyInfo.ReflectedType;
+            return _repo.Get<JobPosting>(orderBy: reflectedType.Equals(typeof(JobPosting)) ? sortedBy
+                                                    : reflectedType.Equals(typeof(Client)) ? "Client."+ sortedBy : "User." + sortedBy,
+                                         includeProperties: $"{nameof(JobPosting.Client)}," + $"{nameof(JobPosting.Client.User)}", 
                                          skip: (currentPage - 1) * pageSize, 
                                          take: pageSize)
                                          .Select(x => new JobInfo

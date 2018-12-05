@@ -17,11 +17,16 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public IEnumerable<ApplicantInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, string filterBy)
+        public IEnumerable<ApplicantInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir, string filterBy)
         {
-            var sortDirection = sortDir.Equals(SortDirection.ASC) ? true : false; 
-           
-            return _repo.Get<Applicant>(orderBy: sortedBy,
+            var sortDirection = sortDir.Equals(SortDirection.ASC) ? true : false;
+
+            if(sortedBy == null)
+                sortedBy = "Id";
+
+            var propertyInfo = typeof(Applicant).GetProperty(sortedBy) ?? typeof(User).GetProperty(sortedBy);
+            
+            return _repo.Get<Applicant>(orderBy: propertyInfo.ReflectedType.Equals(typeof(User)) ? "User." + sortedBy : sortedBy,
                                         includeProperties: $"{nameof(Applicant.User)}", skip: (currentPage-1)*pageSize, take: pageSize, sortDirection: sortDir)
                                         .Select(
                                         x => new ApplicantInfo
