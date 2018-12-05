@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component,OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { mimeType } from "../../../validators/mime-type.validator";
@@ -77,8 +77,7 @@ export class ClientProfileComponent implements OnInit {
     this.clientProfileFormHP.controls["companyEmail"].markAsTouched();
     this.clientProfileFormHP.controls["phonenumber"].markAsTouched();
     this.clientProfileFormHP.controls["logo"].markAsTouched();
-
-    if (this.imagePreview === undefined) {
+      if (this.imagePreview === undefined) {
       this.imageValid = false;
     } else {
       if (this.clientProfileFormHP.valid) {
