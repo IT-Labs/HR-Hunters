@@ -63,7 +63,7 @@ namespace HRHunters.WebAPI.Controllers
         public ActionResult<IEnumerable<JobPosting>> CreateJobPosting(JobSubmit jobSubmit)
         {
 
-            
+            return null;
         }
 
 
