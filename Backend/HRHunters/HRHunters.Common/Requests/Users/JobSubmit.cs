@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HRHunters.Common.Requests.Users
 {
-    public class JobPosting
+    public class JobSubmit
     {
         public string CompanyName { get; set; }
         public string ContactEmail { get; set; }
