@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HRHunters.Common.Entities;
+using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
@@ -16,26 +17,22 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public IEnumerable<ClientInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
+        public IEnumerable<ClientInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, string filterBy)
         {
-            var sortDirection = sortDir % 2 == 0 ? true : false; // true -asc, false -desc
-            var propertyInfo = typeof(Client).GetProperty(sortedBy) 
-                                    ?? typeof(User).GetProperty(sortedBy);
-           
+            var sortDirection = sortDir.Equals(SortDirection.ASC) ? true : false;
+
             return _repo.Get<Client>(orderBy: sortedBy,
-                                    includeProperties: $"{nameof(Client.User)}", 
-                                    skip: (currentPage - 1) * pageSize, 
-                                    take: pageSize
-                                    )
-                                    .Select(
+                                        includeProperties: $"{nameof(Client.User)}," + $"{nameof(Client.JobPostings)}",
+                                        skip: (currentPage - 1) * pageSize, take: pageSize, sortDirection: sortDir)
+                                        .Select(
                                     x => new ClientInfo
                                     {
                                         Id = x.UserId,
                                         FirstName = x.User.FirstName,
                                         Email = x.User.Email,
-                                        Location=x.Location,
+                                        Location = x.Location,
                                         Active = x.JobPostings.Where(z => z.DateTo < DateTime.UtcNow).Count(),
-                                        All = 7,
+                                        All = x.JobPostings.Count(),
                                         Photo = "foto"
                                     });
         }

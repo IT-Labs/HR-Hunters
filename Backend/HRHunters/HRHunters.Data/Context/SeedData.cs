@@ -1,4 +1,5 @@
 ﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Domain.Managers;
 using Microsoft.AspNetCore.Identity;
@@ -71,9 +72,9 @@ namespace HRHunters.Data.Context
                             DateFrom = DateTime.UtcNow,
                             DateTo = DateTime.UtcNow.AddDays(4),
                             Title = "Backend developer" + i,
-                            Education = "Bachelor degree",
+                            Education = EducationType.BACHELOR,
                             Description = "Lorem ipsum bruh...",
-                            EmpCategory = "Full-time",
+                            EmpCategory = JobType.FULLTIME,
                             Location = "Skopje, Macedonia",
                             Status = "Approved",
                             NeededExperience = "3"

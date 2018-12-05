@@ -24,9 +24,9 @@ namespace HRHunters.Common.Entities
         [StringLength(800)]
         public string Description { get; set; }
         [Required]
-        public string EmpCategory { get; set; }
+        public JobType EmpCategory { get; set; }
         [Required]
-        public string Education { get; set; }
+        public EducationType Education { get; set; }
         [DisplayName("Status")]
         public string Status { get; set; }
         [Required]

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using HRHunters.Common.Requests.Users;
 
 namespace HRHunters.Domain.Managers
 {
@@ -39,6 +40,10 @@ namespace HRHunters.Domain.Managers
                                              PositionTitle = x.Title,
                                              Status = x.Status
                                          });
+        }
+        public IEnumerable<JobSubmit> Create(JobSubmit jobSubmit)
+        {
+
         }
     }
 }
