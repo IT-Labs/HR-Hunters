@@ -28,8 +28,8 @@ namespace HRHunters.Domain.Managers
                                             ?? typeof(User).GetProperty(sortedBy);
             var reflectedType = propertyInfo.ReflectedType;
             return _repo.Get<JobPosting>(orderBy: reflectedType.Equals(typeof(JobPosting)) ? sortedBy
-                                                    : reflectedType.Equals(typeof(Client)) ? "Client."+ sortedBy : "Client.User." + sortedBy,
-                                         includeProperties: $"{nameof(Client)}.{nameof(Client.User)},", 
+                                                : reflectedType.Equals(typeof(Client)) ? "Client."+ sortedBy : "Client.User." + sortedBy,
+                               includeProperties: $"{nameof(Client)}.{nameof(Client.User)},", 
                                          skip: (currentPage - 1) * pageSize, 
                                          take: pageSize,
                                          sortDirection: sortDir

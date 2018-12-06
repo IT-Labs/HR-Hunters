@@ -37,9 +37,9 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpGet("applications")]
-        public ActionResult<IEnumerable<Application>> GetMultipleApplications(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, ApplicationStatus filterBy)
+        public ActionResult<IEnumerable<Application>> GetMultipleApplications(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery)
         {
-            return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
+            return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
 
         [HttpGet("jobs")]

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HRHunters.Common.Enums;
+using HRHunters.Common.Responses.AdminDashboard;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -20,5 +22,7 @@ namespace HRHunters.WebAPI.Helpers
                                           query.Expression, Expression.Quote(orderByExpression));
             return query.Provider.CreateQuery<TEntity>(resultExpression);
         }
+        
+
     }
 }

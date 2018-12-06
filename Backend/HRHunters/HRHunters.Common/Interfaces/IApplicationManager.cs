@@ -12,6 +12,6 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IApplicationManager : IBaseManager
     {
-        IEnumerable<ApplicationInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir, ApplicationStatus? filterBy);
+        IEnumerable<ApplicationInfo> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery);
     }
 }

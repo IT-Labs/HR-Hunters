@@ -21,15 +21,15 @@ namespace HRHunters.Domain.Managers
         {
             var sortDirection = sortDir.Equals(SortDirection.ASC) ? true : false;
 
-            if(sortedBy == null)
+            if (sortedBy == null)
                 sortedBy = "Id";
-
             var propertyInfo = typeof(Applicant).GetProperty(sortedBy) ?? typeof(User).GetProperty(sortedBy);
-            
+
             return _repo.Get<Applicant>(orderBy: propertyInfo.ReflectedType.Equals(typeof(User)) ? "User." + sortedBy : sortedBy,
-                                        includeProperties: $"{nameof(Applicant.User)}", skip: (currentPage-1)*pageSize, take: pageSize, sortDirection: sortDir)
-                                        .Select(
-                                        x => new ApplicantInfo
+                                        includeProperties: $"{nameof(Applicant.User)}",
+                                        skip: (currentPage - 1) * pageSize,
+                                        take: pageSize, sortDirection: sortDir)
+                                        .Select(x => new ApplicantInfo
                                         {
                                             Id = x.Id,
                                             FirstName = x.User.FirstName,
