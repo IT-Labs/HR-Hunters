@@ -4,9 +4,11 @@ import { Router } from "@angular/router";
 import { map } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { Applicant } from "../models/applicant.model";
+import { environment } from "../../environments/environment.prod";
 
 @Injectable({ providedIn: "root" })
 export class ApplicantService {
+  baseUrl = environment.baseUrl;
   // Local list of applicants
   private applicants: Applicant[] = [];
 
@@ -25,12 +27,11 @@ export class ApplicantService {
 
   // Get all applicants
   getApplicants(
-    applicantsQP
+    queryParams
   ) {
-    const queryParams = `?pagesize=${applicantsQP.applicantsPerPage}&page=${applicantsQP.currentPage}&sort=${applicantsQP.sortedBy}&sortDir=${applicantsQP.sortDirection}&filter=${applicantsQP.filterBy}`;
     this.http
       .get<{ applicants: Applicant[]; maxApplicants: number }>(
-        "http://localhost:3000/dataApplicants" + queryParams
+        this.baseUrl + '/Admin/applicants' + queryParams
       )
       .pipe(
         map(applicantsData => {
