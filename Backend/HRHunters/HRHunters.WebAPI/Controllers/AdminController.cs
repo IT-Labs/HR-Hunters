@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Data;
 using HRHunters.Domain.Managers;
@@ -31,27 +32,27 @@ namespace HRHunters.WebAPI.Controllers
         }
         //Test methods
         [HttpGet("applicants")]
-        public ActionResult<IEnumerable<Applicant>> GetMultipleApplicants(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, string filterBy)
+        public ActionResult<IEnumerable<Applicant>> GetMultipleApplicants(QueryParams queryParams)
         {
-            return Ok(_applicantManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
+            return Ok(_applicantManager.GetMultiple( queryParams));
         }
 
         [HttpGet("applications")]
-        public ActionResult<IEnumerable<Application>> GetMultipleApplications(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
+        public ActionResult<IEnumerable<Application>> GetMultipleApplications(QueryParams queryParams,ApplicationStatus filterBy)
         {
-            return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
+            return Ok(_applicationManager.GetMultiple(queryParams, filterBy));
         }
 
         [HttpGet("jobs")]
-        public ActionResult<IEnumerable<JobPosting>> GetMultipleJobPosting(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
+        public ActionResult<IEnumerable<JobPosting>> GetMultipleJobPosting(QueryParams queryParams,JobPostingStatus filterBy)
         {
-            return Ok(_jobManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
+            return Ok(_jobManager.GetMultiple( queryParams, filterBy));
         }
 
         [HttpGet("clients")]
-        public ActionResult<IEnumerable<Client>> GetMultipleClients(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, string filterBy)
+        public ActionResult<IEnumerable<Client>> GetMultipleClients(QueryParams queryParams,ClientStatus filterBy)
         {
-            return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
+            return Ok(_clientManager.GetMultiple( queryParams, filterBy));
         }
 
         [HttpGet("jobs/{id}")]

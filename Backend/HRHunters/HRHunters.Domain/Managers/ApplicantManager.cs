@@ -5,6 +5,7 @@ using System.Text;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
 
@@ -17,17 +18,20 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public IEnumerable<ApplicantInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir, string filterBy)
+        public IEnumerable<ApplicantInfo> GetMultiple(QueryParams queryParams)
         {
-            var sortDirection = sortDir.Equals(SortDirection.ASC) ? true : false;
+            var sortDirection = queryParams.SortDir.Equals(SortDirection.ASC) ? true : false;
 
-            if(sortedBy == null)
-                sortedBy = "Id";
+            if(queryParams.SortedBy == null)
+                queryParams.SortedBy = "Id";
 
-            var propertyInfo = typeof(Applicant).GetProperty(sortedBy) ?? typeof(User).GetProperty(sortedBy);
+            var propertyInfo = typeof(Applicant).GetProperty(queryParams.SortedBy) ?? typeof(User).GetProperty(queryParams.SortedBy);
             
-            return _repo.Get<Applicant>(orderBy: propertyInfo.ReflectedType.Equals(typeof(User)) ? "User." + sortedBy : sortedBy,
-                                        includeProperties: $"{nameof(Applicant.User)}", skip: (currentPage-1)*pageSize, take: pageSize, sortDirection: sortDir)
+            return _repo.Get<Applicant>(orderBy: propertyInfo.ReflectedType.Equals(typeof(User)) ? "User." + queryParams.SortedBy : queryParams.SortedBy,
+                                        includeProperties: $"{nameof(Applicant.User)}",
+                                        skip: (queryParams.CurrentPage - 1)* queryParams.PageSize,
+                                        take: queryParams.PageSize,
+                                        sortDirection: queryParams.SortDir)
                                         .Select(
                                         x => new ApplicantInfo
                                         {
