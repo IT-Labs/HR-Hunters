@@ -4,9 +4,11 @@ import { Router } from "@angular/router";
 import { JobPosting } from "../models/job-posting.model";
 import { map } from "rxjs/operators";
 import { Subject } from "rxjs";
+import { environment } from "../../environments/environment.prod";
 
 @Injectable({ providedIn: "root" })
 export class JobPostingService {
+  baseUrl = environment.baseUrl;
   // Local list of job postings
   private jobPostings: JobPosting[] = [];
 
@@ -22,10 +24,7 @@ export class JobPostingService {
   constructor(private http: HttpClient, private router: Router) {}
 
   // Get all job postings
-  getJobPostings(jobPostingQP) {
-    const queryParams = `?pagesize=${jobPostingQP.jobPostingsPerPage}&page=${
-      jobPostingQP.currentPage
-    }&sort=${jobPostingQP.sortedBy}&sortDir=${jobPostingQP.sortDirection}&filter=${jobPostingQP.filterBy}`;
+  getJobPostings(queryParams) {
     this.http
       .get<{
         jobPostings: JobPosting[];
@@ -33,7 +32,7 @@ export class JobPostingService {
         approved: number;
         pending: number;
         expired: number;
-      }>("http://localhost:3000/dataJP")
+      }>(this.baseUrl + '/Admin/jobs' + queryParams)
       .pipe(
         map(jobPostingData => {
           return {

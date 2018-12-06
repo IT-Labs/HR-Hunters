@@ -8,36 +8,43 @@ import { ApplicantService } from "src/app/services/applicants.service";
   templateUrl: "./applicants.component.html",
   styleUrls: ["./applicants.component.scss"]
 })
-export class ADApplicantsComponent implements OnInit,OnDestroy {
+export class ADApplicantsComponent implements OnInit, OnDestroy {
   applicantsCount = {
     all: 0
   };
+
   applicants: Applicant[] = [];
 
   applicantsQP = {
     postsPerPage: 10,
     currentPage: 1,
     currentSortBy: "firstName",
-    currentSortDirection: 1,
-    currentFilter: "All",
-    lastSortBy: ""
-  }
+    lastSortBy: "",
+    currentSortDirection: 0
+  };
+
   paginationSize: number[] = [];
   private applicantsSub: Subscription;
 
   constructor(private applicantService: ApplicantService) {}
 
   ngOnInit() {
-    this.applicantService.getApplicants(
-      this.applicantsQP
-    );
+    const params = this.buildQueryParams(this.applicantsQP);
+    this.applicantService.getApplicants(params);
     this.applicantsSub = this.applicantService
       .getApplicantsUpdateListener()
       .subscribe(applicantData => {
         this.applicants = applicantData.applicants;
         this.applicantsCount.all = applicantData.applicantsCount;
-        this.calculatePagination(this.applicantsCount.all)
+        this.calculatePagination(this.applicantsCount.all);
       });
+  }
+
+  buildQueryParams(data) {
+  return `?pagesize=${data.postsPerPage}
+          &page=${data.currentPage}
+          &sort=${data.currentSortBy}
+          &sortDir=${data.currentSortDirection}`;  
   }
 
   calculatePagination(applicantsCount: number) {
@@ -50,13 +57,20 @@ export class ADApplicantsComponent implements OnInit,OnDestroy {
         this.paginationSize.push(num);
       }
     } else if (paginationSum > 10) {
-      if (this.applicantsQP.currentPage - 10 < paginationSum - 10 && this.applicantsQP.currentPage < 6) {
+      if (
+        this.applicantsQP.currentPage - 10 < paginationSum - 10 &&
+        this.applicantsQP.currentPage < 6
+      ) {
         for (let i = 1; i < 11; i++) {
           const num = i;
           this.paginationSize.push(num);
         }
       } else if (this.applicantsQP.currentPage - 10 < paginationSum - 10) {
-        for (let i = this.applicantsQP.currentPage - 5; i < this.applicantsQP.currentPage + 5; i++) {
+        for (
+          let i = this.applicantsQP.currentPage - 5;
+          i < this.applicantsQP.currentPage + 5;
+          i++
+        ) {
           const num = i;
           this.paginationSize.push(num);
         }
@@ -71,30 +85,23 @@ export class ADApplicantsComponent implements OnInit,OnDestroy {
 
   onChangedPage(page: number) {
     this.applicantsQP.currentPage = page;
-    this.applicantService.getApplicants(
-      this.applicantsQP
-    );
-  }
-
-  onFilter(filterBy: string) {
-    this.applicantsQP.currentFilter = filterBy;
-    this.applicantService.getApplicants(
-      this.applicantsQP
-    );
+    const params = this.buildQueryParams(this.applicantsQP);
+    this.applicantService.getApplicants(params);
   }
 
   onSort(sortBy: any) {
     if (this.applicantsQP.lastSortBy === sortBy) {
-      this.applicantsQP.currentSortDirection++;
+      this.applicantsQP.currentSortDirection = 1;
     } else {
+      this.applicantsQP.currentSortDirection = 0;
       this.applicantsQP.lastSortBy = sortBy;
     }
     this.applicantsQP.currentSortBy = sortBy;
-    this.applicantService.getApplicants(
-      this.applicantsQP
-    );
+    const params = this.buildQueryParams(this.applicantsQP);
+    this.applicantService.getApplicants(params);
   }
-ngOnDestroy() {
-  this.applicantsSub.unsubscribe();
-}
+
+  ngOnDestroy() {
+    this.applicantsSub.unsubscribe();
+  }
 }
