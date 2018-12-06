@@ -11,7 +11,6 @@ export class ClientComponent implements OnInit {
   constructor(private router: Router) { }
 
   ngOnInit() {
-    this.router.navigate(['/client/job-postings'])
   }
 
 }
