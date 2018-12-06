@@ -15,6 +15,6 @@ namespace HRHunters.Common.Responses.AdminDashboard
         public JobType JobType { get; set; }
         public string Expires { get; set; }
         public int Applications { get; set; }
-        public string Status { get; set; }
+        public JobPostingStatus Status { get; set; }
     }
 }

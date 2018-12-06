@@ -64,6 +64,9 @@ namespace HRHunters.Data.Context
                         var client = new Client()
                         {
                             User = user,
+                            Location = "Skopje",
+                            PhoneNumber = "+3891112344",
+                            Status = ClientStatus.ACTIVE,
                         };
                         _clientManager.Create(client);
                         var jobPost = new JobPosting()
@@ -76,8 +79,8 @@ namespace HRHunters.Data.Context
                             Description = "Lorem ipsum bruh...",
                             EmpCategory = JobType.FULLTIME,
                             Location = "Skopje, Macedonia",
-                            Status = "Approved",
-                            NeededExperience = "3"
+                            Status = JobPostingStatus.APPROVED,
+                            NeededExperience = "3",
                         };
                         _clientManager.Create(jobPost, "Admin");
                     }
@@ -87,14 +90,18 @@ namespace HRHunters.Data.Context
                         {
                             User = user,
                             SchoolUniversity = "school" + i,
-                            EducationType = "B"
+                            EducationType = "B",
+                            PhoneNumber = "+38931453312",
+                            Experience = "3",
+                            
                         };
                         _clientManager.Create(applicant, "Admin");
                         var application = new Application()
                         {
                             Applicant = applicant,
                             Date = DateTime.UtcNow,
-                            JobPosting = _clientManager.GetById<Client>(i).JobPostings.FirstOrDefault(),
+                            JobPosting = _clientManager.Get<JobPosting>(filter: x => x.ClientId == i).FirstOrDefault(),
+                            Status = ApplicationStatus.PENDING,
                         };
                         _clientManager.Create(application, "Admin");
                     }

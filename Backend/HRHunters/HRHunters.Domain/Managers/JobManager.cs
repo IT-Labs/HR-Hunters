@@ -44,7 +44,7 @@ namespace HRHunters.Domain.Managers
                                              Status = x.Status
                                          });
         }
-        public IEnumerable<JobSubmit> CreateJobPosting(JobSubmit jobSubmit)
+        public IEnumerable<JobPosting> CreateJobPosting(JobSubmit jobSubmit)
         {
             return null;
         }
