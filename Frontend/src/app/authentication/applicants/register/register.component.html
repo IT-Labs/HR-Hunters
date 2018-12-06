@@ -111,10 +111,10 @@
             <!-- SERVER EMAIL ERROR -->
 
             <div
-              *ngIf="authEmailError"
+              *ngIf="authError"
               class="alert alert-warning auth-form__alert"
             >
-              {{ authEmailError }}
+              {{ authError }}
             </div>
 
             <!-- PASSWORD INPUT -->
@@ -167,15 +167,6 @@
               >
                 Password must contain at least 1 lowercase, 1 uppercase alphabetical character, 1 numeric character and one special character.
               </div>
-            </div>
-
-            <!-- SERVER PASSWORD ERROR -->
-
-            <div
-              *ngIf="authPasswordError"
-              class="alert alert-warning auth-form__alert"
-            >
-              {{ authPasswordError }}
             </div>
 
             <!-- CONFIRM PASSWORD INPUT -->

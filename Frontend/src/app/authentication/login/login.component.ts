@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
     this.authErrorStatusSub = this.authService
       .getAuthErrorStatusListener()
       .subscribe(error => {
-        this.authError = error.email;
+        this.authError = error.error;
       });
   }
 
