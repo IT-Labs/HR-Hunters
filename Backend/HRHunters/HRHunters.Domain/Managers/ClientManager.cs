@@ -17,7 +17,7 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public IEnumerable<ClientInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, string filterBy)
+        public IEnumerable<ClientInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, ClientStatus filterBy)
         {
             var sortDirection = sortDir.Equals(SortDirection.ASC) ? true : false;
 

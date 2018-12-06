@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using HRHunters.Common.Requests.Users;
+using HRHunters.Common.Enums;
 
 namespace HRHunters.Domain.Managers
 {
@@ -18,7 +19,7 @@ namespace HRHunters.Domain.Managers
             _repo = repo;
         }
 
-        public IEnumerable<JobInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
+        public IEnumerable<JobInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir, int filterBy)
         {
             if (string.IsNullOrEmpty(sortedBy))
                 sortedBy = "Id";
@@ -27,14 +28,17 @@ namespace HRHunters.Domain.Managers
                                             ?? typeof(User).GetProperty(sortedBy);
             var reflectedType = propertyInfo.ReflectedType;
             return _repo.Get<JobPosting>(orderBy: reflectedType.Equals(typeof(JobPosting)) ? sortedBy
-                                                    : reflectedType.Equals(typeof(Client)) ? "Client."+ sortedBy : "User." + sortedBy,
-                                         includeProperties: $"{nameof(JobPosting.Client)}," + $"{nameof(JobPosting.Client.User)}", 
+                                                    : reflectedType.Equals(typeof(Client)) ? "Client."+ sortedBy : "Client.User." + sortedBy,
+                                         includeProperties: $"{nameof(Client)}.{nameof(Client.User)},", 
                                          skip: (currentPage - 1) * pageSize, 
-                                         take: pageSize)
+                                         take: pageSize,
+                                         sortDirection: sortDir
+                                         )
+                                         .Where(x => x.Status.Equals(JobPostingStatus.AWAITINGAPPROVAL))
                                          .Select(x => new JobInfo
                                          {
                                              Id = x.Id,
-                                             Applications = x.Applications.Count,
+                                             Applications = 0,
                                              CompanyName = x.Client.User.FirstName,
                                              ContactEmail = x.Client.User.Email,
                                              Expires = x.DateTo.ToString(),

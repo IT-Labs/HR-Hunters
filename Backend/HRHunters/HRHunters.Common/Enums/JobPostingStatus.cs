@@ -6,8 +6,9 @@ namespace HRHunters.Common.Enums
 {
     public enum JobPostingStatus
     {
-        APPROVED = 0,
-        AWAITINGAPPROVAL = 1,
-        REJECTED = 2
+        ALL = 0,
+        APPROVED = 1,
+        AWAITINGAPPROVAL = 2,
+        REJECTED = 3
     }
 }

@@ -17,7 +17,7 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public IEnumerable<ApplicationInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
+        public IEnumerable<ApplicationInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir, ApplicationStatus? filterBy)
         {
             if(sortedBy == null)
                 sortedBy = "Id";
@@ -29,13 +29,12 @@ namespace HRHunters.Domain.Managers
 
             return _repo.Get<Application>(orderBy: reflectedType.Equals(typeof(Application)) ? sortedBy 
                                                     : reflectedType.Equals(typeof(Applicant)) ? "Applicant."+sortedBy 
-                                                    : reflectedType.Equals(typeof(JobPosting)) ? "JobPosting."+sortedBy : "User"+sortedBy,
-                                            includeProperties: $"{nameof(Application.Applicant)}," +
-                                                                $"{nameof(Application.Applicant.User)}," +
-                                                                $"{nameof(Application.JobPosting)}",
+                                                    : reflectedType.Equals(typeof(JobPosting)) ? "JobPosting."+sortedBy : "Applicant.User"+sortedBy,
+                                            includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
+                                                                $"{nameof(JobPosting)}",
                                             skip: (currentPage - 1) * pageSize,
-                                            take: pageSize
-                                            ).Select(x => new ApplicationInfo
+                                            take: pageSize,
+                                            sortDirection: sortDir).Select(x => new ApplicationInfo
                                             {
                                                 ApplicantEmail = x.Applicant.User.Email,
                                                 ApplicantName = x.Applicant.User.FirstName,
