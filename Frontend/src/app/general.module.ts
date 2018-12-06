@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { NgxPopper } from 'angular-popper';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 import { HeaderComponent } from './homepage/header/header.component';
 import { NavigationComponent } from './homepage/header/navigation/navigation.component';
@@ -14,18 +16,18 @@ import { ApplicantRegisterComponent } from './authentication/applicants/register
 import { ClientRegisterComponent } from './authentication/clients/register/register.component';
 import { AddJobPostingComponent } from './homepage/client/add-job-posting/add-job-posting.component';
 import { ApplicantApplicationsComponent } from './homepage/applicant/applicant-applications/applicant-applications.component';
-import { ErrorComponent } from './error/error.component';
 import { JobPostingsListComponent } from './homepage/applicant/job-postings-list/job-postings-list.component';
 import { ClientProfileComponent } from './homepage/client/client-profile/client-profile.component';
 import { ApplicantProfileComponent } from './homepage/applicant/applicant-profile/applicant-profile.component';
 import { WelcomeComponent } from './authentication/welcome.component';
-import { NgxPopper } from 'angular-popper';
+import { LoginComponent } from './authentication/login/login.component';
 import { ADClientsComponent } from './admin-dashboard/clients/clients.component';
 import { ADApplicantsComponent } from './admin-dashboard/applicants/applicants.component';
 import { ADApplicationsComponent } from './admin-dashboard/applications/applications.component';
 import { ADJobPostingsComponent } from './admin-dashboard/job-postings/job-postings.component';
 import { ADNewJobPostingComponent } from './admin-dashboard/job-postings/new-job-posting/new-job-posting.component';
-import { LoginComponent } from './authentication/login/login.component';
+import { ErrorComponent } from './error/error.component';
+
 
 @NgModule({
     declarations: [
@@ -57,7 +59,8 @@ import { LoginComponent } from './authentication/login/login.component';
         ReactiveFormsModule,
         FormsModule,
         RouterModule,
-        NgxPopper
+        NgxPopper,
+        InfiniteScrollModule
     ]
 })
 

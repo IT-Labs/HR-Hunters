@@ -38,8 +38,8 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   constructor(private jobPostingService: JobPostingService) {}
 
   ngOnInit() {
-
-    this.jobPostingService.getJobPostings( this.jobPostingQP );
+    const params = this.buildQueryParams(this.jobPostingQP);
+    this.jobPostingService.getJobPostings(params);
     this.jobPostingSub = this.jobPostingService
       .getJobPostingUpdateListener()
       .subscribe(jobPostingData => {
