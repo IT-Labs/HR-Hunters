@@ -11,8 +11,7 @@ import { AuthService } from "src/app/services/auth.service";
 export class ClientRegisterComponent {
   private password: string;
   private confirmedPassword: string;
-  authEmailError: string;
-  authPasswordError: string;
+  authError: string;
   strongPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
   validEmail = new RegExp("[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}");
   private authErrorStatusSub: Subscription;
@@ -26,8 +25,7 @@ export class ClientRegisterComponent {
     .subscribe(authStatus => {});
     this.authErrorStatusSub = this.authService.getAuthErrorStatusListener().subscribe(error => {
       if (error) {
-        this.authEmailError = error.email;
-        this.authPasswordError = error.password
+        this.authError = error.error;
       }
     })
   }

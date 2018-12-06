@@ -25,8 +25,7 @@ export class AuthService {
   }>();
   private authStatusListener = new Subject<boolean>();
   private authErrorStatusListener = new Subject<{
-    email: string;
-    password: string;
+    error: string;
   }>();
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -124,32 +123,16 @@ export class AuthService {
             this.router.navigate(["login"]);
           }
           if (!response.succeeded) {
-            if (response.errors.Email) {
-              this.authErrorStatusListener.next({
-                email: response.errors.Email[0],
-                password: null
-              });
-            } else if (response.errors.Password) {
-              this.authErrorStatusListener.next({
-                email: null,
-                password: response.errors.Password[0]
-              });
-            }
+            this.authErrorStatusListener.next({
+              error: "Unknown error occured"
+            });
           }
         },
         error => {
-          if (error) {
-            if (error.errors.Email) {
-              this.authErrorStatusListener.next({
-                email: error.error.errors.Email[0],
-                password: null
-              });
-            } else if (error.errors.Password) {
-              this.authErrorStatusListener.next({
-                email: null,
-                password: error.error.errors.Password[0]
-              });
-            }
+          if (error.error.errors) {
+            this.authErrorStatusListener.next({
+              error: error.error.errors.Error[0]
+            });
           }
         }
       );
@@ -185,27 +168,25 @@ export class AuthService {
               this.authStatusListener.next(true);
               this.saveAuthData(token);
               if (response.userType === 0) {
-                this.router.navigate(['applicant'])
+                this.router.navigate(["applicant"]);
               } else if (response.userType === 1) {
-                this.router.navigate(['client'])
+                this.router.navigate(["client"]);
               } else if (response.userType === 2) {
-                this.router.navigate(['admin-dashboard'])
+                this.router.navigate(["admin-dashboard"]);
               }
             }
           } else if (!response.succeeded) {
             if (response.errors) {
               this.authErrorStatusListener.next({
-                email: response.errors.Error[0],
-                password: null
+                error: response.errors.Error[0]
               });
             }
           }
         },
         error => {
-          if (error) {
+          if (error.error.errors) {
             this.authErrorStatusListener.next({
-              email: error.error.errors.Error[0],
-              password: null
+              error: error.error.errors.Error[0]
             });
           }
         }
