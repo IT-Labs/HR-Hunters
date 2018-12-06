@@ -50,7 +50,7 @@
               type="text"
               id="hpid__title"
               class="hp__form--input"
-              placeholder="Enter full name..."
+              placeholder="Enter first name..."
               formControlName="firstName"
               maxlength="30"
             />
@@ -90,7 +90,7 @@
             type="text"
             id="hpid__title"
             class="hp__form--input"
-            placeholder="Enter lastName..."
+            placeholder="Enter last name..."
             formControlName="lastName"
             maxlength="30"
           />
@@ -343,8 +343,9 @@
           </div>
 
           <div class="hp__form--btn-container">
-            <!-- needed special styling for linked in button -->
-            <button type="reset" class="btn btn__primary">Linked in</button>
+            <button  type="submit"  class="btn btn__linkedin">
+              Linked <span class="btn__linkedin--span"><i class="fa fa-linkedin-square "></i></span>
+            </button>
             <button type="reset" class="btn btn__danger">Cancel</button>
             <button
               type="submit"

@@ -24,10 +24,10 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   jobPostingQP = {
     postsPerPage: 10,
     currentPage: 9,
-    currentSortBy: "Expires",
+    currentSortBy: "dateTo",
     lastSortBy: "",
-    currentSortDirection: 1,
-    currentFilter: "All"
+    currentSortDirection: 0,
+    currentFilter: 0
   }
 
   jobPostings: JobPosting[] = [];
@@ -38,7 +38,8 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   constructor(private jobPostingService: JobPostingService) {}
 
   ngOnInit() {
-    this.jobPostingService.getJobPostings( this.jobPostingQP );
+    const params = this.buildQueryParams(this.jobPostingQP);
+    this.jobPostingService.getJobPostings(params);
     this.jobPostingSub = this.jobPostingService
       .getJobPostingUpdateListener()
       .subscribe(jobPostingData => {
@@ -49,6 +50,14 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
         this.jobPostingsCount.expired = jobPostingData.expired;
         this.calculatePagination(this.jobPostingsCount.all);
       });
+  }
+
+  buildQueryParams(data) {
+    return `?pagesize=${data.postsPerPage}
+            &page=${data.currentPage}
+            &sort=${data.currentSortBy}
+            &sortDir=${data.currentSortDirection}
+            &filter=${data.currentFilter}`;
   }
 
   calculatePagination(jobPostingsCount: number) {
@@ -92,28 +101,26 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
 
   onChangedPage(page: number) {
     this.jobPostingQP.currentPage = page;
-    this.jobPostingService.getJobPostings(
-      this.jobPostingQP
-    );
+    const params = this.buildQueryParams(this.jobPostingQP);
+    this.jobPostingService.getJobPostings(params);
   }
 
-  onFilter(filterBy: string) {
+  onFilter(filterBy: number) {
     this.jobPostingQP.currentFilter = filterBy;
-    this.jobPostingService.getJobPostings(
-      this.jobPostingQP
-    );
+    const params = this.buildQueryParams(this.jobPostingQP);
+    this.jobPostingService.getJobPostings(params);
   }
 
   onSort(sortBy: any) {
     if (this.jobPostingQP.lastSortBy === sortBy) {
-      this.jobPostingQP.currentSortDirection++;
+      this.jobPostingQP.currentSortDirection = 1;
     } else {
       this.jobPostingQP.lastSortBy = sortBy;
+      this.jobPostingQP.currentSortDirection = 0;
     }
     this.jobPostingQP.currentSortBy = sortBy;
-    this.jobPostingService.getJobPostings(
-      this.jobPostingQP
-    );
+    const params = this.buildQueryParams(this.jobPostingQP);
+    this.jobPostingService.getJobPostings(params);
   }
 
   chooseStatus(event: any, id: number) {

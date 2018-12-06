@@ -3,19 +3,22 @@
     <h2>Applications</h2>
     <div class="text-muted dash__filtering">
       <ul>
-        <li (click)="onFilter('all')">
+        <li (click)="onFilter(0)">
           All<span>({{ applicationCount.all }})</span>
         </li>
-        <li (click)="onFilter('pending')">
+        <li (click)="onFilter(1)">
           Pending<span>({{ applicationCount.pending }})</span>
         </li>
-        <li (click)="onFilter('contacted')">
+        <li (click)="onFilter(2)">
           Contacted<span>({{ applicationCount.contacted }})</span>
         </li>
-        <li (click)="onFilter('interviewed')">
+        <li (click)="onFilter(3)">
           Interviewed<span>({{ applicationCount.interviewed }})</span>
         </li>
-        <li (click)="onFilter('rejected')">
+        <li (click)="onFilter(4)">
+          Interviewed<span>({{ applicationCount.hired }})</span>
+        </li>
+        <li (click)="onFilter(5)">
           Rejected<span>({{ applicationCount.rejected }})</span>
         </li>
       </ul>

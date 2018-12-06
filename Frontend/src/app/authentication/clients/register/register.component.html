@@ -34,6 +34,13 @@
               >
                 Company name is required.
               </div>
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientName'].errors?.pattern
+                "
+              >
+                The field can only contain letters from the English alphabet.
+              </div>
             </div>
 
             <!-- EMAIL INPUT -->
@@ -83,9 +90,9 @@
             <!-- SERVER ERROR -->
 
             <div
-              *ngIf="authEmailError"
+              *ngIf="authError"
               class="alert alert-warning auth-form__alert"
-            > {{ authEmailError }}
+            > {{ authError }}
             </div>
 
             <!-- PASSWORD INPUT -->
@@ -135,14 +142,6 @@
                 Password must contain at least 1 lowercase, 1 uppercase alphabetical character, 1 numeric character and one special character.
               </div>
             </div>
-
-             <!-- SERVER ERROR -->
-
-             <div
-             *ngIf="authPasswordError"
-             class="alert alert-warning auth-form__alert"
-           > {{ authPasswordError }}
-           </div>
 
             <!-- CONFIRM PASSWORD INPUT -->
             <input

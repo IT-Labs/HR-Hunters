@@ -11,8 +11,7 @@ import { Subscription } from "rxjs";
 export class ApplicantRegisterComponent implements OnInit {
   password: string;
   confirmedPassword: string;
-  authEmailError: string;
-  authPasswordError: string;
+  authError: string;
   strongPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
   validEmail = new RegExp("[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}");
   private authStatusSub: Subscription;
@@ -25,8 +24,7 @@ export class ApplicantRegisterComponent implements OnInit {
       .getAuthStatusListener()
       .subscribe(authStatus => {});
     this.authErrorStatusSub = this.authService.getAuthErrorStatusListener().subscribe(error => {
-      this.authEmailError = error.email;
-      this.authPasswordError = error.password
+      this.authError = error.error
     })
   }
 

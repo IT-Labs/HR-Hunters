@@ -1,14 +1,22 @@
-<div class="jp__container">
-  <h1 class="jp__heading">
-    {{ jobPosting.jobTitle }}
-  </h1>
-  <p class="jp__sub-heading"> {{ jobPosting.jobType }}</p>
-  <p class="jp__content"  ng-init="limit = 150">
-    {{ jobPosting.description }}
-  </p>
-  <p class="jp__meta">Job Posting added on: {{ jobPosting.dateFrom }}, available until: {{ jobPosting.dateTo }}</p>
-  <div class="jp__btn-container">
-    <button class="btn btn__secondary">See more...</button>
-    <button class="btn btn__primary">Apply</button>
+<div
+infiniteScroll
+[infiniteScrollDistance]="2"
+[infiniteScrollUpDistance]="1.5"
+[infiniteScrollThrottle]="50"
+(scrolled)="onScrollDown()"
+(scrolledUp)="onScrollUp()"
+>
+  <div class="jp__container" *ngFor="let jp of jobPostings">
+    <h1 class="jp__heading">{{ jp.jobTitle }}</h1>
+    <p class="jp__sub-heading">{{ jp.jobType }}</p>
+    <p class="jp__content" ng-init="limit = 150">{{ jp.description }}</p>
+    <p class="jp__meta">
+      Job Posting added on: {{ jp.dateFrom }}, available until:
+      {{ jp.dateTo }}
+    </p>
+    <div class="jp__btn-container">
+      <button class="btn btn__secondary">See more...</button>
+      <button class="btn btn__primary">Apply</button>
+    </div>
   </div>
 </div>
