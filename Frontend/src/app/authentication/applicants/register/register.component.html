@@ -51,6 +51,15 @@
               </div>
               <div
                 *ngIf="
+                  applicantRegisterForm.controls['applicantFirstName'].errors
+                    ?.pattern || applicantRegisterForm.controls['applicantFirstName'].errors
+                    ?.pattern
+                "
+              >
+              This fields can only contain letters from the English alphabet.
+              </div>
+              <div
+                *ngIf="
                   applicantRegisterForm.controls['applicantLastName'].errors
                     ?.required
                 "
