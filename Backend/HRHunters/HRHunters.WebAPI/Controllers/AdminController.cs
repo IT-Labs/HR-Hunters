@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Requests.Users;
 using HRHunters.Data;
 using HRHunters.Domain.Managers;
 using Microsoft.AspNetCore.Authorization;
@@ -48,7 +49,7 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpGet("clients")]
-        public ActionResult<IEnumerable<Client>> GetMultipleClients(int? pageSize, int? currentPage, string sortedBy, int sortDir, string filterBy)
+        public ActionResult<IEnumerable<Client>> GetMultipleClients(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, string filterBy)
         {
             return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
         }
@@ -57,6 +58,12 @@ namespace HRHunters.WebAPI.Controllers
         public ActionResult<string> Index2(int id)
         {
             return "value";
+        }
+        [HttpPost("jobs")]
+        public ActionResult<IEnumerable<JobPosting>> CreateJobPosting(JobSubmit jobSubmit)
+        {
+
+            return null;
         }
 
 

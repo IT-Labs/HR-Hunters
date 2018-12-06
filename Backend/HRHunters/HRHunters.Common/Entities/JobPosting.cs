@@ -11,11 +11,8 @@ namespace HRHunters.Common.Entities
     public class JobPosting : Entity
     {
         [Required]
-        [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Only alphabet letters are allowed.")]
-        [DisplayName("Title")]
         public string Title { get; set; }
         [Required]
-        [DisplayName("Date")]
         public DateTime DateFrom { get; set; }
         [Required]
         public DateTime DateTo { get; set; }
@@ -24,11 +21,10 @@ namespace HRHunters.Common.Entities
         [StringLength(800)]
         public string Description { get; set; }
         [Required]
-        public string EmpCategory { get; set; }
+        public JobType EmpCategory { get; set; }
         [Required]
-        public string Education { get; set; }
-        [DisplayName("Status")]
-        public string Status { get; set; }
+        public EducationType Education { get; set; }
+        public JobPostingStatus Status { get; set; }
         [Required]
         public string NeededExperience { get; set; }
         public int ClientId { get; set; }
