@@ -11,17 +11,19 @@ import { Router } from "@angular/router";
   styleUrls: ["./new-job-posting.component.scss"]
 })
 export class ADNewJobPostingComponent implements OnInit {
-  jobTypes = ["Full-time", "Part-time", "Intership"];
+  jobTypes = ["Full-time", "Part-time", "Intership", "Select job type..."];
   education = [
     "High School degree",
     "Bachelor degree",
     "Masters degree",
-    "Doctoral degree"
+    "Doctoral degree",
+    "Select education level..."
   ];
+  myDate = new Date();
 
   existingCompany = false;
   validDates: boolean;
-  validExperience: boolean;
+  // validExperience: boolean;
 
   imagePreview: string | ArrayBuffer;
   imageValid = true;
@@ -47,7 +49,8 @@ export class ADNewJobPostingComponent implements OnInit {
     "17",
     "18",
     "19",
-    "20+"
+    "20+",
+    "Select experience..."
   ];
   filteredExperience = [];
   companies: Client[] = [];
@@ -83,6 +86,12 @@ export class ADNewJobPostingComponent implements OnInit {
   ngOnInit() {
     this.filteredCompanies = this.companies;
     this.filteredExperience = this.experience.slice();
+
+    console.log(
+      this.myDate.getFullYear(),
+      this.myDate.getMonth(),
+      this.myDate.getDay()
+    );
   }
 
   newJobPostingForm = this.fb.group({
@@ -129,25 +138,25 @@ export class ADNewJobPostingComponent implements OnInit {
     description: ["", Validators.compose([Validators.maxLength(300)])],
     jobType: ["", Validators.compose([Validators.required])],
     education: ["", Validators.compose([Validators.required])],
-    experience: [
-      "",
-      Validators.compose([Validators.required, Validators.maxLength(3)])
+    experience: ["", Validators.compose([Validators.required])],
+    durationFrom: [
+      `${this.myDate.getFullYear()}-${this.myDate.getMonth()}-0${this.myDate.getDate()}`,
+      Validators.compose([Validators.required])
     ],
-    durationFrom: ["", Validators.compose([Validators.required])],
-    durationTo: ["", Validators.compose([Validators.required])]
+    durationTo: [`${this.myDate.getFullYear()}-${this.myDate.getMonth()}-0${this.myDate.getDate()+1}`, Validators.compose([Validators.required])]
   });
 
   onCompanyRadioBtnClick(company: string) {
     if (company === "existing") {
       this.existingCompany = true;
-      this.newJobPostingForm.controls["companyEmail"].disable()
-      this.newJobPostingForm.controls["location"].disable()
-      this.newJobPostingForm.controls["logo"].disable()
+      this.newJobPostingForm.controls["companyEmail"].disable();
+      this.newJobPostingForm.controls["location"].disable();
+      this.newJobPostingForm.controls["logo"].disable();
     } else if (company === "new") {
       this.existingCompany = false;
-      this.newJobPostingForm.controls["companyEmail"].enable()
-      this.newJobPostingForm.controls["location"].enable()
-      this.newJobPostingForm.controls["logo"].enable()
+      this.newJobPostingForm.controls["companyEmail"].enable();
+      this.newJobPostingForm.controls["location"].enable();
+      this.newJobPostingForm.controls["logo"].enable();
     }
   }
 
@@ -181,17 +190,17 @@ export class ADNewJobPostingComponent implements OnInit {
     return true;
   }
 
-  checkExperience() {
-    for (let i = 0; i < this.experience.length; i++) {
-      if (
-        this.experience[i] ==
-        this.newJobPostingForm.controls["experience"].value
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }
+  // checkExperience() {
+  //   for (let i = 0; i < this.experience.length; i++) {
+  //     if (
+  //       this.experience[i] ==
+  //       this.newJobPostingForm.controls["experience"].value
+  //     ) {
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // }
 
   onFocus(event: any) {
     this.formFocus = {
@@ -227,15 +236,15 @@ export class ADNewJobPostingComponent implements OnInit {
       }
     });
   }
-  populateExperience(event: any) {
-    this.onFocus("none");
-    const experience = event.target.innerText;
-    this.experience.map(num => {
-      if (num === experience) {
-        this.newJobPostingForm.controls["experience"].setValue(experience);
-      }
-    });
-  }
+  // populateExperience(event: any) {
+  //   this.onFocus("none");
+  //   const experience = event.target.innerText;
+  //   this.experience.map(num => {
+  //     if (num === experience) {
+  //       this.newJobPostingForm.controls["experience"].setValue(experience);
+  //     }
+  //   });
+  // }
 
   populateCompanySuggestions(event: any) {
     this.filteredCompanies = [];
@@ -250,34 +259,35 @@ export class ADNewJobPostingComponent implements OnInit {
     });
   }
 
-  populateExperienceSuggestions(event: any) {
-    this.filteredExperience = [];
-    this.experience.map(num => {
-      if (num.includes(event.target.value)) {
-        this.filteredExperience.push(num);
-      }
-    });
-  }
+  // populateExperienceSuggestions(event: any) {
+  //   this.filteredExperience = [];
+  //   this.experience.map(num => {
+  //     if (num.includes(event.target.value)) {
+  //       this.filteredExperience.push(num);
+  //     }
+  //   });
+  // }
 
   onSubmitNewJobPosting() {
     this.validDates = this.compareTwoDates();
-    this.validExperience = this.checkExperience();
+    //this.validExperience = this.checkExperience();
 
-    this.newJobPostingForm.controls['companyName'].markAsTouched();
-    this.newJobPostingForm.controls['companyEmail'].markAsTouched();
-    this.newJobPostingForm.controls['location'].markAsTouched();
-    this.newJobPostingForm.controls['logo'].markAsTouched();
-    this.newJobPostingForm.controls['title'].markAsTouched();
-    this.newJobPostingForm.controls['jobType'].markAsTouched();
-    this.newJobPostingForm.controls['education'].markAsTouched();
-    this.newJobPostingForm.controls['experience'].markAsTouched();
-    this.newJobPostingForm.controls['durationFrom'].markAsTouched();
-    this.newJobPostingForm.controls['durationTo'].markAsTouched();
+    this.newJobPostingForm.controls["companyName"].markAsTouched();
+    this.newJobPostingForm.controls["companyEmail"].markAsTouched();
+    this.newJobPostingForm.controls["location"].markAsTouched();
+    this.newJobPostingForm.controls["logo"].markAsTouched();
+    this.newJobPostingForm.controls["title"].markAsTouched();
+    this.newJobPostingForm.controls["jobType"].markAsTouched();
+    this.newJobPostingForm.controls["education"].markAsTouched();
+    this.newJobPostingForm.controls["experience"].markAsTouched();
+    this.newJobPostingForm.controls["durationFrom"].markAsTouched();
+    this.newJobPostingForm.controls["durationTo"].markAsTouched();
 
     if (this.imagePreview === undefined) {
       this.imageValid = false;
     } else {
-      if (this.newJobPostingForm.valid && this.validDates && this.validExperience) {
+      if (this.newJobPostingForm.valid && this.validDates) {
+        // && this.validExperience
         this.jobPostingService.addJobPosting(
           this.newJobPostingForm.value.companyName,
           this.newJobPostingForm.value.companyEmail,
