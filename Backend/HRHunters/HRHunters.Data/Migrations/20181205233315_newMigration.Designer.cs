@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HRHunters.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20181130125316_newmigration")]
-    partial class newmigration
+    [Migration("20181205233315_newMigration")]
+    partial class newMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -62,8 +62,7 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<string>("PhoneNumber");
 
-                    b.Property<string>("SchoolUniversity")
-                        .IsRequired();
+                    b.Property<string>("SchoolUniversity");
 
                     b.Property<int>("UserId");
 
@@ -95,7 +94,7 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<DateTime?>("ModifiedDate");
 
-                    b.Property<string>("Status");
+                    b.Property<int>("Status");
 
                     b.HasKey("Id");
 
@@ -115,13 +114,17 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<DateTime>("CreatedDate");
 
+                    b.Property<string>("Location")
+                        .IsRequired();
+
                     b.Property<string>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
-                    b.Property<string>("PhoneNumber");
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired();
 
-                    b.Property<string>("Status");
+                    b.Property<int>("Status");
 
                     b.Property<int>("UserId");
 
@@ -150,11 +153,9 @@ namespace HRHunters.Data.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(800);
 
-                    b.Property<string>("Education")
-                        .IsRequired();
+                    b.Property<int>("Education");
 
-                    b.Property<string>("EmpCategory")
-                        .IsRequired();
+                    b.Property<int>("EmpCategory");
 
                     b.Property<string>("Location")
                         .IsRequired();
@@ -166,7 +167,7 @@ namespace HRHunters.Data.Migrations
                     b.Property<string>("NeededExperience")
                         .IsRequired();
 
-                    b.Property<string>("Status");
+                    b.Property<int>("Status");
 
                     b.Property<string>("Title")
                         .IsRequired();
@@ -224,14 +225,11 @@ namespace HRHunters.Data.Migrations
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50);
+                    b.Property<string>("FirstName");
 
                     b.Property<string>("LastName");
 

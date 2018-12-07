@@ -50,7 +50,6 @@ namespace HRHunters.WebAPI
                 opt.Password.RequireNonAlphanumeric = false;
                 opt.Password.RequireUppercase = false;
                 opt.Password.RequireDigit = false;
-                
             });
             
 

@@ -15,3 +15,119 @@
     background-color: $color-btn-auth-active;
   }
 }
+
+.btn {
+  
+  &__primary {
+    background-color: $color-btn-primary-bg;
+    color: $color-white;
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 1.6rem;
+    padding: .7rem;
+    margin: 1rem;
+    width: 12rem;
+    border-radius: 1.2rem;
+    font-weight: 500;
+
+    &:hover {
+      background-color: $color-btn-primary-hover;
+    }
+    
+    &:active {
+      background-color: $color-btn-primary-active;
+    }
+  }
+  &__secondary {
+    background-color: $color-white;
+    color: $color-btn-primary-bg;
+    border: 2px solid $color-btn-primary-bg;
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 1.6rem;
+    padding: .7rem;
+    margin: 1rem;
+    width: 12rem;
+    border-radius: 1.2rem;
+    font-weight: 500;
+
+    &:hover {
+      color: $color-btn-primary-hover;
+      border: 2px solid $color-btn-primary-hover;
+    }
+    
+    &:active {
+      color: $color-btn-primary-active;
+      border: 2px solid $color-btn-primary-active;
+    }
+  }
+  &__success {
+    background-color: $color-btn-success-bg;
+    color: $color-white;
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 1.6rem;
+    padding: .7rem;
+    margin: 1rem;
+    width: 12rem;
+    border-radius: 1.2rem;
+    font-weight: 500;
+
+    &:hover {
+      background-color: $color-btn-success-hover;
+    }
+    
+    &:active {
+      background-color: $color-btn-success-active;
+    }
+  }
+  &__danger {
+    background-color: $color-white;
+    color: $color-btn-danger-bg;
+    border: 2px solid $color-btn-danger-bg;
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 1.6rem;
+    padding: .7rem;
+    margin: 1rem;
+    width: 12rem;
+    border-radius: 1.2rem;
+    font-weight: 500;
+
+    &:hover {
+      color: $color-btn-danger-hover;
+      border: 2px solid $color-btn-danger-hover;
+    }
+    
+    &:active {
+      color: $color-btn-danger-active;
+      border: 2px solid $color-btn-danger-active;
+    }
+  }
+
+  // linked in 
+  &__linkedin {
+    background-color: $color-linkedin;
+    color: $color-white;
+    font-family: 'Roboto';
+  
+    font-size: 1.9rem;
+    padding: .4rem;
+    margin: 1rem;
+    width: 12rem;
+    border-radius: 1.2rem;
+    font-weight: 600;
+
+    &--span{
+      font-size: 2.2rem;
+    }
+
+    &:hover {
+      background-color: $color-linkedin-hover;
+    }
+    
+    &:active {
+      background-color: $color-linkedin;
+    }
+  }
+}

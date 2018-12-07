@@ -1,4 +1,6 @@
 ﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Enums;
+using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,6 +12,6 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IApplicationManager : IBaseManager
     {
-        IEnumerable<Application> GetMultiple();
+        IEnumerable<ApplicationInfo> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery);
     }
 }

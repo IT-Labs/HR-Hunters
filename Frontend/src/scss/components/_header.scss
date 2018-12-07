@@ -1,0 +1,90 @@
+.header {
+    &__container {
+      height: 20%;
+    }
+    &__image {
+      background-image: url("/../../assets/img/home-header-bg.jpg");
+      background-position: center center;
+      background-size: cover;
+      height:20%;
+      min-height: 20vh;
+    }
+    &__opacity {
+      background-color: rgba($color-black, 0.6);
+      height: 20%;
+      min-height: 20vh;
+      padding: 3rem;
+    }
+    &__logo-container {
+      img {
+        height: 8rem;
+      }
+      &__title {
+        font-size: 4rem;
+        color: $color-white;
+        display: inline-block;
+        margin-left: 2rem;
+        transform: translateY(1.5rem);
+      }
+    }
+  
+  
+  }
+  
+  // Small devices (portrate phones, up to 576px)
+  @media (max-width: 576px) {
+    .header {
+      &__logo-container {
+        img {
+          height: 5rem;
+        }
+        &__title {
+          font-size: 3rem;
+          color: $color-white;
+          display: inline-block;
+          margin-left: 1rem;
+          transform: translateY(0.75rem);
+        }
+      }
+   
+    }
+  }
+  
+  // Small devices (landscape phones, up to 576px)
+  @media (min-width: 576px) {
+    .header {
+      &__logo-container {
+        img {
+          height: 8rem;
+        }
+        &__title {
+          font-size: 3rem;
+          color: $color-white;
+          display: inline-block;
+          margin-left: 1rem;
+          transform: translateY(0.75rem);
+        }
+      }
+   
+    }
+  }
+  
+  // Medium devices (tablets, 768px and up)
+  @media (min-width: 768px) {
+    .header-page {
+      &__logo-container {
+        img {
+          height: 9rem;
+        }
+        &__title {
+          font-size: 3rem;
+          color: $color-white;
+          display: inline-block;
+          margin-left: 1.5rem;
+          transform: translateY(1rem);
+        }
+      }
+ 
+    }
+  }
+  

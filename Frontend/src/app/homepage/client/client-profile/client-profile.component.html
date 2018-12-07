@@ -1,3 +1,187 @@
-<p>
-  client-profile works!
-</p>
+<div class="container">
+  <form
+    class="hp__form"
+    [formGroup]="clientProfileFormHP"
+    (ngSubmit)="onSubmitClientProfile()"
+  >
+    <div class="row">
+      <!-- LEFT SIDEBAR -->
+      <div class="col-xs-12 col-md-3">
+        <div class="company-logo">
+          <img
+            [src]="imagePreview"
+            class="company-logo__img"
+            [alt]="clientProfileFormHP.controls['companyName'].value"
+          />
+          <div class="company-logo__text" (click)="filePicker.click()">
+            <i class="fa fa-camera u-color-dark" aria-hidden="true"></i>Company
+            logo
+            <input
+              type="file"
+              id="hpid__logo"
+              class="dash__form--input"
+              #filePicker
+              (change)="onImagePicked($event)"
+            />
+          </div>
+        </div>
+        <div
+          *ngIf="!imageValid"
+          class="alert hp__form--alert-msg"
+        >
+          Logo is required.<br><br>
+
+          Please upload a propper image file in .png or .jpg format. Maximum size for the image is 600px x 600px
+        </div>
+      </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="col-xs-12 col-md-9">
+        <div class="hp__form__container">
+          <div class="hp__form--section">
+            <!-- COMPANY NAME -->
+
+            <label for="hpid__title" class="hp__form--label"
+              >Company name <span class="u-required-star">*</span></label
+            >
+            <input
+              type="text"
+              id="hpid__title"
+              class="hp__form--input"
+              placeholder="Enter company name..."
+              formControlName="companyName"
+              maxlength="50"
+            />
+
+            <div
+              *ngIf="
+                !clientProfileFormHP.controls['companyName'].valid &&
+                (clientProfileFormHP.controls['companyName'].dirty ||
+                  clientProfileFormHP.controls['companyName'].touched)
+              "
+              class="alert hp__form--alert-msg"
+            >
+              <div
+                *ngIf="
+                  clientProfileFormHP.controls['companyName'].errors?.required
+                "
+              >
+                Company name is required.
+              </div>
+              <div
+                *ngIf="
+                  clientProfileFormHP.controls['companyName'].errors?.maxlength
+                "
+              >
+                Company name must be up to 50 characters long.
+              </div>
+            </div>
+
+            <!-- E-mail start -->
+            <label for="hpid__title" class="hp__form--label"
+              >E-mail <span class="u-required-star">*</span></label
+            >
+            <input
+              type="text"
+              id="hpid__title"
+              class="hp__form--input"
+              placeholder="Enter email..."
+              formControlName="companyEmail"
+              maxlength="30"
+            />
+
+            <div
+              *ngIf="
+                !clientProfileFormHP.controls['companyEmail'].valid &&
+                (clientProfileFormHP.controls['companyEmail'].dirty ||
+                  clientProfileFormHP.controls['companyEmail'].touched)
+              "
+              class="alert hp__form--alert-msg"
+            >
+              <div
+                *ngIf="
+                  clientProfileFormHP.controls['companyEmail'].errors?.pattern
+                "
+              >
+                Email is required.
+              </div>
+              <div
+                *ngIf="
+                  clientProfileFormHP.controls['companyEmail'].errors?.required
+                "
+              >
+                Email is required.
+              </div>
+              <div
+                *ngIf="
+                  clientProfileFormHP.controls['companyEmail'].errors?.minlength
+                "
+              >
+                Email must be at least 6 characters long.
+              </div>
+              <div
+                *ngIf="
+                  clientProfileFormHP.controls['companyEmail'].errors?.maxlength
+                "
+              >
+                Email must be up to 30 characters long.
+              </div>
+            </div>
+
+            <!-- E-mail end -->
+
+            <!-- Phone-number start -->
+            <label for="hpid__title" class="hp__form--label"
+              >Phone number <span class="u-required-star">*</span></label
+            >
+            <input
+              type="text"
+              id="hpid__title"
+              class="hp__form--input"
+              placeholder="Enter phone number..."
+              formControlName="phonenumber"
+            />
+            <div
+              *ngIf="
+                !clientProfileFormHP.controls['phonenumber'].valid &&
+                (clientProfileFormHP.controls['phonenumber'].dirty ||
+                  clientProfileFormHP.controls['phonenumber'].touched)
+              "
+              class="alert hp__form--alert-msg"
+            >
+              <div
+                *ngIf="
+                  clientProfileFormHP.controls['phonenumber'].errors?.required
+                "
+              >
+                Phone number is required.
+              </div>
+              <div
+                *ngIf="
+                  clientProfileFormHP.controls['phonenumber'].errors?.maxlength
+                "
+              >
+                Phone number must be E.164 format.
+              </div>
+            </div>
+
+            <!-- Phone-number end -->
+          </div>
+
+          <div class="hp__form--btn-container">
+            <button type="reset" class="btn btn__danger">Cancel</button>
+            <button
+              type="submit"
+              class="btn btn__success"
+              [disabled]="!clientProfileFormHP.valid"
+          
+            >
+               
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

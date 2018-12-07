@@ -4,9 +4,11 @@ import { Router } from "@angular/router";
 import { map } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { Client } from "../models/client.model";
+import { environment } from "../../environments/environment.prod";
 
 @Injectable({ providedIn: "root" })
 export class ClientService {
+  baseUrl = environment.baseUrl;
   // Local list of clients
   private clients: Client[] = [];
 
@@ -26,19 +28,14 @@ export class ClientService {
   }
 
   // Get all applications
-  getClients(clientQP) {
-    const queryParams = `?pagesize=${clientQP.clientsPerPage}&page=${
-      clientQP.currentPage
-    }&sort=${clientQP.sortedBy}&sortDir=${clientQP.sortDirection}&filter=${
-      clientQP.filterBy
-    }`;
+  getClients(queryParams) {
     this.http
       .get<{
         clients: Client[];
         maxClients: number;
         active: number;
         inactive: number;
-      }>("http://localhost:3000/dataClients")
+      }>(this.baseUrl + '/Admin/clients' + queryParams)
       .pipe(
         map(clientsData => {
           return {

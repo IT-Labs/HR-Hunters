@@ -1,3 +1,294 @@
-<p>
-  new-job-posting works!
-</p>
+<div class="container-fluid">
+  <div class="row">
+    <!-- LEFT SIDEBAR -->
+    <div class="col-xs-12">
+      <div class="hp__form__container">
+        <form
+          class="hp__form"
+          [formGroup]="newJobPostingFormHP"
+          (ngSubmit)="onSubmitNewJobPosting()"
+        >
+          <div class="hp__form--section">
+            <!-- TITLE -->
+
+            <label for="hpid__title" class="hp__form--label"
+              >Title <span class="u-required-star">*</span></label
+            >
+            <input
+              type="text"
+              id="hpid__title"
+              class="hp__form--input"
+              placeholder="Enter job title..."
+              formControlName="title"
+              maxlength="50"
+              (focus)="onFocus('title')"
+            />
+
+            <div
+              *ngIf="
+                !newJobPostingFormHP.controls['title'].valid &&
+                (newJobPostingFormHP.controls['title'].dirty ||
+                  newJobPostingFormHP.controls['title'].touched)
+              "
+              class="alert hp__form--alert-msg"
+            >
+              <div
+                *ngIf="newJobPostingFormHP.controls['title'].errors?.required"
+              >
+                Title is required.
+              </div>
+              <div
+                *ngIf="newJobPostingFormHP.controls['title'].errors?.maxlength"
+              >
+                Title must be up to 50 characters long.
+              </div>
+            </div>
+
+            <!-- DURATION -->
+
+            <label for="hpid__duration" class="hp__form--label"
+              >Duration <span class="u-required-star">*</span></label
+            >
+            <span>From:</span>
+            <input
+              type="date"
+              id="hpid__duration-from"
+              class="hp__form--date"
+              value="2018-07-22"
+              min="2018-01-01"
+              max="2019-12-31"
+              formControlName="durationFrom"
+              (focus)="onFocus('durationFrom')"
+            />
+            <span>To:</span>
+            <input
+              type="date"
+              id="hpid__duration-to"
+              class="hp__form--date"
+              value="2018-07-22"
+              min="2018-01-01"
+              max="2019-12-31"
+              formControlName="durationTo"
+              (focus)="onFocus('durationTo')"
+            />
+
+            <div
+              *ngIf="
+                (!newJobPostingFormHP.controls['durationFrom'].valid &&
+                  (newJobPostingFormHP.controls['durationFrom'].dirty ||
+                    newJobPostingFormHP.controls['durationFrom'].touched)) ||
+                (!newJobPostingFormHP.controls['durationTo'].valid &&
+                  (newJobPostingFormHP.controls['durationTo'].dirty ||
+                    newJobPostingFormHP.controls['durationTo'].touched))
+              "
+              class="alert hp__form--alert-msg"
+            >
+              <div
+                *ngIf="
+                  newJobPostingFormHP.controls['durationTo'].errors
+                "
+              >
+              Start date must be equal to today's date or a later date. End date can't be earlier or equal to start date.
+              </div>
+            </div>
+
+            <!-- LOCATION -->
+            <br />
+            <label for="hpid__location" class="hp__form--label"
+              >Location <span class="u-required-star">*</span></label
+            >
+            <input
+              type="text"
+              id="hpid__location"
+              class="hp__form--input"
+              placeholder="Enter location..."
+              formControlName="location"
+              maxlength="50"
+              (focus)="onFocus('location')"
+              autocomplete="off"
+            />
+
+            <div
+              *ngIf="
+                !newJobPostingFormHP.controls['location'].valid &&
+                (newJobPostingFormHP.controls['location'].dirty ||
+                  newJobPostingFormHP.controls['location'].touched)
+              "
+              class="alert hp__form--alert-msg"
+            >
+              <div
+                *ngIf="
+                  newJobPostingFormHP.controls['location'].errors?.required
+                "
+              >
+                Location is required.
+              </div>
+              <div
+                *ngIf="
+                  newJobPostingFormHP.controls['location'].errors?.maxlength
+                "
+              >
+                Location must be up to 50 characters long.
+              </div>
+            </div>
+
+            <!-- EDUCATION -->
+
+            <label for="hpid__education" class="hp__form--label"
+              >Education <span class="u-required-star">*</span></label
+            >
+            <select
+              id="dashidEducation"
+              class="hp__form--input"
+              formControlName="education"
+              (focus)="onFocus('education')"
+            >
+              <option
+                *ngFor="let edu of education"
+                [ngValue]="edu"
+                [selected]="edu === 'Select education level...'"
+                [disabled]="edu === 'Select education level...'"
+                >{{ edu }}
+              </option>
+            </select>
+
+            <div
+              *ngIf="
+                !newJobPostingFormHP.controls['education'].valid &&
+                (newJobPostingFormHP.controls['education'].dirty ||
+                  newJobPostingFormHP.controls['education'].touched)
+              "
+              class="alert hp__form--alert-msg"
+            >
+              <div
+                *ngIf="
+                  newJobPostingFormHP.controls['education'].errors?.required
+                "
+              >
+                Education must be selected.
+              </div>
+            </div>
+
+            <!-- NEEDED EXPERIENCE -->
+
+            <label for="hpid__experience" class="hp__form--label"
+              >Experience (in years)
+              <span class="u-required-star">*</span></label
+            >
+            <select
+              id="hpid__experience"
+              class="hp__form--input"
+              formControlName="experience"
+              (focus)="onFocus('experience')"
+            >
+              <option
+                *ngFor="let exp of experience"
+                [ngValue]="exp"
+                [selected]="exp === 'Select experience...'"
+                [disabled]="exp === 'Select experience...'"
+                >{{ exp }}
+              </option>
+            </select>
+
+            <div
+              *ngIf="
+                (!newJobPostingFormHP.controls['experience'].valid &&
+                  (newJobPostingFormHP.controls['experience'].dirty ||
+                    newJobPostingFormHP.controls['experience'].touched))
+              "
+              class="alert hp__form--alert-msg"
+            >
+              <div
+                *ngIf="
+                  newJobPostingFormHP.controls['experience'].errors?.required
+                "
+              >
+                Experience is required.
+              </div>
+
+              <div
+                *ngIf="newJobPostingFormHP.controls['title'].errors?.maxlength"
+              >
+                Experience must be up to 2 characters long.
+              </div>
+            </div>
+
+            <!-- JOB TYPE -->
+
+            <label for="hpid__job-type" class="hp__form--label"
+              >Job Type <span class="u-required-star">*</span></label
+            >
+            <select
+              id="hpid__job-type"
+              class="hp__form--input"
+              formControlName="jobType"
+              (focus)="onFocus('jobType')"
+            >
+              <option
+                *ngFor="let jobType of jobTypes"
+                [ngValue]="jobType"
+                [selected]="jobType === 'Select job type...'"
+                [disabled]="jobType === 'Select job type...'"
+                >{{ jobType }}
+              </option>
+            </select>
+
+            <div
+              *ngIf="
+                !newJobPostingFormHP.controls['jobType'].valid &&
+                (newJobPostingFormHP.controls['jobType'].dirty ||
+                  newJobPostingFormHP.controls['jobType'].touched)
+              "
+              class="alert hp__form--alert-msg"
+            >
+              <div
+                *ngIf="newJobPostingFormHP.controls['jobType'].errors?.required"
+              >
+                Job type must be selected.
+              </div>
+            </div>
+
+            <!-- DESCRIPTION -->
+
+            <label
+              for="hpid__description"
+              class="hp__form--label"
+              id="desc-height"
+              >Description</label
+            >
+            <textarea
+              type="text"
+              id="hpid__description"
+              class="hp__form--textarea"
+              placeholder="Enter job description..."
+              formControlName="description"
+              maxlength="300"
+              (focus)="onFocus('description')"
+            ></textarea>
+          </div>
+
+          <div class="hp__form--btn-container">
+            <button
+              type="reset"
+              class="btn btn__danger"
+              [disabled]="
+                !newJobPostingFormHP.valid
+              "
+            >
+              Reset
+            </button>
+            <button
+              type="submit"
+              class="btn btn__success"
+              [disabled]="
+                !newJobPostingFormHP.valid
+              "
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

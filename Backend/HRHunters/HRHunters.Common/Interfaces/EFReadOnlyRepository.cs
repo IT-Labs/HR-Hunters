@@ -3,9 +3,11 @@ using HRHunters.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq.Dynamic.Core;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using HRHunters.Common.Enums;
 
 namespace HRHunters.Data
 {
@@ -21,15 +23,16 @@ namespace HRHunters.Data
 
         protected virtual IQueryable<TEntity> GetQueryable<TEntity>(
         Expression<Func<TEntity, bool>> filter = null,
-        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+        string orderBy = null,
         string includeProperties = null,
         int? skip = null,
-        int? take = null)
+        int? take = null, 
+        SortDirection? sortDirection = null)
         where TEntity : Entity
         {
             includeProperties = includeProperties ?? string.Empty;
             IQueryable<TEntity> query = context.Set<TEntity>();
-
+            query = query.AsQueryable();
             if (filter != null)
             {
                 query = query.Where(filter);
@@ -43,8 +46,9 @@ namespace HRHunters.Data
 
             if (orderBy != null)
             {
-                query = orderBy(query);
-            }
+                if (sortDirection != null)
+                    query = (sortDirection.Equals(SortDirection.ASC)) ? query.OrderBy(orderBy + " ASC") : query.OrderBy(orderBy + " DESC");
+            }   
 
             if (skip.HasValue)
             {
@@ -64,20 +68,22 @@ namespace HRHunters.Data
 
         public virtual IEnumerable<TEntity> Get<TEntity>(
         Expression<Func<TEntity, bool>> filter = null,
-        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+        string orderBy = null,
         string includeProperties = null,
         int? skip = null,
-        int? take = null)
+        int? take = null,
+        SortDirection? sortDirection = null)
         where TEntity : Entity
         {
-           return GetQueryable<TEntity>(filter, orderBy, includeProperties, skip, take).ToList();
+           return GetQueryable<TEntity>(filter, orderBy, includeProperties, skip, take, sortDirection).ToList();
         }
 
         public virtual IEnumerable<TEntity> GetAll<TEntity>(
-        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+        string orderBy = null,
         string includeProperties = null,
         int? skip = null,
-        int? take = null)
+        int? take = null,
+        SortDirection? sortDirection = null)
         where TEntity : Entity
         {
             return GetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).ToList();

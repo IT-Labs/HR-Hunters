@@ -13,10 +13,10 @@ using System.Threading.Tasks;
 
 namespace HRHunters.WebAPI.Helpers
 {
-    public class ExtensionMethods : IExtensionMethods
+    public class TokenGeneration : ITokenGeneration
     {
         private readonly IConfiguration _configuration;
-        public ExtensionMethods(IConfiguration configuration)
+        public TokenGeneration(IConfiguration configuration)
         {
             _configuration = configuration;
         }

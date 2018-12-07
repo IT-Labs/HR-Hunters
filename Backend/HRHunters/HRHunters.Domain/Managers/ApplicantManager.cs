@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HRHunters.Common.Entities;
+using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
+using HRHunters.Common.ExtensionMethods;
 
 namespace HRHunters.Domain.Managers
 {
@@ -15,11 +18,25 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-
-        public IEnumerable<Applicant> GetMultiple()
+        public IEnumerable<ApplicantInfo> GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
-            
-            return _repo.Get<Applicant>();
+                var a = _repo.GetAll<Applicant>(includeProperties: $"{nameof(Applicant.User)},")
+                                                                .Select(
+                                        x => new ApplicantInfo
+                                        {                      
+                                            Id=x.UserId,
+                                            FirstName = x.User.FirstName,
+                                            LastName = x.User.LastName,
+                                            Email = x.User.Email,
+                                            PhoneNumber = x.PhoneNumber,
+                                            Photo="photo"
+                                        });
+
+
+            var filter = new Filters<ApplicantInfo>();
+
+                return filter.Applyfilters(a, pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
         }
     }
+
 }

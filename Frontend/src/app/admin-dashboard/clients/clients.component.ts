@@ -20,23 +20,21 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     postsPerPage: 10,
     currentPage: 1,
     currentSortBy: "companyName",
+    lastSortBy: "",
     currentSortDirection: 1,
-    currentFilter: "All"
+    currentFilter: 'status',
+    currentFilterQuery: 0
   }
 
-  lastSortBy: "";
   paginationSize: number[] = [];
-
 
   private clientsSub: Subscription;
 
   constructor(private clientService: ClientService) {}
 
   ngOnInit() {
-
-    this.clientService.getClients(
-      this.clientQP
-    );
+    const params = this.buildQueryParams(this.clientQP)
+    this.clientService.getClients(params);
     this.clientsSub = this.clientService
       .getClientsUpdateListener()
       .subscribe(clientsData => {
@@ -46,6 +44,15 @@ export class ADClientsComponent implements OnInit, OnDestroy {
         this.clientsCount.inactive = clientsData.inactive;
         this.calculatePagination(this.clientsCount.all)
       });
+  }
+  
+  buildQueryParams(data) {
+    return `?pagesize=${data.postsPerPage}
+            &page=${data.currentPage}
+            &sort=${data.currentSortBy}
+            &sortDir=${data.currentSortDirection}
+            &filterBy=${data.currentFilter}
+            &filterQuery=${data.currentFilterQuery}`;
   }
 
   calculatePagination(applicationCount: number) {
@@ -79,27 +86,32 @@ export class ADClientsComponent implements OnInit, OnDestroy {
 
   onChangedPage(page: number) {
     this.clientQP.currentPage = page;
-    this.clientService.getClients(
-      this.clientQP
-    );
+    const params = this.buildQueryParams(this.clientQP)
+    this.clientService.getClients(params);
   }
-  onFilter(filterBy: string) {
-    this.clientQP.currentFilter = filterBy;
-    this.clientService.getClients(
-      this.clientQP
-    );
+  onFilter(filterBy: number) {
+   
+    if (filterBy === null) {
+      this.clientQP.currentFilter = null
+    } else {
+      this.clientQP.currentFilter = 'status'
+    }
+
+    this.clientQP.currentFilterQuery = filterBy;
+    const params = this.buildQueryParams(this.clientQP)
+    this.clientService.getClients(params);
   }
 
-  onSort(sortBy: any) {
-    if (this.lastSortBy === sortBy) {
-      this.clientQP.currentSortDirection++;
+  onSort(sortBy: string) {
+    if (this.clientQP.lastSortBy === sortBy) {
+      this.clientQP.currentSortDirection = 1;
     } else {
-      this.lastSortBy = sortBy;
+      this.clientQP.lastSortBy = sortBy;
+      this.clientQP.currentSortDirection = 0;
     }
     this.clientQP.currentSortBy = sortBy;
-    this.clientService.getClients(
-      this.clientQP
-    );
+    const params = this.buildQueryParams(this.clientQP)
+    this.clientService.getClients(params);
   }
 
   chooseStatus(event: any, id: number) {

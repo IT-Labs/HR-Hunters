@@ -8,7 +8,7 @@ import { ClientJobPostingsComponent } from "./homepage/client/client-job-posting
 import { JobPostingDetailsComponent } from "./homepage/applicant/job-posting-details/job-posting-details.component";
 import { ApplicantApplicationsComponent } from "./homepage/applicant/applicant-applications/applicant-applications.component";
 import { ErrorComponent } from "./error/error.component";
-import { AppicantJobPostingsComponent } from "./homepage/applicant/applicant-job-postings/applicant-job-postings.component";
+import { JobPostingsListComponent } from "./homepage/applicant/job-postings-list/job-postings-list.component";
 import { ClientProfileComponent } from "./homepage/client/client-profile/client-profile.component";
 import { ApplicantProfileComponent } from "./homepage/applicant/applicant-profile/applicant-profile.component";
 import { WelcomeComponent } from "./authentication/welcome.component";
@@ -19,6 +19,7 @@ import { ADApplicationsComponent } from "./admin-dashboard/applications/applicat
 import { ADClientsComponent } from "./admin-dashboard/clients/clients.component";
 import { ADJobPostingsComponent } from "./admin-dashboard/job-postings/job-postings.component";
 import { ADNewJobPostingComponent } from "./admin-dashboard/job-postings/new-job-posting/new-job-posting.component";
+
 import { AuthGuard } from "./authentication/auth.guard";
 import { ApplicantComponent } from "./homepage/applicant/applicant.component";
 
@@ -44,8 +45,8 @@ const routes: Routes = [
     component: ClientComponent,
     children: [
       { path: "profile", component: ClientProfileComponent },
-      { path: "job-postings/:id", component: ClientJobPostingsComponent },
-      { path: "job-posting/:id", component: JobPostingDetailsComponent },
+      { path: "job-postings", component: ClientJobPostingsComponent },
+      { path: "job-postings/:id", component: JobPostingDetailsComponent },
       { path: "add-job-posting", component: AddJobPostingComponent }
     ]
   },
@@ -54,9 +55,9 @@ const routes: Routes = [
     component: ApplicantComponent,
     children: [
       { path: "profile", component: ApplicantProfileComponent },
-      { path: "job-postings", component: AppicantJobPostingsComponent },
-      { path: "job-posting/:id", component: JobPostingDetailsComponent },
-      { path: "applications/:id", component: ApplicantApplicationsComponent }
+      { path: "job-postings", component: JobPostingsListComponent },
+      { path: "job-postings/:id", component: JobPostingDetailsComponent },
+      { path: "my-applications", component: ApplicantApplicationsComponent }
     ]
   },
   { path: "**", component: ErrorComponent }

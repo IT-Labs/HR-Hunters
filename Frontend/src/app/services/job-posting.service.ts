@@ -4,9 +4,11 @@ import { Router } from "@angular/router";
 import { JobPosting } from "../models/job-posting.model";
 import { map } from "rxjs/operators";
 import { Subject } from "rxjs";
+import { environment } from "../../environments/environment.prod";
 
 @Injectable({ providedIn: "root" })
 export class JobPostingService {
+  baseUrl = environment.baseUrl;
   // Local list of job postings
   private jobPostings: JobPosting[] = [];
 
@@ -22,10 +24,7 @@ export class JobPostingService {
   constructor(private http: HttpClient, private router: Router) {}
 
   // Get all job postings
-  getJobPostings(jobPostingQP) {
-    const queryParams = `?pagesize=${jobPostingQP.jobPostingsPerPage}&page=${
-      jobPostingQP.currentPage
-    }&sort=${jobPostingQP.sortedBy}&sortDir=${jobPostingQP.sortDirection}&filter=${jobPostingQP.filterBy}`;
+  getJobPostings(queryParams) {
     this.http
       .get<{
         jobPostings: JobPosting[];
@@ -33,7 +32,7 @@ export class JobPostingService {
         approved: number;
         pending: number;
         expired: number;
-      }>("http://localhost:3000/dataJP")
+      }>(this.baseUrl + '/Admin/jobs' + queryParams)
       .pipe(
         map(jobPostingData => {
           return {
@@ -53,8 +52,7 @@ export class JobPostingService {
                 location: jobPost.location,
                 logo: jobPost.logo,
                 allApplicationsCount: jobPost.allApplicationsCount,
-                activeApplicationsCount: jobPost.activeApplicationsCount,
-                applicantName: jobPost.applicantName
+                activeApplicationsCount: jobPost.activeApplicationsCount
               };
             }),
             maxJobPosts: jobPostingData.maxJobPosts,
@@ -85,11 +83,11 @@ export class JobPostingService {
   addJobPosting(
     companyName: string,
     companyEmail: string,
-    logo: File,
+    logo: string | File,
     id: number | null,
     jobTitle: string,
-    dateFrom: Date,
-    dateTo: Date,
+    dateFrom: string,
+    dateTo: string,
     location: string,
     description: string,
     jobType: string,
@@ -130,8 +128,8 @@ export class JobPostingService {
     companyEmail: string,
     logo: File | string,
     jobTitle: string,
-    dateFrom: Date,
-    dateTo: Date,
+    dateFrom: string,
+    dateTo: string,
     location: string,
     description: string,
     jobType: string,
@@ -147,8 +145,8 @@ export class JobPostingService {
       jobPostingData.append("companyEmail", companyEmail);
       jobPostingData.append("logo", logo, companyName);
       jobPostingData.append("jobTitle", jobTitle);
-      jobPostingData.append("dateFrom", dateFrom.toDateString());
-      jobPostingData.append("dateTo", dateTo.toDateString());
+      jobPostingData.append("dateFrom", dateFrom);
+      jobPostingData.append("dateTo", dateTo);
       jobPostingData.append("location", location);
       jobPostingData.append("description", description);
       jobPostingData.append("jobType", jobType);

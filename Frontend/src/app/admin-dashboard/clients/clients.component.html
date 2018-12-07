@@ -3,13 +3,13 @@
     <h2>Clients</h2>
     <div class=" text-muted dash__filtering">
       <ul>
-        <li (click)="onFilter('all')">
+        <li (click)="onFilter(null)">
           All<span>({{ clientsCount.all }})</span>
         </li>
-        <li (click)="onFilter('active')">
+        <li (click)="onFilter(1)">
           Active<span>({{ clientsCount.active }})</span>
         </li>
-        <li (click)="onFilter('inactive')">
+        <li (click)="onFilter(2)">
           Inactive<span>({{ clientsCount.inactive }})</span>
         </li>
       </ul>

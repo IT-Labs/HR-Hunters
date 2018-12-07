@@ -1,4 +1,5 @@
 ﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Domain.Managers;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +16,7 @@ namespace HRHunters.Data.Context
         private readonly RoleManager<Role> _roleManager;
         private readonly IClientManager _clientManager;
 
-        public SeedData(IClientManager clientManager, UserManager<User> userManager, RoleManager<Role> roleManager)
+        public SeedData(IClientManager clientManager,IApplicationManager applicationManager, IApplicantManager applicantManager, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             _clientManager = clientManager;
             _userManager = userManager;
@@ -24,23 +25,34 @@ namespace HRHunters.Data.Context
 
         public void EnsureSeedData()
         {
+            if (!_roleManager.Roles.Any())
+            {
+                var roles = new List<Role>
+                {
+                    new Role { Name = "Applicant" },
+                    new Role { Name = "Client" },
+                    new Role { Name = "Admin" }
+                };
+                foreach (var role in roles)
+                {
+                    _roleManager.CreateAsync(role).Wait();
+                }
+
+            }
+
             if (!_userManager.Users.Any())
             { 
             for(int i = 0; i < 10; i++)
                 {
                     var user = new User();
-                    //var pass = new PasswordHasher<User>();
-                    //var hashedPass = pass.HashPassword(user, "password12");
                     user.Email = "vlatkozmejkoski" + i + "@gmail.com";
                     user.EmailConfirmed = true;
                     user.NormalizedEmail = user.Email.ToUpper();
-                    //user.NormalizedUserName = user.UserName.ToUpper();
                     user.SecurityStamp = Guid.NewGuid().ToString("D");
                     user.LockoutEnabled = false;
                     user.FirstName = "Vlatko" + i;
                     user.LastName = "Zmejkoski" + i;
                     user.UserName = user.FirstName.ToLower() + user.LastName.ToLower();
-                    //user.PasswordHash = "";
                     user.PhoneNumber = "078691342";
                     user.AccessFailedCount = 0;
                     user.CreatedBy = user.FirstName;
@@ -52,8 +64,25 @@ namespace HRHunters.Data.Context
                         var client = new Client()
                         {
                             User = user,
+                            Location = "Skopje",
+                            PhoneNumber = "+3891112344",
+                            Status = ClientStatus.ACTIVE,
                         };
                         _clientManager.Create(client);
+                        var jobPost = new JobPosting()
+                        {
+                            Client = client,
+                            DateFrom = DateTime.UtcNow,
+                            DateTo = DateTime.UtcNow.AddDays(4),
+                            Title = "Backend developer" + i,
+                            Education = EducationType.BACHELOR,
+                            Description = "Lorem ipsum bruh...",
+                            EmpCategory = JobType.FULLTIME,
+                            Location = "Skopje, Macedonia",
+                            Status = JobPostingStatus.APPROVED,
+                            NeededExperience = "3",
+                        };
+                        _clientManager.Create(jobPost, "Admin");
                     }
                     else
                     {
@@ -61,26 +90,24 @@ namespace HRHunters.Data.Context
                         {
                             User = user,
                             SchoolUniversity = "school" + i,
-                            EducationType = "B"
+                            EducationType = "B",
+                            PhoneNumber = "+38931453312",
+                            Experience = "3",
+                            
                         };
-                        _clientManager.Create(applicant);
+                        _clientManager.Create(applicant, "Admin");
+                        var application = new Application()
+                        {
+                            Applicant = applicant,
+                            Date = DateTime.UtcNow,
+                            JobPosting = _clientManager.Get<JobPosting>(filter: x => x.ClientId == i).FirstOrDefault(),
+                            Status = ApplicationStatus.PENDING,
+                        };
+                        _clientManager.Create(application, "Admin");
                     }
                 }
             }
-            if(!_roleManager.Roles.Any())
-            {
-                var roles = new List<Role>
-                {
-                    new Role { Name = "Applicant" },
-                    new Role { Name = "Client" },
-                    new Role { Name = "Admin" }
-                };
-                foreach(var role in roles)
-                {
-                    _roleManager.CreateAsync(role).Wait();
-                }
-                
-            }
+            
 
         }
     }

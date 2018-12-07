@@ -34,6 +34,13 @@
               >
                 Company name is required.
               </div>
+              <div
+                *ngIf="
+                  clientRegisterForm.controls['clientName'].errors?.pattern
+                "
+              >
+                The field can only contain letters from the English alphabet.
+              </div>
             </div>
 
             <!-- EMAIL INPUT -->
@@ -83,9 +90,9 @@
             <!-- SERVER ERROR -->
 
             <div
-              *ngIf="authEmailError"
+              *ngIf="authError"
               class="alert alert-warning auth-form__alert"
-            > {{ authEmailError }}
+            > {{ authError }}
             </div>
 
             <!-- PASSWORD INPUT -->
@@ -96,7 +103,6 @@
               formControlName="clientPassword"
               minlength="8"
               maxlength="30"
-              (keyup)="updatePassword($event)"
             />
             <div
               *ngIf="
@@ -136,14 +142,6 @@
               </div>
             </div>
 
-             <!-- SERVER ERROR -->
-
-             <div
-             *ngIf="authPasswordError"
-             class="alert alert-warning auth-form__alert"
-           > {{ authPasswordError }}
-           </div>
-
             <!-- CONFIRM PASSWORD INPUT -->
             <input
               type="password"
@@ -152,32 +150,22 @@
               formControlName="clientConfirmPassword"
               minlength="8"
               maxlength="20"
-              (keyup)="updateConfirmedPassword($event)"
             />
             <div
               *ngIf="
                 (!clientRegisterForm.controls['clientConfirmPassword'].valid &&
                   (clientRegisterForm.controls['clientConfirmPassword'].dirty ||
                     clientRegisterForm.controls['clientConfirmPassword']
-                      .touched)) ||
-                !comparePasswords()
-              "
+                      .touched))"
               class="alert alert-warning auth-form__alert"
             >
-              <div
-                *ngIf="
-                  clientRegisterForm.controls['clientConfirmPassword'].errors?.required
-                "
-              >
-                Confirm password is required.
-              </div>
-              <div *ngIf="!comparePasswords()">Passwords must match!</div>
+              <div *ngIf="clientRegisterForm.controls['clientConfirmPassword'].errors">Passwords must match!</div>
             </div>
 
             <button
               class="btn btn-auth"
               type="submit"
-              [disabled]="!clientRegisterForm.valid || !comparePasswords()"
+              [disabled]="!clientRegisterForm.valid"
             >
               Register
             </button>

@@ -1,3 +1,13 @@
-<p>
-  job-posting-details works!
-</p>
+<div class="jp__container">
+  <h1 class="jp__heading">
+    {{ jobPosting.jobTitle }}
+  </h1>
+  <p class="jp__sub-heading"> {{ jobPosting.jobType }}</p>
+  <p class="jp__content">
+    {{ jobPosting.description }}
+  </p>
+  <p class="jp__meta">Job Posting added on: {{ jobPosting.dateFrom }}, available until: {{ jobPosting.dateTo }}</p>
+  <div class="jp__btn-container">
+    <button class="btn btn__primary">Apply</button>
+  </div>
+</div>

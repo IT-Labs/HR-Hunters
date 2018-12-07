@@ -8,8 +8,11 @@ namespace HRHunters.Common.Requests.Users
 {
     public class UserRegisterModel
     {
-        [Required]
+        [Required, StringLength(25, ErrorMessage = "First name cannot be longer than 25 characters.")]
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "First name can only contain letters.")]
         public string FirstName { get; set; }
+        [StringLength(25, ErrorMessage = "Last name cannot be longer than 25 characters.")]
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Last name can only contain letters.")]
         public string LastName { get; set; }
         [Required, EmailAddress]
         public string Email { get; set; }

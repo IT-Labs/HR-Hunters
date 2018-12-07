@@ -1,4 +1,5 @@
 ﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Data;
 using System;
@@ -34,14 +35,18 @@ namespace HRHunters.Domain.Managers
             Save();
         }
 
-        public IEnumerable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null) where TEntity : Entity
+        public IEnumerable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, string orderBy = null, string includeProperties = null, int? skip = null, int? take = null, SortDirection? sortDirection = null) where TEntity : Entity
         {
-            return _repo.Get(filter, orderBy, includeProperties, skip, take);
+            return _repo.Get(filter, orderBy, includeProperties, skip, take, sortDirection);
         }
 
-        public IEnumerable<TEntity> GetAll<TEntity>(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null, int? take = null) where TEntity : Entity
+        public IEnumerable<TEntity> GetAll<TEntity>(string orderBy = null,
+        string includeProperties = null,
+        int? skip = null,
+        int? take = null,
+        SortDirection? sortDirection = null) where TEntity : Entity
         {
-            return _repo.GetAll(orderBy, includeProperties, skip, take);
+            return _repo.GetAll<TEntity>(orderBy: null, includeProperties: null, skip: null, take: null, sortDirection: null);
         }
 
         public TEntity GetById<TEntity>(object id) where TEntity : Entity

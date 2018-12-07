@@ -51,6 +51,15 @@
               </div>
               <div
                 *ngIf="
+                  applicantRegisterForm.controls['applicantFirstName'].errors
+                    ?.pattern || applicantRegisterForm.controls['applicantFirstName'].errors
+                    ?.pattern
+                "
+              >
+              This fields can only contain letters from the English alphabet.
+              </div>
+              <div
+                *ngIf="
                   applicantRegisterForm.controls['applicantLastName'].errors
                     ?.required
                 "
@@ -111,10 +120,10 @@
             <!-- SERVER EMAIL ERROR -->
 
             <div
-              *ngIf="authEmailError"
+              *ngIf="authError"
               class="alert alert-warning auth-form__alert"
             >
-              {{ authEmailError }}
+              {{ authError }}
             </div>
 
             <!-- PASSWORD INPUT -->
@@ -125,7 +134,6 @@
               formControlName="applicantPassword"
               minlength="8"
               maxlength="20"
-              (keyup)="updatePassword($event)"
             />
             <div
               *ngIf="
@@ -169,15 +177,6 @@
               </div>
             </div>
 
-            <!-- SERVER PASSWORD ERROR -->
-
-            <div
-              *ngIf="authPasswordError"
-              class="alert alert-warning auth-form__alert"
-            >
-              {{ authPasswordError }}
-            </div>
-
             <!-- CONFIRM PASSWORD INPUT -->
             <input
               type="password"
@@ -186,7 +185,6 @@
               formControlName="applicantConfirmPassword"
               minlength="8"
               maxlength="20"
-              (keyup)="updateConfirmedPassword($event)"
             />
             <div
               *ngIf="
@@ -195,26 +193,17 @@
                   (applicantRegisterForm.controls['applicantConfirmPassword']
                     .dirty ||
                     applicantRegisterForm.controls['applicantConfirmPassword']
-                      .touched)) ||
-                !comparePasswords()
+                      .touched))
               "
               class="alert alert-warning auth-form__alert"
             >
-              <div
-                *ngIf="
-                  applicantRegisterForm.controls['applicantConfirmPassword']
-                    .errors?.required
-                "
-              >
-                Password is required.
-              </div>
-              <div *ngIf="!comparePasswords()">Passwords must match!</div>
+              <div *ngIf="applicantRegisterForm.controls.applicantConfirmPassword.errors">Passwords must match!</div>
             </div>
 
             <button
               class="btn btn-auth"
               type="submit"
-              [disabled]="!applicantRegisterForm.valid || !comparePasswords()"
+              [disabled]="!applicantRegisterForm.valid"
             >
               Register
             </button>

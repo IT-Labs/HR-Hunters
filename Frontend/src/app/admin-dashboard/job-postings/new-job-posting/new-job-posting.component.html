@@ -110,17 +110,21 @@
           class="alert dash__form--alert-msg"
         >
           <div
+            *ngIf="
+              newJobPostingForm.controls['applicantEmail'].errors?.pattern
+            "
+          >
+            Email must be in valid format.
+          </div>
+          <div
             *ngIf="newJobPostingForm.controls['companyEmail'].errors?.required"
           >
             Company email is required.
           </div>
-          <div *ngIf="newJobPostingForm.controls['companyEmail'].errors?.email">
-            Email must be in valid format.
-          </div>
           <div
             *ngIf="newJobPostingForm.controls['companyEmail'].errors?.maxlength"
           >
-            Company email must be up to 50 characters long.
+            Company email must be up to 30 characters long.
           </div>
         </div>
 
@@ -158,7 +162,9 @@
 
         <!-- LOGO IMAGE -->
 
-        <label for="dashid__logo" class="dash__form--label">Logo</label>
+        <label for="dashid__logo" class="dash__form--label"
+          >Logo <span class="u-required-star">*</span></label
+        >
         <button
           class="btn dash__heading--btn"
           type="button"
@@ -178,10 +184,7 @@
 
         <div
           class="dash__form--img-preview"
-          *ngIf="
-            imagePreview &&
-            newJobPostingForm.controls['logo'].valid
-          "
+          *ngIf="imagePreview && newJobPostingForm.controls['logo'].valid"
         >
           <img
             [src]="imagePreview"
@@ -192,9 +195,10 @@
           *ngIf="!newJobPostingForm.controls['logo'].valid && !imageValid"
           class="alert dash__form--alert-msg"
         >
-          Logo is required.<br><br>
+          Logo is required.<br /><br />
 
-          Please upload a propper image file in .png or .jpg format. Maximum size for the image is 600px x 600px
+          Please upload a propper image file in .png or .jpg format. Maximum
+          size for the image is 600px x 600px
         </div>
       </div>
 
@@ -261,7 +265,11 @@
           formControlName="jobType"
           (focus)="onFocus('jobType')"
         >
-          <option *ngFor="let jobType of jobTypes" [ngValue]="jobType"
+          <option
+            *ngFor="let jobType of jobTypes"
+            [ngValue]="jobType"
+            [selected]="jobType === 'Select job type...'"
+            [disabled]="jobType === 'Select job type...'"
             >{{ jobType }}
           </option>
         </select>
@@ -290,7 +298,11 @@
           formControlName="education"
           (focus)="onFocus('education')"
         >
-          <option *ngFor="let edu of education" [ngValue]="edu"
+          <option
+            *ngFor="let edu of education"
+            [ngValue]="edu"
+            [selected]="edu === 'Select education level...'"
+            [disabled]="edu === 'Select education level...'"
             >{{ edu }}
           </option>
         </select>
@@ -311,56 +323,35 @@
         <!-- NEEDED EXPERIENCE -->
 
         <label for="dashid__experience" class="dash__form--label"
-          >Needed experience (in years)
-          <span class="u-required-star">*</span></label
+          >Experience (in years) <span class="u-required-star">*</span></label
         >
-        <input
-          type="text"
+        <select
           id="dashid__experience"
           class="dash__form--input"
           formControlName="experience"
-          maxlength="3"
-          autocomplete="off"
-          placeholder="Choose needed experience..."
           (focus)="onFocus('experience')"
-          (keyup)="populateExperienceSuggestions($event)"
-          (keyup)="checkExperience()"
-        />
-
-        <div
-          class="dropdown-container"
-          *ngIf="filteredExperience.length > 0 && formFocus.experience"
         >
-          <div
-            class="dropdown-menu dropdown-menu--height show"
-            aria-labelledby="dashidExperience"
-          >
-            <span
-              class="dropdown-item"
-              *ngFor="let number of filteredExperience"
-              (click)="populateExperience($event)"
-              >{{ number }}</span
-            >
-          </div>
-        </div>
+          <option
+            *ngFor="let exp of experience"
+            [ngValue]="exp"
+            [selected]="exp === 'Select experience...'"
+            [disabled]="exp === 'Select experience...'"
+            >{{ exp }}
+          </option>
+        </select>
 
         <div
           *ngIf="
-            (!newJobPostingForm.controls['experience'].valid &&
-              (newJobPostingForm.controls['experience'].dirty ||
-                newJobPostingForm.controls['experience'].touched)) ||
-            checkExperience()
+            !newJobPostingForm.controls['experience'].valid &&
+            (newJobPostingForm.controls['experience'].dirty ||
+              newJobPostingForm.controls['experience'].touched)
           "
           class="alert dash__form--alert-msg"
         >
           <div
             *ngIf="newJobPostingForm.controls['experience'].errors?.required"
           >
-            Experience is required.
-          </div>
-
-          <div *ngIf="newJobPostingForm.controls['title'].errors?.maxlength">
-            Experience must be up to 2 characters long.
+            Experience must be selected.
           </div>
         </div>
 
@@ -374,19 +365,16 @@
           type="date"
           id="dashid__duration-from"
           class="dash__form--date"
-          value="2018-07-22"
           min="2018-01-01"
           max="2019-12-31"
           formControlName="durationFrom"
           (focus)="onFocus('durationFrom')"
-          (change)="compareTwoDates()"
         />
         <span>To:</span>
         <input
           type="date"
           id="dashid__duration-to"
           class="dash__form--date"
-          value="2018-07-22"
           min="2018-01-01"
           max="2019-12-31"
           formControlName="durationTo"
@@ -400,8 +388,7 @@
                 newJobPostingForm.controls['durationFrom'].touched)) ||
             (!newJobPostingForm.controls['durationTo'].valid &&
               (newJobPostingForm.controls['durationTo'].dirty ||
-                newJobPostingForm.controls['durationTo'].touched)) ||
-            !compareTwoDates()
+                newJobPostingForm.controls['durationTo'].touched))
           "
           class="alert dash__form--alert-msg"
         >
@@ -414,13 +401,20 @@
             Duration is required.
           </div>
 
-          <div *ngIf="!compareTwoDates()">
-            Start date can't be later nor equal to the end date.
+          <div *ngIf="newJobPostingForm.controls.durationTo.errors">
+            Start date must be equal to today's date or a later date. End date can't be earlier or equal to start date.
           </div>
         </div>
       </div>
 
-      <button type="submit" class="btn dash__form--btn" [disabled]="!newJobPostingForm.valid && validDates && validExperience">Publish Job</button>
+      <button
+        type="submit"
+        class="btn dash__form--btn"
+        [disabled]="!newJobPostingForm.valid"
+      >
+      <!--  && validExperience -->
+        Publish Job
+      </button>
     </form>
   </div>
 </div>

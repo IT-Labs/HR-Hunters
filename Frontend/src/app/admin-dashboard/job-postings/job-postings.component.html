@@ -12,16 +12,16 @@
     <button class="btn dash__heading--btn" type="button">Import CSV</button>
     <div class="text-muted dash__filtering">
       <ul>
-        <li (click)="onFilter('all')">
+        <li (click)="onFilter(null)">
           All<span>({{ jobPostingsCount.all }})</span>
         </li>
-        <li (click)="onFilter('approved')">
+        <li (click)="onFilter(1)">
           Aproved<span>({{ jobPostingsCount.approved }})</span>
         </li>
-        <li (click)="onFilter('pending')">
+        <li (click)="onFilter(2)">
           Pending<span>({{ jobPostingsCount.pending }})</span>
         </li>
-        <li (click)="onFilter('expired')">
+        <li (click)="onFilter(3)">
           Expired<span>({{ jobPostingsCount.expired }})</span>
         </li>
       </ul>
@@ -34,7 +34,6 @@
     >
       <thead>
         <tr class="dash__table__header">
-          <th scope="col" (click)="onSort('applicantName')">Applicant Name</th>
           <th scope="col" (click)="onSort('jobTitle')">Position Title</th>
           <th scope="col" (click)="onSort('companyName')">Company Name</th>
           <th scope="col" (click)="onSort('companyEmail')">Contact Email</th>
@@ -49,8 +48,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let jobPosting of jobPostings">
-          <td scope="row">{{ jobPosting.applicantName }}</td>
-          <td>{{ jobPosting.jobTitle }}</td>
+          <td scope="row">{{ jobPosting.jobTitle }}</td>
           <td>{{ jobPosting.companyName }}</td>
           <td>{{ jobPosting.companyEmail }}</td>
           <td>{{ jobPosting.location }}</td>

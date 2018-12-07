@@ -1,4 +1,5 @@
 ﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Enums;
 using HRHunters.Data;
 using System;
 using System.Collections.Generic;
@@ -20,15 +21,17 @@ namespace HRHunters.Common.Interfaces
 
         void Save();
 
-        IEnumerable<TEntity> GetAll<TEntity>(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+        IEnumerable<TEntity> GetAll<TEntity>(string orderBy = null,
         string includeProperties = null,
         int? skip = null,
-        int? take = null) where TEntity : Entity;
+        int? take = null,
+        SortDirection? sortDirection = null) where TEntity : Entity;
 
-        IEnumerable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+        IEnumerable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, string orderBy = null,
         string includeProperties = null,
         int? skip = null,
-        int? take = null) where TEntity : Entity;
+        int? take = null,
+        SortDirection? sortDirection = null) where TEntity : Entity;
 
         TEntity GetOne<TEntity>(
         Expression<Func<TEntity, bool>> filter = null,

@@ -15,10 +15,10 @@ namespace HRHunters.Common.Responses
         public UserRegisterReturnModel(ModelStateDictionary modelState)
         {
             Errors = new Dictionary<string, List<string>>();
+            var listOfErrors = new List<string>();
             foreach (var property in modelState.Keys)
             {
                 var value = modelState[property];
-                var listOfErrors = new List<string>();
                 if (value.Errors.Any())
                 {
                     foreach (var error in value.Errors)
@@ -26,8 +26,9 @@ namespace HRHunters.Common.Responses
                         listOfErrors.Add(error.ErrorMessage);
                     }
                 }
-                Errors.Add(property, listOfErrors);
             }
+
+            Errors.Add("Error", listOfErrors);
         }
     }
 }

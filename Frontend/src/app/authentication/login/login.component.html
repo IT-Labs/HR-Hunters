@@ -24,17 +24,8 @@
               "
               class="alert alert-warning auth-form__alert"
             >
-              <div *ngIf="loginForm.controls['email'].errors.email">
-                Email is required.
-              </div>
-              <div *ngIf="loginForm.controls['email'].errors.required">
-                Email is required.
-              </div>
-              <div *ngIf="loginForm.controls['email'].errors.minlength">
-                Email must be at least 6 characters long.
-              </div>
-              <div *ngIf="loginForm.controls['email'].errors.maxlength">
-                Email must be up to 30 characters long.
+              <div *ngIf="loginForm.controls['email'].errors">
+                Please enter your valid email.
               </div>
             </div>
 
@@ -43,7 +34,7 @@
             <div
               *ngIf="authError"
               class="alert alert-warning auth-form__alert"
-            > {{ authError.description }}
+            > {{ authError }}
             </div>
 
             <!-- PASSWORD INPUT -->
@@ -63,23 +54,14 @@
               "
               class="alert alert-warning auth-form__alert"
             >
-              <div *ngIf="loginForm.controls['password'].errors.password">
-                Password is required.
-              </div>
-              <div *ngIf="loginForm.controls['password'].errors.required">
-                Password is required.
-              </div>
-              <div *ngIf="loginForm.controls['password'].errors.minlength">
-                Password must be at least 8 characters long.
-              </div>
-              <div *ngIf="loginForm.controls['password'].errors.maxlength">
-                Password must be up to 20 characters long.
+              <div *ngIf="loginForm.controls['password'].errors">
+                Please enter your valid password.
               </div>
             </div>
-            <p class="auth-form__text" *ngIf="!selectedTab.admin">
+            <p class="auth-form__text" *ngIf="!role.admin">
               You don't have an account?<br />Register
-              <a routerLink="/applicant-register" *ngIf="selectedTab.applicant">here</a>
-              <a routerLink="/client-register" *ngIf="selectedTab.client">here</a>.
+              <a routerLink="/applicant-register" *ngIf="role.applicant">here</a>
+              <a routerLink="/client-register" *ngIf="role.client">here</a>.
             </p>
             <button
               class="btn btn-auth"

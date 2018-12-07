@@ -7,6 +7,7 @@ using HRHunters.Common.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HRHunters.Domain.Managers
@@ -16,10 +17,10 @@ namespace HRHunters.Domain.Managers
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly SignInManager<User> _signInManager;
-        private readonly IExtensionMethods _extensionMethods;
-        public UsersManager(UserManager<User> userManager, IMapper mapper, SignInManager<User> signInManager, IExtensionMethods extensionMethods)
+        private readonly ITokenGeneration _tokenGeneration;
+        public UsersManager(UserManager<User> userManager, IMapper mapper, SignInManager<User> signInManager, ITokenGeneration tokenGeneration)
         {
-            _extensionMethods = extensionMethods;
+            _tokenGeneration = tokenGeneration;
             _userManager = userManager;
             _mapper = mapper;
             _signInManager = signInManager;
@@ -57,7 +58,7 @@ namespace HRHunters.Domain.Managers
             userToReturn = _mapper.Map<UserLoginReturnModel>(appUser);
             var roles = await _userManager.GetRolesAsync(appUser);
             userToReturn.Succeeded = true;
-            userToReturn.Token = _extensionMethods.GenerateJwtToken(appUser);
+            userToReturn.Token = _tokenGeneration.GenerateJwtToken(appUser);
             userToReturn.Role = roles.Contains("Applicant") ? 0 : 1;
             return userToReturn;
         }
@@ -70,7 +71,7 @@ namespace HRHunters.Domain.Managers
             var userToReturn = new UserRegisterReturnModel()
             {
                 Succeeded = false,
-                Errors= new Dictionary<string, List<string>>(),
+                Errors= new Dictionary<string, List<string>>()
             };
 
             if (string.IsNullOrEmpty(userRegisterModel.LastName) && role=="Applicant")
@@ -82,7 +83,12 @@ namespace HRHunters.Domain.Managers
            
             if (!result.Succeeded)
             {
-                userToReturn.Errors.Add("Email", new List<string>() { "Email already exists" });
+                var list = new List<string>();
+                foreach(var error in result.Errors)
+                {
+                    list.Add(error.Description);
+                }
+                userToReturn.Errors.Add("Error", list);
                 return userToReturn;
             }
             if (role == "Client")

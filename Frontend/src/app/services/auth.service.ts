@@ -25,8 +25,7 @@ export class AuthService {
   }>();
   private authStatusListener = new Subject<boolean>();
   private authErrorStatusListener = new Subject<{
-    email: string;
-    password: string;
+    error: string;
   }>();
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -124,23 +123,15 @@ export class AuthService {
             this.router.navigate(["login"]);
           }
           if (!response.succeeded) {
-            if (response.errors.Email) {
-              this.authErrorStatusListener.next({
-                email: response.errors.Email[0],
-                password: null
-              });
-            } else if (response.errors.Password)
-              this.authErrorStatusListener.next({
-                email: null,
-                password: response.errors.Password[0]
-              });
+            this.authErrorStatusListener.next({
+              error: "Unknown error occured"
+            });
           }
         },
         error => {
-          if (error) {
+          if (error.error.errors) {
             this.authErrorStatusListener.next({
-              email: "Uknown error occured",
-              password: null
+              error: error.error.errors.Error[0]
             });
           }
         }
@@ -148,48 +139,54 @@ export class AuthService {
   }
 
   // LOGIN
-  loginUser(email: string, password: string, userType: number) {
-    const authData: User = { email: email, password: password, userType: userType };
+  loginUser(email: string, password: string) {
+    const authData: User = { email: email, password: password };
     this.http
       .post<{
-        succedeed: boolean;
+        succeeded: boolean;
         firstName: string | null;
         lastName: string | null;
         token: string | null;
         email: string | null;
         id: number | null;
-        role: number;
+        userType: number;
         errors: {
           Error: string[] | null;
         };
       }>(this.baseUrl + "/Authentication/login", authData)
       .subscribe(
         response => {
-          if (response.succedeed) {
+          console.log(response);
+          if (response.succeeded) {
             const token = response.token;
             this.user.token = token;
             this.user.id = response.id;
             this.user.email = response.email;
+            console.log(response.id);
             if (token) {
               this.isAuthenticated = true;
               this.authStatusListener.next(true);
               this.saveAuthData(token);
-              this.router.navigate(["/admin-dashboard/job-postings"]);
+              if (response.userType === 0) {
+                this.router.navigate(["applicant"]);
+              } else if (response.userType === 1) {
+                this.router.navigate(["client"]);
+              } else if (response.userType === 2) {
+                this.router.navigate(["admin-dashboard"]);
+              }
             }
-          } else if (!response.succedeed) {
+          } else if (!response.succeeded) {
             if (response.errors) {
               this.authErrorStatusListener.next({
-                email: response.errors.Error[0],
-                password: null
+                error: response.errors.Error[0]
               });
             }
           }
         },
         error => {
-          if (error) {
+          if (error.error.errors) {
             this.authErrorStatusListener.next({
-              email: "Uknown error occured",
-              password: null
+              error: error.error.errors.Error[0]
             });
           }
         }

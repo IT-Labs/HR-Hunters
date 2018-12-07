@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HRHunters.Data.Migrations
 {
-    public partial class newmigration : Migration
+    public partial class newMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,8 +46,8 @@ namespace HRHunters.Data.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    Email = table.Column<string>(maxLength: 256, nullable: false),
-                    FirstName = table.Column<string>(maxLength: 50, nullable: false),
+                    Email = table.Column<string>(maxLength: 256, nullable: true),
+                    FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
@@ -113,7 +113,7 @@ namespace HRHunters.Data.Migrations
                     ModifiedBy = table.Column<string>(nullable: true),
                     Experience = table.Column<string>(nullable: true),
                     EducationType = table.Column<string>(nullable: true),
-                    SchoolUniversity = table.Column<string>(nullable: false),
+                    SchoolUniversity = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false),
                     PhoneNumber = table.Column<string>(nullable: true),
                     Id = table.Column<int>(nullable: false)
@@ -224,15 +224,16 @@ namespace HRHunters.Data.Migrations
                 name: "Clients",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     CreatedBy = table.Column<string>(nullable: true),
                     ModifiedBy = table.Column<string>(nullable: true),
-                    Status = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
+                    Location = table.Column<string>(nullable: false),
                     UserId = table.Column<int>(nullable: false),
-                    PhoneNumber = table.Column<string>(nullable: true)
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    PhoneNumber = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -260,9 +261,9 @@ namespace HRHunters.Data.Migrations
                     DateTo = table.Column<DateTime>(nullable: false),
                     Location = table.Column<string>(nullable: false),
                     Description = table.Column<string>(maxLength: 800, nullable: true),
-                    EmpCategory = table.Column<string>(nullable: false),
-                    Education = table.Column<string>(nullable: false),
-                    Status = table.Column<string>(nullable: true),
+                    EmpCategory = table.Column<int>(nullable: false),
+                    Education = table.Column<int>(nullable: false),
+                    Status = table.Column<int>(nullable: false),
                     NeededExperience = table.Column<string>(nullable: false),
                     ClientId = table.Column<int>(nullable: false)
                 },
@@ -288,7 +289,7 @@ namespace HRHunters.Data.Migrations
                     CreatedBy = table.Column<string>(nullable: true),
                     ModifiedBy = table.Column<string>(nullable: true),
                     Date = table.Column<DateTime>(nullable: false),
-                    Status = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
                     ApplicantId = table.Column<int>(nullable: false),
                     JobId = table.Column<int>(nullable: false),
                     JobPostingId = table.Column<int>(nullable: true)

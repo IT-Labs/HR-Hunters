@@ -4,9 +4,11 @@ import { Router } from "@angular/router";
 import { map } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { Application } from "../models/application.model";
+import { environment } from "../../environments/environment.prod";
 
 @Injectable({ providedIn: "root" })
 export class ApplicationService {
+  baseUrl = environment.baseUrl;
   // Local list of applications
   private applications: Application[] = [];
 
@@ -17,6 +19,7 @@ export class ApplicationService {
     pending: number;
     contacted: number;
     interviewed: number;
+    hired: number;
     rejected: number;
   }>();
 
@@ -29,9 +32,8 @@ export class ApplicationService {
 
   // Get all applications
   getApplications(
-    applicationQP
+    queryParams
   ) {
-    const queryParams = `?pagesize=${applicationQP.applicationsPerPage}&page=${applicationQP.currentPage}&sort=${applicationQP.sortedBy}&sortDir=${applicationQP.sortDirection}&filter=${applicationQP.filterBy}`;
     this.http
       .get<{
         applications: Application[];
@@ -39,8 +41,9 @@ export class ApplicationService {
         pending: number;
         contacted: number;
         interviewed: number;
+        hired: number;
         rejected: number;
-      }>("http://localhost:3000/dataApplications")
+      }>(this.baseUrl + '/Admin/applications' + queryParams)
       .pipe(
         map(applicationsData => {
           return {
@@ -60,6 +63,7 @@ export class ApplicationService {
             pending: applicationsData.pending,
             contacted: applicationsData.contacted,
             interviewed: applicationsData.interviewed,
+            hired: applicationsData.hired,
             rejected: applicationsData.rejected
           };
         })
@@ -72,6 +76,7 @@ export class ApplicationService {
           pending: transformedApplicationsData.pending,
           contacted: transformedApplicationsData.contacted,
           interviewed: transformedApplicationsData.interviewed,
+          hired: transformedApplicationsData.hired,
           rejected: transformedApplicationsData.rejected
         });
       });
