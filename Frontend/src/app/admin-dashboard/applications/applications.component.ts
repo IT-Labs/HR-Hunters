@@ -103,6 +103,13 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   }
 
   onFilter(filterBy: number) {
+    
+    if (filterBy === null) {
+      this.applicationQP.currentFilter = null
+    } else {
+      this.applicationQP.currentFilter = 'status'
+    }
+
     this.applicationQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.applicationQP)
     this.applicationService.getApplications(params);
