@@ -10,13 +10,14 @@ import { mimeType } from "../../../validators/mime-type.validator";
   styleUrls: ['./applicant-profile.component.scss']
 })
 export class ApplicantProfileComponent implements OnInit {
-
   education = [
     "High School degree",
     "Bachelor degree",
     "Masters degree",
-    "Doctoral degree"
+    "Doctoral degree",
+    'Select education level...'
   ];
+
   imagePreview: string | ArrayBuffer;
   imageValid = true;
   validEmail = new RegExp(
@@ -44,7 +45,8 @@ export class ApplicantProfileComponent implements OnInit {
     "17",
     "18",
     "19",
-    "20+"
+    "20+",
+    'Select experience...'
   ];
   filteredExperience = [];
 
@@ -62,6 +64,12 @@ export class ApplicantProfileComponent implements OnInit {
   validExperience: boolean;
 
   // validPhonenumber = new RegExp("^(\+\s?)?((?<!\+.*)\(\+?\d+([\s\-\.]?\d+)?\)|\d+)([\s\-\.]?(\(\d+([\s\-\.]?\d+)?\)|\d+))*(\s?(x|ext\.?)\s?\d+)?$");
+  // validPhonenumber = new RegExp("/^(?:\+\d{2})?\d{10}(?:,(?:\+\d{2})?\d{10})*$/");
+   validPhonenumber = new RegExp("/^[a-zA-Z0-9\-().\s]{10,15}$/");
+
+  
+
+ 
   constructor(private fb: FormBuilder, private router: Router) { }
 
   ngOnInit() {
@@ -97,7 +105,7 @@ export class ApplicantProfileComponent implements OnInit {
       ])
     ],
 
-    phonenumber: ["", Validators.compose([Validators.required])],
+    phonenumber: ["", Validators.compose([Validators.required,Validators.pattern(this.validPhonenumber)])],
     education: ["", Validators.compose([Validators.required])],
     school: ["", Validators.compose([Validators.required])],
     experience: [

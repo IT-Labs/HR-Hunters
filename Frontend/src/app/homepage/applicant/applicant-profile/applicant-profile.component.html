@@ -220,7 +220,10 @@
             formControlName="education"
       
           >
-            <option *ngFor="let edu of education" [ngValue]="edu"
+            <option *ngFor="let edu of education" 
+            [ngValue]="edu"
+            [selected]="edu === 'Select education level...'"
+            [disabled]="edu === 'Select education level...'"
               >{{ edu }}
             </option>
           </select>
@@ -287,7 +290,7 @@
              >Experience (in years)
              <span class="u-required-star">*</span></label
            >
-           <input
+           <!-- <input
              type="text"
              id="hpid__experience"
              class="hp__form--input"
@@ -298,9 +301,23 @@
              (focus)="onFocus('experience')"
              (keyup)="populateExperienceSuggestions($event)"
              (keyup)="checkExperience()"
-           />
+           /> -->
+           <select
+           id="hpid__experience"
+           class="hp__form--input"
+           formControlName="experience"
+           (focus)="onFocus('experience')"
+         >
+           <option
+             *ngFor="let exp of experience"
+             [ngValue]="exp"
+             [selected]="exp === 'Select experience...'"
+             [disabled]="exp === 'Select experience...'"
+             >{{ exp }}
+           </option>
+         </select>
 
-           <div
+           <!-- <div
              class="dropdown-container"
              *ngIf="filteredExperience.length > 0 && formFocus.experience"
            >
@@ -315,7 +332,7 @@
                  >{{ number }}</span
                >
              </div>
-           </div>
+           </div> -->
 
            <div
              *ngIf="

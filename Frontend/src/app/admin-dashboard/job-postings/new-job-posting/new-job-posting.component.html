@@ -110,17 +110,21 @@
           class="alert dash__form--alert-msg"
         >
           <div
+            *ngIf="
+              newJobPostingForm.controls['applicantEmail'].errors?.pattern
+            "
+          >
+            Email must be in valid format.
+          </div>
+          <div
             *ngIf="newJobPostingForm.controls['companyEmail'].errors?.required"
           >
             Company email is required.
           </div>
-          <div *ngIf="newJobPostingForm.controls['companyEmail'].errors?.email">
-            Email must be in valid format.
-          </div>
           <div
             *ngIf="newJobPostingForm.controls['companyEmail'].errors?.maxlength"
           >
-            Company email must be up to 50 characters long.
+            Company email must be up to 30 characters long.
           </div>
         </div>
 
@@ -365,7 +369,6 @@
           max="2019-12-31"
           formControlName="durationFrom"
           (focus)="onFocus('durationFrom')"
-          (change)="compareTwoDates()"
         />
         <span>To:</span>
         <input
@@ -385,8 +388,7 @@
                 newJobPostingForm.controls['durationFrom'].touched)) ||
             (!newJobPostingForm.controls['durationTo'].valid &&
               (newJobPostingForm.controls['durationTo'].dirty ||
-                newJobPostingForm.controls['durationTo'].touched)) ||
-            !compareTwoDates()
+                newJobPostingForm.controls['durationTo'].touched))
           "
           class="alert dash__form--alert-msg"
         >
@@ -399,8 +401,8 @@
             Duration is required.
           </div>
 
-          <div *ngIf="!compareTwoDates()">
-            Start date can't be later nor equal to the end date.
+          <div *ngIf="newJobPostingForm.controls.durationTo.errors">
+            Start date must be equal to today's date or a later date. End date can't be earlier or equal to start date.
           </div>
         </div>
       </div>
@@ -408,7 +410,7 @@
       <button
         type="submit"
         class="btn dash__form--btn"
-        [disabled]="!newJobPostingForm.valid && validDates"
+        [disabled]="!newJobPostingForm.valid"
       >
       <!--  && validExperience -->
         Publish Job

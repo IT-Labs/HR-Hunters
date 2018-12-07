@@ -25,7 +25,8 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     currentSortBy: "posted",
     lastSortBy: "",
     currentSortDirection: 0,
-    currentFilter: 0
+    currentFilter: 'status',
+    currentFilterQuery: 0
   };
   paginationSize: number[] = [];
 
@@ -55,7 +56,8 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
             &page=${data.currentPage}
             &sort=${data.currentSortBy}
             &sortDir=${data.currentSortDirection}
-            &filter=${data.currentFilter}`;
+            &filterBy=${data.currentFilter}
+            &filterQuery=${data.currentFilterQuery}`;
   }
 
   calculatePagination(applicationCount: number) {
@@ -101,7 +103,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   }
 
   onFilter(filterBy: number) {
-    this.applicationQP.currentFilter = filterBy;
+    this.applicationQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.applicationQP)
     this.applicationService.getApplications(params);
   }

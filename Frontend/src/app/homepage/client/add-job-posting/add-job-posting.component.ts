@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { JobPostingService } from "src/app/services/job-posting.service";
 import { Router } from "@angular/router";
-import { mimeType } from "src/app/validators/mime-type.validator";
+import { DateValidator } from "../../../validators/date.validator";
 
 @Component({
   selector: "app-add-job-posting",
@@ -10,16 +10,14 @@ import { mimeType } from "src/app/validators/mime-type.validator";
   styleUrls: ["./add-job-posting.component.scss"]
 })
 export class AddJobPostingComponent implements OnInit {
-  jobTypes = ["Full-time", "Part-time", "Intership"];
+  jobTypes = ["Full-time", "Part-time", "Intership", 'Select job type...'];
   education = [
     "High School degree",
     "Bachelor degree",
     "Masters degree",
-    "Doctoral degree"
+    "Doctoral degree",
+    'Select education level...'
   ];
-
-  validDates: boolean;
-  validExperience: boolean;
 
   experience = [
     "<1",
@@ -42,9 +40,9 @@ export class AddJobPostingComponent implements OnInit {
     "17",
     "18",
     "19",
-    "20+"
+    "20+",
+    "Select experience..."
   ];
-  filteredExperience = [];
 
   formFocus = {
     title: false,
@@ -63,7 +61,10 @@ export class AddJobPostingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.filteredExperience = this.experience.slice();
+
+    this.newJobPostingFormHP.controls.durationFrom.valueChanges.subscribe(x =>
+      this.newJobPostingFormHP.controls.durationTo.updateValueAndValidity()
+    );
   }
 
   newJobPostingFormHP = this.fb.group({
@@ -76,7 +77,7 @@ export class AddJobPostingComponent implements OnInit {
       ])
     ],
     durationFrom: ["", Validators.compose([Validators.required])],
-    durationTo: ["", Validators.compose([Validators.required])],
+    durationTo: ["", Validators.compose([Validators.required, DateValidator])],
     location: [
       "",
       Validators.compose([
@@ -94,28 +95,6 @@ export class AddJobPostingComponent implements OnInit {
     description: ["", Validators.compose([Validators.maxLength(300)])]
   });
 
-  compareTwoDates() {
-    if (
-      new Date(this.newJobPostingFormHP.controls["durationFrom"].value) >=
-      new Date(this.newJobPostingFormHP.controls["durationTo"].value)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  checkExperience() {
-    for (let i = 0; i < this.experience.length; i++) {
-      if (
-        this.experience[i] ==
-        this.newJobPostingFormHP.controls["experience"].value
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   onFocus(event: any) {
     this.formFocus = {
       title: false,
@@ -129,28 +108,7 @@ export class AddJobPostingComponent implements OnInit {
     this.formFocus[event] = true;
   }
 
-  populateExperience(event: any) {
-    this.onFocus("none");
-    const experience = event.target.innerText;
-    this.experience.map(num => {
-      if (num === experience) {
-        this.newJobPostingFormHP.controls["experience"].setValue(experience);
-      }
-    });
-  }
-
-  populateExperienceSuggestions(event: any) {
-    this.filteredExperience = [];
-    this.experience.map(num => {
-      if (num.includes(event.target.value)) {
-        this.filteredExperience.push(num);
-      }
-    });
-  }
-
   onSubmitNewJobPosting() {
-    this.validDates = this.compareTwoDates();
-    this.validExperience = this.checkExperience();
     this.newJobPostingFormHP.controls['title'].markAsTouched();
     this.newJobPostingFormHP.controls['durationFrom'].markAsTouched();
     this.newJobPostingFormHP.controls['durationTo'].markAsTouched();
@@ -161,9 +119,7 @@ export class AddJobPostingComponent implements OnInit {
     console.log(this.newJobPostingFormHP)
     
     if (
-      this.newJobPostingFormHP.valid &&
-      this.validDates &&
-      this.validExperience
+      this.newJobPostingFormHP.valid
       ) {
       this.jobPostingService.addJobPosting(
         'company name',

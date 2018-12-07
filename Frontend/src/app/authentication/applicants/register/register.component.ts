@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { AuthService } from "src/app/services/auth.service";
 import { Subscription } from "rxjs";
+import { PasswordValidator } from '../../../validators/password.validator';
 
 @Component({
   selector: "app-register",
@@ -9,8 +10,6 @@ import { Subscription } from "rxjs";
   styleUrls: ["./register.component.scss"]
 })
 export class ApplicantRegisterComponent implements OnInit {
-  password: string;
-  confirmedPassword: string;
   authError: string;
   strongPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
   validEmail = new RegExp("[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}");
@@ -26,6 +25,10 @@ export class ApplicantRegisterComponent implements OnInit {
     this.authErrorStatusSub = this.authService.getAuthErrorStatusListener().subscribe(error => {
       this.authError = error.error
     })
+
+    this.applicantRegisterForm.controls.applicantPassword.valueChanges.subscribe(
+      x => this.applicantRegisterForm.controls.applicantConfirmPassword.updateValueAndValidity()
+    );
   }
 
   applicantRegisterForm = this.fb.group({
@@ -69,31 +72,11 @@ export class ApplicantRegisterComponent implements OnInit {
       "",
       Validators.compose([
         Validators.required,
-        Validators.minLength(8),
-        Validators.maxLength(20)
+        PasswordValidator
       ])
     ]
   });
-
-  updatePassword(event: any) {
-    if (event.target.value) {
-      this.password = event.target.value;
-    }
-  }
-
-  updateConfirmedPassword(event: any) {
-    if (event.target.value !== undefined) {
-      this.confirmedPassword = event.target.value;
-    }
-  }
-
-  comparePasswords() {
-    if (this.password === this.confirmedPassword) {
-      return true;
-    }
-    return false;
-  }
-
+  
   onApplicantRegister() {
 
     if (this.applicantRegisterForm.invalid) {
