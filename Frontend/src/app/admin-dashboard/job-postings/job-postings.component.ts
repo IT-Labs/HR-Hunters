@@ -27,7 +27,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     currentSortBy: "dateTo",
     lastSortBy: "",
     currentSortDirection: 0,
-    currentFilter: 0,
+    currentFilter: 'status',
     currentFilterQuery: 0
   }
 
@@ -108,6 +108,13 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   }
 
   onFilter(filterBy: number) {
+
+    if (filterBy === null) {
+      this.jobPostingQP.currentFilter = null
+    } else {
+      this.jobPostingQP.currentFilter = 'status'
+    }
+
     this.jobPostingQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.jobPostingQP);
     this.jobPostingService.getJobPostings(params);
