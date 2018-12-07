@@ -66,7 +66,6 @@ export class ApplicantService {
     lastName: string,
     photo: File | string,
     phone: string
-   
   ) {
     let applicantData: Applicant | FormData;
     if (typeof photo === "object") {

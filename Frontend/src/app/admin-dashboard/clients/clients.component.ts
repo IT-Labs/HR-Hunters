@@ -22,7 +22,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     currentSortBy: "companyName",
     lastSortBy: "",
     currentSortDirection: 1,
-    currentFilter: 0
+    currentFilter: 'status',
+    currentFilterQuery: 0
   }
 
   paginationSize: number[] = [];
@@ -50,7 +51,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
             &page=${data.currentPage}
             &sort=${data.currentSortBy}
             &sortDir=${data.currentSortDirection}
-            &filter=${data.currentFilter}`;
+            &filterBy=${data.currentFilter}
+            &filterQuery=${data.currentFilterQuery}`;
   }
 
   calculatePagination(applicationCount: number) {
@@ -88,7 +90,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     this.clientService.getClients(params);
   }
   onFilter(filterBy: number) {
-    this.clientQP.currentFilter = filterBy;
+    this.clientQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.clientQP)
     this.clientService.getClients(params);
   }

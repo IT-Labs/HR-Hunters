@@ -20,7 +20,7 @@ export class ADNewJobPostingComponent implements OnInit {
     "Doctoral degree",
     "Select education level..."
   ];
-
+  validEmail = new RegExp("[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}");
   existingCompany = false;
 
   imagePreview: string | ArrayBuffer;
@@ -103,7 +103,7 @@ export class ADNewJobPostingComponent implements OnInit {
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(30),
-        Validators.email
+        Validators.pattern(this.validEmail)
       ])
     ],
     location: [

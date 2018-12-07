@@ -110,17 +110,21 @@
           class="alert dash__form--alert-msg"
         >
           <div
+            *ngIf="
+              newJobPostingForm.controls['applicantEmail'].errors?.pattern
+            "
+          >
+            Email must be in valid format.
+          </div>
+          <div
             *ngIf="newJobPostingForm.controls['companyEmail'].errors?.required"
           >
             Company email is required.
           </div>
-          <div *ngIf="newJobPostingForm.controls['companyEmail'].errors?.email">
-            Email must be in valid format.
-          </div>
           <div
             *ngIf="newJobPostingForm.controls['companyEmail'].errors?.maxlength"
           >
-            Company email must be up to 50 characters long.
+            Company email must be up to 30 characters long.
           </div>
         </div>
 
