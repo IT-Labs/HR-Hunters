@@ -90,6 +90,13 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     this.clientService.getClients(params);
   }
   onFilter(filterBy: number) {
+   
+    if (filterBy === null) {
+      this.clientQP.currentFilter = null
+    } else {
+      this.clientQP.currentFilter = 'status'
+    }
+
     this.clientQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.clientQP)
     this.clientService.getClients(params);

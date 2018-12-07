@@ -12,6 +12,6 @@ namespace HRHunters.Common.Responses.AdminDashboard
         public string JobTitle { get; set; }
         public string Experience { get; set; }
         public string Posted { get; set; }
-        public ApplicationStatus Status { get; set; }
+        public string Status { get; set; }
     }
 }

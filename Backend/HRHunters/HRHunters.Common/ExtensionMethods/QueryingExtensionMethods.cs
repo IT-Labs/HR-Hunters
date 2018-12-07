@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HRHunters.Common.Enums;
+using HRHunters.Common.Responses.AdminDashboard;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -31,6 +33,33 @@ namespace HRHunters.Common.ExtensionMethods
             sample = string.Join("", arr);
 
             return sample;
+        }
+    }
+    public class Filters<T>
+    {
+        public IEnumerable<T> Applyfilters(IEnumerable<T> a, int pageSize = 20, int currentPage = 1, string sortedBy="Id" , SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
+        {
+            if (!string.IsNullOrWhiteSpace(sortedBy))
+            {
+                var pi = typeof(T).GetProperty(sortedBy);
+                if (sortDir == SortDirection.DESC)
+                {
+                    a = a.OrderByDescending(x => pi.GetValue(x, null));
+                }
+                if (sortDir == SortDirection.ASC)
+                {
+                   a = a.OrderBy(x => pi.GetValue(x, null));
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(filterBy))
+            {
+
+                var pi = typeof(T).GetProperty(filterBy);
+                a = a.Where(x => pi.GetValue(x, null).Equals(filterQuery));
+
+            }
+            return a.Skip((currentPage - 1) * pageSize).Take(pageSize);
         }
     }
 }
