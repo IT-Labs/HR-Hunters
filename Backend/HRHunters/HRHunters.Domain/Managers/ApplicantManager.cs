@@ -18,28 +18,25 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public IEnumerable<ApplicantInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir)
+        public IEnumerable<ApplicantInfo> GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
-            sortedBy = sortedBy ?? "Id";
-            sortedBy = sortedBy.ToPascalCase();
-
-            var propertyInfo = typeof(Applicant).GetProperty(sortedBy) ?? typeof(User).GetProperty(sortedBy);
-            
-            return _repo.Get<Applicant>(orderBy: propertyInfo.ReflectedType.Equals(typeof(User)) ? "User." + sortedBy : sortedBy,
-                                        includeProperties: $"{nameof(Applicant.User)}", 
-                                        skip: (currentPage-1)*pageSize, 
-                                        take: pageSize, 
-                                        sortDirection: sortDir)
-                                        .Select(
+                var a = _repo.GetAll<Applicant>(includeProperties: $"{nameof(Applicant.User)},")
+                                                                .Select(
                                         x => new ApplicantInfo
-                                        {
-                                            Id = x.Id,
+                                        {                      
+                                            Id=x.UserId,
                                             FirstName = x.User.FirstName,
                                             LastName = x.User.LastName,
                                             Email = x.User.Email,
                                             PhoneNumber = x.PhoneNumber,
-                                            Photo = "",
+                                            Photo="photo"
                                         });
+
+
+            var filter = new Filters<ApplicantInfo>();
+
+                return filter.Applyfilters(a, pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
         }
     }
+
 }

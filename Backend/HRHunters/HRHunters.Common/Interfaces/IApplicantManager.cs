@@ -10,6 +10,6 @@ namespace HRHunters.Common.Interfaces
 {
     public  interface IApplicantManager : IBaseManager
     {
-        IEnumerable<ApplicantInfo> GetMultiple(int? currentPage, int? pageSize, string sortedBy, SortDirection? sortDir);
+        IEnumerable<ApplicantInfo> GetMultiple(int currentPage, int pageSize, string sortedBy, SortDirection sortDir,string filterBy, string filterQuery);
     }
 }

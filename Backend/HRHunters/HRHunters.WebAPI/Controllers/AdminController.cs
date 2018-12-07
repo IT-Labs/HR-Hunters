@@ -31,15 +31,15 @@ namespace HRHunters.WebAPI.Controllers
         }
         //Test methods
         [HttpGet("applicants")]
-        public ActionResult<IEnumerable<Applicant>> GetMultipleApplicants(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir)
+        public ActionResult<IEnumerable<Applicant>> GetMultipleApplicants(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
-            return Ok(_applicantManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir));
+            return Ok(_applicantManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
 
         [HttpGet("applications")]
-        public ActionResult<IEnumerable<Application>> GetMultipleApplications(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, int? filterBy)
+        public ActionResult<IEnumerable<Application>> GetMultipleApplications(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
-            return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
+            return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
 
         [HttpGet("jobs")]
@@ -49,9 +49,9 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpGet("clients")]
-        public ActionResult<IEnumerable<Client>> GetMultipleClients(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, int? filterBy)
+        public ActionResult<IEnumerable<Client>> GetMultipleClients(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
-            return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
+            return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
 
         [HttpGet("jobs/{id}")]
