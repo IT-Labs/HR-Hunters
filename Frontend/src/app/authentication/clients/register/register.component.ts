@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { AuthService } from "src/app/services/auth.service";
+import { PasswordValidator } from '../../../validators/password.validator';
 
 @Component({
   selector: "app-register",
@@ -9,8 +10,6 @@ import { AuthService } from "src/app/services/auth.service";
   styleUrls: ["./register.component.scss"]
 })
 export class ClientRegisterComponent {
-  private password: string;
-  private confirmedPassword: string;
   authError: string;
   strongPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
   validEmail = new RegExp("[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}");
@@ -62,30 +61,11 @@ export class ClientRegisterComponent {
       "",
       Validators.compose([
         Validators.required,
-        Validators.minLength(8),
-        Validators.maxLength(20)
+        PasswordValidator
       ])
     ]
   });
 
-  updatePassword(event: any) {
-    if (event.target.value) {
-      this.password = event.target.value;
-    }
-  }
-
-  updateConfirmedPassword(event: any) {
-    if (event.target.value !== undefined) {
-      this.confirmedPassword = event.target.value;
-    }
-  }
-
-  comparePasswords() {
-    if (this.password === this.confirmedPassword) {
-      return true;
-    }
-    return false;
-  }
   onClientRegister() {
 
     if (this.clientRegisterForm.invalid) {
