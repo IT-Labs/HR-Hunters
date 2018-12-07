@@ -19,7 +19,6 @@ export class ADNewJobPostingComponent implements OnInit {
     "Doctoral degree",
     "Select education level..."
   ];
-  myDate = new Date();
 
   existingCompany = false;
   validDates: boolean;
@@ -86,12 +85,6 @@ export class ADNewJobPostingComponent implements OnInit {
   ngOnInit() {
     this.filteredCompanies = this.companies;
     this.filteredExperience = this.experience.slice();
-
-    console.log(
-      this.myDate.getFullYear(),
-      this.myDate.getMonth(),
-      this.myDate.getDay()
-    );
   }
 
   newJobPostingForm = this.fb.group({
@@ -139,11 +132,8 @@ export class ADNewJobPostingComponent implements OnInit {
     jobType: ["", Validators.compose([Validators.required])],
     education: ["", Validators.compose([Validators.required])],
     experience: ["", Validators.compose([Validators.required])],
-    durationFrom: [
-      `${this.myDate.getFullYear()}-${this.myDate.getMonth()}-0${this.myDate.getDate()}`,
-      Validators.compose([Validators.required])
-    ],
-    durationTo: [`${this.myDate.getFullYear()}-${this.myDate.getMonth()}-0${this.myDate.getDate()+1}`, Validators.compose([Validators.required])]
+    durationFrom: ["", Validators.compose([Validators.required])],
+    durationTo: ["", Validators.compose([Validators.required])]
   });
 
   onCompanyRadioBtnClick(company: string) {
