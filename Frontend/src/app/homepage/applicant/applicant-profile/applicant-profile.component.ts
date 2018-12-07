@@ -10,13 +10,14 @@ import { mimeType } from "../../../validators/mime-type.validator";
   styleUrls: ['./applicant-profile.component.scss']
 })
 export class ApplicantProfileComponent implements OnInit {
-
   education = [
     "High School degree",
     "Bachelor degree",
     "Masters degree",
-    "Doctoral degree"
+    "Doctoral degree",
+    'Select education level...'
   ];
+
   imagePreview: string | ArrayBuffer;
   imageValid = true;
   validEmail = new RegExp(
@@ -44,7 +45,8 @@ export class ApplicantProfileComponent implements OnInit {
     "17",
     "18",
     "19",
-    "20+"
+    "20+",
+    'Select experience...'
   ];
   filteredExperience = [];
 
