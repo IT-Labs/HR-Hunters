@@ -20,34 +20,23 @@ namespace HRHunters.Domain.Managers
             _repo = repo;
         }
 
-        public IEnumerable<JobInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir, int? filterBy)
+        public IEnumerable<JobInfo> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery)
         {
-            sortedBy = sortedBy ?? "Id";
-            sortedBy = sortedBy.ToPascalCase();
+            var a = _repo.GetAll<JobPosting>(includeProperties:$"{nameof(JobPosting.Client)}").Select(
+                x => new JobInfo
+                {
+                   PositionTitle=x.Title,
+                   CompanyName=x.Client.User.FirstName,
+                   ContactEmail=x.Client.User.Email,
+                   Location=x.Client.Location,
+                   
+                });
 
-            var propertyInfo = typeof(JobPosting).GetProperty(sortedBy) 
-                                    ?? typeof(Client).GetProperty(sortedBy) 
-                                            ?? typeof(User).GetProperty(sortedBy);
-            var reflectedType = propertyInfo.ReflectedType;
-            return _repo.Get<JobPosting>(orderBy: reflectedType.Equals(typeof(JobPosting)) ? sortedBy
-                                                    : reflectedType.Equals(typeof(Client)) ? "Client." + sortedBy : "Client.User." + sortedBy,
-                                         includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}",
-                                         skip: (currentPage - 1) * pageSize,
-                                         take: pageSize,
-                                         sortDirection: sortDir
-                                         ).AsQueryable().WhereIf(filterBy != 0, x => ((int)x.Status).Equals(filterBy))
-                                         .Select(x => new JobInfo
-                                         {
-                                             Id = x.Id,
-                                             Applications = x.Applications.Count,
-                                             CompanyName = x.Client.User.FirstName,
-                                             ContactEmail = x.Client.User.Email,
-                                             Expires = x.DateTo.ToString(),
-                                             JobType = x.EmpCategory,
-                                             Location = x.Client.Location,
-                                             PositionTitle = x.Title,
-                                             Status = x.Status
-                                         });
+
+            var filter = new Filters<JobInfo>();
+
+            return filter.Applyfilters(a, pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+
         }
         public IEnumerable<JobPosting> CreateJobPosting(JobSubmit jobSubmit)
         {

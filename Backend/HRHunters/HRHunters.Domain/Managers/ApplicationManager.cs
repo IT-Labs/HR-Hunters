@@ -28,6 +28,7 @@ namespace HRHunters.Domain.Managers
                                                                 $"{nameof(JobPosting)}").Select(
                 x => new ApplicationInfo
                 {
+                    
                     ApplicantEmail = x.Applicant.User.Email,
                     ApplicantName = x.Applicant.User.FirstName,
                     Experience = x.Applicant.Experience,
