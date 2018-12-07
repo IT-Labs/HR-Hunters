@@ -5,9 +5,9 @@ using System.Text;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
-using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
+using HRHunters.Common.ExtensionMethods;
 
 namespace HRHunters.Domain.Managers
 {
@@ -18,20 +18,18 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public IEnumerable<ApplicantInfo> GetMultiple(QueryParams queryParams)
+        public IEnumerable<ApplicantInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir)
         {
-            var sortDirection = queryParams.SortDir.Equals(SortDirection.ASC) ? true : false;
+            sortedBy = sortedBy ?? "Id";
+            sortedBy = sortedBy.ToPascalCase();
 
-            if(queryParams.SortedBy == null)
-                queryParams.SortedBy = "Id";
-
-            var propertyInfo = typeof(Applicant).GetProperty(queryParams.SortedBy) ?? typeof(User).GetProperty(queryParams.SortedBy);
+            var propertyInfo = typeof(Applicant).GetProperty(sortedBy) ?? typeof(User).GetProperty(sortedBy);
             
-            return _repo.Get<Applicant>(orderBy: propertyInfo.ReflectedType.Equals(typeof(User)) ? "User." + queryParams.SortedBy : queryParams.SortedBy,
-                                        includeProperties: $"{nameof(Applicant.User)}",
-                                        skip: (queryParams.CurrentPage - 1)* queryParams.PageSize,
-                                        take: queryParams.PageSize,
-                                        sortDirection: queryParams.SortDir)
+            return _repo.Get<Applicant>(orderBy: propertyInfo.ReflectedType.Equals(typeof(User)) ? "User." + sortedBy : sortedBy,
+                                        includeProperties: $"{nameof(Applicant.User)}", 
+                                        skip: (currentPage-1)*pageSize, 
+                                        take: pageSize, 
+                                        sortDirection: sortDir)
                                         .Select(
                                         x => new ApplicantInfo
                                         {
@@ -40,7 +38,7 @@ namespace HRHunters.Domain.Managers
                                             LastName = x.User.LastName,
                                             Email = x.User.Email,
                                             PhoneNumber = x.PhoneNumber,
-                                            Photo = "Nati foto",
+                                            Photo = "",
                                         });
         }
     }

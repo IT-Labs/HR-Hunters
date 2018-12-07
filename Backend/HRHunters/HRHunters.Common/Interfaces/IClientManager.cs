@@ -1,6 +1,5 @@
 ﻿using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
-using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
 using System;
@@ -11,6 +10,6 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IClientManager : IBaseManager
     {
-        IEnumerable<ClientInfo> GetMultiple(QueryParams queryParams,ClientStatus filterBy);
+        IEnumerable<ClientInfo> GetMultiple(int? currentPage, int? pageSize, string sortedBy, SortDirection sortDir, int? filterBy);
     }
 }

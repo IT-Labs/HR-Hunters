@@ -87,8 +87,8 @@ namespace HRHunters.Domain.Managers
                 foreach(var error in result.Errors)
                 {
                     list.Add(error.Description);
-                    userToReturn.Errors.Add(error.Code, list);
                 }
+                userToReturn.Errors.Add("Error", list);
                 return userToReturn;
             }
             if (role == "Client")

@@ -14,10 +14,8 @@ namespace HRHunters.Common.Entities
         public DateTime Date { get; set; }
         public ApplicationStatus Status { get; set; }
         public int ApplicantId { get; set; }
-        public int JobId { get; set; }
-
+        public int JobPostingId { get; set; }
         public Applicant Applicant { get; set; }
         public JobPosting JobPosting { get; set; }
-
     }
 }
