@@ -398,7 +398,7 @@
           </div>
 
           <div *ngIf="newJobPostingForm.controls.durationTo.errors">
-            Start date can't be later nor equal to the end date.
+            Start date must be equal to today's date or a later date. End date can't be earlier or equal to start date.
           </div>
         </div>
       </div>
