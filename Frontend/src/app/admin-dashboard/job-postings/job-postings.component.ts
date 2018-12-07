@@ -27,7 +27,8 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     currentSortBy: "dateTo",
     lastSortBy: "",
     currentSortDirection: 0,
-    currentFilter: 0
+    currentFilter: 0,
+    currentFilterQuery: 0
   }
 
   jobPostings: JobPosting[] = [];
@@ -57,7 +58,8 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
             &page=${data.currentPage}
             &sort=${data.currentSortBy}
             &sortDir=${data.currentSortDirection}
-            &filter=${data.currentFilter}`;
+            &filterBy=${data.currentFilter}
+            &filterQuery=${data.currentFilterQuery}`;
   }
 
   calculatePagination(jobPostingsCount: number) {
@@ -106,7 +108,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   }
 
   onFilter(filterBy: number) {
-    this.jobPostingQP.currentFilter = filterBy;
+    this.jobPostingQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.jobPostingQP);
     this.jobPostingService.getJobPostings(params);
   }
