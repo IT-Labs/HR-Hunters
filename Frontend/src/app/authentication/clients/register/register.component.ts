@@ -27,6 +27,10 @@ export class ClientRegisterComponent {
         this.authError = error.error;
       }
     })
+
+    this.clientRegisterForm.controls.applicantPassword.valueChanges.subscribe(
+      x => this.clientRegisterForm.controls.applicantConfirmPassword.updateValueAndValidity()
+    );
   }
 
   clientRegisterForm = this.fb.group({

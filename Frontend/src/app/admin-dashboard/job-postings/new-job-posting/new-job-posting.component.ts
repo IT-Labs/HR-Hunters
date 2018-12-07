@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { Client } from "src/app/models/client.model";
 import { mimeType } from "../../../validators/mime-type.validator";
+import { DateValidator } from "../../../validators/date.validator";
 import { JobPostingService } from "src/app/services/job-posting.service";
 import { Router } from "@angular/router";
 
@@ -21,8 +22,6 @@ export class ADNewJobPostingComponent implements OnInit {
   ];
 
   existingCompany = false;
-  validDates: boolean;
-  // validExperience: boolean;
 
   imagePreview: string | ArrayBuffer;
   imageValid = true;
@@ -51,7 +50,6 @@ export class ADNewJobPostingComponent implements OnInit {
     "20+",
     "Select experience..."
   ];
-  filteredExperience = [];
   companies: Client[] = [];
   selectedCompany: Client = {
     id: null,
@@ -84,7 +82,10 @@ export class ADNewJobPostingComponent implements OnInit {
 
   ngOnInit() {
     this.filteredCompanies = this.companies;
-    this.filteredExperience = this.experience.slice();
+
+    this.newJobPostingForm.controls.durationFrom.valueChanges.subscribe(x =>
+      this.newJobPostingForm.controls.durationTo.updateValueAndValidity()
+    );
   }
 
   newJobPostingForm = this.fb.group({
@@ -133,7 +134,7 @@ export class ADNewJobPostingComponent implements OnInit {
     education: ["", Validators.compose([Validators.required])],
     experience: ["", Validators.compose([Validators.required])],
     durationFrom: ["", Validators.compose([Validators.required])],
-    durationTo: ["", Validators.compose([Validators.required])]
+    durationTo: ["", Validators.compose([Validators.required, DateValidator])]
   });
 
   onCompanyRadioBtnClick(company: string) {
@@ -170,28 +171,6 @@ export class ADNewJobPostingComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  compareTwoDates() {
-    if (
-      new Date(this.newJobPostingForm.controls["durationFrom"].value) >=
-      new Date(this.newJobPostingForm.controls["durationTo"].value)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  // checkExperience() {
-  //   for (let i = 0; i < this.experience.length; i++) {
-  //     if (
-  //       this.experience[i] ==
-  //       this.newJobPostingForm.controls["experience"].value
-  //     ) {
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // }
-
   onFocus(event: any) {
     this.formFocus = {
       companyName: false,
@@ -226,15 +205,6 @@ export class ADNewJobPostingComponent implements OnInit {
       }
     });
   }
-  // populateExperience(event: any) {
-  //   this.onFocus("none");
-  //   const experience = event.target.innerText;
-  //   this.experience.map(num => {
-  //     if (num === experience) {
-  //       this.newJobPostingForm.controls["experience"].setValue(experience);
-  //     }
-  //   });
-  // }
 
   populateCompanySuggestions(event: any) {
     this.filteredCompanies = [];
@@ -249,19 +219,7 @@ export class ADNewJobPostingComponent implements OnInit {
     });
   }
 
-  // populateExperienceSuggestions(event: any) {
-  //   this.filteredExperience = [];
-  //   this.experience.map(num => {
-  //     if (num.includes(event.target.value)) {
-  //       this.filteredExperience.push(num);
-  //     }
-  //   });
-  // }
-
   onSubmitNewJobPosting() {
-    this.validDates = this.compareTwoDates();
-    //this.validExperience = this.checkExperience();
-
     this.newJobPostingForm.controls["companyName"].markAsTouched();
     this.newJobPostingForm.controls["companyEmail"].markAsTouched();
     this.newJobPostingForm.controls["location"].markAsTouched();
@@ -276,8 +234,7 @@ export class ADNewJobPostingComponent implements OnInit {
     if (this.imagePreview === undefined) {
       this.imageValid = false;
     } else {
-      if (this.newJobPostingForm.valid && this.validDates) {
-        // && this.validExperience
+      if (this.newJobPostingForm.valid) {
         this.jobPostingService.addJobPosting(
           this.newJobPostingForm.value.companyName,
           this.newJobPostingForm.value.companyEmail,
