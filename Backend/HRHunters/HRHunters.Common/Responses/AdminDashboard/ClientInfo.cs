@@ -8,12 +8,12 @@ namespace HRHunters.Common.Responses.AdminDashboard
     public class ClientInfo
     {
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string Photo { get; set; }
+        public string CompanyName { get; set; }
+        public string Logo { get; set; }
         public string Email { get; set; }
         public string Location { get; set; }
         public int Active { get; set; }
-        public int All { get; set; }
-        public ClientStatus Status { get; set; }
+        public int AllJobs { get; set; }
+        public string Status { get; set; }
     }
 }
