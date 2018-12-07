@@ -1,29 +1,7 @@
 <div class="container-fluid">
   <div class="row">
     <!-- LEFT SIDEBAR -->
-    <div class="col-xs-12 col-md-3">
-      <!-- <div class="company-logo">
-        <img
-          src="https://www.bluepointstore.be/wp-content/uploads/2015/05/final-adi.jpg"
-          class="company-logo__img"
-          alt="logo"
-        />
-        <div class="company-logo__text" (click)="filePicker.click()">
-          <i class="fa fa-camera u-color-dark" aria-hidden="true"></i>Company
-          logo
-          <input
-            type="file"
-            id="hpid__logo"
-            class="dash__form--input"
-            #filePicker
-            (change)="onImagePicked($event)"
-          />
-        </div>
-      </div> -->
-    </div>
-
-    <!-- RIGHT SIDEBAR -->
-    <div class="col-xs-12 col-md-9">
+    <div class="col-xs-12">
       <div class="hp__form__container">
         <form
           class="hp__form"
@@ -81,7 +59,6 @@
               max="2019-12-31"
               formControlName="durationFrom"
               (focus)="onFocus('durationFrom')"
-              (change)="compareTwoDates()"
             />
             <span>To:</span>
             <input
@@ -93,7 +70,6 @@
               max="2019-12-31"
               formControlName="durationTo"
               (focus)="onFocus('durationTo')"
-              (change)="compareTwoDates()"
             />
 
             <div
@@ -103,23 +79,16 @@
                     newJobPostingFormHP.controls['durationFrom'].touched)) ||
                 (!newJobPostingFormHP.controls['durationTo'].valid &&
                   (newJobPostingFormHP.controls['durationTo'].dirty ||
-                    newJobPostingFormHP.controls['durationTo'].touched)) ||
-                !compareTwoDates()
+                    newJobPostingFormHP.controls['durationTo'].touched))
               "
               class="alert hp__form--alert-msg"
             >
               <div
                 *ngIf="
-                  newJobPostingFormHP.controls['durationFrom'].errors
-                    ?.required ||
-                  newJobPostingFormHP.controls['durationTo'].errors?.required
+                  newJobPostingFormHP.controls['durationTo'].errors
                 "
               >
-                Duration is required.
-              </div>
-
-              <div *ngIf="!compareTwoDates()">
-                Start date can't be later nor equal to the end date.
+              Start date must be equal to today's date or a later date. End date can't be earlier or equal to start date.
               </div>
             </div>
 
@@ -174,7 +143,11 @@
               formControlName="education"
               (focus)="onFocus('education')"
             >
-              <option *ngFor="let edu of education" [ngValue]="edu"
+              <option
+                *ngFor="let edu of education"
+                [ngValue]="edu"
+                [selected]="edu === 'Select education level...'"
+                [disabled]="edu === 'Select education level...'"
                 >{{ edu }}
               </option>
             </select>
@@ -202,42 +175,26 @@
               >Experience (in years)
               <span class="u-required-star">*</span></label
             >
-            <input
-              type="text"
+            <select
               id="hpid__experience"
               class="hp__form--input"
               formControlName="experience"
-              maxlength="3"
-              autocomplete="off"
-              placeholder="Choose needed experience..."
               (focus)="onFocus('experience')"
-              (keyup)="populateExperienceSuggestions($event)"
-              (keyup)="checkExperience()"
-            />
-
-            <div
-              class="dropdown-container"
-              *ngIf="filteredExperience.length > 0 && formFocus.experience"
             >
-              <div
-                class="dropdown-menu dropdown-menu--height show"
-                aria-labelledby="dashidExperience"
-              >
-                <span
-                  class="dropdown-item"
-                  *ngFor="let number of filteredExperience"
-                  (click)="populateExperience($event)"
-                  >{{ number }}</span
-                >
-              </div>
-            </div>
+              <option
+                *ngFor="let exp of experience"
+                [ngValue]="exp"
+                [selected]="exp === 'Select experience...'"
+                [disabled]="exp === 'Select experience...'"
+                >{{ exp }}
+              </option>
+            </select>
 
             <div
               *ngIf="
                 (!newJobPostingFormHP.controls['experience'].valid &&
                   (newJobPostingFormHP.controls['experience'].dirty ||
-                    newJobPostingFormHP.controls['experience'].touched)) ||
-                checkExperience()
+                    newJobPostingFormHP.controls['experience'].touched))
               "
               class="alert hp__form--alert-msg"
             >
@@ -267,7 +224,11 @@
               formControlName="jobType"
               (focus)="onFocus('jobType')"
             >
-              <option *ngFor="let jobType of jobTypes" [ngValue]="jobType"
+              <option
+                *ngFor="let jobType of jobTypes"
+                [ngValue]="jobType"
+                [selected]="jobType === 'Select job type...'"
+                [disabled]="jobType === 'Select job type...'"
                 >{{ jobType }}
               </option>
             </select>
@@ -311,7 +272,7 @@
               type="reset"
               class="btn btn__danger"
               [disabled]="
-                !newJobPostingFormHP.valid && validDates && validExperience
+                !newJobPostingFormHP.valid
               "
             >
               Reset
@@ -320,7 +281,7 @@
               type="submit"
               class="btn btn__success"
               [disabled]="
-                !newJobPostingFormHP.valid && validDates && validExperience
+                !newJobPostingFormHP.valid
               "
             >
               Submit
