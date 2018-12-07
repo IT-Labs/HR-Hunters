@@ -37,7 +37,7 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpGet("applications")]
-        public ActionResult<IEnumerable<Application>> GetMultipleApplications(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, ApplicationStatus filterBy)
+        public ActionResult<IEnumerable<Application>> GetMultipleApplications(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, int? filterBy)
         {
             return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
         }
@@ -49,15 +49,15 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpGet("clients")]
-        public ActionResult<IEnumerable<Client>> GetMultipleClients(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, ClientStatus filterBy)
+        public ActionResult<IEnumerable<Client>> GetMultipleClients(int? pageSize, int? currentPage, string sortedBy, SortDirection sortDir, int? filterBy)
         {
             return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy));
         }
 
         [HttpGet("jobs/{id}")]
-        public ActionResult<string> Index2(int id)
+        public ActionResult<JobPosting> GetOneJobPosting(int id)
         {
-            return "value";
+            return Ok(_jobManager.GetOneJobPosting(id));
         }
         [HttpPost("jobs1")]
         public ActionResult<IEnumerable<JobPosting>> CreateJobPosting(JobSubmit jobSubmit)

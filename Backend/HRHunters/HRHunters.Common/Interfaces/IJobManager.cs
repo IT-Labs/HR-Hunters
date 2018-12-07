@@ -11,8 +11,9 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IJobManager : IBaseManager
     {
-        IEnumerable<JobInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir, int filterBy);
+        IEnumerable<JobInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir, int? filterBy);
         IEnumerable<JobPosting> CreateJobPosting(JobSubmit jobSubmit);
+        JobPosting GetOneJobPosting(int id);
 
     }
 }

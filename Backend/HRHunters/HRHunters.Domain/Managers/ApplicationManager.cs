@@ -2,6 +2,7 @@
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Responses.AdminDashboard;
+using HRHunters.Common.ExtensionMethods;
 using HRHunters.Data;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,10 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public IEnumerable<ApplicationInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir, ApplicationStatus? filterBy)
+        public IEnumerable<ApplicationInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir, int? filterBy)
         {
-            if(sortedBy == null)
-                sortedBy = "Id";
+            sortedBy = sortedBy ?? "Id";
+            sortedBy = sortedBy.ToPascalCase();
             var propertyInfo = typeof(Application).GetProperty(sortedBy)
                                     ?? typeof(Applicant).GetProperty(sortedBy)
                                             ?? typeof(JobPosting).GetProperty(sortedBy)
@@ -29,12 +30,14 @@ namespace HRHunters.Domain.Managers
 
             return _repo.Get<Application>(orderBy: reflectedType.Equals(typeof(Application)) ? sortedBy 
                                                     : reflectedType.Equals(typeof(Applicant)) ? "Applicant."+sortedBy 
-                                                    : reflectedType.Equals(typeof(JobPosting)) ? "JobPosting."+sortedBy : "Applicant.User"+sortedBy,
+                                                    : reflectedType.Equals(typeof(JobPosting)) ? "JobPosting."+sortedBy : "Applicant.User."+sortedBy,
                                             includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
                                                                 $"{nameof(JobPosting)}",
                                             skip: (currentPage - 1) * pageSize,
                                             take: pageSize,
-                                            sortDirection: sortDir).Select(x => new ApplicationInfo
+                                            sortDirection: sortDir
+                                            ).AsQueryable().WhereIf(filterBy != 0, x => ((int)x.Status).Equals(filterBy))
+                                            .Select(x => new ApplicationInfo
                                             {
                                                 ApplicantEmail = x.Applicant.User.Email,
                                                 ApplicantName = x.Applicant.User.FirstName,

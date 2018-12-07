@@ -7,6 +7,7 @@ using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
+using HRHunters.Common.ExtensionMethods;
 
 namespace HRHunters.Domain.Managers
 {
@@ -19,15 +20,16 @@ namespace HRHunters.Domain.Managers
         }
         public IEnumerable<ApplicantInfo> GetMultiple(int? pageSize, int? currentPage, string sortedBy, SortDirection? sortDir)
         {
-            var sortDirection = sortDir.Equals(SortDirection.ASC) ? true : false;
-
-            if(sortedBy == null)
-                sortedBy = "Id";
+            sortedBy = sortedBy ?? "Id";
+            sortedBy = sortedBy.ToPascalCase();
 
             var propertyInfo = typeof(Applicant).GetProperty(sortedBy) ?? typeof(User).GetProperty(sortedBy);
             
             return _repo.Get<Applicant>(orderBy: propertyInfo.ReflectedType.Equals(typeof(User)) ? "User." + sortedBy : sortedBy,
-                                        includeProperties: $"{nameof(Applicant.User)}", skip: (currentPage-1)*pageSize, take: pageSize, sortDirection: sortDir)
+                                        includeProperties: $"{nameof(Applicant.User)}", 
+                                        skip: (currentPage-1)*pageSize, 
+                                        take: pageSize, 
+                                        sortDirection: sortDir)
                                         .Select(
                                         x => new ApplicantInfo
                                         {
@@ -36,7 +38,7 @@ namespace HRHunters.Domain.Managers
                                             LastName = x.User.LastName,
                                             Email = x.User.Email,
                                             PhoneNumber = x.PhoneNumber,
-                                            Photo = "Nati foto",
+                                            Photo = "",
                                         });
         }
     }
