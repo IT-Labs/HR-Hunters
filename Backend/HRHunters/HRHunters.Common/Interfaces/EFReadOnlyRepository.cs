@@ -23,11 +23,7 @@ namespace HRHunters.Data
 
         protected virtual IQueryable<TEntity> GetQueryable<TEntity>(
         Expression<Func<TEntity, bool>> filter = null,
-        string orderBy = null,
-        string includeProperties = null,
-        int? skip = null,
-        int? take = null, 
-        SortDirection? sortDirection = null)
+        string includeProperties = null)
         where TEntity : Entity
         {
             includeProperties = includeProperties ?? string.Empty;
@@ -44,29 +40,13 @@ namespace HRHunters.Data
                 query = query.Include(includeProperty);
             }
 
-            if (orderBy != null)
-            {
-                if (sortDirection != null)
-                    query = (sortDirection.Equals(SortDirection.ASC)) ? query.OrderBy(orderBy + " ASC") : query.OrderBy(orderBy + " DESC");
-            }   
-
-            if (skip.HasValue)
-            {
-                query = query.Skip(skip.Value);
-            }
-
-            if (take.HasValue)
-            {
-                query = query.Take(take.Value);
-            }
-
             return query;
         }
 
 
 
 
-        public virtual IEnumerable<TEntity> Get<TEntity>(
+        public virtual IQueryable<TEntity> Get<TEntity>(
         Expression<Func<TEntity, bool>> filter = null,
         string orderBy = null,
         string includeProperties = null,
@@ -75,10 +55,10 @@ namespace HRHunters.Data
         SortDirection? sortDirection = null)
         where TEntity : Entity
         {
-           return GetQueryable<TEntity>(filter, orderBy, includeProperties, skip, take, sortDirection).ToList();
+           return GetQueryable<TEntity>(filter,includeProperties);
         }
 
-        public virtual IEnumerable<TEntity> GetAll<TEntity>(
+        public virtual IQueryable<TEntity> GetAll<TEntity>(
         string orderBy = null,
         string includeProperties = null,
         int? skip = null,
@@ -86,7 +66,7 @@ namespace HRHunters.Data
         SortDirection? sortDirection = null)
         where TEntity : Entity
         {
-            return GetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).ToList();
+            return GetQueryable<TEntity>(null, includeProperties);
         }
 
         public virtual TEntity GetById<TEntity>(object id)
@@ -112,7 +92,7 @@ namespace HRHunters.Data
         string includeProperties = "")
         where TEntity : Entity
         {
-            return GetQueryable<TEntity>(filter, null, includeProperties).SingleOrDefault();
+            return GetQueryable<TEntity>(filter, includeProperties).FirstOrDefault();
         }
     }
 }

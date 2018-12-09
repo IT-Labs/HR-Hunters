@@ -1,5 +1,6 @@
 ﻿using HRHunters.Common.Enums;
 using HRHunters.Common.Responses.AdminDashboard;
+using HRHunters.Common.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,28 +36,31 @@ namespace HRHunters.Common.ExtensionMethods
             return sample;
         }
     }
-    public class Filters<T>
+    public static class Filters
     {
-        public IEnumerable<T> Applyfilters(IEnumerable<T> a, int pageSize = 20, int currentPage = 1, string sortedBy="Id" , SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
+        public static IQueryable<T> Applyfilters<T>(this IQueryable<T> a, int pageSize = 20, int currentPage = 1, string sortedBy="Id" , SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
-            if (!string.IsNullOrWhiteSpace(sortedBy))
+            if (string.IsNullOrWhiteSpace(sortedBy))
+                sortedBy = "Id";
+
+            //Convert first character from client side to upper to match the model naming convention
+            sortedBy = char.ToUpper(sortedBy[0]) + sortedBy.Substring(1); 
+            filterBy = filterBy != null ? char.ToUpper(filterBy[0]) + filterBy.Substring(1) : "";
+            filterQuery = filterQuery != null ? char.ToUpper(filterQuery[0]) + filterQuery.Substring(1) : "";
+            var pi = typeof(T).GetProperty(sortedBy);
+            if (sortDir == SortDirection.DESC)
             {
-                var pi = typeof(T).GetProperty(sortedBy);
-                if (sortDir == SortDirection.DESC)
-                {
-                    a = a.OrderByDescending(x => pi.GetValue(x, null));
-                }
-                if (sortDir == SortDirection.ASC)
-                {
-                   a = a.OrderBy(x => pi.GetValue(x, null));
-                }
+                a = a.OrderByDescending(x => pi.GetValue(x, null));
+            }
+            if (sortDir == SortDirection.ASC)
+            {
+                a = a.OrderBy(x => pi.GetValue(x, null));
             }
 
             if (!string.IsNullOrWhiteSpace(filterBy))
             {
-
-                var pi = typeof(T).GetProperty(filterBy);
-                a = a.Where(x => pi.GetValue(x, null).Equals(filterQuery));
+                pi = typeof(T).GetProperty(filterBy);
+                a = a.AsQueryable().WhereIf(filterBy != null, x => pi.GetValue(x, null).Equals(filterQuery));
 
             }
             return a.Skip((currentPage - 1) * pageSize).Take(pageSize);

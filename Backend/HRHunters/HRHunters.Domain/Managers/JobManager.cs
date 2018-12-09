@@ -22,21 +22,24 @@ namespace HRHunters.Domain.Managers
 
         public IEnumerable<JobInfo> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery)
         {
-            var a = _repo.GetAll<JobPosting>(includeProperties:$"{nameof(JobPosting.Client)}").Select(
-                x => new JobInfo
-                {
-                   PositionTitle=x.Title,
-                   CompanyName=x.Client.User.FirstName,
-                   ContactEmail=x.Client.User.Email,
-                   Location=x.Client.Location,
-                   
-                });
-
-
-            var filter = new Filters<JobInfo>();
-
-            return filter.Applyfilters(a, pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
-
+            return _repo.GetAll<JobPosting>(
+                    includeProperties: $"{nameof(Client)}.{nameof(Client.User)}, {nameof(JobPosting.Applications)}")
+                                        .Select(
+                                        x => new JobInfo
+                                        {
+                                           Id = x.Id,
+                                           CompanyName = x.Client.User.FirstName,
+                                           CompanyEmail = x.Client.User.Email,
+                                           DateTo = x.DateTo.ToShortTimeString(),
+                                           JobType = x.EmpCategory.ToString(),
+                                           Location = x.Location,
+                                           JobTitle = x.Title,
+                                           Status = x.Status.ToString(),
+                                           AllApplicationsCount = x.Applications.Count
+                                           
+                                        })
+                                        .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
+                                        .ToList();
         }
         public IEnumerable<JobPosting> CreateJobPosting(JobSubmit jobSubmit)
         {

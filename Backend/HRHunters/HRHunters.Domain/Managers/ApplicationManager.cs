@@ -24,23 +24,21 @@ namespace HRHunters.Domain.Managers
 
         public IEnumerable<ApplicationInfo> GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
-            var a = _repo.GetAll<Application>(includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
-                                                                $"{nameof(JobPosting)}").Select(
-                x => new ApplicationInfo
-                {
-                    
-                    ApplicantEmail = x.Applicant.User.Email,
-                    ApplicantName = x.Applicant.User.FirstName,
-                    Experience = x.Applicant.Experience,
-                    JobTitle = x.JobPosting.Title,
-                    Posted = x.Date.ToString(),
-                    Status = x.Status.ToString(),
-                });
-
-
-            var filter = new Filters<ApplicationInfo>();
-
-            return filter.Applyfilters(a, pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+            return _repo.GetAll<Application>(
+                includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
+                                   $"{nameof(JobPosting)}")
+                                   .Select(x => new ApplicationInfo
+                                   {
+                                       Id = x.Id,
+                                       ApplicantEmail = x.Applicant.User.Email,
+                                       ApplicantName = x.Applicant.User.FirstName,
+                                       Experience = x.Applicant.Experience,
+                                       JobTitle = x.JobPosting.Title,
+                                       PostedOn = x.Date.ToShortTimeString(),
+                                       Status = x.Status.ToString()
+                                   })
+                                   .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
+                                   .ToList();
 
         }
 
