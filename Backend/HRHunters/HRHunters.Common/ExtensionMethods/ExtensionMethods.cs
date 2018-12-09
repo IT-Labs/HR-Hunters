@@ -45,21 +45,21 @@ namespace HRHunters.Common.ExtensionMethods
             sortedBy = char.ToUpper(sortedBy[0]) + sortedBy.Substring(1);
             filterBy = filterBy != null ? char.ToUpper(filterBy[0]) + filterBy.Substring(1) : "";
             filterQuery = filterQuery != null ? char.ToUpper(filterQuery[0]) + filterQuery.Substring(1) : "";
-            var pi = typeof(T).GetProperty(sortedBy);
+            var filter = typeof(T).GetProperty(filterBy);
+            if (!string.IsNullOrWhiteSpace(filterBy))
+            {
+                filter = typeof(T).GetProperty(filterBy);
+                a = a.AsQueryable().WhereIf(filterBy != null, x => filter.GetValue(x, null).Equals(filterQuery));
+
+            }
+            var sort = typeof(T).GetProperty(sortedBy);
             if (sortDir == SortDirection.DESC)
             {
-                a = a.OrderByDescending(x => pi.GetValue(x, null));
+                a = a.OrderByDescending(x => sort.GetValue(x, null));
             }
             if (sortDir == SortDirection.ASC)
             {
-                a = a.OrderBy(x => pi.GetValue(x, null));
-            }
-
-            if (!string.IsNullOrWhiteSpace(filterBy))
-            {
-                pi = typeof(T).GetProperty(filterBy);
-                a = a.AsQueryable().WhereIf(filterBy != null, x => pi.GetValue(x, null).Equals(filterQuery));
-
+                a = a.OrderBy(x => sort.GetValue(x, null));
             }
             return a.Skip((currentPage - 1) * pageSize).Take(pageSize);
         }
