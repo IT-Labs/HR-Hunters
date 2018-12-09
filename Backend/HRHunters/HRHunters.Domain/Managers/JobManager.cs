@@ -25,19 +25,7 @@ namespace HRHunters.Domain.Managers
             return _repo.GetAll<JobPosting>(
                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)}, {nameof(JobPosting.Applications)}")
                                         .Select(
-                                        x => new JobInfo
-                                        {
-                                           Id = x.Id,
-                                           CompanyName = x.Client.User.FirstName,
-                                           CompanyEmail = x.Client.User.Email,
-                                           DateTo = x.DateTo.ToShortTimeString(),
-                                           JobType = x.EmpCategory.ToString(),
-                                           Location = x.Location,
-                                           JobTitle = x.Title,
-                                           Status = x.Status.ToString(),
-                                           AllApplicationsCount = x.Applications.Count
-                                           
-                                        })
+                                        x => new JobInfo().JobInformation(x))
                                         .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                         .ToList();
         }
@@ -46,9 +34,24 @@ namespace HRHunters.Domain.Managers
             return null;
         }
 
-        public JobPosting GetOneJobPosting(int id)
+        public JobInfo GetOneJobPosting(int id)
         {
-            return _repo.GetOne<JobPosting>(x => x.Id == id);   
+            var jobpost = _repo.GetOne<JobPosting>(filter: x => x.Id == id, 
+                                        includeProperties: $"{nameof(Client)}.{nameof(Client.User)}, {nameof(JobPosting.Applications)}");
+
+            return new JobInfo().JobInformation(jobpost);
+        }
+
+        public JobInfo UpdateJobStatus(int id, string status)
+        {
+            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == id,
+                                                    includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
+            var statusToUpdate = jobPost.Status;
+            Enum.TryParse(status, out statusToUpdate);
+            jobPost.Status = statusToUpdate;
+            _repo.Update(jobPost, "Admin");
+
+            return new JobInfo().JobInformation(jobPost);
         }
     }
 }

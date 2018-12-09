@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using HRHunters.Common.Entities;
 
 namespace HRHunters.Common.ExtensionMethods
 {
-    public static class QueryingExtensionMethods
+    public static class ExtensionMethods
     {
         public static IQueryable<TEntity> WhereIf<TEntity>(this IQueryable<TEntity> source,
             bool condition, Expression<Func<TEntity, bool>> predicate)
@@ -35,16 +36,13 @@ namespace HRHunters.Common.ExtensionMethods
 
             return sample;
         }
-    }
-    public static class Filters
-    {
-        public static IQueryable<T> Applyfilters<T>(this IQueryable<T> a, int pageSize = 20, int currentPage = 1, string sortedBy="Id" , SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
+        public static IQueryable<T> Applyfilters<T>(this IQueryable<T> a, int pageSize = 20, int currentPage = 1, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
             if (string.IsNullOrWhiteSpace(sortedBy))
                 sortedBy = "Id";
 
             //Convert first character from client side to upper to match the model naming convention
-            sortedBy = char.ToUpper(sortedBy[0]) + sortedBy.Substring(1); 
+            sortedBy = char.ToUpper(sortedBy[0]) + sortedBy.Substring(1);
             filterBy = filterBy != null ? char.ToUpper(filterBy[0]) + filterBy.Substring(1) : "";
             filterQuery = filterQuery != null ? char.ToUpper(filterQuery[0]) + filterQuery.Substring(1) : "";
             var pi = typeof(T).GetProperty(sortedBy);
@@ -65,5 +63,24 @@ namespace HRHunters.Common.ExtensionMethods
             }
             return a.Skip((currentPage - 1) * pageSize).Take(pageSize);
         }
+
+        public static JobInfo JobInformation(this JobInfo jobInfo, JobPosting jobPosting)
+        {
+            return new JobInfo
+            {
+                CompanyEmail = jobPosting.Client.User.Email,
+                CompanyName = jobPosting.Client.User.FirstName,
+                AllApplicationsCount = jobPosting.Applications.Count,
+                DateTo = jobPosting.DateTo.ToLocalTime().ToString(),
+                Id = jobPosting.Id,
+                JobTitle = jobPosting.Title,
+                JobType = jobPosting.EmpCategory.ToString(),
+                Location = jobPosting.Location,
+                Status = jobPosting.Status.ToString(),
+            };
+        }
+
     }
+    
+        
 }

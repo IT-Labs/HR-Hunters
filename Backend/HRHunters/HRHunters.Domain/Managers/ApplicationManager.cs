@@ -41,6 +41,25 @@ namespace HRHunters.Domain.Managers
                                    .ToList();
 
         }
-
+        
+        public ApplicationInfo UpdateApplicationStatus(int id, string status)
+        {
+            var application = _repo.Get<Application>(filter: x => x.Id == id, 
+                                                    includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)},{nameof(JobPosting)}").FirstOrDefault();
+            var statusToUpdate = application.Status;
+            Enum.TryParse(status, out statusToUpdate);
+            application.Status = statusToUpdate;
+            _repo.Update(application, "Admin");
+            return new ApplicationInfo
+            {
+                Id = application.Id,
+                Status = application.Status.ToString(),
+                ApplicantEmail = application.Applicant.User.Email,
+                ApplicantName = application.Applicant.User.FirstName,
+                Experience = application.Applicant.Experience,
+                JobTitle = application.JobPosting.Title,
+                PostedOn = application.Date.ToLocalTime().ToString()
+            };
+        }
     }
 }

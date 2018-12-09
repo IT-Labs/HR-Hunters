@@ -37,5 +37,26 @@ namespace HRHunters.Domain.Managers
                                       .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                       .ToList();
         }
+
+        public ClientInfo UpdateClientStatus(int id, string status)
+        {
+            var client = _repo.GetOne<Client>(filter: x => x.Id == id,
+                                                    includeProperties: $"{nameof(User)},{nameof(Client.JobPostings)}");
+            var statusToUpdate = client.Status;
+            Enum.TryParse(status, out statusToUpdate);
+            client.Status = statusToUpdate;
+            _repo.Update(client, "Admin");
+            return new ClientInfo
+            {
+                Id = client.Id,
+                CompanyName = client.User.FirstName,
+                Email = client.User.Email,
+                Location = client.Location,
+                Active = client.JobPostings.Count(x => x.DateTo < DateTime.UtcNow),
+                AllJobs = client.JobPostings.Count,
+                Status = client.Status.ToString(),
+                Logo = "Photo"
+            };
+        }
     }
 }
