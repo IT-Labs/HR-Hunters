@@ -28,17 +28,17 @@ namespace HRHunters.Data
         {
             includeProperties = includeProperties ?? string.Empty;
             IQueryable<TEntity> query = context.Set<TEntity>();
-            query = query.AsQueryable();
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
             foreach (var includeProperty in includeProperties.Split
                 (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 query = query.Include(includeProperty);
             }
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            
 
             return query;
         }

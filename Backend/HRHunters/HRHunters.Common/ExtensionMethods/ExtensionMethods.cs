@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using HRHunters.Common.Entities;
+using System.Globalization;
 
 namespace HRHunters.Common.ExtensionMethods
 {
@@ -71,7 +72,7 @@ namespace HRHunters.Common.ExtensionMethods
                 CompanyEmail = jobPosting.Client.User.Email,
                 CompanyName = jobPosting.Client.User.FirstName,
                 AllApplicationsCount = jobPosting.Applications.Count,
-                DateTo = jobPosting.DateTo.ToLocalTime().ToString(),
+                DateTo = jobPosting.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
                 Id = jobPosting.Id,
                 JobTitle = jobPosting.Title,
                 JobType = jobPosting.EmpCategory.ToString(),

@@ -9,6 +9,8 @@ using System.Linq;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Enums;
 using HRHunters.Common.ExtensionMethods;
+using System.Globalization;
+using HRHunters.Common.Requests.Admin;
 
 namespace HRHunters.Domain.Managers
 {
@@ -34,21 +36,38 @@ namespace HRHunters.Domain.Managers
             return null;
         }
 
-        public JobInfo GetOneJobPosting(int id)
+        public JobPosting GetOneJobPosting(int id)
         {
-            var jobpost = _repo.GetOne<JobPosting>(filter: x => x.Id == id, 
-                                        includeProperties: $"{nameof(Client)}.{nameof(Client.User)}, {nameof(JobPosting.Applications)}");
+            return _repo.Get<JobPosting>(filter: x => x.Id == id, 
+                                                    includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}").FirstOrDefault();
 
-            return new JobInfo().JobInformation(jobpost);
         }
 
-        public JobInfo UpdateJobStatus(int id, string status)
+        public JobInfo UpdateJob(int id, string status, JobUpdate jobUpdate)
         {
             var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
-            var statusToUpdate = jobPost.Status;
-            Enum.TryParse(status, out statusToUpdate);
-            jobPost.Status = statusToUpdate;
+            if (!string.IsNullOrEmpty(status))
+            { 
+                var statusToUpdate = jobPost.Status;
+                Enum.TryParse(status, out statusToUpdate);
+                jobPost.Status = statusToUpdate;
+            }else 
+            if(jobUpdate != null) {
+                jobPost.Title = jobUpdate.JobTitle;
+                jobPost.Description = jobUpdate.Description;
+                var currentJobType = jobPost.EmpCategory;
+                Enum.TryParse(jobUpdate.JobType, out currentJobType);
+                jobPost.EmpCategory = currentJobType;
+                var currentEducation = jobPost.Education;
+                Enum.TryParse(jobUpdate.Education, out currentJobType);
+                jobPost.Education = currentEducation;
+                jobPost.NeededExperience = jobUpdate.Experience;
+                DateTime.TryParse(jobUpdate.DateFrom, out DateTime date);
+                jobPost.DateFrom = date;
+                DateTime.TryParse(jobUpdate.DateTo, out date);
+                jobPost.DateTo = date;
+            }
             _repo.Update(jobPost, "Admin");
 
             return new JobInfo().JobInformation(jobPost);

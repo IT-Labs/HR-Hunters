@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
@@ -79,9 +80,9 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpPut("jobs/{id}")]
-        public ActionResult<JobInfo> UpdateJobStatus(int id, string status)
+        public ActionResult<JobInfo> UpdateJob(int id, [FromQuery]string status, [FromBody]JobUpdate jobSubmit)
         {
-            return Ok(_jobManager.UpdateJobStatus(id, status));
+            return Ok(_jobManager.UpdateJob(id, status, jobSubmit));
         }
     }
 }

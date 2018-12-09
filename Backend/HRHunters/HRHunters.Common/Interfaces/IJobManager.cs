@@ -1,5 +1,6 @@
 ﻿using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
+using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
@@ -13,8 +14,8 @@ namespace HRHunters.Common.Interfaces
     {
         IEnumerable<JobInfo> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery);
         IEnumerable<JobPosting> CreateJobPosting(JobSubmit jobSubmit);
-        JobInfo GetOneJobPosting(int id);
-        JobInfo UpdateJobStatus(int id, string status);
+        JobPosting GetOneJobPosting(int id);
+        JobInfo UpdateJob(int id, string status, JobUpdate jobSubmit);
 
     }
 }
