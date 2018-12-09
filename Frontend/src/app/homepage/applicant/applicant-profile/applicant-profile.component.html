@@ -290,18 +290,7 @@
              >Experience (in years)
              <span class="u-required-star">*</span></label
            >
-           <!-- <input
-             type="text"
-             id="hpid__experience"
-             class="hp__form--input"
-             formControlName="experience"
-             maxlength="3"
-             autocomplete="off"
-             placeholder="Choose needed experience..."
-             (focus)="onFocus('experience')"
-             (keyup)="populateExperienceSuggestions($event)"
-             (keyup)="checkExperience()"
-           /> -->
+        
            <select
            id="hpid__experience"
            class="hp__form--input"
@@ -317,22 +306,6 @@
            </option>
          </select>
 
-           <!-- <div
-             class="dropdown-container"
-             *ngIf="filteredExperience.length > 0 && formFocus.experience"
-           >
-             <div
-               class="dropdown-menu dropdown-menu--height show"
-               aria-labelledby="dashidExperience"
-             >
-               <span
-                 class="dropdown-item"
-                 *ngFor="let number of filteredExperience"
-                 (click)="populateExperience($event)"
-                 >{{ number }}</span
-               >
-             </div>
-           </div> -->
 
            <div
              *ngIf="
