@@ -14,10 +14,12 @@ export class AuthService {
   private isAuthenticated = false;
   private user = {
     id: null,
+    firstName: '',
+    lastName: '',
     token: "",
-    email: ""
+    email: "",
+    role: 0
   };
-  private currentRole;
   private roleStatusListener = new Subject<{
     applicant: boolean;
     client: boolean;
@@ -59,11 +61,11 @@ export class AuthService {
   }
 
   getRole() {
-    return this.currentRole;
+    return this.user.role;
   }
 
   selectRole(role: any) {
-    this.currentRole = role;
+    this.user.role = role;
   }
 
   // Saves the token to the local storage and deletes the old one if there already is a token saved
@@ -78,6 +80,21 @@ export class AuthService {
   // Deletes the token from the local storage
   private clearAuthData() {
     localStorage.removeItem("token");
+  }
+
+  // Saves the token to the local storage and deletes the old one if there already is a token saved
+  private saveUserData(user: any) {
+    const hasUserData = localStorage.getItem('user');
+    const userData = JSON.parse(hasUserData);
+    if (userData) {
+      localStorage.removeItem("user");
+    }
+    localStorage.setItem("user", JSON.stringify(this.user));
+  }
+
+  // Deletes the token from the local storage
+  private clearUserData() {
+    localStorage.removeItem("user");
   }
 
   // REGISTER
@@ -160,10 +177,14 @@ export class AuthService {
             this.user.token = token;
             this.user.id = response.id;
             this.user.email = response.email;
+            this.user.role = response.role;
+            this.user.firstName = response.firstName;
+            this.user.lastName = response.lastName;
             if (token) {
               this.isAuthenticated = true;
               this.authStatusListener.next(true);
               this.saveAuthData(token);
+              this.saveUserData(JSON.stringify(this.user));
               if (response.role === 1) {
                 this.router.navigate(["/applicant"]);
               } else if (response.role === 2) {
@@ -245,6 +266,7 @@ export class AuthService {
     this.isAuthenticated = false;
     this.authStatusListener.next(false);
     this.clearAuthData();
+    this.clearUserData();
     this.router.navigate(["/login"]);
   }
 }
