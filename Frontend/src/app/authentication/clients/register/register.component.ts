@@ -29,7 +29,7 @@ export class ClientRegisterComponent {
     })
 
     this.clientRegisterForm.controls.clientPassword.valueChanges.subscribe(
-      x => this.clientRegisterForm.controls.applicantConfirmPassword.updateValueAndValidity()
+      x => this.clientRegisterForm.controls.clientConfirmPassword.updateValueAndValidity()
     );
   }
 
