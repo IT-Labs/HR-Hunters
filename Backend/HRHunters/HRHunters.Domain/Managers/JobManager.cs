@@ -51,8 +51,18 @@ namespace HRHunters.Domain.Managers
         {
             var jobPost =  _repo.GetOne<JobPosting>(filter: x => x.Id == id, 
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
-            return new JobInfo().JobInformation(jobPost);
-
+            return new JobInfo()
+            {
+                CompanyEmail = jobPost.Client.User.Email,
+                CompanyName = jobPost.Client.User.FirstName,
+                AllApplicationsCount = jobPost.Applications.Count,
+                DateTo = jobPost.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                Id = jobPost.Id,
+                JobTitle = jobPost.Title,
+                JobType = jobPost.EmpCategory.ToString(),
+                Location = jobPost.Location,
+                Status = jobPost.Status.ToString(),
+            };
         }
 
         public JobInfo UpdateJob(int id, string status, JobUpdate jobUpdate)
@@ -82,7 +92,7 @@ namespace HRHunters.Domain.Managers
             }
             _repo.Update(jobPost, "Admin");
 
-            return new JobInfo().JobInformation(jobPost);
+            return new JobInfo();
         }
     }
 }

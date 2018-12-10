@@ -64,38 +64,5 @@ namespace HRHunters.Common.ExtensionMethods
             }
             return a.Skip((currentPage - 1) * pageSize).Take(pageSize);
         }
-
-        public static JobInfo JobInformation(this JobInfo jobInfo, JobPosting jobPosting)
-        {
-            return new JobInfo
-            {
-                CompanyEmail = jobPosting.Client.User.Email,
-                CompanyName = jobPosting.Client.User.FirstName,
-                AllApplicationsCount = jobPosting.Applications.Count,
-                DateTo = jobPosting.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
-                Id = jobPosting.Id,
-                JobTitle = jobPosting.Title,
-                JobType = jobPosting.EmpCategory.ToString(),
-                Location = jobPosting.Location,
-                Status = jobPosting.Status.ToString(),
-            };
-        }
-
-        public static ApplicationInfo ApplicationInfo(this ApplicationInfo applicationInfo, Application app)
-        {
-            return new ApplicationInfo
-            {
-                Id = app.Id,
-                ApplicantEmail = app.Applicant.User.Email,
-                ApplicantName = app.Applicant.User.FirstName,
-                Experience = app.Applicant.Experience,
-                JobTitle = app.JobPosting.Title,
-                PostedOn = app.Date.ToShortTimeString(),
-                Status = app.Status.ToString()
-            };
-        }
-
     }
-    
-        
 }

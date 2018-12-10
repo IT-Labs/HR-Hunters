@@ -7,7 +7,7 @@ namespace HRHunters.Common.Responses.AdminDashboard
     public class ApplicationResponse
     {
         public List<ApplicationInfo> Application { get; set; }
-        public int All { get; set; }
+        public int MaxApplications { get; set; }
         public int Pending { get; set; }
         public int Contacted { get; set; }
         public int Interviewed { get; set; }
