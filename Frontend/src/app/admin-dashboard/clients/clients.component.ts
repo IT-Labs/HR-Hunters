@@ -23,7 +23,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     lastSortBy: "",
     currentSortDirection: 1,
     currentFilter: 'status',
-    currentFilterQuery: 0
+    currentFilterQuery: null
   }
 
   paginationSize: number[] = [];
@@ -47,12 +47,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   }
   
   buildQueryParams(data) {
-    return `?pagesize=${data.postsPerPage}
-            &page=${data.currentPage}
-            &sort=${data.currentSortBy}
-            &sortDir=${data.currentSortDirection}
-            &filterBy=${data.currentFilter}
-            &filterQuery=${data.currentFilterQuery}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
   }
 
   calculatePagination(applicationCount: number) {
@@ -89,7 +84,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     const params = this.buildQueryParams(this.clientQP)
     this.clientService.getClients(params);
   }
-  onFilter(filterBy: number) {
+  onFilter(filterBy: string) {
    
     if (filterBy === null) {
       this.clientQP.currentFilter = null

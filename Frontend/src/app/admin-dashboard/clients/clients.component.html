@@ -6,10 +6,10 @@
         <li (click)="onFilter(null)">
           All<span>({{ clientsCount.all }})</span>
         </li>
-        <li (click)="onFilter(1)">
+        <li (click)="onFilter('Active')">
           Active<span>({{ clientsCount.active }})</span>
         </li>
-        <li (click)="onFilter(2)">
+        <li (click)="onFilter('Inactive')">
           Inactive<span>({{ clientsCount.inactive }})</span>
         </li>
       </ul>
