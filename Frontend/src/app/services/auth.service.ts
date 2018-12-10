@@ -164,11 +164,11 @@ export class AuthService {
               this.isAuthenticated = true;
               this.authStatusListener.next(true);
               this.saveAuthData(token);
-              if (response.role === 0) {
+              if (response.role === 1) {
                 this.router.navigate(["/applicant"]);
-              } else if (response.role === 1) {
-                this.router.navigate(["/client"]);
               } else if (response.role === 2) {
+                this.router.navigate(["/client"]);
+              } else if (response.role === 3) {
                 this.router.navigate(["/admin-dashboard"]);
               }
             }

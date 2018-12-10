@@ -7,7 +7,7 @@ namespace HRHunters.Common.Enums
     public enum JobPostingStatus
     {
         Approved = 0,
-        Awaiting_approval = 1,
+        Pending = 1,
         Rejected = 2
     }
 }

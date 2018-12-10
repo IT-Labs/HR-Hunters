@@ -18,9 +18,11 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public IEnumerable<ClientInfo> GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
+        public ClientResponse GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
-            return _repo.GetAll<Client>(
+            var response = new ClientResponse() { Client = new List<ClientInfo>()};
+
+            var query = _repo.GetAll<Client>(
                 includeProperties: $"{nameof(User)}," +
                                    $"{nameof(Client.JobPostings)}")
                                    .Select(
@@ -36,12 +38,38 @@ namespace HRHunters.Domain.Managers
                                       })
                                       .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                       .ToList();
+            response.Client.AddRange(query);
+            response.MaxClients = _repo.GetAll<Client>().Count();
+            response.Active = _repo.GetCount<Client>(x => x.Status.Equals(ClientStatus.Active));
+            response.Inactive= _repo.GetCount<Client>(x => x.Status.Equals(ClientStatus.Inactive));
+            return response;
+
+        }
+
+        public IEnumerable<ClientInfo> GetMultiple()
+        {
+            return _repo.GetAll<Client>(
+                includeProperties: $"{nameof(User)}," +
+                                   $"{nameof(Client.JobPostings)}")
+                                   .Select(
+                                      x => new ClientInfo
+                                      {
+                                          Id=x.UserId,
+                                          CompanyName = x.User.FirstName,
+                                          Email = x.User.Email,
+                                          Active = x.JobPostings.Count(y=>y.DateTo<DateTime.UtcNow),
+                                          AllJobs = x.JobPostings.Count,
+                                          Status = x.Status.ToString(),
+                                          Logo = "photo"
+                                      })
+                                      .ToList();
         }
 
         public ClientInfo UpdateClientStatus(int id, string status)
         {
             var client = _repo.GetOne<Client>(filter: x => x.Id == id,
                                                     includeProperties: $"{nameof(User)},{nameof(Client.JobPostings)}");
+
             var statusToUpdate = client.Status;
             Enum.TryParse(status, out statusToUpdate);
             client.Status = statusToUpdate;
