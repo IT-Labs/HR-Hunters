@@ -20,8 +20,9 @@ namespace HRHunters.Domain.Managers
         }
         public IEnumerable<ApplicantInfo> GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
-                var a = _repo.GetAll<Applicant>(includeProperties: $"{nameof(Applicant.User)},")
-                                                                .Select(
+                return _repo.GetAll<Applicant>(
+                    includeProperties: $"{nameof(Applicant.User)},")
+                                        .Select(
                                         x => new ApplicantInfo
                                         {                      
                                             Id=x.UserId,
@@ -30,12 +31,9 @@ namespace HRHunters.Domain.Managers
                                             Email = x.User.Email,
                                             PhoneNumber = x.PhoneNumber,
                                             Photo="photo"
-                                        });
-
-
-            var filter = new Filters<ApplicantInfo>();
-
-                return filter.Applyfilters(a, pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+                                        })
+                                        .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
+                                        .ToList();
         }
     }
 

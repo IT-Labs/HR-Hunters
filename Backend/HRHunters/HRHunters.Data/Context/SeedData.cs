@@ -37,8 +37,10 @@ namespace HRHunters.Data.Context
                 {
                     _roleManager.CreateAsync(role).Wait();
                 }
-
+                
             }
+
+            Random random = new Random();
 
             if (!_userManager.Users.Any())
             { 
@@ -58,6 +60,7 @@ namespace HRHunters.Data.Context
                     user.CreatedBy = user.FirstName;
 
                     _userManager.CreateAsync(user, "Password").Wait();
+                    Array values = Enum.GetValues(typeof(ClientStatus));
 
                     if (i % 2 == 0)
                     {
@@ -66,20 +69,21 @@ namespace HRHunters.Data.Context
                             User = user,
                             Location = "Skopje",
                             PhoneNumber = "+3891112344",
-                            Status = ClientStatus.ACTIVE,
+                            Status = (ClientStatus)values.GetValue(random.Next(values.Length))
                         };
                         _clientManager.Create(client);
+                        values = Enum.GetValues(typeof(JobPostingStatus));
                         var jobPost = new JobPosting()
                         {
                             Client = client,
                             DateFrom = DateTime.UtcNow,
                             DateTo = DateTime.UtcNow.AddDays(4),
                             Title = "Backend developer" + i,
-                            Education = EducationType.BACHELOR,
+                            Education = EducationType.Bachelor,
                             Description = "Lorem ipsum bruh...",
-                            EmpCategory = JobType.FULLTIME,
+                            EmpCategory = JobType.Full_time,
                             Location = "Skopje, Macedonia",
-                            Status = JobPostingStatus.APPROVED,
+                            Status = (JobPostingStatus)values.GetValue(random.Next(values.Length)),
                             NeededExperience = "3",
                         };
                         _clientManager.Create(jobPost, "Admin");
@@ -96,12 +100,13 @@ namespace HRHunters.Data.Context
                             
                         };
                         _clientManager.Create(applicant, "Admin");
+                        values = Enum.GetValues(typeof(ApplicationStatus));
                         var application = new Application()
                         {
                             Applicant = applicant,
                             Date = DateTime.UtcNow,
-                            JobPosting = _clientManager.Get<JobPosting>(filter: x => x.ClientId == i).FirstOrDefault(),
-                            Status = ApplicationStatus.PENDING,
+                            JobPosting = _clientManager.GetOne<JobPosting>(filter: x => x.ClientId == i),
+                            Status = (ApplicationStatus)values.GetValue(random.Next(values.Length)),
                         };
                         _clientManager.Create(application, "Admin");
                     }

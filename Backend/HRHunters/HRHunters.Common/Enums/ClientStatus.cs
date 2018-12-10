@@ -6,7 +6,7 @@ namespace HRHunters.Common.Enums
 {
     public enum ClientStatus
     {
-        ACTIVE = 0,
-        INACTIVE = 1
+        Active = 0,
+        Inactive = 1
     }
 }

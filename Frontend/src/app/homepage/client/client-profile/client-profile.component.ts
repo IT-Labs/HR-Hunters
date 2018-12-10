@@ -16,7 +16,8 @@ export class ClientProfileComponent implements OnInit {
   );
   // validPhonenumber = new RegExp("^(\+\s?)?((?<!\+.*)\(\+?\d+([\s\-\.]?\d+)?\)|\d+)([\s\-\.]?(\(\d+([\s\-\.]?\d+)?\)|\d+))*(\s?(x|ext\.?)\s?\d+)?$");
   // validPhonenumber = new RegExp("/^[a-zA-Z0-9\-().\s]{10,15}$/");
-  // validPhonenumber = new RegExp("^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$");
+    validPhonenumber = new RegExp("^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$");
+    //ex: format: +61 01 2345 6789
 
   constructor(private fb: FormBuilder, private router: Router) {}
 
@@ -35,8 +36,8 @@ export class ClientProfileComponent implements OnInit {
       ])
     ],
 
-    phonenumber: ["", Validators.compose([Validators.required])],
-    // phonenumber: ["", Validators.compose([Validators.required,Validators.pattern(this.validPhonenumber)])],
+    
+    phonenumber: ["", Validators.compose([Validators.required,Validators.pattern(this.validPhonenumber)])],
     logo: [
       "",
       {
@@ -77,7 +78,7 @@ export class ClientProfileComponent implements OnInit {
   }
 
   onSubmitClientProfile() {
-    // console.log(this.clientProfileFormHP);
+    console.log(this.clientProfileFormHP);
     this.clientProfileFormHP.controls["companyName"].markAsTouched();
     this.clientProfileFormHP.controls["companyEmail"].markAsTouched();
     this.clientProfileFormHP.controls["phonenumber"].markAsTouched();
