@@ -59,7 +59,7 @@ namespace HRHunters.Domain.Managers
             var roles = await _userManager.GetRolesAsync(appUser);
             userToReturn.Succeeded = true;
             userToReturn.Token = _tokenGeneration.GenerateJwtToken(appUser);
-            userToReturn.Role = roles.Contains("Applicant") ? 0 : 1;
+            userToReturn.Role = roles.Contains("Applicant") ? 1 : roles.Contains("Client") ? 2 : 3 ;
             return userToReturn;
         }
 

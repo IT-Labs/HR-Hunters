@@ -26,21 +26,32 @@ namespace HRHunters.Domain.Managers
         {
             return _repo.GetAll<JobPosting>(
                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}")
-                                        .Applyfilters(pageSize: pageSize, currentPage: currentPage, sortedBy: sortedBy, sortDir: sortDir, filterBy: filterBy, filterQuery: filterQuery)
                                         .Select(
-                                        x => new JobInfo().JobInformation(x))
+                                        x => new JobInfo()
+                                        {
+                                            CompanyEmail = x.Client.User.Email,
+                                            CompanyName = x.Client.User.FirstName,
+                                            AllApplicationsCount = x.Applications.Count,
+                                            DateTo = x.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                                            Id = x.Id,
+                                            JobTitle = x.Title,
+                                            JobType = x.EmpCategory.ToString(),
+                                            Location = x.Location,
+                                            Status = x.Status.ToString(),
+                                        })
+                                        .Applyfilters(pageSize: pageSize, currentPage: currentPage, sortedBy: sortedBy, sortDir: sortDir, filterBy: filterBy, filterQuery: filterQuery)
                                         .ToList();
         }
         public IEnumerable<JobPosting> CreateJobPosting(JobSubmit jobSubmit)
         {
-
             return null;
         }
 
-        public JobPosting GetOneJobPosting(int id)
+        public JobInfo GetOneJobPosting(int id)
         {
-            return _repo.GetOne<JobPosting>(filter: x => x.Id == id, 
+            var jobPost =  _repo.GetOne<JobPosting>(filter: x => x.Id == id, 
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
+            return new JobInfo().JobInformation(jobPost);
 
         }
 

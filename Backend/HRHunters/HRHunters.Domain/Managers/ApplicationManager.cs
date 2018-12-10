@@ -27,10 +27,18 @@ namespace HRHunters.Domain.Managers
             return _repo.GetAll<Application>(
                 includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
                                    $"{nameof(JobPosting)}")
+                                   .Select(x => new ApplicationInfo
+                                   {
+                                        ApplicantEmail = x.Applicant.User.Email,
+                                        ApplicantName = x.Applicant.User.FirstName,
+                                        Experience = x.Applicant.Experience,
+                                        Id = x.Id,
+                                        JobTitle = x.JobPosting.Title,
+                                        PostedOn = x.Date.ToString(),
+                                        Status = x.Status.ToString()
+                                   })
                                    .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
-                                   .Select(x => new ApplicationInfo().ApplicationInfo(x))
                                    .ToList();
-
         }
         
         public ApplicationInfo UpdateApplicationStatus(int id, string status)

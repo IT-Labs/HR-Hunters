@@ -50,6 +50,12 @@ namespace HRHunters.WebAPI.Controllers
             return Ok(_jobManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
 
+        [HttpGet("jobs/addExistingCo")]
+        public ActionResult<IEnumerable<ClientInfo>> GetMultipleClients()
+        {
+            return Ok(_clientManager.GetMultiple());
+        }
+
         [HttpGet("clients")]
         public ActionResult<IEnumerable<ClientInfo>> GetMultipleClients(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {

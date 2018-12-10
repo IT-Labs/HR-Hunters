@@ -14,7 +14,7 @@ namespace HRHunters.Common.Interfaces
     {
         IEnumerable<JobInfo> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery);
         IEnumerable<JobPosting> CreateJobPosting(JobSubmit jobSubmit);
-        JobPosting GetOneJobPosting(int id);
+        JobInfo GetOneJobPosting(int id);
         JobInfo UpdateJob(int id, string status, JobUpdate jobSubmit);
 
     }
