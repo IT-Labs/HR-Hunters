@@ -37,7 +37,7 @@ namespace HRHunters.Common.ExtensionMethods
 
             return sample;
         }
-        public static IQueryable<T> Applyfilters<T>(this IQueryable<T> a, int pageSize = 20, int currentPage = 1, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
+        public static IQueryable<T> Applyfilters<T>(this IQueryable<T> a, int pageSize = 3, int currentPage = 1, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = null, string filterQuery = null)
         {
             if (string.IsNullOrWhiteSpace(sortedBy))
                 sortedBy = "Id";
@@ -78,6 +78,20 @@ namespace HRHunters.Common.ExtensionMethods
                 JobType = jobPosting.EmpCategory.ToString(),
                 Location = jobPosting.Location,
                 Status = jobPosting.Status.ToString(),
+            };
+        }
+
+        public static ApplicationInfo ApplicationInfo(this ApplicationInfo applicationInfo, Application app)
+        {
+            return new ApplicationInfo
+            {
+                Id = app.Id,
+                ApplicantEmail = app.Applicant.User.Email,
+                ApplicantName = app.Applicant.User.FirstName,
+                Experience = app.Applicant.Experience,
+                JobTitle = app.JobPosting.Title,
+                PostedOn = app.Date.ToShortTimeString(),
+                Status = app.Status.ToString()
             };
         }
 
