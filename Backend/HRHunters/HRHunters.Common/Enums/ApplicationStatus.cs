@@ -6,10 +6,10 @@ namespace HRHunters.Common.Enums
 {
     public enum ApplicationStatus
     {
-        PENDING = 0,
-        CONTACTED = 1,
-        INTERVIEWED = 2,
-        HIRED = 3,
-        REJECTED = 4
+        Pending = 0,
+        Contacted = 1,
+        Interviewed = 2,
+        Hired = 3,
+        Rejected = 4
     }
 }

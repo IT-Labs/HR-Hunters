@@ -96,12 +96,12 @@ namespace HRHunters.WebAPI
                 });
             });
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.Configure<ApiBehaviorOptions>(options => {
                 //Custom ModelState validations through [ApiController] attribute, to match the client's expected response
                 options.InvalidModelStateResponseFactory = actionContext =>
                 {
-                    //We always know the first keyvalue pair in RouteData is the "action", the second is the "controller"
                     if(actionContext.RouteData.Values["action"].Equals("Login"))
                         return new BadRequestObjectResult(new UserLoginReturnModel(actionContext.ModelState));
                     return new BadRequestObjectResult(new UserRegisterReturnModel(actionContext.ModelState));

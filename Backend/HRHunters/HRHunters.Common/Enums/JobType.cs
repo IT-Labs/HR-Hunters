@@ -6,8 +6,8 @@ namespace HRHunters.Common.Enums
 {
     public enum JobType
     {
-        FULLTIME=0,
-        PARTTIME=1,
-        INTERN=2
+        Full_time=0,
+        Part_time=1,
+        Intern=2
     }
 }

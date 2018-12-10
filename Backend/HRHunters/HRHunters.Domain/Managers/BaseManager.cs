@@ -35,18 +35,14 @@ namespace HRHunters.Domain.Managers
             Save();
         }
 
-        public IEnumerable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, string orderBy = null, string includeProperties = null, int? skip = null, int? take = null, SortDirection? sortDirection = null) where TEntity : Entity
+        public IQueryable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null) where TEntity : Entity
         {
-            return _repo.Get(filter, orderBy, includeProperties, skip, take, sortDirection);
+            return _repo.Get(filter, includeProperties);
         }
 
-        public IEnumerable<TEntity> GetAll<TEntity>(string orderBy = null,
-        string includeProperties = null,
-        int? skip = null,
-        int? take = null,
-        SortDirection? sortDirection = null) where TEntity : Entity
+        public IQueryable<TEntity> GetAll<TEntity>(string includeProperities) where TEntity : Entity
         {
-            return _repo.GetAll<TEntity>(orderBy: null, includeProperties: null, skip: null, take: null, sortDirection: null);
+            return _repo.GetAll<TEntity>(includeProperties: null);
         }
 
         public TEntity GetById<TEntity>(object id) where TEntity : Entity

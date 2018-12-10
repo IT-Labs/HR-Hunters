@@ -12,14 +12,14 @@ namespace HRHunters.Data
 {
     public interface IReadonlyRepository
     {
-        IEnumerable<TEntity> GetAll<TEntity>(string orderBy = null,
+        IQueryable<TEntity> GetAll<TEntity>(string orderBy = null,
         string includeProperties = null,
         int? skip = null,
         int? take = null,
         SortDirection? sortDirection = null)
         where TEntity : Entity;
 
-        IEnumerable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null,string orderBy =null,
+        IQueryable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null,string orderBy =null,
         string includeProperties = null,
         int? skip = null,
         int? take = null, 
