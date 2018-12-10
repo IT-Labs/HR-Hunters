@@ -68,10 +68,9 @@ namespace HRHunters.WebAPI.Controllers
             return Ok(_jobManager.GetOneJobPosting(id));
         }
         [HttpPost("jobs1")]
-        public ActionResult<IEnumerable<JobPosting>> CreateJobPosting(JobSubmit jobSubmit)
+        public async Task<ActionResult<object>> CreateJobPosting(JobSubmit jobSubmit)
         {
-
-            return null;
+            return Ok(await _jobManager.CreateJobPosting(jobSubmit));
         }
 
         [HttpPut("applications/{id}")]
