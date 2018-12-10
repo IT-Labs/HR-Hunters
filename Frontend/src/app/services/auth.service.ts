@@ -113,8 +113,7 @@ export class AuthService {
       .post<{
         succeeded: false;
         errors: {
-          Email: string[] | null;
-          Password: string[] | null;
+          Error: string[] | null
         };
       }>(this.baseUrl + "/Authentication/register", authData)
       .subscribe(
@@ -149,30 +148,28 @@ export class AuthService {
         token: string | null;
         email: string | null;
         id: number | null;
-        userType: number;
+        role: number;
         errors: {
           Error: string[] | null;
         };
       }>(this.baseUrl + "/Authentication/login", authData)
       .subscribe(
         response => {
-          console.log(response);
           if (response.succeeded) {
             const token = response.token;
             this.user.token = token;
             this.user.id = response.id;
             this.user.email = response.email;
-            console.log(response.id);
             if (token) {
               this.isAuthenticated = true;
               this.authStatusListener.next(true);
               this.saveAuthData(token);
-              if (response.userType === 0) {
-                this.router.navigate(["applicant"]);
-              } else if (response.userType === 1) {
-                this.router.navigate(["client"]);
-              } else if (response.userType === 2) {
-                this.router.navigate(["admin-dashboard"]);
+              if (response.role === 0) {
+                this.router.navigate(["/applicant"]);
+              } else if (response.role === 1) {
+                this.router.navigate(["/client"]);
+              } else if (response.role === 2) {
+                this.router.navigate(["/admin-dashboard"]);
               }
             }
           } else if (!response.succeeded) {

@@ -28,7 +28,7 @@ export class ClientRegisterComponent {
       }
     })
 
-    this.clientRegisterForm.controls.applicantPassword.valueChanges.subscribe(
+    this.clientRegisterForm.controls.clientPassword.valueChanges.subscribe(
       x => this.clientRegisterForm.controls.applicantConfirmPassword.updateValueAndValidity()
     );
   }
