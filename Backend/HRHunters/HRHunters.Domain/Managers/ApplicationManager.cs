@@ -49,7 +49,18 @@ namespace HRHunters.Domain.Managers
             Enum.TryParse(status, out statusToUpdate);
             application.Status = statusToUpdate;
             _repo.Update(application, "Admin");
-            return new ApplicationInfo().ApplicationInfo(application);
+            return new ApplicationInfo()
+            {
+
+                ApplicantEmail = application.Applicant.User.Email,
+                ApplicantName = application.Applicant.User.FirstName,
+                Experience = application.Applicant.Experience,
+                Id = application.Id,
+                JobTitle = application.JobPosting.Title,
+                PostedOn = application.Date.ToString(),
+                Status = application.Status.ToString()
+
+            };
         }
     }
 }

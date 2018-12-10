@@ -22,9 +22,10 @@ namespace HRHunters.Domain.Managers
             _repo = repo;
         }
 
-        public IEnumerable<JobInfo> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery)
+        public JobResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery)
         {
-            return _repo.GetAll<JobPosting>(
+            var response = new JobResponse() { JobPosting = new List<JobInfo>() };
+            var query =  _repo.GetAll<JobPosting>(
                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}")
                                         .Select(
                                         x => new JobInfo()
@@ -41,6 +42,13 @@ namespace HRHunters.Domain.Managers
                                         })
                                         .Applyfilters(pageSize: pageSize, currentPage: currentPage, sortedBy: sortedBy, sortDir: sortDir, filterBy: filterBy, filterQuery: filterQuery)
                                         .ToList();
+            response.JobPosting.AddRange(query);
+            response.MaxJobPosts = _repo.GetCount<JobPosting>();
+            response.Approved = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Approved);
+            response.Pending = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Pending);
+            response.Rejected = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Rejected);
+
+            return response;
         }
         public IEnumerable<JobPosting> CreateJobPosting(JobSubmit jobSubmit)
         {
@@ -51,7 +59,18 @@ namespace HRHunters.Domain.Managers
         {
             var jobPost =  _repo.GetOne<JobPosting>(filter: x => x.Id == id, 
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
-            return new JobInfo().JobInformation(jobPost);
+            return new JobInfo()
+            {
+                CompanyEmail = jobPost.Client.User.Email,
+                CompanyName = jobPost.Client.User.FirstName,
+                AllApplicationsCount = jobPost.Applications.Count,
+                DateTo = jobPost.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                Id = jobPost.Id,
+                JobTitle = jobPost.Title,
+                JobType = jobPost.EmpCategory.ToString(),
+                Location = jobPost.Location,
+                Status = jobPost.Status.ToString(),
+            };
 
         }
 
@@ -82,7 +101,18 @@ namespace HRHunters.Domain.Managers
             }
             _repo.Update(jobPost, "Admin");
 
-            return new JobInfo().JobInformation(jobPost);
+            return new JobInfo()
+            {
+                CompanyEmail = jobPost.Client.User.Email,
+                CompanyName = jobPost.Client.User.FirstName,
+                AllApplicationsCount = jobPost.Applications.Count,
+                DateTo = jobPost.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                Id = jobPost.Id,
+                JobTitle = jobPost.Title,
+                JobType = jobPost.EmpCategory.ToString(),
+                Location = jobPost.Location,
+                Status = jobPost.Status.ToString(),
+            };
         }
     }
 }
