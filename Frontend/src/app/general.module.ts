@@ -27,7 +27,7 @@ import { ADApplicationsComponent } from './admin-dashboard/applications/applicat
 import { ADJobPostingsComponent } from './admin-dashboard/job-postings/job-postings.component';
 import { ADNewJobPostingComponent } from './admin-dashboard/job-postings/new-job-posting/new-job-posting.component';
 import { ErrorComponent } from './error/error.component';
-
+import { NgbModule, NgbPaginationModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     declarations: [
@@ -60,7 +60,10 @@ import { ErrorComponent } from './error/error.component';
         FormsModule,
         RouterModule,
         NgxPopper,
-        InfiniteScrollModule
+        InfiniteScrollModule,
+        NgbModule,
+        NgbPaginationModule,
+        NgbAlertModule
     ]
 })
 
