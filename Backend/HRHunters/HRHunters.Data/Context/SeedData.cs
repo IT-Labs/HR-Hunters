@@ -37,22 +37,7 @@ namespace HRHunters.Data.Context
                 {
                     _roleManager.CreateAsync(role).Wait();
                 }
-                var user = new User()
-                {
-                    Email = "hradmin@codecarrot.com",
-                    FirstName = "Admin",
-                    LastName = "Admin",
-                    CreatedBy = "Admin",
-                    EmailConfirmed = false,
-                    NormalizedEmail = "HRADMIN@CODECARROT.COM",
-                    SecurityStamp = Guid.NewGuid().ToString("D"),
-                    LockoutEnabled = false,
-                    AccessFailedCount = 0,
-                    UserName = "hradmin@codecarrot.com",
-                    PhoneNumber = "+38978691342"
-                };
-                _userManager.CreateAsync(user, "Admin").Wait();
-                _userManager.AddToRoleAsync(user, "Admin").Wait();
+                
             }
 
             Random random = new Random();

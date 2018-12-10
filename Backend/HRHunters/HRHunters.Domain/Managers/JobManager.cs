@@ -33,6 +33,7 @@ namespace HRHunters.Domain.Managers
         }
         public IEnumerable<JobPosting> CreateJobPosting(JobSubmit jobSubmit)
         {
+
             return null;
         }
 
