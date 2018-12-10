@@ -10,8 +10,9 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IClientManager : IBaseManager
     {
-        IEnumerable<ClientInfo> GetMultiple(int pageSize, int currentPage, 
+        ClientResponse GetMultiple(int pageSize, int currentPage, 
             string sortedBy, SortDirection sortDir, string filterBy, string filterQuery);
+        IEnumerable<ClientInfo> GetMultiple();
         ClientInfo UpdateClientStatus(int id, string status);
     }
 }

@@ -18,13 +18,13 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public IEnumerable<ApplicantInfo> GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
+        public ApplicantResponse GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
-                return _repo.GetAll<Applicant>(
+            var response = new ApplicantResponse() { Applicant = new List<ApplicantInfo>()};
+                var query = _repo.GetAll<Applicant>(
                     includeProperties: $"{nameof(Applicant.User)},")
-                                        .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                         .Select(
-                                        x => new ApplicantInfo
+                                        x =>  new ApplicantInfo
                                         {
                                             Id = x.UserId,
                                             FirstName = x.User.FirstName,
@@ -33,7 +33,11 @@ namespace HRHunters.Domain.Managers
                                             PhoneNumber = x.PhoneNumber,
                                             Photo = "photo"
                                         })
+                                        .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                         .ToList();
+            response.Applicant.AddRange(query);
+            response.MaxApplicants = _repo.GetCount<Applicant>();
+            return response;
         }
     }
 

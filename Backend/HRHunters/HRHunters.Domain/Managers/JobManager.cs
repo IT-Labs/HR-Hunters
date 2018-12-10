@@ -22,25 +22,55 @@ namespace HRHunters.Domain.Managers
             _repo = repo;
         }
 
-        public IEnumerable<JobInfo> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery)
+        public JobResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery)
         {
-            return _repo.GetAll<JobPosting>(
+            var response = new JobResponse() { JobPosting = new List<JobInfo>() };
+            var query =  _repo.GetAll<JobPosting>(
                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}")
-                                        .Applyfilters(pageSize: pageSize, currentPage: currentPage, sortedBy: sortedBy, sortDir: sortDir, filterBy: filterBy, filterQuery: filterQuery)
                                         .Select(
-                                        x => new JobInfo().JobInformation(x))
+                                        x => new JobInfo()
+                                        {
+                                            CompanyEmail = x.Client.User.Email,
+                                            CompanyName = x.Client.User.FirstName,
+                                            AllApplicationsCount = x.Applications.Count,
+                                            DateTo = x.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                                            Id = x.Id,
+                                            JobTitle = x.Title,
+                                            JobType = x.EmpCategory.ToString(),
+                                            Location = x.Location,
+                                            Status = x.Status.ToString(),
+                                        })
+                                        .Applyfilters(pageSize: pageSize, currentPage: currentPage, sortedBy: sortedBy, sortDir: sortDir, filterBy: filterBy, filterQuery: filterQuery)
                                         .ToList();
+            response.JobPosting.AddRange(query);
+            response.MaxJobPosts = _repo.GetCount<JobPosting>();
+            response.Approved = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Approved);
+            response.Pending = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Pending);
+            response.Rejected = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Rejected);
+
+            return response;
         }
         public IEnumerable<JobPosting> CreateJobPosting(JobSubmit jobSubmit)
         {
-
             return null;
         }
 
-        public JobPosting GetOneJobPosting(int id)
+        public JobInfo GetOneJobPosting(int id)
         {
-            return _repo.GetOne<JobPosting>(filter: x => x.Id == id, 
+            var jobPost =  _repo.GetOne<JobPosting>(filter: x => x.Id == id, 
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
+            return new JobInfo()
+            {
+                CompanyEmail = jobPost.Client.User.Email,
+                CompanyName = jobPost.Client.User.FirstName,
+                AllApplicationsCount = jobPost.Applications.Count,
+                DateTo = jobPost.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                Id = jobPost.Id,
+                JobTitle = jobPost.Title,
+                JobType = jobPost.EmpCategory.ToString(),
+                Location = jobPost.Location,
+                Status = jobPost.Status.ToString(),
+            };
 
         }
 
@@ -71,7 +101,18 @@ namespace HRHunters.Domain.Managers
             }
             _repo.Update(jobPost, "Admin");
 
-            return new JobInfo().JobInformation(jobPost);
+            return new JobInfo()
+            {
+                CompanyEmail = jobPost.Client.User.Email,
+                CompanyName = jobPost.Client.User.FirstName,
+                AllApplicationsCount = jobPost.Applications.Count,
+                DateTo = jobPost.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                Id = jobPost.Id,
+                JobTitle = jobPost.Title,
+                JobType = jobPost.EmpCategory.ToString(),
+                Location = jobPost.Location,
+                Status = jobPost.Status.ToString(),
+            };
         }
     }
 }
