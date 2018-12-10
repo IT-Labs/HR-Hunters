@@ -20,11 +20,11 @@ export class AuthService {
     email: "",
     role: 0
   };
+  
   private roleStatusListener = new Subject<{
-    applicant: boolean;
-    client: boolean;
-    admin: boolean;
+    role: number;
   }>();
+
   private authStatusListener = new Subject<boolean>();
   private authErrorStatusListener = new Subject<{
     error: string;
@@ -64,7 +64,7 @@ export class AuthService {
     return this.user.role;
   }
 
-  selectRole(role: any) {
+  selectRole(role: number) {
     this.user.role = role;
   }
 
@@ -266,7 +266,7 @@ export class AuthService {
     this.isAuthenticated = false;
     this.authStatusListener.next(false);
     this.clearAuthData();
-    this.clearUserData();
+    this.clearUserData
     this.router.navigate(["/login"]);
   }
 }
