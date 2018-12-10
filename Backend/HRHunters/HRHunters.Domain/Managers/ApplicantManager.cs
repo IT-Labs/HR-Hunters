@@ -22,17 +22,17 @@ namespace HRHunters.Domain.Managers
         {
                 return _repo.GetAll<Applicant>(
                     includeProperties: $"{nameof(Applicant.User)},")
+                                        .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                         .Select(
                                         x => new ApplicantInfo
-                                        {                      
-                                            Id=x.UserId,
+                                        {
+                                            Id = x.UserId,
                                             FirstName = x.User.FirstName,
                                             LastName = x.User.LastName,
                                             Email = x.User.Email,
                                             PhoneNumber = x.PhoneNumber,
-                                            Photo="photo"
+                                            Photo = "photo"
                                         })
-                                        .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                         .ToList();
         }
     }

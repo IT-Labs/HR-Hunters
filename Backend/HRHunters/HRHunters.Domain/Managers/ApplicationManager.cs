@@ -27,17 +27,8 @@ namespace HRHunters.Domain.Managers
             return _repo.GetAll<Application>(
                 includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
                                    $"{nameof(JobPosting)}")
-                                   .Select(x => new ApplicationInfo
-                                   {
-                                       Id = x.Id,
-                                       ApplicantEmail = x.Applicant.User.Email,
-                                       ApplicantName = x.Applicant.User.FirstName,
-                                       Experience = x.Applicant.Experience,
-                                       JobTitle = x.JobPosting.Title,
-                                       PostedOn = x.Date.ToShortTimeString(),
-                                       Status = x.Status.ToString()
-                                   })
                                    .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
+                                   .Select(x => new ApplicationInfo().ApplicationInfo(x))
                                    .ToList();
 
         }
@@ -50,16 +41,7 @@ namespace HRHunters.Domain.Managers
             Enum.TryParse(status, out statusToUpdate);
             application.Status = statusToUpdate;
             _repo.Update(application, "Admin");
-            return new ApplicationInfo
-            {
-                Id = application.Id,
-                Status = application.Status.ToString(),
-                ApplicantEmail = application.Applicant.User.Email,
-                ApplicantName = application.Applicant.User.FirstName,
-                Experience = application.Applicant.Experience,
-                JobTitle = application.JobPosting.Title,
-                PostedOn = application.Date.ToLocalTime().ToString()
-            };
+            return new ApplicationInfo().ApplicationInfo(application);
         }
     }
 }

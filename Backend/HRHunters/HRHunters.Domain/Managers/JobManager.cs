@@ -25,10 +25,10 @@ namespace HRHunters.Domain.Managers
         public IEnumerable<JobInfo> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery)
         {
             return _repo.GetAll<JobPosting>(
-                    includeProperties: $"{nameof(Client)}.{nameof(Client.User)}, {nameof(JobPosting.Applications)}")
+                    includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}")
+                                        .Applyfilters(pageSize: pageSize, currentPage: currentPage, sortedBy: sortedBy, sortDir: sortDir, filterBy: filterBy, filterQuery: filterQuery)
                                         .Select(
                                         x => new JobInfo().JobInformation(x))
-                                        .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                         .ToList();
         }
         public IEnumerable<JobPosting> CreateJobPosting(JobSubmit jobSubmit)
@@ -39,8 +39,8 @@ namespace HRHunters.Domain.Managers
 
         public JobPosting GetOneJobPosting(int id)
         {
-            return _repo.Get<JobPosting>(filter: x => x.Id == id, 
-                                                    includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}").FirstOrDefault();
+            return _repo.GetOne<JobPosting>(filter: x => x.Id == id, 
+                                                    includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
 
         }
 
