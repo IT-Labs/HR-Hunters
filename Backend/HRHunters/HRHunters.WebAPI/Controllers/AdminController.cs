@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests.Users;
+using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
 using HRHunters.Domain.Managers;
 using Microsoft.AspNetCore.Authorization;
@@ -31,25 +33,25 @@ namespace HRHunters.WebAPI.Controllers
         }
         //Test methods
         [HttpGet("applicants")]
-        public ActionResult<IEnumerable<Applicant>> GetMultipleApplicants(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ActionResult<IEnumerable<ApplicantInfo>> GetMultipleApplicants(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             return Ok(_applicantManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
 
         [HttpGet("applications")]
-        public ActionResult<IEnumerable<Application>> GetMultipleApplications(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ActionResult<IEnumerable<ApplicationInfo>> GetMultipleApplications(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
 
         [HttpGet("jobs")]
-        public ActionResult<IEnumerable<JobPosting>> GetMultipleJobPosting(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ActionResult<IEnumerable<JobInfo>> GetMultipleJobPosting(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             return Ok(_jobManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
 
         [HttpGet("clients")]
-        public ActionResult<IEnumerable<Client>> GetMultipleClients(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ActionResult<IEnumerable<ClientInfo>> GetMultipleClients(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
@@ -66,7 +68,21 @@ namespace HRHunters.WebAPI.Controllers
             return null;
         }
 
+        [HttpPut("applications/{id}")]
+        public ActionResult<ApplicationInfo> UpdateApplicationStatus(int id, string status)
+        {
+            return Ok(_applicationManager.UpdateApplicationStatus(id, status));
+        }
+        [HttpPut("clients/{id}")]
+        public ActionResult<ClientInfo> UpdateClientStatus(int id, string status)
+        {
+            return Ok(_clientManager.UpdateClientStatus(id, status));
+        }
 
-
+        [HttpPut("jobs/{id}")]
+        public ActionResult<JobInfo> UpdateJob(int id, [FromQuery]string status, [FromBody]JobUpdate jobSubmit)
+        {
+            return Ok(_jobManager.UpdateJob(id, status, jobSubmit));
+        }
     }
 }

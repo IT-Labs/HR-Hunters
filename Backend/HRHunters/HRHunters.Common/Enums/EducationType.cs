@@ -6,9 +6,9 @@ namespace HRHunters.Common.Enums
 {
     public enum EducationType
     {
-        HIGHSCHOOL=0,
-        BACHELOR=1,
-        MASTER=2,
-        DOCTORAL=3
+        Highschool=0,
+        Bachelor=1,
+        Master=2,
+        Doctoral=3
     }
 }

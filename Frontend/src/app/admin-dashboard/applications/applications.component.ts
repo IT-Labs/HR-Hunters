@@ -22,11 +22,11 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   applicationQP = {
     postsPerPage: 10,
     currentPage: 1,
-    currentSortBy: "posted",
+    currentSortBy: "postedOn",
     lastSortBy: "",
     currentSortDirection: 0,
     currentFilter: 'status',
-    currentFilterQuery: 0
+    currentFilterQuery: null
   };
   paginationSize: number[] = [];
 
@@ -52,12 +52,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   }
 
   buildQueryParams(data) {
-    return `?pagesize=${data.postsPerPage}
-            &page=${data.currentPage}
-            &sort=${data.currentSortBy}
-            &sortDir=${data.currentSortDirection}
-            &filterBy=${data.currentFilter}
-            &filterQuery=${data.currentFilterQuery}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
   }
 
   calculatePagination(applicationCount: number) {
@@ -102,7 +97,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     this.applicationService.getApplications(params);
   }
 
-  onFilter(filterBy: number) {
+  onFilter(filterBy: string) {
     
     if (filterBy === null) {
       this.applicationQP.currentFilter = null

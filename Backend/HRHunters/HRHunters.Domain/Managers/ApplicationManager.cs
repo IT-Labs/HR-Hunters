@@ -24,25 +24,24 @@ namespace HRHunters.Domain.Managers
 
         public IEnumerable<ApplicationInfo> GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
-            var a = _repo.GetAll<Application>(includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
-                                                                $"{nameof(JobPosting)}").Select(
-                x => new ApplicationInfo
-                {
-                    
-                    ApplicantEmail = x.Applicant.User.Email,
-                    ApplicantName = x.Applicant.User.FirstName,
-                    Experience = x.Applicant.Experience,
-                    JobTitle = x.JobPosting.Title,
-                    Posted = x.Date.ToString(),
-                    Status = x.Status.ToString(),
-                });
-
-
-            var filter = new Filters<ApplicationInfo>();
-
-            return filter.Applyfilters(a, pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+            return _repo.GetAll<Application>(
+                includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
+                                   $"{nameof(JobPosting)}")
+                                   .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
+                                   .Select(x => new ApplicationInfo().ApplicationInfo(x))
+                                   .ToList();
 
         }
-
+        
+        public ApplicationInfo UpdateApplicationStatus(int id, string status)
+        {
+            var application = _repo.Get<Application>(filter: x => x.Id == id, 
+                                                    includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)},{nameof(JobPosting)}").FirstOrDefault();
+            var statusToUpdate = application.Status;
+            Enum.TryParse(status, out statusToUpdate);
+            application.Status = statusToUpdate;
+            _repo.Update(application, "Admin");
+            return new ApplicationInfo().ApplicationInfo(application);
+        }
     }
 }

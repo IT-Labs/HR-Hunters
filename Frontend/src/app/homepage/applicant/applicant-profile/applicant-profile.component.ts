@@ -64,8 +64,10 @@ export class ApplicantProfileComponent implements OnInit {
   validExperience: boolean;
 
   // validPhonenumber = new RegExp("^(\+\s?)?((?<!\+.*)\(\+?\d+([\s\-\.]?\d+)?\)|\d+)([\s\-\.]?(\(\d+([\s\-\.]?\d+)?\)|\d+))*(\s?(x|ext\.?)\s?\d+)?$");
-  // validPhonenumber = new RegExp("/^(?:\+\d{2})?\d{10}(?:,(?:\+\d{2})?\d{10})*$/");
-   validPhonenumber = new RegExp("/^[a-zA-Z0-9\-().\s]{10,15}$/");
+  
+  //  validPhonenumber = new RegExp("/^[a-zA-Z0-9\-().\s]{10,15}$/");
+  validPhonenumber = new RegExp("^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$");
+  //ex: format: +61 01 2345 6789
 
   
 

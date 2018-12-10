@@ -21,17 +21,10 @@ namespace HRHunters.Common.Interfaces
 
         void Save();
 
-        IEnumerable<TEntity> GetAll<TEntity>(string orderBy = null,
-        string includeProperties = null,
-        int? skip = null,
-        int? take = null,
-        SortDirection? sortDirection = null) where TEntity : Entity;
+        IQueryable<TEntity> GetAll<TEntity>(string includeProperties = null) where TEntity : Entity;
 
-        IEnumerable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, string orderBy = null,
-        string includeProperties = null,
-        int? skip = null,
-        int? take = null,
-        SortDirection? sortDirection = null) where TEntity : Entity;
+        IQueryable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null,
+        string includeProperties = null) where TEntity : Entity;
 
         TEntity GetOne<TEntity>(
         Expression<Func<TEntity, bool>> filter = null,

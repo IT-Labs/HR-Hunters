@@ -23,12 +23,12 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
 
   jobPostingQP = {
     postsPerPage: 10,
-    currentPage: 9,
+    currentPage: 1,
     currentSortBy: "dateTo",
     lastSortBy: "",
     currentSortDirection: 0,
     currentFilter: 'status',
-    currentFilterQuery: 0
+    currentFilterQuery: null
   }
 
   jobPostings: JobPosting[] = [];
@@ -54,12 +54,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   }
 
   buildQueryParams(data) {
-    return `?pagesize=${data.postsPerPage}
-            &page=${data.currentPage}
-            &sort=${data.currentSortBy}
-            &sortDir=${data.currentSortDirection}
-            &filterBy=${data.currentFilter}
-            &filterQuery=${data.currentFilterQuery}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
   }
 
   calculatePagination(jobPostingsCount: number) {

@@ -6,19 +6,19 @@
         <li (click)="onFilter(null)">
           All<span>({{ applicationCount.all }})</span>
         </li>
-        <li (click)="onFilter(1)">
+        <li (click)="onFilter('Pending')">
           Pending<span>({{ applicationCount.pending }})</span>
         </li>
-        <li (click)="onFilter(2)">
+        <li (click)="onFilter('Contacted')">
           Contacted<span>({{ applicationCount.contacted }})</span>
         </li>
-        <li (click)="onFilter(3)">
+        <li (click)="onFilter('Interviewed')">
           Interviewed<span>({{ applicationCount.interviewed }})</span>
         </li>
-        <li (click)="onFilter(4)">
+        <li (click)="onFilter('Hired')">
           Interviewed<span>({{ applicationCount.hired }})</span>
         </li>
-        <li (click)="onFilter(5)">
+        <li (click)="onFilter('Rejected')">
           Rejected<span>({{ applicationCount.rejected }})</span>
         </li>
       </ul>
