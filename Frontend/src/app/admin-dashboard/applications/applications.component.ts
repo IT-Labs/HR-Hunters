@@ -22,7 +22,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   applicationQP = {
     postsPerPage: 10,
     currentPage: 1,
-    currentSortBy: "posted",
+    currentSortBy: "postedOn",
     lastSortBy: "",
     currentSortDirection: 0,
     currentFilter: 'status',
@@ -52,7 +52,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   }
 
   buildQueryParams(data) {
-    return `?pagesize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
   }
 
   calculatePagination(applicationCount: number) {

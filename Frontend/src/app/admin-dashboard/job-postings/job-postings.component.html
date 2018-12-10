@@ -15,13 +15,13 @@
         <li (click)="onFilter(null)">
           All<span>({{ jobPostingsCount.all }})</span>
         </li>
-        <li (click)="onFilter(1)">
+        <li (click)="onFilter('Approved')">
           Aproved<span>({{ jobPostingsCount.approved }})</span>
         </li>
-        <li (click)="onFilter(2)">
+        <li (click)="onFilter('awaitingApproval')">
           Pending<span>({{ jobPostingsCount.pending }})</span>
         </li>
-        <li (click)="onFilter(3)">
+        <li (click)="onFilter('Expired')">
           Expired<span>({{ jobPostingsCount.expired }})</span>
         </li>
       </ul>
