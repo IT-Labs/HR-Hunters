@@ -45,11 +45,11 @@ namespace HRHunters.Common.ExtensionMethods
             //Convert first character from client side to upper to match the model naming convention
             sortedBy = char.ToUpper(sortedBy[0]) + sortedBy.Substring(1);
             filterBy = filterBy != null ? char.ToUpper(filterBy[0]) + filterBy.Substring(1) : "";
-            filterQuery = filterQuery != null ? char.ToUpper(filterQuery[0]) + filterQuery.Substring(1) : "";
+            if(filterBy.Equals("Status"))
+                filterQuery = filterQuery != null ? char.ToUpper(filterQuery[0]) + filterQuery.Substring(1) : "";
             var filter = typeof(T).GetProperty(filterBy);
             if (!string.IsNullOrWhiteSpace(filterBy))
             {
-                filter = typeof(T).GetProperty(filterBy);
                 a = a.AsQueryable().WhereIf(filterBy != null, x => filter.GetValue(x, null).Equals(filterQuery));
 
             }

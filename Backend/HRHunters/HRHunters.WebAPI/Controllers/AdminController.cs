@@ -33,19 +33,19 @@ namespace HRHunters.WebAPI.Controllers
         }
         //Test methods
         [HttpGet("applicants")]
-        public ActionResult<IEnumerable<ApplicationInfo>> GetMultipleApplicants(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ActionResult<ApplicantResponse> GetMultipleApplicants(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             return Ok(_applicantManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
 
         [HttpGet("applications")]
-        public ActionResult<IEnumerable<ApplicationInfo>> GetMultipleApplications(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ActionResult<ApplicationResponse> GetMultipleApplications(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
 
         [HttpGet("jobs")]
-        public ActionResult<IEnumerable<JobInfo>> GetMultipleJobPosting(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ActionResult<JobResponse> GetMultipleJobPosting(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             return Ok(_jobManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
@@ -57,7 +57,7 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpGet("clients")]
-        public ActionResult<IEnumerable<ClientInfo>> GetMultipleClients(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ActionResult<ClientResponse> GetMultipleClients(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
