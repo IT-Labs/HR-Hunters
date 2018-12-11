@@ -5,6 +5,7 @@ using System.Text;
 
 namespace HRHunters.Common.Requests
 {
+
     public class SearchRequest
     {
         public int PageSize = 10;
@@ -14,4 +15,5 @@ namespace HRHunters.Common.Requests
         public string FilterBy = "";
         public string FilterQuery = "";
     }
+
 }
