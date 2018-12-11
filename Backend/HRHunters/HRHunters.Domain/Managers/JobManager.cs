@@ -67,6 +67,7 @@ namespace HRHunters.Domain.Managers
             response.Approved = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Approved);
             response.Pending = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Pending);
             response.Rejected = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Rejected);
+            response.Expired = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Expired);
 
             return response;
         }
