@@ -54,12 +54,43 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   }
 
   buildQueryParams(data) {
-    
     if (data.currentFilter === null) {
     return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
     }
-    
     return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
+  }
+
+  buildJobPostingDataOnUpdate(
+    id: number,
+    companyName: string,
+    companyEmail: string,
+    jobTitle: string,
+    dateFrom: string,
+    dateTo: string,
+    companyLocation: string,
+    description: string,
+    jobType: string,
+    education: string,
+    status: string,
+    experience: number
+  ) {
+    let jobPostingData: JobPosting;
+    jobPostingData = {
+      id: id,
+      companyName: companyName,
+      companyEmail: companyEmail,
+      jobTitle: jobTitle,
+      dateFrom: dateFrom,
+      dateTo: dateTo,
+      companyLocation: companyLocation,
+      description: description,
+      jobType: jobType,
+      education: education,
+      status: status,
+      experience: experience
+    };
+
+    return jobPostingData;
   }
 
   calculatePagination(jobPostingsCount: number) {
@@ -140,21 +171,22 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
       (currentId === this.jobPostings[i].id) && (currentJobPosting = this.jobPostings[i]);
     }
 
-    this.jobPostingService.updateJobPosting(
+    const jobPostingData = this.buildJobPostingDataOnUpdate(
       currentId,
       currentJobPosting.companyName,
       currentJobPosting.companyEmail,
-      currentJobPosting.logo,
       currentJobPosting.jobTitle,
       currentJobPosting.dateFrom,
       currentJobPosting.dateTo,
-      currentJobPosting.location,
+      currentJobPosting.companyLocation,
       currentJobPosting.description,
       currentJobPosting.jobType,
       currentJobPosting.education,
       currentStatus,
       currentJobPosting.experience
-    );
+    )
+
+    this.jobPostingService.updateJobPosting(jobPostingData);
   }
 
   ngOnDestroy() {
