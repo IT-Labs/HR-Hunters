@@ -81,7 +81,7 @@ export class ClientRegisterComponent {
       null, null,
       this.clientRegisterForm.value.clientEmail,
       this.clientRegisterForm.value.clientPassword,
-      1
+      2
     );
   }
 
