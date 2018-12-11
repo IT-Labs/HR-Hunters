@@ -27,7 +27,7 @@ export class JobPostingService {
   getJobPostings(queryParams) {
     this.http
       .get<{
-        jobPostings: JobPosting[];
+        jobPostings: any[];
         maxJobPosts: number;
         approved: number;
         pending: number;

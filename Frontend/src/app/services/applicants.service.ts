@@ -43,7 +43,7 @@ export class ApplicantService {
                 firstName: applicant.firstName,
                 lastName: applicant.lastName,
                 photo: applicant.photo,
-                phone: applicant.phone
+                phoneNumber: applicant.phoneNumber
               };
             }),
             maxApplicants: applicantsData.maxApplicants
@@ -65,7 +65,7 @@ export class ApplicantService {
     firstName: string,
     lastName: string,
     photo: File | string,
-    phone: string
+    phoneNumber: string
   ) {
     let applicantData: Applicant | FormData;
     if (typeof photo === "object") {
@@ -75,7 +75,7 @@ export class ApplicantService {
       applicantData.append("firstName",firstName);
       applicantData.append("lastName",lastName);
       applicantData.append("photo", photo);
-      applicantData.append("phone", phone);
+      applicantData.append("phoneNumber", phoneNumber);
     
     } else {
       applicantData = {
@@ -84,7 +84,7 @@ export class ApplicantService {
         firstName: firstName,
         lastName: lastName,
         photo: photo,
-        phone: phone
+        phoneNumber: phoneNumber
      
       }
     }

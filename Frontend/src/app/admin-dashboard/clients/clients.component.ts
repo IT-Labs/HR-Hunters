@@ -22,7 +22,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     currentSortBy: "companyName",
     lastSortBy: "",
     currentSortDirection: 1,
-    currentFilter: 'status',
+    currentFilter: null,
     currentFilterQuery: null
   }
 
@@ -47,6 +47,11 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   }
   
   buildQueryParams(data) {
+
+    if (data.currentFilter === null) {
+    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+    }
+
     return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
   }
 
