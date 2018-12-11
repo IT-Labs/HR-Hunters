@@ -71,8 +71,7 @@ namespace HRHunters.Domain.Managers
             var client = _repo.GetOne<Client>(filter: x => x.Id == id,
                                                     includeProperties: $"{nameof(User)},{nameof(Client.JobPostings)}");
 
-            var statusToUpdate = client.Status;
-            Enum.TryParse(status, out statusToUpdate);
+            Enum.TryParse(status, out ClientStatus statusToUpdate);
             client.Status = statusToUpdate;
             _repo.Update(client, "Admin");
             return new ClientInfo

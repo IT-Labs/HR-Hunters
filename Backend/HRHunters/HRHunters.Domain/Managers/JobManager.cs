@@ -144,8 +144,13 @@ namespace HRHunters.Domain.Managers
 
         }
 
-        public JobInfo UpdateJob(int id, string status, JobUpdate jobUpdate)
+        public GeneralResponse UpdateJob(int id, string status, JobUpdate jobUpdate)
         {
+            var response = new GeneralResponse()
+            {
+                Succeeded = true,
+                Errors = new Dictionary<string, List<string>>(),
+            };
             var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
             if (!string.IsNullOrEmpty(status))
@@ -168,10 +173,17 @@ namespace HRHunters.Domain.Managers
                 jobPost.DateFrom = date;
                 DateTime.TryParse(jobUpdate.DateTo, out date);
                 jobPost.DateTo = date;
+            }else
+            {
+                var list = new List<string>();
+                list.Add("Invalid input");
+                response.Errors.Add("Error", list);
+                response.Succeeded = false;
+                return response;
             }
             _repo.Update(jobPost, "Admin");
 
-            return ToJobInfo(jobPost);
+            return response;
         }
     }
 }
