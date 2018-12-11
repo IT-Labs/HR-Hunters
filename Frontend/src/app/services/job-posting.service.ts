@@ -9,8 +9,6 @@ import { environment } from "../../environments/environment.prod";
 @Injectable({ providedIn: "root" })
 export class JobPostingService {
   baseUrl = environment.baseUrl;
-  // Local list of job postings
-  private jobPostings: JobPosting[] = [];
 
   // Observable watching when JobPosings get updated
   private jobPostingsUpdated = new Subject<{
@@ -27,49 +25,19 @@ export class JobPostingService {
   getJobPostings(queryParams) {
     this.http
       .get<{
-        jobPostings: any[];
-        maxJobPosts: number;
+        jobPostings: JobPosting[];
+        maxJobPostings: number;
         approved: number;
         pending: number;
         expired: number;
-      }>(this.baseUrl + '/Admin/jobs' + queryParams)
-      .pipe(
-        map(jobPostingData => {
-          return {
-            jobPostings: jobPostingData.jobPostings.map(jobPost => {
-              return {
-                id: jobPost.id,
-                jobTitle: jobPost.jobTitle,
-                jobType: jobPost.jobType,
-                dateFrom: jobPost.dateFrom,
-                dateTo: jobPost.dateTo,
-                description: jobPost.description,
-                education: jobPost.education,
-                status: jobPost.status,
-                experience: jobPost.experience,
-                companyName: jobPost.companyName,
-                companyEmail: jobPost.companyEmail,
-                location: jobPost.location,
-                logo: jobPost.logo,
-                allApplicationsCount: jobPost.allApplicationsCount,
-                activeApplicationsCount: jobPost.activeApplicationsCount
-              };
-            }),
-            maxJobPosts: jobPostingData.maxJobPosts,
-            approved: jobPostingData.approved,
-            pending: jobPostingData.pending,
-            expired: jobPostingData.expired
-          };
-        })
-      )
-      .subscribe(transformedJobPostingData => {
-        this.jobPostings = transformedJobPostingData.jobPostings;
+      }>(this.baseUrl + "/Jobs" + queryParams)
+      .subscribe(jobPostingData => {
         this.jobPostingsUpdated.next({
-          jobPostings: this.jobPostings,
-          jobPostingCount: transformedJobPostingData.maxJobPosts,
-          approved: transformedJobPostingData.approved,
-          pending: transformedJobPostingData.pending,
-          expired: transformedJobPostingData.expired
+          jobPostings: jobPostingData.jobPostings,
+          jobPostingCount: jobPostingData.maxJobPostings,
+          approved: jobPostingData.approved,
+          pending: jobPostingData.pending,
+          expired: jobPostingData.expired
         });
       });
   }
@@ -80,98 +48,20 @@ export class JobPostingService {
   }
 
   // Adding new job posting
-  addJobPosting(
-    companyName: string,
-    companyEmail: string,
-    logo: string | File,
-    id: number | null,
-    jobTitle: string,
-    dateFrom: string,
-    dateTo: string,
-    location: string,
-    description: string,
-    jobType: string,
-    education: string,
-    status: string,
-    experience: number
-  ) {
-    const clientData = new FormData();
-    clientData.append("companyName", companyName);
-    clientData.append("companyEmail", companyEmail);
-    clientData.append("logo", logo, companyName);
-    const jobPostingData = {
-      id: id,
-      jobTitle: jobTitle,
-      dateFrom: dateFrom,
-      dateTo: dateTo,
-      location: location,
-      description: description,
-      jobType: jobType,
-      education: education,
-      status: status,
-      experience: experience
-    };
-    const newData = {
-      client: clientData,
-      jobPosing: jobPostingData
-    };
+  addJobPosting(jobPostingData) {
     this.http
-      .post<{ jobPosing: JobPosting }>("BACKEND_URL", newData)
+      .post<{ jobPosing: JobPosting }>("/Jobs", jobPostingData)
       .subscribe(response => {
         this.router.navigate(["admin-dashboard"]);
       });
   }
 
-  updateJobPosting(
-    id: number,
-    companyName: string,
-    companyEmail: string,
-    logo: File | string,
-    jobTitle: string,
-    dateFrom: string,
-    dateTo: string,
-    location: string,
-    description: string,
-    jobType: string,
-    education: string,
-    status: string,
-    experience: number
-  ) {
-    let jobPostingData: JobPosting | FormData;
-    if (typeof logo === "object") {
-      jobPostingData = new FormData();
-      jobPostingData.append("id", id.toString());
-      jobPostingData.append("companyName", companyName);
-      jobPostingData.append("companyEmail", companyEmail);
-      jobPostingData.append("logo", logo, companyName);
-      jobPostingData.append("jobTitle", jobTitle);
-      jobPostingData.append("dateFrom", dateFrom);
-      jobPostingData.append("dateTo", dateTo);
-      jobPostingData.append("location", location);
-      jobPostingData.append("description", description);
-      jobPostingData.append("jobType", jobType);
-      jobPostingData.append("education", education);
-      jobPostingData.append("status", status);
-      jobPostingData.append("experience", experience.toString());
-    } else {
-      jobPostingData = {
-        id: id,
-        companyName: companyName,
-        companyEmail: companyEmail,
-        logo: logo,
-        jobTitle: jobTitle,
-        dateFrom: dateFrom,
-        dateTo: dateTo,
-        location: location,
-        description: description,
-        jobType: jobType,
-        education: education,
-        status: status,
-        experience: experience
-      };
-    }
+  updateJobPosting(jobPostingData) {
     this.http
-      .put("http://localhost:3000/dataJPupdate" + id, jobPostingData)
+      .put(
+        "/Jobs" + jobPostingData.id,
+        jobPostingData
+      )
       .subscribe(response => {});
   }
 }

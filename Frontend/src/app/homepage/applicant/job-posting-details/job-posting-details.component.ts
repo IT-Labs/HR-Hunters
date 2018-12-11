@@ -24,8 +24,7 @@ export class JobPostingDetailsComponent implements OnInit {
     education: 'High-school',
     experience: 5,
     id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
+    companyLocation: 'Skopje',
     status: 'Active'
   }
 

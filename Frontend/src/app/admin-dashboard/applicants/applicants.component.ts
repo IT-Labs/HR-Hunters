@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Applicant } from "src/app/models/applicant.model";
 import { Subscription } from "rxjs";
-import { ApplicantService } from "src/app/services/applicants.service";
+import { ApplicantService } from "src/app/services/applicant.service";
 
 @Component({
   selector: "app-ad-applicants",
@@ -41,7 +41,38 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
   }
 
   buildQueryParams(data) {
-    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${
+      data.currentPage
+    }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+  }
+
+  buildApplicantDataOnUpdate(
+    id: number,
+    email: string,
+    firstName: string,
+    lastName: string,
+    photo: File | string,
+    phoneNumber: string
+  ) {
+    let applicantData: Applicant | FormData;
+    if (typeof photo === "object") {
+      applicantData = new FormData();
+      applicantData.append("id", id.toString());
+      applicantData.append("email", email);
+      applicantData.append("firstName", firstName);
+      applicantData.append("lastName", lastName);
+      applicantData.append("photo", photo);
+      applicantData.append("phoneNumber", phoneNumber);
+    } else {
+      applicantData = {
+        id: id,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        photo: photo,
+        phoneNumber: phoneNumber
+      };
+    }
   }
 
   calculatePagination(applicantsCount: number) {
