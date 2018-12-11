@@ -47,12 +47,46 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   }
   
   buildQueryParams(data) {
-
     if (data.currentFilter === null) {
     return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
     }
-
     return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
+  }
+
+  buildClientDataOnUpdate(
+    id: number,
+    email: string,
+    companyName: string,
+    logo: File | string,
+    activeJobs: number,
+    allJobs: number,
+    status: string,
+    location: string
+  ) {
+    let clientData: Client | FormData;
+    if (typeof logo === "object") {
+      clientData = new FormData();
+      clientData.append("id", id.toString());
+      clientData.append("email", email);
+      clientData.append("companyName", companyName);
+      clientData.append("logo", logo, companyName);
+      clientData.append("activeJobs", activeJobs.toString());
+      clientData.append("allJobs", allJobs.toString());
+      clientData.append("status", status);
+      clientData.append("location", location);
+    } else {
+      clientData = {
+        id: id,
+        email: email,
+        companyName: companyName,
+        logo: logo,
+        activeJobs: activeJobs,
+        allJobs: allJobs,
+        status: status,
+        location: location
+      };
+    }
+    return clientData;
   }
 
   calculatePagination(applicationCount: number) {
@@ -124,7 +158,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.clientService.updateClient(
+    let clientData = this.buildClientDataOnUpdate(
       currentId,
       currentClient.email,
       currentClient.companyName,
@@ -134,6 +168,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       currentStatus,
       currentClient.location
     );
+    
+    this.clientService.updateClient(clientData);
   }
 
   ngOnDestroy() {

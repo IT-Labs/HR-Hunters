@@ -52,12 +52,34 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   }
 
   buildQueryParams(data) {
-  
     if (data.currentFilter === null) {
       return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
     }
-    
     return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
+  }
+
+  buildApplicationsDataOnUpdate(
+    id: number,
+    applicantFirstName: string,
+    applicantLastName: string,
+    applicantEmail: string,
+    jobTitle: string,
+    experience: number,
+    postedOn: Date,
+    status: string
+  ) {
+    let applicationData: Application = {
+      id: id,
+      applicantFirstName: applicantFirstName,
+      applicantLastName: applicantLastName,
+      applicantEmail: applicantEmail,
+      jobTitle: jobTitle,
+      experience: experience,
+      postedOn: postedOn,
+      status: status
+    };
+
+    return applicationData;
   }
 
   calculatePagination(applicationCount: number) {
@@ -137,7 +159,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.applicationService.updateApplication(
+    const applicationData = this.buildApplicationsDataOnUpdate(
       currentId,
       currentApplication.applicantFirstName,
       currentApplication.applicantLastName,
@@ -146,7 +168,9 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       currentApplication.experience,
       currentApplication.postedOn,
       currentStatus
-    );
+    )
+
+    this.applicationService.updateApplication(applicationData);
   }
 
   ngOnDestroy() {

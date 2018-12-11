@@ -9,8 +9,6 @@ import { environment } from "../../environments/environment.prod";
 @Injectable({ providedIn: "root" })
 export class ClientService {
   baseUrl = environment.baseUrl;
-  // Local list of clients
-  private clients: Client[] = [];
 
   // Observable watching when clients get updated
   private clientsUpdated = new Subject<{
@@ -35,74 +33,43 @@ export class ClientService {
         maxClients: number;
         active: number;
         inactive: number;
-      }>(this.baseUrl + '/Admin/clients' + queryParams)
-      .pipe(
-        map(clientsData => {
-          return {
-            clients: clientsData.clients.map(client => {
-              return {
-                id: client.id,
-                email: client.email,
-                companyName: client.companyName,
-                logo: client.logo,
-                activeJobs: client.activeJobs,
-                allJobs: client.allJobs,
-                status: client.status,
-                location: client.location
-              };
-            }),
-            maxClients: clientsData.maxClients,
-            active: clientsData.active,
-            inactive: clientsData.inactive
-          };
-        })
-      )
-      .subscribe(transformedClientsData => {
-        this.clients = transformedClientsData.clients;
+      }>(this.baseUrl + "/Clients" + queryParams)
+      .subscribe(clientsData => {
         this.clientsUpdated.next({
-          clients: this.clients,
-          clientsCount: transformedClientsData.maxClients,
-          active: transformedClientsData.active,
-          inactive: transformedClientsData.inactive
+          clients: clientsData.clients,
+          clientsCount: clientsData.maxClients,
+          active: clientsData.active,
+          inactive: clientsData.inactive
         });
       });
   }
 
-  updateClient(
-    id: number,
-    email: string,
-    companyName: string,
-    logo: File | string,
-    activeJobs: number,
-    allJobs: number,
-    status: string,
-    location: string
-  ) {
-    let clientData: Client | FormData;
-    if (typeof logo === "object") {
-      clientData = new FormData();
-      clientData.append("id", id.toString());
-      clientData.append("email", email);
-      clientData.append("companyName", companyName);
-      clientData.append("logo", logo, companyName);
-      clientData.append("activeJobs", activeJobs.toString());
-      clientData.append("allJobs", allJobs.toString());
-      clientData.append("status", status);
-      clientData.append("location", location);
-    } else {
-      clientData = {
-        id: id,
-        email: email,
-        companyName: companyName,
-        logo: logo,
-        activeJobs: activeJobs,
-        allJobs: allJobs,
-        status: status,
-        location: location
-      };
-    }
+  getAllClients() {
     this.http
-      .put("http://localhost:3000/dataJPupdate" + id, clientData)
+      .get<{
+        clients: Client[];
+        maxClients: number;
+        active: number;
+        inactive: number;
+      }>(this.baseUrl + "/Clients/existing")
+      .subscribe(
+        clientsData => {
+          this.clientsUpdated.next({
+            clients: clientsData.clients,
+            clientsCount: clientsData.maxClients,
+            active: clientsData.active,
+            inactive: clientsData.inactive
+          });
+        },
+        error => {
+          console.log(error);
+        }
+      );
+  }
+
+  updateClient(clientData) {
+    this.http
+      .put(this.baseUrl + "/Clients/clients" + clientData.id, clientData)
       .subscribe(response => {});
   }
 }

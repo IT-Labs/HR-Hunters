@@ -61,7 +61,6 @@ export class AddJobPostingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-
     this.newJobPostingFormHP.controls.durationFrom.valueChanges.subscribe(x =>
       this.newJobPostingFormHP.controls.durationTo.updateValueAndValidity()
     );
@@ -116,26 +115,27 @@ export class AddJobPostingComponent implements OnInit {
     this.newJobPostingFormHP.controls['education'].markAsTouched();
     this.newJobPostingFormHP.controls['experience'].markAsTouched();
     this.newJobPostingFormHP.controls['jobType'].markAsTouched();
+    
     console.log(this.newJobPostingFormHP)
     
     if (
       this.newJobPostingFormHP.valid
       ) {
-      this.jobPostingService.addJobPosting(
-        'company name',
-        'company mail',
-        'company logo',
-        1,
-        this.newJobPostingFormHP.value.title,
-        this.newJobPostingFormHP.value.DateFrom,
-        this.newJobPostingFormHP.value.DateTo,
-        this.newJobPostingFormHP.value.location,
-        this.newJobPostingFormHP.value.description,
-        this.newJobPostingFormHP.value.jobType,
-        this.newJobPostingFormHP.value.education,
-        "Approved",
-        this.newJobPostingFormHP.value.experience
-      );
+      // this.jobPostingService.addJobPosting(
+      //   'company name',
+      //   'company mail',
+      //   'company logo',
+      //   1,
+      //   this.newJobPostingFormHP.value.title,
+      //   this.newJobPostingFormHP.value.DateFrom,
+      //   this.newJobPostingFormHP.value.DateTo,
+      //   this.newJobPostingFormHP.value.location,
+      //   this.newJobPostingFormHP.value.description,
+      //   this.newJobPostingFormHP.value.jobType,
+      //   this.newJobPostingFormHP.value.education,
+      //   "Approved",
+      //   this.newJobPostingFormHP.value.experience
+      // );
       this.router.navigate(["/client"]);
     }
   }

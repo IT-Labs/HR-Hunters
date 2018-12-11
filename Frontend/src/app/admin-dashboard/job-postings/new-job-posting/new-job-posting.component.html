@@ -8,14 +8,16 @@
       <label
         class="btn btn-secondary dash__heading--radio-btn"
         [ngClass]="{ active: !existingCompany }"
-        (click)="onCompanyRadioBtnClick('new')"
+        (click)="onCompanyRadioBtnClick()"
+        (click)="existingCompany = false"
       >
         <input type="radio" name="options" autocomplete="off" /> Add New Company
       </label>
       <label
         class="btn btn-secondary dash__heading--radio-btn"
         [ngClass]="{ active: existingCompany }"
-        (click)="onCompanyRadioBtnClick('existing')"
+        (click)="onCompanyRadioBtnClick()"
+        (click)="existingCompany = true"
       >
         <input type="radio" name="options" autocomplete="off" /> Select Existing
         Company
@@ -50,14 +52,14 @@
         />
         <div
           class="dropdown-container"
-          *ngIf="filteredCompanies.length > 0 && formFocus.companyName"
+          *ngIf="clients.length > 0 && formFocus.companyName"
         >
           <div class="dropdown-menu show" aria-labelledby="dashidCompanyName">
             <span
               class="dropdown-item"
-              *ngFor="let company of filteredCompanies"
-              (click)="populateCompanyInfo($event)"
-              >{{ company.companyName }}</span
+              *ngFor="let client of clients"
+              (click)="populateCompanyInfo($event, client.id)"
+              >{{ client.companyName }}</span
             >
           </div>
         </div>
@@ -110,9 +112,7 @@
           class="alert dash__form--alert-msg"
         >
           <div
-            *ngIf="
-              newJobPostingForm.controls['applicantEmail'].errors?.pattern
-            "
+            *ngIf="newJobPostingForm.controls['applicantEmail'].errors?.pattern"
           >
             Email must be in valid format.
           </div>
@@ -159,52 +159,9 @@
             Location must be up to 50 characters long.
           </div>
         </div>
-
-        <!-- LOGO IMAGE -->
-
-        <label for="dashid__logo" class="dash__form--label"
-          >Logo <span class="u-required-star">*</span></label
-        >
-        <button
-          class="btn dash__heading--btn"
-          type="button"
-          id="browse-btn"
-          (click)="filePicker.click()"
-          (focus)="onFocus('logo')"
-        >
-          Browse
-        </button>
-        <input
-          type="file"
-          id="dashid__logo"
-          class="dash__form--input"
-          #filePicker
-          (change)="onImagePicked($event)"
-        />
-
-        <div
-          class="dash__form--img-preview"
-          *ngIf="imagePreview && newJobPostingForm.controls['logo'].valid"
-        >
-          <img
-            [src]="imagePreview"
-            [alt]="newJobPostingForm.value.companyName"
-          />
-        </div>
-        <div
-          *ngIf="!newJobPostingForm.controls['logo'].valid && !imageValid"
-          class="alert dash__form--alert-msg"
-        >
-          Logo is required.<br /><br />
-
-          Please upload a propper image file in .png or .jpg format. Maximum
-          size for the image is 600px x 600px
-        </div>
       </div>
-
       <div class="dash__form--section">
         <p>Job information</p>
-
         <!-- TITLE -->
 
         <label for="dashid__title" class="dash__form--label"
@@ -367,8 +324,8 @@
           class="dash__form--date"
           min="2018-01-01"
           max="2019-12-31"
-          formControlName="durationFrom"
-          (focus)="onFocus('durationFrom')"
+          formControlName="dateFrom"
+          (focus)="onFocus('dateFrom')"
         />
         <span>To:</span>
         <input
@@ -377,32 +334,33 @@
           class="dash__form--date"
           min="2018-01-01"
           max="2019-12-31"
-          formControlName="durationTo"
-          (focus)="onFocus('durationTo')"
+          formControlName="dateTo"
+          (focus)="onFocus('dateTo')"
         />
 
         <div
           *ngIf="
-            (!newJobPostingForm.controls['durationFrom'].valid &&
-              (newJobPostingForm.controls['durationFrom'].dirty ||
-                newJobPostingForm.controls['durationFrom'].touched)) ||
-            (!newJobPostingForm.controls['durationTo'].valid &&
-              (newJobPostingForm.controls['durationTo'].dirty ||
-                newJobPostingForm.controls['durationTo'].touched))
+            (!newJobPostingForm.controls['dateFrom'].valid &&
+              (newJobPostingForm.controls['dateFrom'].dirty ||
+                newJobPostingForm.controls['dateFrom'].touched)) ||
+            (!newJobPostingForm.controls['dateTo'].valid &&
+              (newJobPostingForm.controls['dateTo'].dirty ||
+                newJobPostingForm.controls['dateTo'].touched))
           "
           class="alert dash__form--alert-msg"
         >
           <div
             *ngIf="
-              newJobPostingForm.controls['durationFrom'].errors?.required ||
-              newJobPostingForm.controls['durationTo'].errors?.required
+              newJobPostingForm.controls['dateFrom'].errors?.required ||
+              newJobPostingForm.controls['dateTo'].errors?.required
             "
           >
             Duration is required.
           </div>
 
-          <div *ngIf="newJobPostingForm.controls.durationTo.errors">
-            Start date must be equal to today's date or a later date. End date can't be earlier or equal to start date.
+          <div *ngIf="newJobPostingForm.controls.dateTo.errors">
+            Start date must be equal to today's date or a later date. End date
+            can't be earlier or equal to start date.
           </div>
         </div>
       </div>
@@ -412,7 +370,7 @@
         class="btn dash__form--btn"
         [disabled]="!newJobPostingForm.valid"
       >
-      <!--  && validExperience -->
+        <!-- && validExperience -->
         Publish Job
       </button>
     </form>
