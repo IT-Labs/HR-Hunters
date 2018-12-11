@@ -13,10 +13,14 @@ namespace HRHunters.Common.CustomValidationAttributes
         {
             PropertyName = propertyName;
             DesiredValue = desiredvalue;
+            
         }
+
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
-            if (value != null) { return ValidationResult.Success; }
+            if (value != null) {
+                return ValidationResult.Success;
+            }
             object instance = context.ObjectInstance;
             Type type = instance.GetType();
             object proprtyvalue = type.GetProperty(PropertyName).GetValue(instance, null);

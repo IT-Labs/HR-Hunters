@@ -20,7 +20,7 @@ namespace HRHunters.Domain.Managers
         }
         public ClientResponse GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
-            var response = new ClientResponse() { Client = new List<ClientInfo>()};
+            var response = new ClientResponse() { Clients = new List<ClientInfo>()};
 
             var query = _repo.GetAll<Client>(
                 includeProperties: $"{nameof(User)}," +
@@ -38,7 +38,7 @@ namespace HRHunters.Domain.Managers
                                       })
                                       .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                       .ToList();
-            response.Client.AddRange(query);
+            response.Clients.AddRange(query);
             response.MaxClients = _repo.GetAll<Client>().Count();
             response.Active = _repo.GetCount<Client>(x => x.Status.Equals(ClientStatus.Active));
             response.Inactive= _repo.GetCount<Client>(x => x.Status.Equals(ClientStatus.Inactive));

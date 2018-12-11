@@ -46,9 +46,9 @@ namespace HRHunters.Common.ExtensionMethods
             if(filterBy.Equals("Status"))
                 filterQuery = !string.IsNullOrEmpty(filterQuery) ? char.ToUpper(filterQuery[0]) + filterQuery.Substring(1) : "";
             var filter = typeof(T).GetProperty(filterBy);
-            if (!string.IsNullOrWhiteSpace(filterBy))
+            if (!string.IsNullOrWhiteSpace(filterBy) && filter != null )
             {
-                a = a.AsQueryable().WhereIf(filterBy != null, x => filter.GetValue(x, null).Equals(filterQuery));
+                a = a.Where(x => filter.GetValue(x, null).Equals(filterQuery));
 
             }
             var sort = typeof(T).GetProperty(sortedBy);

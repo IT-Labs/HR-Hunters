@@ -63,12 +63,12 @@ namespace HRHunters.Domain.Managers
             return userToReturn;
         }
 
-        public async Task<UserRegisterReturnModel> Register(UserRegisterModel userRegisterModel)
+        public async Task<GeneralResponse> Register(UserRegisterModel userRegisterModel)
         {
             var userToCreate = _mapper.Map<User>(userRegisterModel);
             userToCreate.UserName = userToCreate.Email.ToLower();
             var role = userRegisterModel.UserType == UserType.APPLICANT ? "Applicant" : "Client";
-            var userToReturn = new UserRegisterReturnModel()
+            var userToReturn = new GeneralResponse()
             {
                 Succeeded = false,
                 Errors= new Dictionary<string, List<string>>()

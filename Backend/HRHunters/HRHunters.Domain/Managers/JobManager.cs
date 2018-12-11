@@ -14,6 +14,7 @@ using HRHunters.Common.Requests.Admin;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using System.Dynamic;
+using HRHunters.Common.Responses;
 
 namespace HRHunters.Domain.Managers
 {
@@ -34,18 +35,17 @@ namespace HRHunters.Domain.Managers
                 CompanyEmail = x.Client.User.Email,
                 CompanyName = x.Client.User.FirstName,
                 AllApplicationsCount = x.Applications.Count,
-                DateTo = x.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                DateTo = x.DateTo.ToString("yyyy/MM/dd"),
                 Id = x.Id,
                 JobTitle = x.Title,
                 JobType = x.EmpCategory.ToString(),
-                Location = x.Location,
                 Status = x.Status.ToString(),
             };
         }
 
         public JobResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery)
         {
-            var response = new JobResponse() { JobPosting = new List<JobInfo>() };
+            var response = new JobResponse() { JobPostings = new List<JobInfo>() };
             var query = _repo.GetAll<JobPosting>(
                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}")
                                         .Select(
@@ -62,7 +62,7 @@ namespace HRHunters.Domain.Managers
                                         })
                                         .Applyfilters(pageSize: pageSize, currentPage: currentPage, sortedBy: sortedBy, sortDir: sortDir, filterBy: filterBy, filterQuery: filterQuery)
                                         .ToList();
-            response.JobPosting.AddRange(query);
+            response.JobPostings.AddRange(query);
             response.MaxJobPosts = _repo.GetCount<JobPosting>();
             response.Approved = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Approved);
             response.Pending = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Pending);
@@ -79,14 +79,14 @@ namespace HRHunters.Domain.Managers
                 User user = new User()
                 {
                     FirstName = jobSubmit.CompanyName,
-                    Email = jobSubmit.Email,
+                    Email = jobSubmit.CompanyEmail,
                     UserName = jobSubmit.CompanyName,
                     CreatedBy = "Admin"
                 };
                 await _userManager.CreateAsync(user, "ClientDefaultPassword");
                 await _userManager.AddToRoleAsync(user, "Client");
                 company.User = user;
-                company.Location = jobSubmit.Location;
+                company.Location = "Default Location";
                 company.Status = ClientStatus.Active;
                 company.PhoneNumber = "+38978691342";
                 _repo.Create(company, "Admin");
@@ -111,32 +111,19 @@ namespace HRHunters.Domain.Managers
                 Education = educationType,
                 EmpCategory = jobType,
                 Title = jobSubmit.JobTitle,
-                Location = jobSubmit.Location,
                 NeededExperience = jobSubmit.Experience,
-                Status = JobPostingStatus.Approved
+                Status = JobPostingStatus.Approved,
             };
             _repo.Create(jobPost, "Admin");
-            return new
-            {
-                Message = "Successfuly created new job post."
-            };
+            return new GeneralResponse();
         }
 
         public JobInfo GetOneJobPosting(int id)
         {
+            var response = new JobResponse() { JobPostings = new List<JobInfo>() };
             var jobPost =  _repo.GetOne<JobPosting>(filter: x => x.Id == id, 
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
-            return new JobInfo()
-            {
-                CompanyEmail = jobPost.Client.User.Email,
-                CompanyName = jobPost.Client.User.FirstName,
-                AllApplicationsCount = jobPost.Applications.Count,
-                DateTo = jobPost.DateTo.ToString("yyyy/MM/dd"),
-                Id = jobPost.Id,
-                JobTitle = jobPost.Title,
-                JobType = jobPost.EmpCategory.ToString(),
-                Status = jobPost.Status.ToString(),
-            };
+            return ToJobInfo(jobPost);
 
         }
 
@@ -167,17 +154,7 @@ namespace HRHunters.Domain.Managers
             }
             _repo.Update(jobPost, "Admin");
 
-            return new JobInfo()
-            {
-                CompanyEmail = jobPost.Client.User.Email,
-                CompanyName = jobPost.Client.User.FirstName,
-                AllApplicationsCount = jobPost.Applications.Count,
-                DateTo = jobPost.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
-                Id = jobPost.Id,
-                JobTitle = jobPost.Title,
-                JobType = jobPost.EmpCategory.ToString(),
-                Status = jobPost.Status.ToString(),
-            };
+            return ToJobInfo(jobPost);
         }
     }
 }

@@ -153,9 +153,6 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<int>("EmpCategory");
 
-                    b.Property<string>("Location")
-                        .IsRequired();
-
                     b.Property<string>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");

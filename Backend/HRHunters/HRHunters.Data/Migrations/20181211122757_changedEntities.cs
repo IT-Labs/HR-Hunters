@@ -2,13 +2,17 @@
 
 namespace HRHunters.Data.Migrations
 {
-    public partial class newNewMig : Migration
+    public partial class changedEntities : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_Applications_JobPostings_JobPostingId",
                 table: "Applications");
+
+            migrationBuilder.DropColumn(
+                name: "Location",
+                table: "JobPostings");
 
             migrationBuilder.DropColumn(
                 name: "JobId",
@@ -35,6 +39,12 @@ namespace HRHunters.Data.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Applications_JobPostings_JobPostingId",
                 table: "Applications");
+
+            migrationBuilder.AddColumn<string>(
+                name: "Location",
+                table: "JobPostings",
+                nullable: false,
+                defaultValue: "");
 
             migrationBuilder.AlterColumn<int>(
                 name: "JobPostingId",
