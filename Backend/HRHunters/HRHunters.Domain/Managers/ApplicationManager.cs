@@ -2,6 +2,7 @@
 using HRHunters.Common.Enums;
 using HRHunters.Common.ExtensionMethods;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Requests;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
 using System;
@@ -22,7 +23,7 @@ namespace HRHunters.Domain.Managers
 
         
 
-        public ApplicationResponse GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
+        public ApplicationResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             var response = new ApplicationResponse() { Application = new List<ApplicationInfo>()};
 
