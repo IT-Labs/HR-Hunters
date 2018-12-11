@@ -25,7 +25,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     currentSortBy: "postedOn",
     lastSortBy: "",
     currentSortDirection: 0,
-    currentFilter: 'status',
+    currentFilter: null,
     currentFilterQuery: null
   };
   paginationSize: number[] = [];
@@ -52,6 +52,11 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   }
 
   buildQueryParams(data) {
+  
+    if (data.currentFilter === null) {
+      return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+    }
+    
     return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
   }
 
