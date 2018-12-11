@@ -20,7 +20,7 @@ namespace HRHunters.Domain.Managers
         }
         public ClientResponse GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
-            var response = new ClientResponse() { Client = new List<ClientInfo>()};
+            var response = new ClientResponse() { Clients = new List<ClientInfo>()};
 
             var query = _repo.GetAll<Client>(
                 includeProperties: $"{nameof(User)}," +
@@ -31,14 +31,14 @@ namespace HRHunters.Domain.Managers
                                           Id=x.UserId,
                                           CompanyName = x.User.FirstName,
                                           Email = x.User.Email,
-                                          Active = x.JobPostings.Count(y=>y.DateTo<DateTime.UtcNow),
+                                          ActiveJobs = x.JobPostings.Count(y=>y.DateTo<DateTime.UtcNow),
                                           AllJobs = x.JobPostings.Count,
                                           Status = x.Status.ToString(),
                                           Logo = "photo"
                                       })
                                       .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                       .ToList();
-            response.Client.AddRange(query);
+            response.Clients.AddRange(query);
             response.MaxClients = _repo.GetAll<Client>().Count();
             response.Active = _repo.GetCount<Client>(x => x.Status.Equals(ClientStatus.Active));
             response.Inactive= _repo.GetCount<Client>(x => x.Status.Equals(ClientStatus.Inactive));
@@ -46,23 +46,24 @@ namespace HRHunters.Domain.Managers
 
         }
 
-        public IEnumerable<ClientInfo> GetMultiple()
+        public ClientResponse GetMultiple()
         {
-            return _repo.GetAll<Client>(
+            var response = new ClientResponse() { Clients = new List<ClientInfo>() };
+
+            var query = _repo.GetAll<Client>(
                 includeProperties: $"{nameof(User)}," +
                                    $"{nameof(Client.JobPostings)}")
                                    .Select(
                                       x => new ClientInfo
                                       {
-                                          Id=x.UserId,
+                                          Id = x.UserId,
                                           CompanyName = x.User.FirstName,
                                           Email = x.User.Email,
-                                          Active = x.JobPostings.Count(y=>y.DateTo<DateTime.UtcNow),
-                                          AllJobs = x.JobPostings.Count,
-                                          Status = x.Status.ToString(),
-                                          Logo = "photo"
+                                          Location = x.Location
                                       })
                                       .ToList();
+            response.Clients.AddRange(query);
+            return response;
         }
 
         public ClientInfo UpdateClientStatus(int id, string status)
@@ -80,7 +81,7 @@ namespace HRHunters.Domain.Managers
                 CompanyName = client.User.FirstName,
                 Email = client.User.Email,
                 Location = client.Location,
-                Active = client.JobPostings.Count(x => x.DateTo < DateTime.UtcNow),
+                ActiveJobs = client.JobPostings.Count(x => x.DateTo < DateTime.UtcNow),
                 AllJobs = client.JobPostings.Count,
                 Status = client.Status.ToString(),
                 Logo = "Photo"

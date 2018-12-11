@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HRHunters.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20181206132331_newNewMig")]
-    partial class newNewMig
+    [Migration("20181211122757_changedEntities")]
+    partial class changedEntities
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -154,9 +154,6 @@ namespace HRHunters.Data.Migrations
                     b.Property<int>("Education");
 
                     b.Property<int>("EmpCategory");
-
-                    b.Property<string>("Location")
-                        .IsRequired();
 
                     b.Property<string>("ModifiedBy");
 

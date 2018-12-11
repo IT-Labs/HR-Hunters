@@ -12,7 +12,7 @@ namespace HRHunters.Common.Interfaces
     {
         ClientResponse GetMultiple(int pageSize, int currentPage, 
             string sortedBy, SortDirection sortDir, string filterBy, string filterQuery);
-        IEnumerable<ClientInfo> GetMultiple();
+        ClientResponse GetMultiple();
         ClientInfo UpdateClientStatus(int id, string status);
     }
 }

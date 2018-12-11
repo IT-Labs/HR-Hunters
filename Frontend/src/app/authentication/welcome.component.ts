@@ -12,11 +12,7 @@ export class WelcomeComponent implements OnInit {
   private userIsAuthenticated = false;
   private authStatusSub: Subscription;
 
-  selectedTab = {
-    applicant: false,
-    client: false,
-    admin: true
-  }
+  role = 3;
 
   constructor(private authService: AuthService) {}
 
@@ -29,18 +25,10 @@ export class WelcomeComponent implements OnInit {
       });
   }
 
-  onSelectTab(input: string) {
-    if (input === "applicant") {
-      this.selectedTab.applicant = true;
-      this.selectedTab.client = false;
-      this.selectedTab.admin = false;
-    } else if (input === "client") {
-      this.selectedTab.applicant = false;
-      this.selectedTab.client = true;
-      this.selectedTab.admin = false;
-    }
+  onSelectRole(role: number) {
+    this.role = role;
 
-    this.authService.selectRole(this.selectedTab)
+    this.authService.selectRole(this.role)
   }
 
   

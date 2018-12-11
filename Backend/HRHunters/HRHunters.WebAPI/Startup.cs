@@ -104,7 +104,7 @@ namespace HRHunters.WebAPI
                 {
                     if(actionContext.RouteData.Values["action"].Equals("Login"))
                         return new BadRequestObjectResult(new UserLoginReturnModel(actionContext.ModelState));
-                    return new BadRequestObjectResult(new UserRegisterReturnModel(actionContext.ModelState));
+                    return new BadRequestObjectResult(new GeneralResponse(actionContext.ModelState));
                 };
             });
             // Register the Swagger generator, defining 1 or more Swagger documents

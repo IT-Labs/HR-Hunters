@@ -57,10 +57,10 @@
                 Please enter your valid password.
               </div>
             </div>
-            <p class="auth-form__text" *ngIf="!role.admin">
+            <p class="auth-form__text" *ngIf="role === 1 || role === 2">
               You don't have an account?<br />Register
-              <a routerLink="/applicant-register" *ngIf="role.applicant">here</a>
-              <a routerLink="/client-register" *ngIf="role.client">here</a>.
+              <a routerLink="/applicant-register" *ngIf="role === 1">here</a>
+              <a routerLink="/client-register" *ngIf="role === 2">here</a>.
             </p>
             <button
               class="btn btn-auth"

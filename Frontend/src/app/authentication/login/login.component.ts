@@ -10,11 +10,7 @@ import { Router } from "@angular/router";
   styleUrls: ["./login.component.scss"]
 })
 export class LoginComponent implements OnInit {
-  role = {
-    applicant: false,
-    client: false,
-    admin: true
-  };
+  role = 3;
 
   authError;
   private authErrorStatusSub: Subscription;
@@ -27,26 +23,8 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.role === undefined) {
-      this.role = {
-        applicant: false,
-        client: false,
-        admin: true
-      };
-    }
-    const currentRole = this.authService.getRole();
-    if (currentRole) {
-      if (!currentRole.admin && (currentRole.applicant || currentRole.client)) {
-        this.role = this.authService.getRole();
-      } else {
-        this.role = {
-          applicant: false,
-          client: false,
-          admin: true
-        };
-      }
-    }
-
+    this.role = this.authService.getRole();
+    
     this.authErrorStatusSub = this.authService
       .getAuthErrorStatusListener()
       .subscribe(error => {

@@ -2,6 +2,7 @@
 using HRHunters.Common.Enums;
 using HRHunters.Common.ExtensionMethods;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Requests;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
 using System;
@@ -20,11 +21,24 @@ namespace HRHunters.Domain.Managers
             _repo = repo;
         }
 
-        
-
-        public ApplicationResponse GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
+        public ApplicationInfo ToApplicationInfo(Application application)
         {
-            var response = new ApplicationResponse() { Application = new List<ApplicationInfo>()};
+            return new ApplicationInfo()
+            {
+                ApplicantEmail = application.Applicant.User.Email,
+                ApplicantFirstName = application.Applicant.User.FirstName,
+                ApplicantLastName = application.Applicant.User.LastName,
+                Experience = application.Applicant.Experience,
+                Id = application.Id,
+                JobTitle = application.JobPosting.Title,
+                PostedOn = application.Date.ToString("yyyy/MM/dd"),
+                Status = application.Status.ToString()
+            };
+        }
+
+        public ApplicationResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        {
+            var response = new ApplicationResponse() { Applications = new List<ApplicationInfo>()};
 
             var query = _repo.GetAll<Application>(
                 includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
@@ -32,17 +46,18 @@ namespace HRHunters.Domain.Managers
                                    .Select(x => new ApplicationInfo
                                    {
                                         ApplicantEmail = x.Applicant.User.Email,
-                                        ApplicantName = x.Applicant.User.FirstName,
+                                        ApplicantFirstName = x.Applicant.User.FirstName,
+                                        ApplicantLastName = x.Applicant.User.LastName,
                                         Experience = x.Applicant.Experience,
                                         Id = x.Id,
                                         JobTitle = x.JobPosting.Title,
-                                        PostedOn = x.Date.ToString(),
+                                        PostedOn = x.Date.ToString("yyyy/MM/dd"),
                                         Status = x.Status.ToString()
                                    })
                                    .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                    .ToList();
 
-            response.Application.AddRange(query);
+            response.Applications.AddRange(query);
             response.MaxApplications = _repo.GetCount<Application>();
             response.Contacted = _repo.GetCount<Application>(x=>x.Status.Equals(ApplicationStatus.Contacted));
             response.Pending = _repo.GetCount<Application>(x => x.Status.Equals(ApplicationStatus.Pending));
@@ -61,16 +76,7 @@ namespace HRHunters.Domain.Managers
             Enum.TryParse(status, out statusToUpdate);
             application.Status = statusToUpdate;
             _repo.Update(application, "Admin");
-            return new ApplicationInfo()
-            {
-                ApplicantEmail = application.Applicant.User.Email,
-                ApplicantName = application.Applicant.User.FirstName,
-                Experience = application.Applicant.Experience,
-                Id = application.Id,
-                JobTitle = application.JobPosting.Title,
-                PostedOn = application.Date.ToString(),
-                Status = application.Status.ToString()
-            };
+            return ToApplicationInfo(application);
         }
     }
 }
