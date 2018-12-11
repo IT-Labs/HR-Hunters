@@ -27,7 +27,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     currentSortBy: "dateTo",
     lastSortBy: "",
     currentSortDirection: 0,
-    currentFilter: 'status',
+    currentFilter: null,
     currentFilterQuery: null
   }
 
@@ -54,6 +54,11 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   }
 
   buildQueryParams(data) {
+    
+    if (data.currentFilter === null) {
+    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+    }
+    
     return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
   }
 
@@ -102,7 +107,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     this.jobPostingService.getJobPostings(params);
   }
 
-  onFilter(filterBy: number) {
+  onFilter(filterBy: string) {
 
     if (filterBy === null) {
       this.jobPostingQP.currentFilter = null

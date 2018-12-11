@@ -79,9 +79,9 @@ export class ClientRegisterComponent {
     this.authService.registerUser(
       this.clientRegisterForm.value.clientName,
       null, null,
-      this.clientRegisterForm.value.applicantEmail,
-      this.clientRegisterForm.value.applicantPassword,
-      1
+      this.clientRegisterForm.value.clientEmail,
+      this.clientRegisterForm.value.clientPassword,
+      2
     );
   }
 

@@ -37,7 +37,7 @@ export class ApplicantRegisterComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.minLength(1),
-        Validators.maxLength(50),
+        Validators.maxLength(30),
         Validators.pattern("[a-zA-Z ]*")
       ])
     ],
@@ -46,7 +46,7 @@ export class ApplicantRegisterComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.minLength(1),
-        Validators.maxLength(50),
+        Validators.maxLength(30),
         Validators.pattern("[a-zA-Z ]*")
       ])
     ],
@@ -86,7 +86,7 @@ export class ApplicantRegisterComponent implements OnInit {
     this.authService.registerUser( null, this.applicantRegisterForm.value.applicantFirstName,
       this.applicantRegisterForm.value.applicantLastName,
       this.applicantRegisterForm.value.applicantEmail,
-      this.applicantRegisterForm.value.applicantPassword, 0
+      this.applicantRegisterForm.value.applicantPassword, 1
     );
   }
 
