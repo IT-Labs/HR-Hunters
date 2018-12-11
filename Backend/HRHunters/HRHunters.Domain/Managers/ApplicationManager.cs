@@ -32,11 +32,12 @@ namespace HRHunters.Domain.Managers
                                    .Select(x => new ApplicationInfo
                                    {
                                         ApplicantEmail = x.Applicant.User.Email,
-                                        ApplicantName = x.Applicant.User.FirstName,
+                                        ApplicantFirstName = x.Applicant.User.FirstName,
+                                        ApplicantLastName = x.Applicant.User.LastName,
                                         Experience = x.Applicant.Experience,
                                         Id = x.Id,
                                         JobTitle = x.JobPosting.Title,
-                                        PostedOn = x.Date.ToString(),
+                                        PostedOn = x.Date.ToString("yyyy/MM/dd"),
                                         Status = x.Status.ToString()
                                    })
                                    .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
@@ -64,7 +65,8 @@ namespace HRHunters.Domain.Managers
             return new ApplicationInfo()
             {
                 ApplicantEmail = application.Applicant.User.Email,
-                ApplicantName = application.Applicant.User.FirstName,
+                ApplicantFirstName = application.Applicant.User.FirstName,
+                ApplicantLastName = application.Applicant.User.LastName,
                 Experience = application.Applicant.Experience,
                 Id = application.Id,
                 JobTitle = application.JobPosting.Title,

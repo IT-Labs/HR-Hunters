@@ -33,7 +33,7 @@ namespace HRHunters.WebAPI.Controllers
         }
         //Test methods
         [HttpGet("applicants")]
-        public ActionResult<ApplicantResponse> GetMultipleApplicants(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ActionResult<ApplicantResponse> GetMultipleApplicants(int pageSize = 10, int currentPage = 1, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
             return Ok(_applicantManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }

@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Text;
 using HRHunters.Common.Entities;
 using System.Globalization;
+using System.Web;
 
 namespace HRHunters.Common.ExtensionMethods
 {
@@ -39,14 +40,11 @@ namespace HRHunters.Common.ExtensionMethods
         }
         public static IQueryable<T> Applyfilters<T>(this IQueryable<T> a, int pageSize = 3, int currentPage = 1, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = null, string filterQuery = null)
         {
-            if (string.IsNullOrWhiteSpace(sortedBy))
-                sortedBy = "Id";
-
             //Convert first character from client side to upper to match the model naming convention
             sortedBy = char.ToUpper(sortedBy[0]) + sortedBy.Substring(1);
-            filterBy = filterBy != null ? char.ToUpper(filterBy[0]) + filterBy.Substring(1) : "";
+            filterBy = !string.IsNullOrEmpty(filterBy) ? char.ToUpper(filterBy[0]) + filterBy.Substring(1) : "";
             if(filterBy.Equals("Status"))
-                filterQuery = filterQuery != null ? char.ToUpper(filterQuery[0]) + filterQuery.Substring(1) : "";
+                filterQuery = !string.IsNullOrEmpty(filterQuery) ? char.ToUpper(filterQuery[0]) + filterQuery.Substring(1) : "";
             var filter = typeof(T).GetProperty(filterBy);
             if (!string.IsNullOrWhiteSpace(filterBy))
             {
@@ -65,7 +63,14 @@ namespace HRHunters.Common.ExtensionMethods
             return a.Skip((currentPage - 1) * pageSize).Take(pageSize);
         }
 
+        public static string GetQueryString(this object obj)
+        {
+            var properties = from p in obj.GetType().GetProperties()
+                             where p.GetValue(obj, null) != null
+                             select p.Name + "=" + HttpUtility.UrlEncode(p.GetValue(obj, null).ToString());
 
+            return string.Join("&", properties.ToArray());
+        }
     }
     
         
