@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Text;
 using HRHunters.Common.Entities;
 using System.Globalization;
+using HRHunters.Common.Requests;
 
 namespace HRHunters.Common.ExtensionMethods
 {
@@ -37,20 +38,44 @@ namespace HRHunters.Common.ExtensionMethods
 
             return sample;
         }
+        //public static IQueryable<T> Applyfilters<T>(this IQueryable<T> a, SearchRequest request)
+        //{
+        //    if (string.IsNullOrWhiteSpace(request.SortedBy))
+        //        request.SortedBy = "Id";
+
+        //    //Convert first character from client side to upper to match the model naming convention
+        //    //sortedBy = char.ToUpper(sortedBy[0]) + sortedBy.Substring(1);
+        //    //filterBy = filterBy != null ? char.ToUpper(filterBy[0]) + filterBy.Substring(1) : "";
+        //    if(request.FilterBy.Equals("Status"))
+        //        request.FilterQuery = string.IsNullOrWhiteSpace(request.FilterQuery) ? char.ToUpper(request.FilterQuery[0]) + request.FilterQuery.Substring(1) : "";
+        //    var filter = typeof(T).GetProperty(request.FilterBy);
+        //    if (!string.IsNullOrWhiteSpace(request.FilterBy))
+        //    {
+        //        a = a.AsQueryable().WhereIf(request.FilterBy != null, x => filter.GetValue(x, null).Equals(request.FilterQuery));
+
+        //    }
+        //    var sort = typeof(T).GetProperty(request.SortedBy);
+        //    if (request.SortDir == SortDirection.DESC)
+        //    {
+        //        a = a.OrderByDescending(x => sort.GetValue(x, null));
+        //    }
+        //    if (request.SortDir == SortDirection.ASC)
+        //    {
+        //        a = a.OrderBy(x => sort.GetValue(x, null));
+        //    }
+        //    return a.Skip((request.CurrentPage - 1) * request.PageSize).Take(request.PageSize);
+        //}
         public static IQueryable<T> Applyfilters<T>(this IQueryable<T> a, int pageSize = 3, int currentPage = 1, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = null, string filterQuery = null)
         {
-            if (string.IsNullOrWhiteSpace(sortedBy))
-                sortedBy = "Id";
-
             //Convert first character from client side to upper to match the model naming convention
             sortedBy = char.ToUpper(sortedBy[0]) + sortedBy.Substring(1);
-            filterBy = filterBy != null ? char.ToUpper(filterBy[0]) + filterBy.Substring(1) : "";
-            if(filterBy.Equals("Status"))
-                filterQuery = filterQuery != null ? char.ToUpper(filterQuery[0]) + filterQuery.Substring(1) : "";
+            filterBy = !string.IsNullOrEmpty(filterBy) ? char.ToUpper(filterBy[0]) + filterBy.Substring(1) : "";
+            if (filterBy.Equals("Status"))
+                filterQuery = !string.IsNullOrEmpty(filterQuery) ? char.ToUpper(filterQuery[0]) + filterQuery.Substring(1) : "";
             var filter = typeof(T).GetProperty(filterBy);
-            if (!string.IsNullOrWhiteSpace(filterBy))
+            if (!string.IsNullOrWhiteSpace(filterBy) && filter != null)
             {
-                a = a.AsQueryable().WhereIf(filterBy != null, x => filter.GetValue(x, null).Equals(filterQuery));
+                a = a.Where(x => filter.GetValue(x, null).Equals(filterQuery));
 
             }
             var sort = typeof(T).GetProperty(sortedBy);
