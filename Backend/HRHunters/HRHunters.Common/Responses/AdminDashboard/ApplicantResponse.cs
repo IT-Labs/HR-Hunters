@@ -7,7 +7,7 @@ namespace HRHunters.Common.Responses.AdminDashboard
 {
     public class ApplicantResponse
     {
-        public List<ApplicantInfo> Applicant { get; set; }
+        public List<ApplicantInfo> Applicants { get; set; }
         public int MaxApplicants { get; set; }
 
     }

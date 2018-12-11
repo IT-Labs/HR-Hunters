@@ -82,7 +82,6 @@ namespace HRHunters.Data.Context
                             Education = EducationType.Bachelor,
                             Description = "Lorem ipsum bruh...",
                             EmpCategory = JobType.Full_time,
-                            Location = "Skopje, Macedonia",
                             Status = (JobPostingStatus)values.GetValue(random.Next(values.Length)),
                             NeededExperience = "3",
                         };

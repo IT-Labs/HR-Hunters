@@ -12,7 +12,7 @@ namespace HRHunters.Common.Responses.AdminDashboard
         public string Logo { get; set; }
         public string Email { get; set; }
         public string Location { get; set; }
-        public int Active { get; set; }
+        public int ActiveJobs { get; set; }
         public int AllJobs { get; set; }
         public string Status { get; set; }
     }

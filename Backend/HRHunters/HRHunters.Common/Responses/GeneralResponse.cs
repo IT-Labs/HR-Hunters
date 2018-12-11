@@ -6,13 +6,16 @@ using System.Text;
 
 namespace HRHunters.Common.Responses
 {
-    public class UserRegisterReturnModel
+    public class GeneralResponse
     {
         public bool Succeeded { get; set; }
         public IDictionary<string, List<string>> Errors { get; set; }
 
-        public UserRegisterReturnModel() { }
-        public UserRegisterReturnModel(ModelStateDictionary modelState)
+        public GeneralResponse()
+        {
+            Errors = new Dictionary<string, List<string>>(); 
+        }
+        public GeneralResponse(ModelStateDictionary modelState)
         {
             Errors = new Dictionary<string, List<string>>();
             var listOfErrors = new List<string>();

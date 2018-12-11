@@ -16,8 +16,6 @@ namespace HRHunters.Common.Entities
         public DateTime DateFrom { get; set; }
         [Required]
         public DateTime DateTo { get; set; }
-        [Required]
-        public string Location { get; set; }
         [StringLength(800)]
         public string Description { get; set; }
         [Required]

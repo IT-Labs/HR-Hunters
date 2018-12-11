@@ -39,4 +39,10 @@
     <ProjectReference Include="..\HRHunters.Domain\HRHunters.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Controllers\ApplicantsController.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
 </Project>
