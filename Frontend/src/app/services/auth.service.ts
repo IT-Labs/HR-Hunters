@@ -138,11 +138,6 @@ export class AuthService {
           if (response.succeeded) {
             this.router.navigate(["login"]);
           }
-          if (!response.succeeded) {
-            this.authErrorStatusListener.next({
-              error: "Unknown error occured"
-            });
-          }
         },
         error => {
           if (error.error.errors) {
@@ -192,12 +187,6 @@ export class AuthService {
               } else if (response.role === 3) {
                 this.router.navigate(["/admin-dashboard"]);
               }
-            }
-          } else if (!response.succeeded) {
-            if (response.errors) {
-              this.authErrorStatusListener.next({
-                error: response.errors.Error[0]
-              });
             }
           }
         },

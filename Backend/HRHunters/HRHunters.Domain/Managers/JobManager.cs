@@ -27,6 +27,22 @@ namespace HRHunters.Domain.Managers
             _userManager = userManager;
         }
 
+        public JobInfo ToJobInfo(JobPosting x)
+        {
+            return new JobInfo()
+            {
+                CompanyEmail = x.Client.User.Email,
+                CompanyName = x.Client.User.FirstName,
+                AllApplicationsCount = x.Applications.Count,
+                DateTo = x.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                Id = x.Id,
+                JobTitle = x.Title,
+                JobType = x.EmpCategory.ToString(),
+                Location = x.Location,
+                Status = x.Status.ToString(),
+            };
+        }
+
         public JobResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery)
         {
             var response = new JobResponse() { JobPosting = new List<JobInfo>() };
@@ -38,7 +54,7 @@ namespace HRHunters.Domain.Managers
                                             CompanyEmail = x.Client.User.Email,
                                             CompanyName = x.Client.User.FirstName,
                                             AllApplicationsCount = x.Applications.Count,
-                                            DateTo = x.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                                            DateTo = x.DateTo.ToString("yyyy/MM/dd"),
                                             Id = x.Id,
                                             JobTitle = x.Title,
                                             JobType = x.EmpCategory.ToString(),
@@ -115,7 +131,7 @@ namespace HRHunters.Domain.Managers
                 CompanyEmail = jobPost.Client.User.Email,
                 CompanyName = jobPost.Client.User.FirstName,
                 AllApplicationsCount = jobPost.Applications.Count,
-                DateTo = jobPost.DateTo.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                DateTo = jobPost.DateTo.ToString("yyyy/MM/dd"),
                 Id = jobPost.Id,
                 JobTitle = jobPost.Title,
                 JobType = jobPost.EmpCategory.ToString(),

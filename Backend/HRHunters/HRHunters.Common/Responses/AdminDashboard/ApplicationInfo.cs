@@ -8,7 +8,8 @@ namespace HRHunters.Common.Responses.AdminDashboard
     public class ApplicationInfo
     {
         public int Id { get; set; }
-        public string ApplicantName { get; set; }
+        public string ApplicantFirstName { get; set; }
+        public string ApplicantLastName { get; set; }
         public string ApplicantEmail { get; set; }
         public string JobTitle { get; set; }
         public string Experience { get; set; }

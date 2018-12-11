@@ -19,7 +19,10 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
+
         public ApplicantResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+
+   
         {
             var response = new ApplicantResponse() { Applicant = new List<ApplicantInfo>()};
                 var query = _repo.GetAll<Applicant>(
