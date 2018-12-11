@@ -21,12 +21,12 @@ namespace HRHunters.WebAPI.Controllers
             _applicationManager = applicationManager;
         }
 
-        [HttpGet("applications")]
+        [HttpGet]
         public ActionResult<ApplicationResponse> GetMultipleApplications(int pageSize = 10, int currentPage = 1, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
             return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
-        [HttpPut("applications/{id}")]
+        [HttpPut("{id}")]
         public ActionResult<ApplicationInfo> UpdateApplicationStatus(int id, string status)
         {
             return Ok(_applicationManager.UpdateApplicationStatus(id, status));

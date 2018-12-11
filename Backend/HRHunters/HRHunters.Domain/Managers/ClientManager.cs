@@ -31,7 +31,7 @@ namespace HRHunters.Domain.Managers
                                           Id=x.UserId,
                                           CompanyName = x.User.FirstName,
                                           Email = x.User.Email,
-                                          Active = x.JobPostings.Count(y=>y.DateTo<DateTime.UtcNow),
+                                          ActiveJobs = x.JobPostings.Count(y=>y.DateTo<DateTime.UtcNow),
                                           AllJobs = x.JobPostings.Count,
                                           Status = x.Status.ToString(),
                                           Logo = "photo"
@@ -46,23 +46,24 @@ namespace HRHunters.Domain.Managers
 
         }
 
-        public IEnumerable<ClientInfo> GetMultiple()
+        public ClientResponse GetMultiple()
         {
-            return _repo.GetAll<Client>(
+            var response = new ClientResponse() { Clients = new List<ClientInfo>() };
+
+            var query = _repo.GetAll<Client>(
                 includeProperties: $"{nameof(User)}," +
                                    $"{nameof(Client.JobPostings)}")
                                    .Select(
                                       x => new ClientInfo
                                       {
-                                          Id=x.UserId,
+                                          Id = x.UserId,
                                           CompanyName = x.User.FirstName,
                                           Email = x.User.Email,
-                                          Active = x.JobPostings.Count(y=>y.DateTo<DateTime.UtcNow),
-                                          AllJobs = x.JobPostings.Count,
-                                          Status = x.Status.ToString(),
-                                          Logo = "photo"
+                                          Location = x.Location
                                       })
                                       .ToList();
+            response.Clients.AddRange(query);
+            return response;
         }
 
         public ClientInfo UpdateClientStatus(int id, string status)
@@ -80,7 +81,7 @@ namespace HRHunters.Domain.Managers
                 CompanyName = client.User.FirstName,
                 Email = client.User.Email,
                 Location = client.Location,
-                Active = client.JobPostings.Count(x => x.DateTo < DateTime.UtcNow),
+                ActiveJobs = client.JobPostings.Count(x => x.DateTo < DateTime.UtcNow),
                 AllJobs = client.JobPostings.Count,
                 Status = client.Status.ToString(),
                 Logo = "Photo"

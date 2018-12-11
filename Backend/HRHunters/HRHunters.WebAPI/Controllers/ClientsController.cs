@@ -24,7 +24,7 @@ namespace HRHunters.WebAPI.Controllers
         {
             return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
-        [HttpPut("clients/{id}")]
+        [HttpPut("{id}")]
         public ActionResult<ClientInfo> UpdateClientStatus(int id, string status)
         {
             return Ok(_clientManager.UpdateClientStatus(id, status));

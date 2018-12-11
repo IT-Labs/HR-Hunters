@@ -72,8 +72,13 @@ namespace HRHunters.Domain.Managers
         }
         public async Task<object> CreateJobPosting(JobSubmit jobSubmit)
         {
-            var response = new object();
             var company = new Client();
+            var list = new List<string>();
+            var response = new GeneralResponse()
+            {
+                Succeeded = true,
+                Errors = new Dictionary<string, List<string>>()
+            };
             if (jobSubmit != null && !jobSubmit.ExistingCompany)
             {
                 User user = new User()
@@ -83,6 +88,15 @@ namespace HRHunters.Domain.Managers
                     UserName = jobSubmit.CompanyName,
                     CreatedBy = "Admin"
                 };
+                var userExists = await _userManager.FindByEmailAsync(user.Email);
+                if (userExists != null)
+                {
+                    response.Succeeded = false;
+                    list.Add("Company already exists.");
+                    response.Errors.Add("Error", list);
+                    return response;
+                }
+                    
                 await _userManager.CreateAsync(user, "ClientDefaultPassword");
                 await _userManager.AddToRoleAsync(user, "Client");
                 company.User = user;
@@ -95,7 +109,10 @@ namespace HRHunters.Domain.Managers
                 company = _repo.Get<Client>(filter: x => x.Id == jobSubmit.Id, includeProperties: $"{nameof(User)}").FirstOrDefault();
             }else
             {
-                return new { Message = "Failed to create new job post." };
+                response.Succeeded = false;
+                list.Add("Invalid input");
+                response.Errors.Add("Error", list);
+                return response;
             }
             DateTime.TryParse(jobSubmit.DateFrom, out DateTime dateFrom);
             DateTime.TryParse(jobSubmit.DateTo, out DateTime dateTo);
@@ -115,7 +132,7 @@ namespace HRHunters.Domain.Managers
                 Status = JobPostingStatus.Approved,
             };
             _repo.Create(jobPost, "Admin");
-            return new GeneralResponse();
+            return response;
         }
 
         public JobInfo GetOneJobPosting(int id)
