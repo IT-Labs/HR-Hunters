@@ -29,7 +29,7 @@ namespace HRHunters.Domain.Managers
 
         public JobResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery)
         {
-            var response = new JobResponse() { JobPosting = new List<JobInfo>() };
+            var response = new JobResponse() { JobPostings = new List<JobInfo>() };
             var query = _repo.GetAll<JobPosting>(
                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}")
                                         .Select(
@@ -46,7 +46,7 @@ namespace HRHunters.Domain.Managers
                                         })
                                         .Applyfilters(pageSize: pageSize, currentPage: currentPage, sortedBy: sortedBy, sortDir: sortDir, filterBy: filterBy, filterQuery: filterQuery)
                                         .ToList();
-            response.JobPosting.AddRange(query);
+            response.JobPostings.AddRange(query);
             response.MaxJobPosts = _repo.GetCount<JobPosting>();
             response.Approved = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Approved);
             response.Pending = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Pending);

@@ -25,7 +25,7 @@ namespace HRHunters.Domain.Managers
 
         public ApplicationResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
-            var response = new ApplicationResponse() { Application = new List<ApplicationInfo>()};
+            var response = new ApplicationResponse() { Applications = new List<ApplicationInfo>()};
 
             var query = _repo.GetAll<Application>(
                 includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
@@ -43,7 +43,7 @@ namespace HRHunters.Domain.Managers
                                    .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                    .ToList();
 
-            response.Application.AddRange(query);
+            response.Applications.AddRange(query);
             response.MaxApplications = _repo.GetCount<Application>();
             response.Contacted = _repo.GetCount<Application>(x=>x.Status.Equals(ApplicationStatus.Contacted));
             response.Pending = _repo.GetCount<Application>(x => x.Status.Equals(ApplicationStatus.Pending));

@@ -21,7 +21,7 @@ namespace HRHunters.Domain.Managers
         }
         public ApplicantResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
-            var response = new ApplicantResponse() { Applicant = new List<ApplicantInfo>()};
+            var response = new ApplicantResponse() { Applicants = new List<ApplicantInfo>()};
                 var query = _repo.GetAll<Applicant>(
                     includeProperties: $"{nameof(Applicant.User)},")
                                         .Select(
@@ -36,7 +36,7 @@ namespace HRHunters.Domain.Managers
                                         })
                                         .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                         .ToList();
-            response.Applicant.AddRange(query);
+            response.Applicants.AddRange(query);
             response.MaxApplicants = _repo.GetCount<Applicant>();
             return response;
         }
