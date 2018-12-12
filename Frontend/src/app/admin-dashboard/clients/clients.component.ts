@@ -124,7 +124,6 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     this.clientService.getClients(params);
   }
   onFilter(filterBy: string) {
-   
     if (filterBy === null) {
       this.clientQP.currentFilter = null
     } else {
@@ -138,10 +137,19 @@ export class ADClientsComponent implements OnInit, OnDestroy {
 
   onSort(sortBy: string) {
     if (this.clientQP.lastSortBy === sortBy) {
-      this.clientQP.currentSortDirection = 1;
-    } else {
+      if (this.clientQP.currentSortDirection === 1) {
+        this.clientQP.currentSortDirection = 0;
+      } else if (this.clientQP.currentSortDirection === 0) {
+        this.clientQP.currentSortDirection = 1;
+      }
+      this.clientQP.lastSortBy = '';
+    } else if (this.clientQP.lastSortBy !== sortBy) {
+      if (this.clientQP.currentSortDirection === 1) {
+        this.clientQP.currentSortDirection = 0;
+      } else if (this.clientQP.currentSortDirection === 0) {
+        this.clientQP.currentSortDirection = 1;
+      }
       this.clientQP.lastSortBy = sortBy;
-      this.clientQP.currentSortDirection = 0;
     }
     this.clientQP.currentSortBy = sortBy;
     const params = this.buildQueryParams(this.clientQP)
@@ -151,22 +159,16 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
     const currentId = id;
-    let currentClient: Client;
-    for (let i = 0; i < this.clients.length; i++) {
-      if (currentId === this.clients[i].id) {
-        currentClient = this.clients[i];
-      }
-    }
-
+    
     let clientData = this.buildClientDataOnUpdate(
       currentId,
-      currentClient.email,
-      currentClient.companyName,
-      currentClient.logo,
-      currentClient.activeJobs,
-      currentClient.allJobs,
+      null,
+      null,
+      null,
+      null,
+      null,
       currentStatus,
-      currentClient.location
+      null
     );
     
     this.clientService.updateClient(clientData);

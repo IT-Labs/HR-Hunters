@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { JobPosting } from "src/app/models/job-posting.model";
 import { Subscription } from "rxjs";
 import { JobPostingService } from "src/app/services/job-posting.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-ad-job-postings",
@@ -36,7 +37,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
 
   private jobPostingSub: Subscription;
 
-  constructor(private jobPostingService: JobPostingService) {}
+  constructor(private jobPostingService: JobPostingService, private router: Router) {}
 
   ngOnInit() {
     const params = this.buildQueryParams(this.jobPostingQP);
@@ -91,6 +92,10 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     };
 
     return jobPostingData;
+  }
+
+  onEditJobPosting(id: number) {
+    this.jobPostingService.editJobPostingId = id;
   }
 
   calculatePagination(jobPostingsCount: number) {
@@ -153,10 +158,19 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
 
   onSort(sortBy: any) {
     if (this.jobPostingQP.lastSortBy === sortBy) {
-      this.jobPostingQP.currentSortDirection = 1;
-    } else {
+      if (this.jobPostingQP.currentSortDirection === 1) {
+        this.jobPostingQP.currentSortDirection = 0;
+      } else if (this.jobPostingQP.currentSortDirection === 0) {
+        this.jobPostingQP.currentSortDirection = 1;
+      }
+      this.jobPostingQP.lastSortBy = '';
+    } else if (this.jobPostingQP.lastSortBy !== sortBy) {
+      if (this.jobPostingQP.currentSortDirection === 1) {
+        this.jobPostingQP.currentSortDirection = 0;
+      } else if (this.jobPostingQP.currentSortDirection === 0) {
+        this.jobPostingQP.currentSortDirection = 1;
+      }
       this.jobPostingQP.lastSortBy = sortBy;
-      this.jobPostingQP.currentSortDirection = 0;
     }
     this.jobPostingQP.currentSortBy = sortBy;
     const params = this.buildQueryParams(this.jobPostingQP);
@@ -166,26 +180,21 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
     const currentId = id;
-    let currentJobPosting: JobPosting;
-    for (let i = 0; i < this.jobPostings.length; i++) {
-      (currentId === this.jobPostings[i].id) && (currentJobPosting = this.jobPostings[i]);
-    }
 
     const jobPostingData = this.buildJobPostingDataOnUpdate(
       currentId,
-      currentJobPosting.companyName,
-      currentJobPosting.companyEmail,
-      currentJobPosting.jobTitle,
-      currentJobPosting.dateFrom,
-      currentJobPosting.dateTo,
-      currentJobPosting.companyLocation,
-      currentJobPosting.description,
-      currentJobPosting.jobType,
-      currentJobPosting.education,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
       currentStatus,
-      currentJobPosting.experience
+      null
     )
-
     this.jobPostingService.updateJobPosting(jobPostingData);
   }
 

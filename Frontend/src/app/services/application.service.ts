@@ -39,7 +39,7 @@ export class ApplicationService {
         interviewed: number;
         hired: number;
         rejected: number;
-      }>(this.baseUrl + "/Applications/applications" + queryParams)
+      }>(this.baseUrl + "/Applications" + queryParams)
       .subscribe(applicationsData => {
         this.applicationsUpdated.next({
           applications: applicationsData.applications,
@@ -55,10 +55,7 @@ export class ApplicationService {
 
   updateApplication(applicationData) {
     this.http
-      .put(
-        "/Applications/applications" + applicationData.id,
-        applicationData
-      )
+      .put(this.baseUrl + "/Applications/" + applicationData.id, applicationData)
       .subscribe(response => {});
   }
 }

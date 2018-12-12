@@ -44,32 +44,9 @@ export class ClientService {
       });
   }
 
-  getAllClients() {
-    this.http
-      .get<{
-        clients: Client[];
-        maxClients: number;
-        active: number;
-        inactive: number;
-      }>(this.baseUrl + "/Clients/existing")
-      .subscribe(
-        clientsData => {
-          this.clientsUpdated.next({
-            clients: clientsData.clients,
-            clientsCount: clientsData.maxClients,
-            active: clientsData.active,
-            inactive: clientsData.inactive
-          });
-        },
-        error => {
-          console.log(error);
-        }
-      );
-  }
-
   updateClient(clientData) {
     this.http
-      .put(this.baseUrl + "/Clients/clients" + clientData.id, clientData)
+      .put(this.baseUrl + "/Clients" + clientData.id, clientData)
       .subscribe(response => {});
   }
 }

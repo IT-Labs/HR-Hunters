@@ -1,11 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { Client } from "src/app/models/client.model";
-import { DateValidator } from "../../../validators/date.validator";
 import { JobPostingService } from "src/app/services/job-posting.service";
-import { Router } from "@angular/router";
 import { ClientService } from "src/app/services/client.service";
 import { Subscription } from "rxjs";
+import {NgbDate, NgbCalendar} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: "app-ad-new-job-posting",
@@ -25,7 +24,6 @@ export class ADNewJobPostingComponent implements OnInit {
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
   existingCompany = false;
-  filteredClients = [];
   clients: Client[] = [];
   experience = [
     "<1",
@@ -71,25 +69,35 @@ export class ADNewJobPostingComponent implements OnInit {
     dateFrom: false,
     dateTo: false
   };
+
+  hoveredDate: NgbDate;
+  fromDate: NgbDate;
+  toDate: NgbDate;
+
   private clientsSub: Subscription;
 
   constructor(
     private fb: FormBuilder,
     private jobPostingService: JobPostingService,
     private clientService: ClientService,
-    private router: Router
+    private calendar: NgbCalendar
   ) {}
 
   ngOnInit() {
-    this.clientService.getAllClients();
+    const params = this.buildQueryParams()
+    this.clientService.getClients(params);
     this.clientsSub = this.clientService
       .getClientsUpdateListener()
       .subscribe(clientsData => {
         this.clients = clientsData.clients;
+        this.clients.push({
+          companyName: 'Select company...',
+          email: ''
+        });
       });
-    this.newJobPostingForm.controls.dateFrom.valueChanges.subscribe(x =>
-      this.newJobPostingForm.controls.dateTo.updateValueAndValidity()
-    );
+
+    this.fromDate = this.calendar.getToday();
+    this.toDate = this.calendar.getNext(this.calendar.getToday(), 'd', 10);
   }
 
   newJobPostingForm = this.fb.group({
@@ -110,7 +118,7 @@ export class ADNewJobPostingComponent implements OnInit {
         Validators.pattern(this.validEmail)
       ])
     ],
-    location: [
+    companyLocation: [
       "",
       Validators.compose([
         Validators.required,
@@ -129,54 +137,76 @@ export class ADNewJobPostingComponent implements OnInit {
     description: ["", Validators.compose([Validators.maxLength(300)])],
     jobType: ["", Validators.compose([Validators.required])],
     education: ["", Validators.compose([Validators.required])],
-    experience: ["", Validators.compose([Validators.required])],
-    dateFrom: ["", Validators.compose([Validators.required])],
-    dateTo: ["", Validators.compose([Validators.required, DateValidator])]
+    experience: ["", Validators.compose([Validators.required])]
   });
 
   buildJobPostingDataOnAddJobPosting(
-    companyId: number,
+    existingCompany: boolean,
+    id: number,
     companyName: string,
     companyEmail: string,
     companyLocation: string,
     jobTitle: string,
-    dateFrom: string,
-    dateTo: string,
     description: string,
     jobType: string,
     education: string,
-    experience: number
+    experience: number,
+    dateFrom: string,
+    dateTo: string
   ) {
-    const clientData = {
-      companyId: companyId,
+    const newJobPostingData = {
+      existingCompany: existingCompany,
+      id: id,
       companyName: companyName,
       companyEmail: companyEmail,
-      companyLocation: companyLocation
-    };
-    const jobPostingData = {
-      jobTitle: jobTitle,
-      dateFrom: dateFrom,
-      dateTo: dateTo,
       companyLocation: companyLocation,
+      jobTitle: jobTitle,
       description: description,
       jobType: jobType,
       education: education,
-      experience: experience
+      experience: experience,
+      dateFrom: dateFrom,
+      dateTo: dateTo
     };
-    const jpAndClientData = {
-      client: clientData,
-      jobPosing: jobPostingData
-    };
-    return jpAndClientData;
+    return newJobPostingData;
   }
 
-  onCompanyRadioBtnClick() {
-    if (this.existingCompany) {
+  buildQueryParams() {
+    return `?pageSize=0&currentPage=0`;
+  }
+
+  onDateSelection(date: NgbDate) {
+    if (!this.fromDate && !this.toDate) {
+      this.fromDate = date;
+    } else if (this.fromDate && !this.toDate && date.after(this.fromDate)) {
+      this.toDate = date;
+    } else {
+      this.toDate = null;
+      this.fromDate = date;
+    }
+  }
+
+  isHovered(date: NgbDate) {
+    return this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate);
+  }
+
+  isInside(date: NgbDate) {
+    return date.after(this.fromDate) && date.before(this.toDate);
+  }
+
+  isRange(date: NgbDate) {
+    return date.equals(this.fromDate) || date.equals(this.toDate) || this.isInside(date) || this.isHovered(date);
+  }
+
+  onCompanyRadioBtnClick(comapnyType: string) {
+    if (comapnyType === 'existing') {
+      this.existingCompany = true;
       this.newJobPostingForm.controls["companyEmail"].disable();
-      this.newJobPostingForm.controls["location"].disable();
-    } else if (!this.existingCompany) {
+      this.newJobPostingForm.controls["companyLocation"].disable();
+    } else if (comapnyType === 'new') {
+      this.existingCompany = false;
       this.newJobPostingForm.controls["companyEmail"].enable();
-      this.newJobPostingForm.controls["location"].enable();
+      this.newJobPostingForm.controls["companyLocation"].enable();
     }
   }
 
@@ -195,12 +225,9 @@ export class ADNewJobPostingComponent implements OnInit {
     this.formFocus[event] = true;
   }
 
-  populateCompanyInfo(event: any, id: number) {
-    this.onFocus("none");
-    this.selectedCompany.id = id;
-    const companyName = event.target.innerText;
+  populateCompanyInfo(selected: string) {
     this.clients.map(client => {
-      if (client.companyName === companyName) {
+      if (selected === client.companyName) {
         this.selectedCompany = client;
         this.newJobPostingForm.controls["companyName"].setValue(
           this.selectedCompany.companyName
@@ -208,22 +235,9 @@ export class ADNewJobPostingComponent implements OnInit {
         this.newJobPostingForm.controls["companyEmail"].setValue(
           this.selectedCompany.email
         );
-        this.newJobPostingForm.controls["location"].setValue(
+        this.newJobPostingForm.controls["companyLocation"].setValue(
           this.selectedCompany.location
         );
-      }
-    });
-  }
-
-  populateCompanySuggestions(event: any) {
-    this.filteredClients = [];
-    this.clients.filter(client => {
-      if (
-        client.companyName
-          .toLowerCase()
-          .includes(event.target.value.toLowerCase())
-      ) {
-        this.filteredClients.push(client);
       }
     });
   }
@@ -231,49 +245,79 @@ export class ADNewJobPostingComponent implements OnInit {
   onSubmitNewJobPosting() {
     this.newJobPostingForm.controls["companyName"].markAsTouched();
     this.newJobPostingForm.controls["companyEmail"].markAsTouched();
-    this.newJobPostingForm.controls["location"].markAsTouched();
+    this.newJobPostingForm.controls["companyLocation"].markAsTouched();
     this.newJobPostingForm.controls["title"].markAsTouched();
     this.newJobPostingForm.controls["jobType"].markAsTouched();
     this.newJobPostingForm.controls["education"].markAsTouched();
     this.newJobPostingForm.controls["experience"].markAsTouched();
-    this.newJobPostingForm.controls["dateFrom"].markAsTouched();
-    this.newJobPostingForm.controls["dateTo"].markAsTouched();
+
+    let monthToDate, monthFromDate, dayToDate, dayFromDate, dateFrom, dateTo
+
+    if (this.fromDate && this.toDate) {
+      if (this.fromDate.month < 10) {
+        monthFromDate = `0${this.fromDate.month}`;
+      } else {
+        monthFromDate = this.fromDate.month;
+      }
+      
+      if (this.fromDate.day < 10) {
+        dayFromDate = `0${this.fromDate.day}`;
+      } else {
+        dayFromDate = this.fromDate.day;
+      }
+      
+      if (this.toDate.month < 10) {
+        monthToDate = `0${this.toDate.month}`;
+      } else {
+        monthToDate = this.toDate.month;
+      }
+      
+      if (this.fromDate.day < 10) {
+        dayToDate = `0${this.toDate.day}`;
+      } else {
+        dayToDate = this.toDate.day;
+      }
+  
+      dateFrom = `${this.fromDate.year}/${monthFromDate}/${dayFromDate}`
+      dateTo = `${this.toDate.year}/${monthToDate}/${dayToDate}`
+    }
 
     let jobPostingData;
-
     if (this.existingCompany) {
       jobPostingData = this.buildJobPostingDataOnAddJobPosting(
+        true,
         this.selectedCompany.id,
         null,
         null,
         null,
         this.newJobPostingForm.value.title,
-        this.newJobPostingForm.value.DateFrom,
-        this.newJobPostingForm.value.DateTo,
         this.newJobPostingForm.value.description,
         this.newJobPostingForm.value.jobType,
         this.newJobPostingForm.value.education,
-        this.newJobPostingForm.value.experience
+        this.newJobPostingForm.value.experience,
+        dateFrom,
+        dateTo
       );
     } else if (!this.existingCompany) {
       jobPostingData = this.buildJobPostingDataOnAddJobPosting(
-        null,
+        false,
+        0,
         this.newJobPostingForm.value.companyName,
         this.newJobPostingForm.value.companyEmail,
         this.newJobPostingForm.value.companyLocation,
         this.newJobPostingForm.value.title,
-        this.newJobPostingForm.value.DateFrom,
-        this.newJobPostingForm.value.DateTo,
         this.newJobPostingForm.value.description,
         this.newJobPostingForm.value.jobType,
         this.newJobPostingForm.value.education,
-        this.newJobPostingForm.value.experience
+        this.newJobPostingForm.value.experience,
+        dateFrom,
+        dateTo
       );
     }
 
-    if (this.newJobPostingForm.valid) {
+    if (this.newJobPostingForm.valid && this.fromDate && this.toDate) {
       this.jobPostingService.addJobPosting(jobPostingData);
-      this.router.navigate(["/admin-dashboard/job-postings"]);
     }
+
   }
 }

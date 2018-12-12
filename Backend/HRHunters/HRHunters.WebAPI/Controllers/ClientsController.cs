@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Http;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests.Users;
@@ -22,7 +23,7 @@ namespace HRHunters.WebAPI.Controllers
             _clientManager = clientManager;
         }
         [HttpGet]
-        public ActionResult<ClientResponse> GetMultipleClients(int pageSize=10, int currentPage=1, string sortedBy="Id", SortDirection sortDir=SortDirection.ASC, string filterBy="", string filterQuery="")
+        public ActionResult<ClientResponse> GetMultipleClients(int pageSize = 0, int currentPage = 0, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
             return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
@@ -37,6 +38,6 @@ namespace HRHunters.WebAPI.Controllers
         public ActionResult<ClientInfo> UpdateClientStatus(int id, string status)
         {
             return Ok(_clientManager.UpdateClientStatus(id, status));
-        }
+        }      
     }
 }

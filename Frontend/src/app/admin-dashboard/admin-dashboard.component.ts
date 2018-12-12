@@ -11,9 +11,8 @@ import { Router } from "@angular/router";
 export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   adminIsAuthenticated = false;
-
   dropdownOpen = false;
-
+  
   private authListenerSubs: Subscription;
   
   constructor(private authService: AuthService, private router: Router) { }
@@ -23,7 +22,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.authListenerSubs = this.authService.getAuthStatusListener().subscribe(isAuthenticated => {
       this.adminIsAuthenticated = isAuthenticated;
     })
-    this.router.navigate(['/admin-dashboard/job-postings'])
   }
 
   // Closing the dropdown on click on link
