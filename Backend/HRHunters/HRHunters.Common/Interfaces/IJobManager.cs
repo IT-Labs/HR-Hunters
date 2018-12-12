@@ -15,7 +15,7 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IJobManager : IBaseManager
     {
-        JobResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery);
+        Task<JobResponse> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery, int id);
         Task<object> CreateJobPosting(JobSubmit jobSubmit);
         JobInfo GetOneJobPosting(int id);
         GeneralResponse UpdateJob(JobUpdate jobSubmit);

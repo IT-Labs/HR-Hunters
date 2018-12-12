@@ -12,6 +12,7 @@ namespace HRHunters.Common.Responses.AdminDashboard
         public string ApplicantLastName { get; set; }
         public string ApplicantEmail { get; set; }
         public string JobTitle { get; set; }
+        public string Description { get; set; }
         public string Experience { get; set; }
         public string PostedOn { get; set; }
         public string Status { get; set; }
