@@ -18,7 +18,7 @@ namespace HRHunters.Common.Interfaces
         JobResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery);
         Task<object> CreateJobPosting(JobSubmit jobSubmit);
         JobInfo GetOneJobPosting(int id);
-        GeneralResponse UpdateJob(int id, string status, JobUpdate jobSubmit);
+        GeneralResponse UpdateJob(JobUpdate jobSubmit);
 
     }
 }

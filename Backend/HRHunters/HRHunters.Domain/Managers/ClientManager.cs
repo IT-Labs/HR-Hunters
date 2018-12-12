@@ -34,7 +34,8 @@ namespace HRHunters.Domain.Managers
                                           ActiveJobs = x.JobPostings.Count(y=>y.DateTo<DateTime.UtcNow),
                                           AllJobs = x.JobPostings.Count,
                                           Status = x.Status.ToString(),
-                                          Logo = "photo"
+                                          Logo = "photo.jpg",
+                                          Location = x.Location
                                       })
                                       .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                       .ToList();
@@ -83,7 +84,7 @@ namespace HRHunters.Domain.Managers
                 ActiveJobs = client.JobPostings.Count(x => x.DateTo < DateTime.UtcNow),
                 AllJobs = client.JobPostings.Count,
                 Status = client.Status.ToString(),
-                Logo = "Photo"
+                Logo = "photo.jpg"
             };
         }
     }

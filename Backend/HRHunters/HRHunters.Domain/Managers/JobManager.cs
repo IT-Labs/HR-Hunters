@@ -67,7 +67,7 @@ namespace HRHunters.Domain.Managers
             response.Approved = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Approved);
             response.Pending = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Pending);
             response.Rejected = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Rejected);
-
+            response.Expired = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Expired);
             return response;
         }
         public async Task<object> CreateJobPosting(JobSubmit jobSubmit)
@@ -144,19 +144,19 @@ namespace HRHunters.Domain.Managers
 
         }
 
-        public GeneralResponse UpdateJob(int id, string status, JobUpdate jobUpdate)
+        public GeneralResponse UpdateJob(JobUpdate jobUpdate)
         {
             var response = new GeneralResponse()
             {
                 Succeeded = true,
                 Errors = new Dictionary<string, List<string>>(),
             };
-            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == id,
+            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
-            if (!string.IsNullOrEmpty(status))
+            if (!string.IsNullOrEmpty(jobUpdate.Status))
             { 
                 var statusToUpdate = jobPost.Status;
-                Enum.TryParse(status, out statusToUpdate);
+                Enum.TryParse(jobUpdate.Status, out statusToUpdate);
                 jobPost.Status = statusToUpdate;
             }else 
             if(jobUpdate != null) {

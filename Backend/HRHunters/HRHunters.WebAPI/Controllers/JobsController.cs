@@ -44,9 +44,9 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<GeneralResponse> UpdateJob(int id, [FromQuery]string status, [FromBody]JobUpdate jobSubmit)
+        public ActionResult<GeneralResponse> UpdateJob(JobUpdate jobSubmit)
         {
-            return Ok(_jobManager.UpdateJob(id, status, jobSubmit));
+            return Ok(_jobManager.UpdateJob(jobSubmit));
         }
     }
 }
