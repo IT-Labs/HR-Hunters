@@ -12,6 +12,5 @@ namespace HRHunters.Common.Responses.AdminDashboard
         public int Pending { get; set; }
         public int Rejected { get; set; }
         public int Expired { get; set; }
-
     }
 }
