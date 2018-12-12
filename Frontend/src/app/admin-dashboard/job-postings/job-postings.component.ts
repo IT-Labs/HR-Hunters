@@ -96,7 +96,6 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
 
   onEditJobPosting(id: number) {
     this.jobPostingService.editJobPostingId = id;
-    // this.router.navigate([''])
   }
 
   calculatePagination(jobPostingsCount: number) {
