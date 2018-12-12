@@ -36,11 +36,26 @@ namespace HRHunters.Domain.Managers
             };
         }
 
-        public ApplicationResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ApplicationResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery,int id)
         {
             var response = new ApplicationResponse() { Applications = new List<ApplicationInfo>()};
 
-            var query = _repo.GetAll<Application>(
+            if (id != 0)
+            {
+                var queryOwn = _repo.GetAll<Application>(
+               includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
+                                  $"{nameof(JobPosting)}").Where(x => x.ApplicantId == id).Select(x => new ApplicationInfo
+                                  {
+                                      JobTitle = x.JobPosting.Title,
+                                      Description = x.JobPosting.Description,
+                                      PostedOn = x.Date.ToString()
+                                  });
+                response.Applications.AddRange(queryOwn);
+
+            }
+            else
+            { 
+             var query = _repo.GetAll<Application>(
                 includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
                                    $"{nameof(JobPosting)}")
                                    .Select(x => new ApplicationInfo
@@ -56,7 +71,7 @@ namespace HRHunters.Domain.Managers
                                    })
                                    .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                    .ToList();
-
+            
             response.Applications.AddRange(query);
             response.MaxApplications = _repo.GetCount<Application>();
             response.Contacted = _repo.GetCount<Application>(x=>x.Status.Equals(ApplicationStatus.Contacted));
@@ -64,6 +79,7 @@ namespace HRHunters.Domain.Managers
             response.Hired = _repo.GetCount<Application>(x => x.Status.Equals(ApplicationStatus.Hired));
             response.Interviewed = _repo.GetCount<Application>(x => x.Status.Equals(ApplicationStatus.Interviewed));
             response.Rejected = _repo.GetCount<Application>(x => x.Status.Equals(ApplicationStatus.Rejected));
+            }
             return response;
 
         }

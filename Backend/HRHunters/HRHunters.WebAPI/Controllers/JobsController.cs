@@ -25,10 +25,10 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<JobResponse> GetJobs(int pageSize = 10, int currentPage = 1, string sortedBy = "Id", 
-            SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
+        public async Task<ActionResult<JobResponse>> GetJobs(int pageSize = 10, int currentPage = 1, string sortedBy = "Id", 
+            SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "",int id=0)
         {
-            return Ok(_jobManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
+            return Ok(await _jobManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery, id));
         }
 
         [HttpGet("{id}")]
