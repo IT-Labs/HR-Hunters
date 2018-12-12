@@ -30,7 +30,7 @@ namespace HRHunters.Domain.Managers
         public ClientResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
-
+            
             
             if (pageSize == 0 && currentPage == 0)
             {
