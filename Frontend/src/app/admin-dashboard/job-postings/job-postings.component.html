@@ -24,6 +24,9 @@
         <li (click)="onFilter('Expired')">
           Expired<span>({{ jobPostingsCount.expired }})</span>
         </li>
+        <li (click)="onFilter('Rejected')">
+          Rejected<span>({{ jobPostingsCount.rejected }})</span>
+        </li>
       </ul>
     </div>
   </div>
@@ -48,7 +51,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let jobPosting of jobPostings">
-          <td scope="row">{{ jobPosting.jobTitle }}</td>
+          <td scope="row" (click)="onEditJobPosting(jobPosting.id)">{{ jobPosting.jobTitle }}</td>
           <td>{{ jobPosting.companyName }}</td>
           <td>{{ jobPosting.companyEmail }}</td>
           <td>{{ jobPosting.location }}</td>

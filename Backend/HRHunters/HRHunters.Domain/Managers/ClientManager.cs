@@ -23,10 +23,12 @@ namespace HRHunters.Domain.Managers
         public ClientResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
+
             
             if (pageSize == 0 && currentPage == 0)
             {
-                var queryAll = _repo.GetAll<Client>(
+                var queryAll = _repo.GetAll<Client>(         
+
                 includeProperties: $"{nameof(User)}," +
                                    $"{nameof(Client.JobPostings)}")
                                    .Select(
@@ -83,7 +85,7 @@ namespace HRHunters.Domain.Managers
                 ActiveJobs = client.JobPostings.Count(x => x.DateTo < DateTime.UtcNow),
                 AllJobs = client.JobPostings.Count,
                 Status = client.Status.ToString(),
-                Logo = "Photo"
+                Logo = "photo.jpg"
             };
         }
     }

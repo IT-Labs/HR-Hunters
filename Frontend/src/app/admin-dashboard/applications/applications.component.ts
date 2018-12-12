@@ -139,9 +139,18 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
 
   onSort(sortBy: string) {
     if (this.applicationQP.lastSortBy === sortBy) {
-      this.applicationQP.currentSortDirection = 0;
-    } else {
-      this.applicationQP.currentSortDirection = 1;
+      if (this.applicationQP.currentSortDirection === 1) {
+        this.applicationQP.currentSortDirection = 0;
+      } else if (this.applicationQP.currentSortDirection === 0) {
+        this.applicationQP.currentSortDirection = 1;
+      }
+      this.applicationQP.lastSortBy = '';
+    } else if (this.applicationQP.lastSortBy !== sortBy) {
+      if (this.applicationQP.currentSortDirection === 1) {
+        this.applicationQP.currentSortDirection = 0;
+      } else if (this.applicationQP.currentSortDirection === 0) {
+        this.applicationQP.currentSortDirection = 1;
+      }
       this.applicationQP.lastSortBy = sortBy;
     }
     this.applicationQP.currentSortBy = sortBy;
@@ -152,21 +161,15 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
     const currentId = id;
-    let currentApplication: Application;
-    for (let i = 0; i < this.applications.length; i++) {
-      if (currentId === this.applications[i].id) {
-        currentApplication = this.applications[i];
-      }
-    }
 
     const applicationData = this.buildApplicationsDataOnUpdate(
       currentId,
-      currentApplication.applicantFirstName,
-      currentApplication.applicantLastName,
-      currentApplication.applicantEmail,
-      currentApplication.jobTitle,
-      currentApplication.experience,
-      currentApplication.postedOn,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
       currentStatus
     )
 

@@ -119,9 +119,18 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
 
   onSort(sortBy: any) {
     if (this.applicantsQP.lastSortBy === sortBy) {
-      this.applicantsQP.currentSortDirection = 1;
-    } else {
-      this.applicantsQP.currentSortDirection = 0;
+      if (this.applicantsQP.currentSortDirection === 1) {
+        this.applicantsQP.currentSortDirection = 0;
+      } else if (this.applicantsQP.currentSortDirection === 0) {
+        this.applicantsQP.currentSortDirection = 1;
+      }
+      this.applicantsQP.lastSortBy = '';
+    } else if (this.applicantsQP.lastSortBy !== sortBy) {
+      if (this.applicantsQP.currentSortDirection === 1) {
+        this.applicantsQP.currentSortDirection = 0;
+      } else if (this.applicantsQP.currentSortDirection === 0) {
+        this.applicantsQP.currentSortDirection = 1;
+      }
       this.applicantsQP.lastSortBy = sortBy;
     }
     this.applicantsQP.currentSortBy = sortBy;

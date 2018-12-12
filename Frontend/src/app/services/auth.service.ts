@@ -185,7 +185,7 @@ export class AuthService {
               } else if (response.role === 2) {
                 this.router.navigate(["/client"]);
               } else if (response.role === 3) {
-                this.router.navigate(["/admin-dashboard"]);
+                this.router.navigate(["/admin-dashboard/job-postings"]);
               }
             }
           }
