@@ -25,6 +25,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   jobPostingQP = {
     postsPerPage: 10,
     currentPage: 1,
+    previousPage: 0,
     currentSortBy: "dateTo",
     lastSortBy: "",
     currentSortDirection: 0,
@@ -138,9 +139,11 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   }
 
   onChangedPage(page: number) {
-    this.jobPostingQP.currentPage = page;
-    const params = this.buildQueryParams(this.jobPostingQP);
-    this.jobPostingService.getJobPostings(params);
+    if (this.jobPostingQP.currentPage !== this.jobPostingQP.previousPage) {
+      this.jobPostingQP.previousPage = this.jobPostingQP.currentPage;
+      const params = this.buildQueryParams(this.jobPostingQP);
+      this.jobPostingService.getJobPostings(params);
+    }
   }
 
   onFilter(filterBy: string) {
