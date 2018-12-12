@@ -18,8 +18,13 @@ namespace HRHunters.Domain.Managers
         private readonly IMapper _mapper;
         private readonly SignInManager<User> _signInManager;
         private readonly ITokenGeneration _tokenGeneration;
-        public UsersManager(UserManager<User> userManager, IMapper mapper, SignInManager<User> signInManager, ITokenGeneration tokenGeneration)
+        private readonly IClientManager _clientManager;
+        private readonly IApplicantManager _applicantManager;
+        public UsersManager(UserManager<User> userManager, IMapper mapper, 
+            SignInManager<User> signInManager, ITokenGeneration tokenGeneration, IClientManager clientManager, IApplicantManager applicantManager)
         {
+            _clientManager = clientManager;
+            _applicantManager = applicantManager;
             _tokenGeneration = tokenGeneration;
             _userManager = userManager;
             _mapper = mapper;
@@ -95,9 +100,16 @@ namespace HRHunters.Domain.Managers
             {
                 userToCreate.LastName = null;
             }
+
+            if(role.Equals("Applicant"))
+                _applicantManager.Create(new Applicant() { User = userToCreate });
+            else
+                _clientManager.Create(new Client() { User = userToCreate });
+
             await _userManager.AddToRoleAsync(userToCreate, role);
             userToReturn.Succeeded = true;
             return userToReturn;
         }
+
     }
 }

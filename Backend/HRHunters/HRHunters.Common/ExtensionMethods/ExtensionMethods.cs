@@ -9,6 +9,8 @@ using System.Text;
 using HRHunters.Common.Entities;
 using System.Globalization;
 using System.Web;
+using HRHunters.Common.Responses;
+using System.Threading.Tasks;
 
 namespace HRHunters.Common.ExtensionMethods
 {
@@ -71,6 +73,7 @@ namespace HRHunters.Common.ExtensionMethods
 
             return string.Join("&", properties.ToArray());
         }
+
     }
     
         

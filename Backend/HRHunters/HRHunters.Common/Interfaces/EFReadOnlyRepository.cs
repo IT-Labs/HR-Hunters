@@ -24,7 +24,7 @@ namespace HRHunters.Data
         protected virtual IQueryable<TEntity> GetQueryable<TEntity>(
         Expression<Func<TEntity, bool>> filter = null,
         string includeProperties = null)
-        where TEntity : Entity
+        where TEntity : Entity, IEntity
         {
             includeProperties = includeProperties ?? string.Empty;
             IQueryable<TEntity> query = context.Set<TEntity>();
@@ -53,7 +53,7 @@ namespace HRHunters.Data
         int? skip = null,
         int? take = null,
         SortDirection? sortDirection = null)
-        where TEntity : Entity
+        where TEntity : Entity, IEntity
         {
            return GetQueryable<TEntity>(filter,includeProperties);
         }
@@ -64,25 +64,25 @@ namespace HRHunters.Data
         int? skip = null,
         int? take = null,
         SortDirection? sortDirection = null)
-        where TEntity : Entity
+        where TEntity : Entity, IEntity
         {
             return GetQueryable<TEntity>(null, includeProperties);
         }
 
         public virtual TEntity GetById<TEntity>(object id)
-        where TEntity : Entity
+        where TEntity : Entity, IEntity
         {
             return context.Set<TEntity>().Find(id);
         }
 
         public virtual int GetCount<TEntity>(Expression<Func<TEntity, bool>> filter = null)
-        where TEntity : Entity
+        where TEntity : Entity, IEntity
         {
             return GetQueryable<TEntity>(filter).Count();
         }
 
         public virtual bool GetExists<TEntity>(Expression<Func<TEntity, bool>> filter = null)
-       where TEntity : Entity
+       where TEntity : Entity, IEntity
         {
             return GetQueryable<TEntity>(filter).Any();
         }
@@ -90,7 +90,7 @@ namespace HRHunters.Data
         public virtual TEntity GetOne<TEntity>(
         Expression<Func<TEntity, bool>> filter = null,
         string includeProperties = "")
-        where TEntity : Entity
+        where TEntity : Entity, IEntity
         {
             return GetQueryable<TEntity>(filter, includeProperties).FirstOrDefault();
         }
