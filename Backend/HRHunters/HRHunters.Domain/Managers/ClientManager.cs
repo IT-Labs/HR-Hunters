@@ -8,6 +8,8 @@ using HRHunters.Common.Interfaces;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Common.ExtensionMethods;
 using HRHunters.Data;
+using HRHunters.Common.Requests;
+using Microsoft.AspNetCore.Identity;
 
 namespace HRHunters.Domain.Managers
 {
@@ -18,39 +20,13 @@ namespace HRHunters.Domain.Managers
         {
             _repo = repo;
         }
-        public ClientResponse GetMultiple(int pageSize = 20, int currentPage = 1, string sortedBy = "", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
+        public ClientResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
-
-            var query = _repo.GetAll<Client>(
-                includeProperties: $"{nameof(User)}," +
-                                   $"{nameof(Client.JobPostings)}")
-                                   .Select(
-                                      x => new ClientInfo
-                                      {
-                                          Id=x.UserId,
-                                          CompanyName = x.User.FirstName,
-                                          Email = x.User.Email,
-                                          ActiveJobs = x.JobPostings.Count(y=>y.DateTo<DateTime.UtcNow),
-                                          AllJobs = x.JobPostings.Count,
-                                          Status = x.Status.ToString(),
-                                          Logo = "photo"
-                                      })
-                                      .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
-                                      .ToList();
-            response.Clients.AddRange(query);
-            response.MaxClients = _repo.GetAll<Client>().Count();
-            response.Active = _repo.GetCount<Client>(x => x.Status.Equals(ClientStatus.Active));
-            response.Inactive= _repo.GetCount<Client>(x => x.Status.Equals(ClientStatus.Inactive));
-            return response;
-
-        }
-
-        public ClientResponse GetMultiple()
-        {
-            var response = new ClientResponse() { Clients = new List<ClientInfo>() };
-
-            var query = _repo.GetAll<Client>(
+            
+            if (pageSize == 0 && currentPage == 0)
+            {
+                var queryAll = _repo.GetAll<Client>(
                 includeProperties: $"{nameof(User)}," +
                                    $"{nameof(Client.JobPostings)}")
                                    .Select(
@@ -62,7 +38,31 @@ namespace HRHunters.Domain.Managers
                                           Location = x.Location
                                       })
                                       .ToList();
-            response.Clients.AddRange(query);
+                response.Clients.AddRange(queryAll);
+            }
+            else
+            {
+               var query = _repo.GetAll<Client>(
+                    includeProperties: $"{nameof(User)}," +
+                                       $"{nameof(Client.JobPostings)}")
+                                       .Select(
+                                          x => new ClientInfo
+                                          {
+                                              Id = x.UserId,
+                                              CompanyName = x.User.FirstName,
+                                              Email = x.User.Email,
+                                              ActiveJobs = x.JobPostings.Count(y => y.DateTo < DateTime.UtcNow),
+                                              AllJobs = x.JobPostings.Count,
+                                              Status = x.Status.ToString(),
+                                              Logo = "photo"
+                                          })
+                                          .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
+                                          .ToList();
+              response.Clients.AddRange(query);
+              response.MaxClients = _repo.GetAll<Client>().Count();
+              response.Active = _repo.GetCount<Client>(x => x.Status.Equals(ClientStatus.Active));
+              response.Inactive = _repo.GetCount<Client>(x => x.Status.Equals(ClientStatus.Inactive));
+            }
             return response;
         }
 
