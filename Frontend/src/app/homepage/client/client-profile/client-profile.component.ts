@@ -53,6 +53,15 @@ export class ClientProfileComponent implements OnInit {
         Validators.maxLength(30),
         Validators.pattern(this.validEmail)
       ])
+    ],
+    location:[
+      "",
+      Validators.compose([
+        Validators.required,
+        Validators.minLength(1),
+        Validators.maxLength(30),
+        Validators.pattern("[a-zA-Z0-9]*")
+      ])
     ]
     
   });
