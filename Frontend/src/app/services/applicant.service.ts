@@ -27,7 +27,7 @@ export class ApplicantService {
   getApplicants(queryParams) {
     this.http
       .get<{ applicants: Applicant[]; maxApplicants: number }>(
-        this.baseUrl + "/Applicants/applicants" + queryParams
+        this.baseUrl + "/Applicants" + queryParams
       )
       .subscribe(applicantsData => {
         this.applicantsUpdated.next({

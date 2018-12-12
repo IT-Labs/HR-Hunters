@@ -69,7 +69,7 @@ export class ClientService {
 
   updateClient(clientData) {
     this.http
-      .put(this.baseUrl + "/Clients/clients" + clientData.id, clientData)
+      .put(this.baseUrl + "/Clients" + clientData.id, clientData)
       .subscribe(response => {});
   }
 }

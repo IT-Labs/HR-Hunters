@@ -8,16 +8,14 @@
       <label
         class="btn btn-secondary dash__heading--radio-btn"
         [ngClass]="{ active: !existingCompany }"
-        (click)="onCompanyRadioBtnClick()"
-        (click)="existingCompany = false"
+        (click)="onCompanyRadioBtnClick('new')"
       >
         <input type="radio" name="options" autocomplete="off" /> Add New Company
       </label>
       <label
         class="btn btn-secondary dash__heading--radio-btn"
         [ngClass]="{ active: existingCompany }"
-        (click)="onCompanyRadioBtnClick()"
-        (click)="existingCompany = true"
+        (click)="onCompanyRadioBtnClick('existing')"
       >
         <input type="radio" name="options" autocomplete="off" /> Select Existing
         Company
@@ -45,24 +43,14 @@
           maxlength="50"
           autocomplete="off"
           id="dashidCompanyName"
+          placeholder="Company name..."
           aria-haspopup="true"
           aria-expanded="true"
-          (keyup)="populateCompanySuggestions($event)"
-          (focus)="onFocus('companyName')"
         />
         <div
           class="dropdown-container"
           *ngIf="clients.length > 0 && formFocus.companyName"
-        >
-          <div class="dropdown-menu show" aria-labelledby="dashidCompanyName">
-            <span
-              class="dropdown-item"
-              *ngFor="let client of clients"
-              (click)="populateCompanyInfo($event, client.id)"
-              >{{ client.companyName }}</span
-            >
-          </div>
-        </div>
+        ></div>
         <div
           *ngIf="
             !newJobPostingForm.controls['companyName'].valid &&
@@ -112,7 +100,7 @@
           class="alert dash__form--alert-msg"
         >
           <div
-            *ngIf="newJobPostingForm.controls['applicantEmail'].errors?.pattern"
+            *ngIf="newJobPostingForm.controls['companyEmail'].errors?.pattern"
           >
             Email must be in valid format.
           </div>
@@ -138,7 +126,7 @@
           id="dashid__location"
           class="dash__form--input"
           placeholder="Enter location..."
-          formControlName="location"
+          formControlName="companyLocation"
           maxlength="50"
           (focus)="onFocus('location')"
           autocomplete="off"
@@ -146,16 +134,24 @@
 
         <div
           *ngIf="
-            !newJobPostingForm.controls['location'].valid &&
-            (newJobPostingForm.controls['location'].dirty ||
-              newJobPostingForm.controls['location'].touched)
+            !newJobPostingForm.controls['companyLocation'].valid &&
+            (newJobPostingForm.controls['companyLocation'].dirty ||
+              newJobPostingForm.controls['companyLocation'].touched)
           "
           class="alert dash__form--alert-msg"
         >
-          <div *ngIf="newJobPostingForm.controls['location'].errors?.required">
+          <div
+            *ngIf="
+              newJobPostingForm.controls['companyLocation'].errors?.required
+            "
+          >
             Location is required.
           </div>
-          <div *ngIf="newJobPostingForm.controls['location'].errors?.maxlength">
+          <div
+            *ngIf="
+              newJobPostingForm.controls['companyLocation'].errors?.maxlength
+            "
+          >
             Location must be up to 50 characters long.
           </div>
         </div>
@@ -317,60 +313,45 @@
         <label for="dashid__duration" class="dash__form--label"
           >Duration <span class="u-required-star">*</span></label
         >
-        <span>From:</span>
-        <input
-          type="date"
-          id="dashid__duration-from"
-          class="dash__form--date"
-          min="2018-01-01"
-          max="2019-12-31"
-          formControlName="dateFrom"
-          (focus)="onFocus('dateFrom')"
-        />
-        <span>To:</span>
-        <input
-          type="date"
-          id="dashid__duration-to"
-          class="dash__form--date"
-          min="2018-01-01"
-          max="2019-12-31"
-          formControlName="dateTo"
-          (focus)="onFocus('dateTo')"
-        />
 
-        <div
+        <ngb-datepicker
+          #dp
+          (select)="onDateSelection($event)"
+          [displayMonths]="2"
+          [dayTemplate]="t"
+          outsideDays="hidden"
+        >
+        </ngb-datepicker>
+
+        <ng-template #t let-date let-focused="focused">
+          <span
+            class="custom-day"
+            [class.focused]="focused"
+            [class.range]="isRange(date)"
+            [class.faded]="isHovered(date) || isInside(date)"
+            (mouseenter)="hoveredDate = date"
+            (mouseleave)="hoveredDate = null"
+          >
+            {{ date.day }}
+          </span>
+        </ng-template>
+
+       <div
           *ngIf="
-            (!newJobPostingForm.controls['dateFrom'].valid &&
-              (newJobPostingForm.controls['dateFrom'].dirty ||
-                newJobPostingForm.controls['dateFrom'].touched)) ||
-            (!newJobPostingForm.controls['dateTo'].valid &&
-              (newJobPostingForm.controls['dateTo'].dirty ||
-                newJobPostingForm.controls['dateTo'].touched))
+            !fromDate || !toDate
           "
           class="alert dash__form--alert-msg"
         >
-          <div
-            *ngIf="
-              newJobPostingForm.controls['dateFrom'].errors?.required ||
-              newJobPostingForm.controls['dateTo'].errors?.required
-            "
-          >
-            Duration is required.
-          </div>
-
-          <div *ngIf="newJobPostingForm.controls.dateTo.errors">
             Start date must be equal to today's date or a later date. End date
             can't be earlier or equal to start date.
-          </div>
-        </div>
+        </div> 
       </div>
 
       <button
         type="submit"
         class="btn dash__form--btn"
-        [disabled]="!newJobPostingForm.valid"
+        [disabled]="!newJobPostingForm.valid || !fromDate || !toDate"
       >
-        <!-- && validExperience -->
         Publish Job
       </button>
     </form>
