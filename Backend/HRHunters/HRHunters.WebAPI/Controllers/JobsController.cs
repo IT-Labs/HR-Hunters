@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests.Users;
+using HRHunters.Common.Responses;
 using HRHunters.Common.Responses.AdminDashboard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +41,12 @@ namespace HRHunters.WebAPI.Controllers
         public async Task<ActionResult<object>> CreateJobPosting(JobSubmit jobSubmit)
         {
             return Ok(await _jobManager.CreateJobPosting(jobSubmit));
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult<GeneralResponse> UpdateJob(JobUpdate jobSubmit)
+        {
+            return Ok(_jobManager.UpdateJob(jobSubmit));
         }
     }
 }

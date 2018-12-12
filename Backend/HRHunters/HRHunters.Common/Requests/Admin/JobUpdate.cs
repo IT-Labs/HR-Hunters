@@ -7,7 +7,9 @@ namespace HRHunters.Common.Requests.Admin
 {
     public class JobUpdate
     {
-        [Required, RegularExpression("^[a-zA-Z ]*$", ErrorMessage = "Title can only contain alphabet characters.")]
+        public int Id { get; set; }
+        public string Status { get; set; }
+        [Required]
         public string JobTitle { get; set; }
         [StringLength(800)]
         public string Description { get; set; }

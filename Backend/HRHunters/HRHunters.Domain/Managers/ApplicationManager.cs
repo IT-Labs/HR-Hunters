@@ -72,8 +72,8 @@ namespace HRHunters.Domain.Managers
         {
             var application = _repo.Get<Application>(filter: x => x.Id == id, 
                                                     includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)},{nameof(JobPosting)}").FirstOrDefault();
-            var statusToUpdate = application.Status;
-            Enum.TryParse(status, out statusToUpdate);
+            
+            Enum.TryParse(status, out ApplicationStatus statusToUpdate);
             application.Status = statusToUpdate;
             _repo.Update(application, "Admin");
             return ToApplicationInfo(application);

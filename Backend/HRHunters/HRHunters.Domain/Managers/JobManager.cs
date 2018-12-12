@@ -67,7 +67,7 @@ namespace HRHunters.Domain.Managers
             response.Approved = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Approved);
             response.Pending = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Pending);
             response.Rejected = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Rejected);
-
+            response.Expired = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Expired);
             return response;
         }
         public async Task<object> CreateJobPosting(JobSubmit jobSubmit)
@@ -144,14 +144,19 @@ namespace HRHunters.Domain.Managers
 
         }
 
-        public JobInfo UpdateJob(int id, string status, JobUpdate jobUpdate)
+        public GeneralResponse UpdateJob(JobUpdate jobUpdate)
         {
-            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == id,
+            var response = new GeneralResponse()
+            {
+                Succeeded = true,
+                Errors = new Dictionary<string, List<string>>(),
+            };
+            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
-            if (!string.IsNullOrEmpty(status))
+            if (!string.IsNullOrEmpty(jobUpdate.Status))
             { 
                 var statusToUpdate = jobPost.Status;
-                Enum.TryParse(status, out statusToUpdate);
+                Enum.TryParse(jobUpdate.Status, out statusToUpdate);
                 jobPost.Status = statusToUpdate;
             }else 
             if(jobUpdate != null) {
@@ -168,10 +173,17 @@ namespace HRHunters.Domain.Managers
                 jobPost.DateFrom = date;
                 DateTime.TryParse(jobUpdate.DateTo, out date);
                 jobPost.DateTo = date;
+            }else
+            {
+                var list = new List<string>();
+                list.Add("Invalid input");
+                response.Errors.Add("Error", list);
+                response.Succeeded = false;
+                return response;
             }
             _repo.Update(jobPost, "Admin");
 
-            return ToJobInfo(jobPost);
+            return response;
         }
     }
 }
