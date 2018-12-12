@@ -8,16 +8,23 @@ using HRHunters.Common.Interfaces;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Common.ExtensionMethods;
 using HRHunters.Data;
-using HRHunters.Common.Requests;
+using HRHunters.Common.Responses;
+using System.Threading.Tasks;
+using HRHunters.Common.Requests.Users;
 using Microsoft.AspNetCore.Identity;
+using AutoMapper;
 
 namespace HRHunters.Domain.Managers
 {
     public class ClientManager : BaseManager, IClientManager
     {
         private readonly IRepository _repo;
-        public ClientManager(IRepository repo) : base(repo)
+        private readonly UserManager<User> _userManager;
+        private readonly IMapper _mapper;
+        public ClientManager(IRepository repo, UserManager<User> userManager, IMapper mapper) : base(repo)
         {
+            _userManager = userManager;
+            _mapper = mapper;
             _repo = repo;
         }
         public ClientResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
@@ -87,6 +94,40 @@ namespace HRHunters.Domain.Managers
                 Status = client.Status.ToString(),
                 Logo = "photo.jpg"
             };
+        }
+
+        public async Task<GeneralResponse> UpdateClientProfile(ClientUpdate clientUpdate)
+        {
+            var response = new GeneralResponse()
+            {
+                Succeeded = true,
+                Errors = new Dictionary<string, List<string>>()
+            };
+            var user = await _userManager.FindByIdAsync(clientUpdate.UserId.ToString());
+
+            var client = _repo.GetById<Client>(clientUpdate.UserId);
+            if (user != null && clientUpdate != null)
+            {
+                client = _mapper.Map(clientUpdate, client);
+                client.User.ModifiedDate = DateTime.UtcNow;
+                client.User.ModifiedBy = "User";
+                try
+                {
+                    _repo.Update(client, "User");
+                    await _userManager.UpdateAsync(user);
+                    return response;
+                }
+                catch (Exception e)
+                {
+                    throw new Exception(e.Message);
+                }
+            }
+            var list = new List<string>()
+            {
+                "Error occured, client-side validation failed."
+            };
+            response.Errors.Add("Error", list);
+            return response;
         }
     }
 }

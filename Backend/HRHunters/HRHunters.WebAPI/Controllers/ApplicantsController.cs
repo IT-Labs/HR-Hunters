@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
+using HRHunters.Common.Requests.Users;
+using HRHunters.Common.Responses;
 using HRHunters.Common.Responses.AdminDashboard;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +27,11 @@ namespace HRHunters.WebAPI.Controllers
         public ActionResult<ApplicantResponse> GetMultipleApplicants(int pageSize = 0, int currentPage = 0, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
             return Ok(_applicantManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
+        }
+        [HttpPut]
+        public async Task<ActionResult<GeneralResponse>> UpdateApplicantProfile(ApplicantUpdate applicantUpdate)
+        {
+            return Ok(await _applicantManager.UpdateApplicantProfile(applicantUpdate));
         }
     }
 }

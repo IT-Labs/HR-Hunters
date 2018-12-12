@@ -43,7 +43,7 @@ namespace HRHunters.WebAPI.Controllers
             return Ok(await _jobManager.CreateJobPosting(jobSubmit));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public ActionResult<GeneralResponse> UpdateJob(JobUpdate jobSubmit)
         {
             return Ok(_jobManager.UpdateJob(jobSubmit));
