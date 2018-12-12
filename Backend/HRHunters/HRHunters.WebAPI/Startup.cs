@@ -7,6 +7,7 @@ using AutoMapper;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Responses;
+using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
 using HRHunters.Data.Context;
 using HRHunters.Domain.Managers;
