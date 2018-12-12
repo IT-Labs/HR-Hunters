@@ -28,6 +28,7 @@ import { ADJobPostingsComponent } from './admin-dashboard/job-postings/job-posti
 import { ADNewJobPostingComponent } from './admin-dashboard/job-postings/new-job-posting/new-job-posting.component';
 import { ErrorComponent } from './error/error.component';
 import { NgbModule, NgbPaginationModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbdPaginationConfig } from './admin-dashboard/pagination/ng-pagination-config.component';
 
 @NgModule({
     declarations: [
@@ -52,7 +53,8 @@ import { NgbModule, NgbPaginationModule, NgbAlertModule } from '@ng-bootstrap/ng
         ADApplicationsComponent,
         ADJobPostingsComponent,
         ADNewJobPostingComponent,
-        LoginComponent
+        LoginComponent,
+        NgbdPaginationConfig
     ],
     imports: [
         CommonModule,
