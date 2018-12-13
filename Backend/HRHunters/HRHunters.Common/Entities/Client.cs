@@ -12,6 +12,7 @@ namespace HRHunters.Common.Entities
     {
         public ClientStatus Status { get; set; }
         public string Location { get; set; }
+        public string Logo { get; set; }
         public int UserId { get; set; }
         public new int Id { get { return UserId; } set { Id = value; } }
 

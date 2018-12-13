@@ -54,6 +54,8 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<string>("Experience");
 
+                    b.Property<string>("Logo");
+
                     b.Property<string>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
@@ -111,6 +113,8 @@ namespace HRHunters.Data.Migrations
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<string>("Location");
+
+                    b.Property<string>("Logo");
 
                     b.Property<string>("ModifiedBy");
 

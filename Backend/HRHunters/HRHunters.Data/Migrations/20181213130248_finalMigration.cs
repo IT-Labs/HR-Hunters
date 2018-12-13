@@ -114,6 +114,7 @@ namespace HRHunters.Data.Migrations
                     Experience = table.Column<string>(nullable: true),
                     EducationType = table.Column<string>(nullable: true),
                     SchoolUniversity = table.Column<string>(nullable: true),
+                    Logo = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false),
                     PhoneNumber = table.Column<string>(nullable: true),
                     Id = table.Column<int>(nullable: false)
@@ -230,6 +231,7 @@ namespace HRHunters.Data.Migrations
                     ModifiedBy = table.Column<string>(nullable: true),
                     Status = table.Column<int>(nullable: false),
                     Location = table.Column<string>(nullable: true),
+                    Logo = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),

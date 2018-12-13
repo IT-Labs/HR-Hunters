@@ -44,7 +44,7 @@ namespace HRHunters.Data.Context
 
             if (!_userManager.Users.Any())
             { 
-            for(int i = 0; i < 10; i++)
+            for(int i = 0; i < 90; i++)
                 {
                     var user = new User();
                     user.Email = "vlatkozmejkoski" + i + "@gmail.com";
@@ -72,6 +72,7 @@ namespace HRHunters.Data.Context
                             Status = (ClientStatus)values.GetValue(random.Next(values.Length))
                         };
                         _clientManager.Create(client);
+                        _userManager.AddToRoleAsync(user, "Client").Wait();
                         values = Enum.GetValues(typeof(JobPostingStatus));
                         var jobPost = new JobPosting()
                         {
@@ -98,7 +99,9 @@ namespace HRHunters.Data.Context
                             Experience = "3",
                             
                         };
+
                         _clientManager.Create(applicant, "Admin");
+                        _userManager.AddToRoleAsync(user, "Applicant").Wait();
                         values = Enum.GetValues(typeof(ApplicationStatus));
                         var application = new Application()
                         {
