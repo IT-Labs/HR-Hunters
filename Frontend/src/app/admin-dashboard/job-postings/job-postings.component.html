@@ -96,8 +96,8 @@
     </table>
   </div>
      
-
   <ngb-pagination
+  *ngIf="jobPostingsCount.all > 10"
     [collectionSize]="jobPostingsCount.all"
     [(page)]="jobPostingQP.currentPage"
     [maxSize]="10"

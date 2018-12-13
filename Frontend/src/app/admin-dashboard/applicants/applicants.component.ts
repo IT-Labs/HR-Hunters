@@ -18,6 +18,7 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
   applicantsQP = {
     postsPerPage: 10,
     currentPage: 1,
+    previousPage: 0,
     currentSortBy: "firstName",
     lastSortBy: "",
     currentSortDirection: 0
@@ -36,7 +37,6 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
       .subscribe(applicantData => {
         this.applicants = applicantData.applicants;
         this.applicantsCount.all = applicantData.applicantsCount;
-        this.calculatePagination(this.applicantsCount.all);
       });
   }
 
@@ -75,46 +75,12 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
     }
   }
 
-  calculatePagination(applicantsCount: number) {
-    this.paginationSize = [];
-    const paginationSum = Math.ceil(applicantsCount / 10);
-
-    if (paginationSum > 0 && paginationSum < 11) {
-      for (let i = 1; i < paginationSum + 1; i++) {
-        const num = i;
-        this.paginationSize.push(num);
-      }
-    } else if (paginationSum > 10) {
-      if (
-        this.applicantsQP.currentPage - 10 < paginationSum - 10 &&
-        this.applicantsQP.currentPage < 6
-      ) {
-        for (let i = 1; i < 11; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else if (this.applicantsQP.currentPage - 10 < paginationSum - 10) {
-        for (
-          let i = this.applicantsQP.currentPage - 5;
-          i < this.applicantsQP.currentPage + 5;
-          i++
-        ) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else {
-        for (let i = paginationSum - 9; i < paginationSum + 1; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      }
-    }
-  }
-
   onChangedPage(page: number) {
-    this.applicantsQP.currentPage = page;
-    const params = this.buildQueryParams(this.applicantsQP);
-    this.applicantService.getApplicants(params);
+    if (this.applicantsQP.currentPage !== this.applicantsQP.previousPage) {
+      this.applicantsQP.previousPage = this.applicantsQP.currentPage;
+      const params = this.buildQueryParams(this.applicantsQP);
+      this.applicantService.getApplicants(params);
+    }
   }
 
   onSort(sortBy: any) {
