@@ -9,6 +9,7 @@ using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
 using HRHunters.Common.Responses.AdminDashboard;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,7 +31,7 @@ namespace HRHunters.WebAPI.Controllers
         {
             return Ok(await _jobManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery, id));
         }
-
+        [Authorize(policy:"RequireClientRole")]
         [HttpGet("{id}")]
         public ActionResult<JobResponse> GetOneJobPosting(int id)
         {
@@ -42,7 +43,7 @@ namespace HRHunters.WebAPI.Controllers
         {
             return Ok(await _jobManager.CreateJobPosting(jobSubmit));
         }
-
+        [Authorize(policy: "RequireAdminRole")]
         [HttpPut]
         public ActionResult<GeneralResponse> UpdateJob(JobUpdate jobSubmit)
         {
