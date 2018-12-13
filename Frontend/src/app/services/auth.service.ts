@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpRequest } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { User } from "../models/user.model";
 import { Subject } from "rxjs";
@@ -34,7 +34,7 @@ export class AuthService {
 
   // Gets the users token
   getToken() {
-    return this.user.token;
+    return localStorage.getItem('token');
   }
 
   getUser() {
@@ -245,6 +245,19 @@ export class AuthService {
     return {
       token: token
     };
+  }
+
+  // Caching unauthorized requests
+
+  cachedRequests: Array<HttpRequest<any>> = [];
+
+  public collectFailedRequest(request): void {
+    this.cachedRequests.push(request);
+  }
+
+  public retryFailedRequests(): void {
+    // retry the requests. this method can
+    // be called after the token is refreshed
   }
 
   // LOGOUT
