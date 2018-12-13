@@ -23,7 +23,8 @@ export class ADNewJobPostingComponent implements OnInit {
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
-  existingCompany = false;
+  validDate = false;
+
   clients: Client[] = [];
   experience = [
     "<1",
@@ -58,19 +59,9 @@ export class ADNewJobPostingComponent implements OnInit {
     status: null,
     location: null
   };
-  formFocus = {
-    companyName: false,
-    companyEmail: false,
-    title: false,
-    description: false,
-    jobType: false,
-    education: false,
-    experience: false,
-    dateFrom: false,
-    dateTo: false
-  };
 
   hoveredDate: NgbDate;
+  todayDate: NgbDate;
   fromDate: NgbDate;
   toDate: NgbDate;
 
@@ -96,8 +87,17 @@ export class ADNewJobPostingComponent implements OnInit {
         });
       });
 
+    this.todayDate = this.calendar.getToday();
     this.fromDate = this.calendar.getToday();
     this.toDate = this.calendar.getNext(this.calendar.getToday(), 'd', 10);
+
+    if (this.fromDate >= this.todayDate ) {
+      this.validDate = true;
+    } else {
+      this.validDate = false;
+    }
+
+    console.log(this.todayDate)
   }
 
   newJobPostingForm = this.fb.group({
@@ -106,23 +106,6 @@ export class ADNewJobPostingComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.minLength(2),
-        Validators.maxLength(50)
-      ])
-    ],
-    companyEmail: [
-      "",
-      Validators.compose([
-        Validators.required,
-        Validators.minLength(6),
-        Validators.maxLength(30),
-        Validators.pattern(this.validEmail)
-      ])
-    ],
-    companyLocation: [
-      "",
-      Validators.compose([
-        Validators.required,
-        Validators.minLength(1),
         Validators.maxLength(50)
       ])
     ],
@@ -198,60 +181,14 @@ export class ADNewJobPostingComponent implements OnInit {
     return date.equals(this.fromDate) || date.equals(this.toDate) || this.isInside(date) || this.isHovered(date);
   }
 
-  onCompanyRadioBtnClick(comapnyType: string) {
-    if (comapnyType === 'existing') {
-      this.existingCompany = true;
-      this.newJobPostingForm.controls["companyEmail"].disable();
-      this.newJobPostingForm.controls["companyLocation"].disable();
-    } else if (comapnyType === 'new') {
-      this.existingCompany = false;
-      this.newJobPostingForm.controls["companyEmail"].enable();
-      this.newJobPostingForm.controls["companyLocation"].enable();
-    }
-  }
-
-  onFocus(event: any) {
-    this.formFocus = {
-      companyName: false,
-      companyEmail: false,
-      title: false,
-      description: false,
-      jobType: false,
-      education: false,
-      experience: false,
-      dateFrom: false,
-      dateTo: false
-    };
-    this.formFocus[event] = true;
-  }
-
-  populateCompanyInfo(selected: string) {
-    this.clients.map(client => {
-      if (selected === client.companyName) {
-        this.selectedCompany = client;
-        this.newJobPostingForm.controls["companyName"].setValue(
-          this.selectedCompany.companyName
-        );
-        this.newJobPostingForm.controls["companyEmail"].setValue(
-          this.selectedCompany.email
-        );
-        this.newJobPostingForm.controls["companyLocation"].setValue(
-          this.selectedCompany.location
-        );
-      }
-    });
-  }
-
   onSubmitNewJobPosting() {
     this.newJobPostingForm.controls["companyName"].markAsTouched();
-    this.newJobPostingForm.controls["companyEmail"].markAsTouched();
-    this.newJobPostingForm.controls["companyLocation"].markAsTouched();
     this.newJobPostingForm.controls["title"].markAsTouched();
     this.newJobPostingForm.controls["jobType"].markAsTouched();
     this.newJobPostingForm.controls["education"].markAsTouched();
     this.newJobPostingForm.controls["experience"].markAsTouched();
 
-    let monthToDate, monthFromDate, dayToDate, dayFromDate, dateFrom, dateTo
+    let monthToDate, monthFromDate, dayToDate, dayFromDate, dateFrom, dateTo, dateToday, monthTodayDate, dayTodayDate
 
     if (this.fromDate && this.toDate) {
       if (this.fromDate.month < 10) {
@@ -277,14 +214,31 @@ export class ADNewJobPostingComponent implements OnInit {
       } else {
         dayToDate = this.toDate.day;
       }
+      
+      if (this.todayDate.month < 10) {
+        monthTodayDate = `0${this.todayDate.month}`;
+      } else {
+        monthTodayDate = this.todayDate.month;
+      }
+      
+      if (this.todayDate.day < 10) {
+        dayTodayDate = `0${this.todayDate.day}`;
+      } else {
+        dayTodayDate = this.todayDate.day;
+      }
   
       dateFrom = `${this.fromDate.year}/${monthFromDate}/${dayFromDate}`
       dateTo = `${this.toDate.year}/${monthToDate}/${dayToDate}`
+      dateToday = `${this.todayDate.year}/${monthTodayDate}/${dayTodayDate}`
     }
 
-    let jobPostingData;
-    if (this.existingCompany) {
-      jobPostingData = this.buildJobPostingDataOnAddJobPosting(
+    if (this.fromDate >= this.todayDate ) {
+      this.validDate = true;
+    } else {
+      this.validDate = false;
+    }
+
+    let jobPostingData = this.buildJobPostingDataOnAddJobPosting(
         true,
         this.selectedCompany.id,
         null,
@@ -298,24 +252,8 @@ export class ADNewJobPostingComponent implements OnInit {
         dateFrom,
         dateTo
       );
-    } else if (!this.existingCompany) {
-      jobPostingData = this.buildJobPostingDataOnAddJobPosting(
-        false,
-        0,
-        this.newJobPostingForm.value.companyName,
-        this.newJobPostingForm.value.companyEmail,
-        this.newJobPostingForm.value.companyLocation,
-        this.newJobPostingForm.value.title,
-        this.newJobPostingForm.value.description,
-        this.newJobPostingForm.value.jobType,
-        this.newJobPostingForm.value.education,
-        this.newJobPostingForm.value.experience,
-        dateFrom,
-        dateTo
-      );
-    }
 
-    if (this.newJobPostingForm.valid && this.fromDate && this.toDate) {
+    if (this.newJobPostingForm.valid && this.fromDate && this.toDate && this.validDate) {
       this.jobPostingService.addJobPosting(jobPostingData);
     }
 
