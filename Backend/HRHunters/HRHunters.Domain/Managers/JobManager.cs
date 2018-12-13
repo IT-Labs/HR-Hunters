@@ -15,6 +15,10 @@ using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using System.Dynamic;
 using HRHunters.Common.Responses;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
+using HRHunters.Common.Exceptions;
 
 namespace HRHunters.Domain.Managers
 {
@@ -22,56 +26,64 @@ namespace HRHunters.Domain.Managers
     {
         private readonly IRepository _repo;
         private readonly UserManager<User> _userManager;
-        public JobManager(IRepository repo, UserManager<User> userManager) : base(repo)
+        private readonly IMapper _mapper;
+        public JobManager(IRepository repo, UserManager<User> userManager, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(repo)
         {
             _repo = repo;
             _userManager = userManager;
+            _mapper = mapper;
         }
 
-        public JobInfo ToJobInfo(JobPosting x)
+        public async Task<JobResponse> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery, int id, int currentUserId)
         {
-            return new JobInfo()
-            {
-                CompanyEmail = x.Client.User.Email,
-                CompanyName = x.Client.User.FirstName,
-                AllApplicationsCount = x.Applications.Count,
-                DateTo = x.DateTo.ToString("yyyy/MM/dd"),
-                Id = x.Id,
-                JobTitle = x.Title,
-                JobType = x.EmpCategory.ToString(),
-                Status = x.Status.ToString(),
-            };
-        }
+            //if (id != currentUserId)
+            //    throw new InvalidUserException("User not found!");
 
-        public JobResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy,string filterQuery)
-        {
             var response = new JobResponse() { JobPostings = new List<JobInfo>() };
-            var query = _repo.GetAll<JobPosting>(
-                    includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}")
-                                        .Select(
-                                        x => new JobInfo()
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            IList<string> role = new List<string>();
+            if (user != null)
+                role = _userManager.GetRolesAsync(user).Result;
+           
+            if (role != null || id == 0)
+            {
+                var queryApplicant = _repo.GetAll<JobPosting>(
+                        includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}"
+                        ).Where(x => role.Contains("Applicant")
+                                        ? x.Client.Status == ClientStatus.Active && x.Status == JobPostingStatus.Approved
+                                            : role.Contains("Client") ? x.ClientId == id
+                                                : x.Status.GetType().IsEnum);
+
+                var selected = _mapper.ProjectTo<JobInfo>(queryApplicant)
+                    .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+
+                response.JobPostings.AddRange(selected.ToList());
+            }
+            var groupings = _repo.GetAll<JobPosting>()
+                                        .GroupBy(x => x.Status)
+                                        .Select(x => new
                                         {
-                                            CompanyEmail = x.Client.User.Email,
-                                            CompanyName = x.Client.User.FirstName,
-                                            AllApplicationsCount = x.Applications.Count,
-                                            DateTo = x.DateTo.ToString("yyyy/MM/dd"),
-                                            Id = x.Id,
-                                            JobTitle = x.Title,
-                                            JobType = x.EmpCategory.ToString(),
-                                            Status = x.Status.ToString(),
-                                        })
-                                        .Applyfilters(pageSize: pageSize, currentPage: currentPage, sortedBy: sortedBy, sortDir: sortDir, filterBy: filterBy, filterQuery: filterQuery)
-                                        .ToList();
-            response.JobPostings.AddRange(query);
-            response.MaxJobPosts = _repo.GetCount<JobPosting>();
-            response.Approved = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Approved);
-            response.Pending = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Pending);
-            response.Rejected = _repo.GetCount<JobPosting>(x => x.Status == JobPostingStatus.Rejected);
+                                            Status = x.Key,
+                                            Count = x.Count()
+                                        }).ToList();
+            
+            response.MaxJobPosts = groupings.Sum(x => x.Count);
+            response.Approved = groupings.Where(x => x.Status.Equals(JobPostingStatus.Approved)).Select(x => x.Count).FirstOrDefault();
+            response.Pending = groupings.Where(x => x.Status.Equals(JobPostingStatus.Pending)).Select(x => x.Count).FirstOrDefault();
+            response.Rejected = groupings.Where(x => x.Status.Equals(JobPostingStatus.Rejected)).Select(x => x.Count).FirstOrDefault();
+            response.Expired = groupings.Where(x => x.Status.Equals(JobPostingStatus.Expired)).Select(x => x.Count).FirstOrDefault();
 
             return response;
         }
-        public async Task<object> CreateJobPosting(JobSubmit jobSubmit)
+
+        public async Task<GeneralResponse> CreateJobPosting(JobSubmit jobSubmit, int currentUserId)
         {
+            var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(jobSubmit.Id.ToString()));
+
+            //if(jobSubmit.Id != currentUserId && !userRole.Contains("Admin"))
+            //{
+            //    throw new UnauthorizedAccessException("Unautherized access!");
+            //}
             var company = new Client();
             var list = new List<string>();
             var response = new GeneralResponse()
@@ -79,105 +91,73 @@ namespace HRHunters.Domain.Managers
                 Succeeded = true,
                 Errors = new Dictionary<string, List<string>>()
             };
-            if (jobSubmit != null && !jobSubmit.ExistingCompany)
-            {
-                User user = new User()
-                {
-                    FirstName = jobSubmit.CompanyName,
-                    Email = jobSubmit.CompanyEmail,
-                    UserName = jobSubmit.CompanyName,
-                    CreatedBy = "Admin"
-                };
-                var userExists = await _userManager.FindByEmailAsync(user.Email);
-                if (userExists != null)
-                {
-                    response.Succeeded = false;
-                    list.Add("Company already exists.");
-                    response.Errors.Add("Error", list);
-                    return response;
-                }
-                    
-                await _userManager.CreateAsync(user, "ClientDefaultPassword");
-                await _userManager.AddToRoleAsync(user, "Client");
-                company.User = user;
-                company.Location = "Default Location";
-                company.Status = ClientStatus.Active;
-                company.PhoneNumber = "+38978691342";
-                _repo.Create(company, "Admin");
-            }else if(jobSubmit.ExistingCompany && jobSubmit != null && jobSubmit.Id > 0)
-            { 
-                company = _repo.Get<Client>(filter: x => x.Id == jobSubmit.Id, includeProperties: $"{nameof(User)}").FirstOrDefault();
-            }else
-            {
-                response.Succeeded = false;
-                list.Add("Invalid input");
-                response.Errors.Add("Error", list);
-                return response;
-            }
-            DateTime.TryParse(jobSubmit.DateFrom, out DateTime dateFrom);
-            DateTime.TryParse(jobSubmit.DateTo, out DateTime dateTo);
-            Enum.TryParse(jobSubmit.Education, out EducationType educationType);
-            Enum.TryParse(jobSubmit.JobType, out JobType jobType);
+
+            company = _repo.GetById<Client>(jobSubmit.Id);
             var jobPost = new JobPosting()
             {
                 Client = company,
-                CreatedBy = "Admin",
-                DateFrom = dateFrom,
-                DateTo = dateTo,
-                Description = jobSubmit.Description,
-                Education = educationType,
-                EmpCategory = jobType,
-                Title = jobSubmit.JobTitle,
-                NeededExperience = jobSubmit.Experience,
-                Status = JobPostingStatus.Approved,
             };
+            jobPost = _mapper.Map(jobSubmit, jobPost);
+            DateTime.TryParse(jobSubmit.DateFrom, out DateTime dateFrom);
+            DateTime.TryParse(jobSubmit.DateTo, out DateTime dateTo);
+            Enum.TryParse(jobSubmit.Education, out EducationType education);
+            Enum.TryParse(jobSubmit.EmpCategory, out JobType empCategory);
+
+            jobPost.DateFrom = dateFrom;
+            jobPost.DateTo = dateTo;
+            jobPost.EmpCategory = empCategory;
+            jobPost.Education = education;
+            if (userRole.Contains("Client"))
+                jobPost.Status = JobPostingStatus.Pending;
+            else
+                jobPost.Status = JobPostingStatus.Approved;
+                
             _repo.Create(jobPost, "Admin");
+
             return response;
         }
 
-        public JobInfo GetOneJobPosting(int id)
+        public JobInfo GetOneJobPosting(int id, int currentUserId)
         {
-            var response = new JobResponse() { JobPostings = new List<JobInfo>() };
-            var jobPost =  _repo.GetOne<JobPosting>(filter: x => x.Id == id, 
+            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
-            return ToJobInfo(jobPost);
+
+            return _mapper.Map(jobPost, new JobInfo());
 
         }
 
-        public GeneralResponse UpdateJob(int id, string status, JobUpdate jobUpdate)
+        public GeneralResponse UpdateJob(JobUpdate jobUpdate, int currentUserId)
         {
             var response = new GeneralResponse()
             {
                 Succeeded = true,
                 Errors = new Dictionary<string, List<string>>(),
             };
-            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == id,
+            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
-            if (!string.IsNullOrEmpty(status))
+                                                    
+            if (!string.IsNullOrEmpty(jobUpdate.Status) && jobPost != null)
             { 
-                var statusToUpdate = jobPost.Status;
-                Enum.TryParse(status, out statusToUpdate);
+
+                Enum.TryParse(jobUpdate.Status, out JobPostingStatus statusToUpdate);
                 jobPost.Status = statusToUpdate;
-            }else 
-            if(jobUpdate != null) {
-                jobPost.Title = jobUpdate.JobTitle;
-                jobPost.Description = jobUpdate.Description;
-                var currentJobType = jobPost.EmpCategory;
-                Enum.TryParse(jobUpdate.JobType, out currentJobType);
+            }
+            else
+            if (jobPost != null && jobUpdate != null)
+            {
+                jobPost = _mapper.Map(jobUpdate, jobPost);
+                Enum.TryParse(jobUpdate.JobType, out JobType currentJobType);
                 jobPost.EmpCategory = currentJobType;
-                var currentEducation = jobPost.Education;
-                Enum.TryParse(jobUpdate.Education, out currentJobType);
+                Enum.TryParse(jobUpdate.Education, out EducationType currentEducation);
                 jobPost.Education = currentEducation;
-                jobPost.NeededExperience = jobUpdate.Experience;
                 DateTime.TryParse(jobUpdate.DateFrom, out DateTime date);
                 jobPost.DateFrom = date;
                 DateTime.TryParse(jobUpdate.DateTo, out date);
                 jobPost.DateTo = date;
-            }else
+            }
+            else
             {
-                var list = new List<string>();
-                list.Add("Invalid input");
-                response.Errors.Add("Error", list);
+                response.Errors.Add("Error", new List<string> { "Front-end sends wrong information!" });
                 response.Succeeded = false;
                 return response;
             }

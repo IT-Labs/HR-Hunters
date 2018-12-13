@@ -13,6 +13,7 @@ namespace HRHunters.Common.Entities
         public string Experience { get; set; }
         public string EducationType { get; set; }
         public string SchoolUniversity { get; set; }
+        public string Logo { get; set; }
         public int UserId { get; set; }
         public string PhoneNumber { get; set; }
         public new int Id { get { return UserId; } set { Id = value; } }

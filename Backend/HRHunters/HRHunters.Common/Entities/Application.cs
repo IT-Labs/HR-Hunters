@@ -10,7 +10,6 @@ namespace HRHunters.Common.Entities
 {
     public class Application : Entity
     {
-        [Required]
         public DateTime Date { get; set; }
         public ApplicationStatus Status { get; set; }
         public int ApplicantId { get; set; }

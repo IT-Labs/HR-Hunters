@@ -27,7 +27,7 @@ export class ApplicantService {
   getApplicants(queryParams) {
     this.http
       .get<{ applicants: Applicant[]; maxApplicants: number }>(
-        this.baseUrl + "/Applicants/applicants" + queryParams
+        this.baseUrl + "/Applicants" + queryParams
       )
       .subscribe(applicantsData => {
         this.applicantsUpdated.next({
@@ -37,12 +37,21 @@ export class ApplicantService {
       });
   }
 
-  // updateApplicant(applicantData) {
-  //   this.http
-  //     .put(
-  //       "http://localhost:3000/dataApplicantsUpdate/" + applicantData.id,
-  //       applicantData
-  //     )
-  //     .subscribe(response => {});
-  // }
+  updateApplicant(applicantData) {
+    this.http
+      .put<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        };
+      }>(this.baseUrl + "/Applicants", applicantData)
+      .subscribe(response => {
+        if (response.succeeded) {
+          this.router.navigate(["/admin-dashboard/applicants"]);
+        }
+      },
+      error => {
+        console.log(error)
+      });
+  }
 }

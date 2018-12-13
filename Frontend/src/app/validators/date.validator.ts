@@ -2,8 +2,8 @@ import { AbstractControl } from "@angular/forms";
 
 export function DateValidator(control: AbstractControl) {
     if (control && (control.value !== null || control.value !== undefined)) {
-        const durationTo = new Date(control.value);
-        const dateControl = control.root.get('durationFrom');
+        const dateTo = new Date(control.value);
+        const dateControl = control.root.get('dateFrom');
 
         const date = new Date();
         const dd = date.getDay()
@@ -34,7 +34,7 @@ export function DateValidator(control: AbstractControl) {
                     isError: true
                 }
             }
-            if (dateFromValue >= durationTo) {
+            if (dateFromValue >= dateTo) {
                 return {
                     isError: true
                 }

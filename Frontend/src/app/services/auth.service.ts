@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpRequest } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { User } from "../models/user.model";
 import { Subject } from "rxjs";
@@ -34,7 +34,7 @@ export class AuthService {
 
   // Gets the users token
   getToken() {
-    return this.user.token;
+    return localStorage.getItem('token');
   }
 
   getUser() {
@@ -82,7 +82,7 @@ export class AuthService {
     localStorage.removeItem("token");
   }
 
-  // Saves the token to the local storage and deletes the old one if there already is a token saved
+  // Saves the userdata to the local storage and deletes the old one if there already is a token saved
   private saveUserData(user: any) {
     const hasUserData = localStorage.getItem('user');
     const userData = JSON.parse(hasUserData);
@@ -92,7 +92,7 @@ export class AuthService {
     localStorage.setItem("user", JSON.stringify(this.user));
   }
 
-  // Deletes the token from the local storage
+  // Deletes the userdata from the local storage
   private clearUserData() {
     localStorage.removeItem("user");
   }
@@ -128,7 +128,7 @@ export class AuthService {
     }
     this.http
       .post<{
-        succeeded: false;
+        succeeded: boolean;
         errors: {
           Error: string[] | null
         };
@@ -185,7 +185,7 @@ export class AuthService {
               } else if (response.role === 2) {
                 this.router.navigate(["/client"]);
               } else if (response.role === 3) {
-                this.router.navigate(["/admin-dashboard"]);
+                this.router.navigate(["/admin-dashboard/job-postings"]);
               }
             }
           }
@@ -245,6 +245,19 @@ export class AuthService {
     return {
       token: token
     };
+  }
+
+  // Caching unauthorized requests
+
+  cachedRequests: Array<HttpRequest<any>> = [];
+
+  public collectFailedRequest(request): void {
+    this.cachedRequests.push(request);
+  }
+
+  public retryFailedRequests(): void {
+    // retry the requests. this method can
+    // be called after the token is refreshed
   }
 
   // LOGOUT

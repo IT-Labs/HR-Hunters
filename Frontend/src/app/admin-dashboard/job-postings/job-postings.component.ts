@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { JobPosting } from "src/app/models/job-posting.model";
 import { Subscription } from "rxjs";
 import { JobPostingService } from "src/app/services/job-posting.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-ad-job-postings",
@@ -13,17 +14,14 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     all: 0,
     approved: 0,
     pending: 0,
-    expired: 0
-  };
-
-  selectedTab = {
-    jobs: true,
-    new: false
+    expired: 0,
+    rejected: 0
   };
 
   jobPostingQP = {
     postsPerPage: 10,
     currentPage: 1,
+    previousPage: 0,
     currentSortBy: "dateTo",
     lastSortBy: "",
     currentSortDirection: 0,
@@ -36,7 +34,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
 
   private jobPostingSub: Subscription;
 
-  constructor(private jobPostingService: JobPostingService) {}
+  constructor(private jobPostingService: JobPostingService, private router: Router) {}
 
   ngOnInit() {
     const params = this.buildQueryParams(this.jobPostingQP);
@@ -49,7 +47,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
         this.jobPostingsCount.approved = jobPostingData.approved;
         this.jobPostingsCount.pending = jobPostingData.pending;
         this.jobPostingsCount.expired = jobPostingData.expired;
-        this.calculatePagination(this.jobPostingsCount.all);
+        this.jobPostingsCount.rejected = jobPostingData.rejected
       });
   }
 
@@ -62,80 +60,40 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
 
   buildJobPostingDataOnUpdate(
     id: number,
-    companyName: string,
-    companyEmail: string,
+    status: string,
     jobTitle: string,
-    dateFrom: string,
-    dateTo: string,
-    companyLocation: string,
     description: string,
     jobType: string,
     education: string,
-    status: string,
-    experience: number
+    experience: number,
+    dateFrom: string,
+    dateTo: string
   ) {
     let jobPostingData: JobPosting;
     jobPostingData = {
       id: id,
-      companyName: companyName,
-      companyEmail: companyEmail,
+      status: status,
       jobTitle: jobTitle,
-      dateFrom: dateFrom,
-      dateTo: dateTo,
-      companyLocation: companyLocation,
       description: description,
       jobType: jobType,
       education: education,
-      status: status,
-      experience: experience
+      experience: experience,
+      dateFrom: dateFrom,
+      dateTo: dateTo
     };
-
     return jobPostingData;
   }
 
-  calculatePagination(jobPostingsCount: number) {
-    this.paginationSize = [];
-    const paginationSum = Math.ceil(jobPostingsCount / 10);
-
-    if (paginationSum > 0 && paginationSum < 11) {
-      for (let i = 1; i < paginationSum + 1; i++) {
-        const num = i;
-        this.paginationSize.push(num);
-      }
-    } else if (paginationSum > 10) {
-      if (this.jobPostingQP.currentPage - 10 < paginationSum - 10 && this.jobPostingQP.currentPage < 6) {
-        for (let i = 1; i < 11; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else if (this.jobPostingQP.currentPage - 10 < paginationSum - 10) {
-        for (let i = this.jobPostingQP.currentPage - 5; i < this.jobPostingQP.currentPage + 5; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else {
-        for (let i = paginationSum - 9; i < paginationSum + 1; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      }
-    }
-  }
-
-  onChangeTab(event: string) {
-    if (event === "jobs") {
-      this.selectedTab.jobs = true;
-      this.selectedTab.new = false;
-    } else if (event === "new") {
-      this.selectedTab.jobs = false;
-      this.selectedTab.new = true;
-    }
+  onEditJobPosting(id: number) {
+    this.jobPostingService.editJobPostingId = id;
   }
 
   onChangedPage(page: number) {
-    this.jobPostingQP.currentPage = page;
-    const params = this.buildQueryParams(this.jobPostingQP);
-    this.jobPostingService.getJobPostings(params);
+    if (this.jobPostingQP.currentPage !== this.jobPostingQP.previousPage) {
+      this.jobPostingQP.previousPage = this.jobPostingQP.currentPage;
+      const params = this.buildQueryParams(this.jobPostingQP);
+      this.jobPostingService.getJobPostings(params);
+    }
   }
 
   onFilter(filterBy: string) {
@@ -153,10 +111,19 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
 
   onSort(sortBy: any) {
     if (this.jobPostingQP.lastSortBy === sortBy) {
-      this.jobPostingQP.currentSortDirection = 1;
-    } else {
+      if (this.jobPostingQP.currentSortDirection === 1) {
+        this.jobPostingQP.currentSortDirection = 0;
+      } else if (this.jobPostingQP.currentSortDirection === 0) {
+        this.jobPostingQP.currentSortDirection = 1;
+      }
+      this.jobPostingQP.lastSortBy = '';
+    } else if (this.jobPostingQP.lastSortBy !== sortBy) {
+      if (this.jobPostingQP.currentSortDirection === 1) {
+        this.jobPostingQP.currentSortDirection = 0;
+      } else if (this.jobPostingQP.currentSortDirection === 0) {
+        this.jobPostingQP.currentSortDirection = 1;
+      }
       this.jobPostingQP.lastSortBy = sortBy;
-      this.jobPostingQP.currentSortDirection = 0;
     }
     this.jobPostingQP.currentSortBy = sortBy;
     const params = this.buildQueryParams(this.jobPostingQP);
@@ -166,26 +133,18 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
     const currentId = id;
-    let currentJobPosting: JobPosting;
-    for (let i = 0; i < this.jobPostings.length; i++) {
-      (currentId === this.jobPostings[i].id) && (currentJobPosting = this.jobPostings[i]);
-    }
 
     const jobPostingData = this.buildJobPostingDataOnUpdate(
       currentId,
-      currentJobPosting.companyName,
-      currentJobPosting.companyEmail,
-      currentJobPosting.jobTitle,
-      currentJobPosting.dateFrom,
-      currentJobPosting.dateTo,
-      currentJobPosting.companyLocation,
-      currentJobPosting.description,
-      currentJobPosting.jobType,
-      currentJobPosting.education,
       currentStatus,
-      currentJobPosting.experience
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
     )
-
     this.jobPostingService.updateJobPosting(jobPostingData);
   }
 

@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HRHunters.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20181205233315_newMigration")]
-    partial class newMigration
+    [Migration("20181213130248_finalMigration")]
+    partial class finalMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -56,6 +56,8 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<string>("Experience");
 
+                    b.Property<string>("Logo");
+
                     b.Property<string>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
@@ -86,9 +88,7 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<DateTime>("Date");
 
-                    b.Property<int>("JobId");
-
-                    b.Property<int?>("JobPostingId");
+                    b.Property<int>("JobPostingId");
 
                     b.Property<string>("ModifiedBy");
 
@@ -114,15 +114,15 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<DateTime>("CreatedDate");
 
-                    b.Property<string>("Location")
-                        .IsRequired();
+                    b.Property<string>("Location");
+
+                    b.Property<string>("Logo");
 
                     b.Property<string>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired();
+                    b.Property<string>("PhoneNumber");
 
                     b.Property<int>("Status");
 
@@ -156,9 +156,6 @@ namespace HRHunters.Data.Migrations
                     b.Property<int>("Education");
 
                     b.Property<int>("EmpCategory");
-
-                    b.Property<string>("Location")
-                        .IsRequired();
 
                     b.Property<string>("ModifiedBy");
 
@@ -388,7 +385,8 @@ namespace HRHunters.Data.Migrations
 
                     b.HasOne("HRHunters.Common.Entities.JobPosting", "JobPosting")
                         .WithMany("Applications")
-                        .HasForeignKey("JobPostingId");
+                        .HasForeignKey("JobPostingId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("HRHunters.Common.Entities.Client", b =>
