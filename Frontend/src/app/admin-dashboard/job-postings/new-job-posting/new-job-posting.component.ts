@@ -18,12 +18,12 @@ export class ADNewJobPostingComponent implements OnInit {
   focus$ = new Subject<string>();
   click$ = new Subject<string>();
 
-  jobTypes = ["Full-time", "Part-time", "Intership", "Select job type..."];
+  jobTypes = ["Full-time", "Part-time", "Intern", "Select job type..."];
   education = [
-    "High School degree",
-    "Bachelor degree",
-    "Masters degree",
-    "Doctoral degree",
+    "Highschool",
+    "Bachelor",
+    "Master",
+    "Doctoral",
     "Select education level..."
   ];
 
@@ -129,30 +129,22 @@ export class ADNewJobPostingComponent implements OnInit {
   });
 
   buildJobPostingDataOnAddJobPosting(
-    existingCompany: boolean,
     id: number,
-    companyName: string,
-    companyEmail: string,
-    companyLocation: string,
-    jobTitle: string,
+    title: string,
     description: string,
-    jobType: string,
+    empCategory: string,
     education: string,
-    experience: number,
+    neededExperience: number,
     dateFrom: string,
     dateTo: string
   ) {
     const newJobPostingData = {
-      existingCompany: existingCompany,
       id: id,
-      companyName: companyName,
-      companyEmail: companyEmail,
-      companyLocation: companyLocation,
-      jobTitle: jobTitle,
+      title: title,
       description: description,
-      jobType: jobType,
+      empCategory: empCategory,
       education: education,
-      experience: experience,
+      neededExperience: neededExperience,
       dateFrom: dateFrom,
       dateTo: dateTo
     };
@@ -273,16 +265,25 @@ export class ADNewJobPostingComponent implements OnInit {
       }
     })
 
+    let education;
+    switch (this.newJobPostingForm.value.education) {
+      case "Full-time": 
+        education = "Full_time"
+        break;
+      case "Part-time":
+        education = "Part_time"
+        break;
+      case "Intern": 
+        education = "Intern"
+        break;
+    }
+
     let jobPostingData = this.buildJobPostingDataOnAddJobPosting(
-      true,
       this.selectedCompany.id,
-      null,
-      null,
-      null,
       this.newJobPostingForm.value.title,
       this.newJobPostingForm.value.description,
       this.newJobPostingForm.value.jobType,
-      this.newJobPostingForm.value.education,
+      education,
       this.newJobPostingForm.value.experience,
       dateFrom,
       dateTo

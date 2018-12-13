@@ -55,35 +55,35 @@ export class ADClientsComponent implements OnInit, OnDestroy {
 
   buildClientDataOnUpdate(
     id: number,
-    email: string,
     companyName: string,
     logo: File | string,
+    email: string,
+    location: string,
     activeJobs: number,
     allJobs: number,
     status: string,
-    location: string
   ) {
     let clientData: Client | FormData;
     if (typeof logo === "object") {
       clientData = new FormData();
       clientData.append("id", id.toString());
-      clientData.append("email", email);
       clientData.append("companyName", companyName);
       clientData.append("logo", logo, companyName);
+      clientData.append("email", email);
+      clientData.append("location", location);
       clientData.append("activeJobs", activeJobs.toString());
       clientData.append("allJobs", allJobs.toString());
       clientData.append("status", status);
-      clientData.append("location", location);
     } else {
       clientData = {
         id: id,
-        email: email,
         companyName: companyName,
         logo: logo,
+        email: email,
+        location: location,
         activeJobs: activeJobs,
         allJobs: allJobs,
         status: status,
-        location: location
       };
     }
     return clientData;
@@ -103,7 +103,6 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     } else {
       this.clientQP.currentFilter = 'status'
     }
-
     this.clientQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.clientQP)
     this.clientService.getClients(params);
@@ -141,8 +140,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       null,
       null,
       null,
+      null,
       currentStatus,
-      null
     );
     
     this.clientService.updateClient(clientData);

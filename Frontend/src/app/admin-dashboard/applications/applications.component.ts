@@ -70,6 +70,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     applicantLastName: string,
     applicantEmail: string,
     jobTitle: string,
+    description: string,
     experience: number,
     postedOn: Date,
     status: string
@@ -80,11 +81,11 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       applicantLastName: applicantLastName,
       applicantEmail: applicantEmail,
       jobTitle: jobTitle,
+      description: description,
       experience: experience,
       postedOn: postedOn,
       status: status
     };
-
     return applicationData;
   }
 
@@ -133,6 +134,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     const currentId = id;
     const applicationData = this.buildApplicationsDataOnUpdate(
       currentId,
+      null,
       null,
       null,
       null,

@@ -47,32 +47,26 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
   }
 
   buildApplicantDataOnUpdate(
-    id: number,
-    email: string,
+    userId: number,
     firstName: string,
     lastName: string,
-    photo: File | string,
-    phoneNumber: string
+    email: string,
+    phoneNumber: string,
+    educationType: string,
+    schoolUniversity: string,
+    experience: string
   ) {
-    let applicantData: Applicant | FormData;
-    if (typeof photo === "object") {
-      applicantData = new FormData();
-      applicantData.append("id", id.toString());
-      applicantData.append("email", email);
-      applicantData.append("firstName", firstName);
-      applicantData.append("lastName", lastName);
-      applicantData.append("photo", photo);
-      applicantData.append("phoneNumber", phoneNumber);
-    } else {
-      applicantData = {
-        id: id,
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        photo: photo,
-        phoneNumber: phoneNumber
+    let applicantData = {
+      userId: userId,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phoneNumber: phoneNumber,
+      educationType: educationType,
+      schoolUniversity: schoolUniversity,
+      experience: experience
       };
-    }
+    return applicantData;
   }
 
   onChangedPage(page: number) {

@@ -60,34 +60,27 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
 
   buildJobPostingDataOnUpdate(
     id: number,
-    companyName: string,
-    companyEmail: string,
+    status: string,
     jobTitle: string,
-    dateFrom: string,
-    dateTo: string,
-    companyLocation: string,
     description: string,
     jobType: string,
     education: string,
-    status: string,
-    experience: number
+    experience: number,
+    dateFrom: string,
+    dateTo: string
   ) {
     let jobPostingData: JobPosting;
     jobPostingData = {
       id: id,
-      companyName: companyName,
-      companyEmail: companyEmail,
+      status: status,
       jobTitle: jobTitle,
-      dateFrom: dateFrom,
-      dateTo: dateTo,
-      companyLocation: companyLocation,
       description: description,
       jobType: jobType,
       education: education,
-      status: status,
-      experience: experience
+      experience: experience,
+      dateFrom: dateFrom,
+      dateTo: dateTo
     };
-
     return jobPostingData;
   }
 
@@ -143,16 +136,13 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
 
     const jobPostingData = this.buildJobPostingDataOnUpdate(
       currentId,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
       currentStatus,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
       null
     )
     this.jobPostingService.updateJobPosting(jobPostingData);
