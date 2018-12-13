@@ -35,7 +35,22 @@
         <label for="dashidCompanyName" class="dash__form--label"
           >Company Name <span class="u-required-star">*</span></label
         >
-        <input
+        <select
+          *ngIf="existingCompany"
+          id="dashid__experience"
+          class="dash__form--input"
+          formControlName="companyName"
+          (change)="populateCompanyInfo($event.target.value)"
+          >
+          <option
+            *ngFor="let client of clients; let i = index"
+            [value]="client.companyName"
+            [selected]="client.companyName === 'Select company...'"
+            [disabled]="client.companyName === 'Select company...'"
+            >{{ client.companyName }}
+          </option>
+        </select>
+        <input *ngIf="!existingCompany"
           type="text"
           class="dash__form--input"
           placeholder="Enter company name..."

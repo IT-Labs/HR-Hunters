@@ -110,15 +110,13 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<DateTime>("CreatedDate");
 
-                    b.Property<string>("Location")
-                        .IsRequired();
+                    b.Property<string>("Location");
 
                     b.Property<string>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired();
+                    b.Property<string>("PhoneNumber");
 
                     b.Property<int>("Status");
 

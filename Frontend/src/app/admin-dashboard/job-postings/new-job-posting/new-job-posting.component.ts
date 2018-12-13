@@ -24,7 +24,6 @@ export class ADNewJobPostingComponent implements OnInit {
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
   existingCompany = false;
-  filteredClients = [];
   clients: Client[] = [];
   experience = [
     "<1",
@@ -85,15 +84,17 @@ export class ADNewJobPostingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.clientService.getAllClients();
+    const params = this.buildQueryParams()
+    this.clientService.getClients(params);
     this.clientsSub = this.clientService
       .getClientsUpdateListener()
       .subscribe(clientsData => {
         this.clients = clientsData.clients;
+        this.clients.push({
+          companyName: 'Select company...',
+          email: ''
+        });
       });
-    // this.newJobPostingForm.controls.dateFrom.valueChanges.subscribe(x =>
-    //   this.newJobPostingForm.controls.dateTo.updateValueAndValidity()
-    // );
 
     this.fromDate = this.calendar.getToday();
     this.toDate = this.calendar.getNext(this.calendar.getToday(), 'd', 10);
@@ -136,9 +137,7 @@ export class ADNewJobPostingComponent implements OnInit {
     description: ["", Validators.compose([Validators.maxLength(300)])],
     jobType: ["", Validators.compose([Validators.required])],
     education: ["", Validators.compose([Validators.required])],
-    experience: ["", Validators.compose([Validators.required])],
-    // dateFrom: ["", Validators.compose([Validators.required])],
-    // dateTo: ["", Validators.compose([Validators.required, DateValidator])]
+    experience: ["", Validators.compose([Validators.required])]
   });
 
   buildJobPostingDataOnAddJobPosting(
@@ -170,6 +169,10 @@ export class ADNewJobPostingComponent implements OnInit {
       dateTo: dateTo
     };
     return newJobPostingData;
+  }
+
+  buildQueryParams() {
+    return `?pageSize=0&currentPage=0`;
   }
 
   onDateSelection(date: NgbDate) {
@@ -222,12 +225,9 @@ export class ADNewJobPostingComponent implements OnInit {
     this.formFocus[event] = true;
   }
 
-  populateCompanyInfo(event: any, id: number) {
-    this.onFocus("none");
-    this.selectedCompany.id = id;
-    const companyName = event.target.innerText;
+  populateCompanyInfo(selected: string) {
     this.clients.map(client => {
-      if (client.companyName === companyName) {
+      if (selected === client.companyName) {
         this.selectedCompany = client;
         this.newJobPostingForm.controls["companyName"].setValue(
           this.selectedCompany.companyName
@@ -242,19 +242,6 @@ export class ADNewJobPostingComponent implements OnInit {
     });
   }
 
-  populateCompanySuggestions(event: any) {
-    this.filteredClients = [];
-    this.clients.filter(client => {
-      if (
-        client.companyName
-          .toLowerCase()
-          .includes(event.target.value.toLowerCase())
-      ) {
-        this.filteredClients.push(client);
-      }
-    });
-  }
-
   onSubmitNewJobPosting() {
     this.newJobPostingForm.controls["companyName"].markAsTouched();
     this.newJobPostingForm.controls["companyEmail"].markAsTouched();
@@ -263,8 +250,6 @@ export class ADNewJobPostingComponent implements OnInit {
     this.newJobPostingForm.controls["jobType"].markAsTouched();
     this.newJobPostingForm.controls["education"].markAsTouched();
     this.newJobPostingForm.controls["experience"].markAsTouched();
-    // this.newJobPostingForm.controls["dateFrom"].markAsTouched();
-    // this.newJobPostingForm.controls["dateTo"].markAsTouched();
 
     let monthToDate, monthFromDate, dayToDate, dayFromDate, dateFrom, dateTo
 
@@ -295,11 +280,9 @@ export class ADNewJobPostingComponent implements OnInit {
   
       dateFrom = `${this.fromDate.year}/${monthFromDate}/${dayFromDate}`
       dateTo = `${this.toDate.year}/${monthToDate}/${dayToDate}`
-      console.log(dateFrom, dateTo)
     }
 
     let jobPostingData;
-
     if (this.existingCompany) {
       jobPostingData = this.buildJobPostingDataOnAddJobPosting(
         true,
@@ -315,7 +298,6 @@ export class ADNewJobPostingComponent implements OnInit {
         dateFrom,
         dateTo
       );
-      console.log('existing ', jobPostingData)
     } else if (!this.existingCompany) {
       jobPostingData = this.buildJobPostingDataOnAddJobPosting(
         false,
@@ -335,7 +317,6 @@ export class ADNewJobPostingComponent implements OnInit {
 
     if (this.newJobPostingForm.valid && this.fromDate && this.toDate) {
       this.jobPostingService.addJobPosting(jobPostingData);
-      console.log(jobPostingData)
     }
 
   }

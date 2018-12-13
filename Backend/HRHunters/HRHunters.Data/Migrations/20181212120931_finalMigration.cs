@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HRHunters.Data.Migrations
 {
-    public partial class newMigration : Migration
+    public partial class finalMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -229,11 +229,11 @@ namespace HRHunters.Data.Migrations
                     CreatedBy = table.Column<string>(nullable: true),
                     ModifiedBy = table.Column<string>(nullable: true),
                     Status = table.Column<int>(nullable: false),
-                    Location = table.Column<string>(nullable: false),
+                    Location = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    PhoneNumber = table.Column<string>(nullable: false)
+                    PhoneNumber = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -259,7 +259,6 @@ namespace HRHunters.Data.Migrations
                     Title = table.Column<string>(nullable: false),
                     DateFrom = table.Column<DateTime>(nullable: false),
                     DateTo = table.Column<DateTime>(nullable: false),
-                    Location = table.Column<string>(nullable: false),
                     Description = table.Column<string>(maxLength: 800, nullable: true),
                     EmpCategory = table.Column<int>(nullable: false),
                     Education = table.Column<int>(nullable: false),
@@ -291,8 +290,7 @@ namespace HRHunters.Data.Migrations
                     Date = table.Column<DateTime>(nullable: false),
                     Status = table.Column<int>(nullable: false),
                     ApplicantId = table.Column<int>(nullable: false),
-                    JobId = table.Column<int>(nullable: false),
-                    JobPostingId = table.Column<int>(nullable: true)
+                    JobPostingId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -308,7 +306,7 @@ namespace HRHunters.Data.Migrations
                         column: x => x.JobPostingId,
                         principalTable: "JobPostings",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
