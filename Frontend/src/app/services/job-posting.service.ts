@@ -18,6 +18,7 @@ export class JobPostingService {
     approved: number;
     pending: number;
     expired: number;
+    rejected: number;
   }>();
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -30,8 +31,8 @@ export class JobPostingService {
         maxJobPosts: number;
         approved: number;
         pending: number;
-        rejected: number;
         expired: number;
+        rejected: number;
       }>(this.baseUrl + "/Jobs" + queryParams)
       .subscribe(jobPostingData => {
         this.jobPostingsUpdated.next({
@@ -39,7 +40,8 @@ export class JobPostingService {
           jobPostingCount: jobPostingData.maxJobPosts,
           approved: jobPostingData.approved,
           pending: jobPostingData.pending,
-          expired: jobPostingData.expired
+          expired: jobPostingData.expired,
+          rejected: jobPostingData.rejected
         });
       });
   }

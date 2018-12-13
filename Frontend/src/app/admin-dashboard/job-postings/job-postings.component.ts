@@ -14,7 +14,8 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     all: 0,
     approved: 0,
     pending: 0,
-    expired: 0
+    expired: 0,
+    rejected: 0
   };
 
   jobPostingQP = {
@@ -46,6 +47,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
         this.jobPostingsCount.approved = jobPostingData.approved;
         this.jobPostingsCount.pending = jobPostingData.pending;
         this.jobPostingsCount.expired = jobPostingData.expired;
+        this.jobPostingsCount.rejected = jobPostingData.rejected
       });
   }
 
