@@ -19,6 +19,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   clientQP = {
     postsPerPage: 10,
     currentPage: 1,
+    previousPage: 0,
     currentSortBy: "companyName",
     lastSortBy: "",
     currentSortDirection: 1,
@@ -42,7 +43,6 @@ export class ADClientsComponent implements OnInit, OnDestroy {
         this.clientsCount.all = clientsData.clientsCount;
         this.clientsCount.active = clientsData.active;
         this.clientsCount.inactive = clientsData.inactive;
-        this.calculatePagination(this.clientsCount.all)
       });
   }
   
@@ -55,82 +55,54 @@ export class ADClientsComponent implements OnInit, OnDestroy {
 
   buildClientDataOnUpdate(
     id: number,
-    email: string,
     companyName: string,
     logo: File | string,
+    email: string,
+    location: string,
     activeJobs: number,
     allJobs: number,
     status: string,
-    location: string
   ) {
     let clientData: Client | FormData;
     if (typeof logo === "object") {
       clientData = new FormData();
       clientData.append("id", id.toString());
-      clientData.append("email", email);
       clientData.append("companyName", companyName);
       clientData.append("logo", logo, companyName);
+      clientData.append("email", email);
+      clientData.append("location", location);
       clientData.append("activeJobs", activeJobs.toString());
       clientData.append("allJobs", allJobs.toString());
       clientData.append("status", status);
-      clientData.append("location", location);
     } else {
       clientData = {
         id: id,
-        email: email,
         companyName: companyName,
         logo: logo,
+        email: email,
+        location: location,
         activeJobs: activeJobs,
         allJobs: allJobs,
         status: status,
-        location: location
       };
     }
     return clientData;
   }
 
-  calculatePagination(applicationCount: number) {
-    this.paginationSize = [];
-    const paginationSum = Math.ceil(applicationCount / 10);
-
-    if (paginationSum > 0 && paginationSum < 11) {
-      for (let i = 1; i < paginationSum + 1; i++) {
-        const num = i;
-        this.paginationSize.push(num);
-      }
-    } else if (paginationSum > 10) {
-      if (this.clientQP.currentPage - 10 < paginationSum - 10 && this.clientQP.currentPage < 6) {
-        for (let i = 1; i < 11; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else if (this.clientQP.currentPage - 10 < paginationSum - 10) {
-        for (let i = this.clientQP.currentPage - 5; i < this.clientQP.currentPage + 5; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else {
-        for (let i = paginationSum - 9; i < paginationSum + 1; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      }
+  onChangedPage(page: number) {
+    if (this.clientQP.currentPage !== this.clientQP.previousPage) {
+      this.clientQP.previousPage = this.clientQP.currentPage;
+      const params = this.buildQueryParams(this.clientQP);
+      this.clientService.getClients(params);
     }
   }
 
-  onChangedPage(page: number) {
-    this.clientQP.currentPage = page;
-    const params = this.buildQueryParams(this.clientQP)
-    this.clientService.getClients(params);
-  }
   onFilter(filterBy: string) {
-   
     if (filterBy === null) {
       this.clientQP.currentFilter = null
     } else {
       this.clientQP.currentFilter = 'status'
     }
-
     this.clientQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.clientQP)
     this.clientService.getClients(params);
@@ -138,10 +110,19 @@ export class ADClientsComponent implements OnInit, OnDestroy {
 
   onSort(sortBy: string) {
     if (this.clientQP.lastSortBy === sortBy) {
-      this.clientQP.currentSortDirection = 1;
-    } else {
+      if (this.clientQP.currentSortDirection === 1) {
+        this.clientQP.currentSortDirection = 0;
+      } else if (this.clientQP.currentSortDirection === 0) {
+        this.clientQP.currentSortDirection = 1;
+      }
+      this.clientQP.lastSortBy = '';
+    } else if (this.clientQP.lastSortBy !== sortBy) {
+      if (this.clientQP.currentSortDirection === 1) {
+        this.clientQP.currentSortDirection = 0;
+      } else if (this.clientQP.currentSortDirection === 0) {
+        this.clientQP.currentSortDirection = 1;
+      }
       this.clientQP.lastSortBy = sortBy;
-      this.clientQP.currentSortDirection = 0;
     }
     this.clientQP.currentSortBy = sortBy;
     const params = this.buildQueryParams(this.clientQP)
@@ -151,22 +132,16 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
     const currentId = id;
-    let currentClient: Client;
-    for (let i = 0; i < this.clients.length; i++) {
-      if (currentId === this.clients[i].id) {
-        currentClient = this.clients[i];
-      }
-    }
-
+    
     let clientData = this.buildClientDataOnUpdate(
       currentId,
-      currentClient.email,
-      currentClient.companyName,
-      currentClient.logo,
-      currentClient.activeJobs,
-      currentClient.allJobs,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
       currentStatus,
-      currentClient.location
     );
     
     this.clientService.updateClient(clientData);

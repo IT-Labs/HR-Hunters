@@ -13,7 +13,7 @@ namespace HRHunters.Data
         public EFRepository(TContext context) : base(context) { }
 
         public virtual void Create<TEntity>(TEntity entity, string createdBy = null)
-        where TEntity : Entity
+        where TEntity : Entity, IEntity
         {
             entity.CreatedDate = DateTime.UtcNow;
             entity.CreatedBy = createdBy;
@@ -22,7 +22,7 @@ namespace HRHunters.Data
         }
 
         public virtual void Update<TEntity>(TEntity entity, string modifiedBy = null)
-            where TEntity : Entity
+            where TEntity : Entity, IEntity
         {
             entity.ModifiedDate = DateTime.UtcNow;
             entity.ModifiedBy = modifiedBy;
@@ -32,7 +32,7 @@ namespace HRHunters.Data
         }
 
         public virtual void Delete<TEntity>(object id)
-            where TEntity : Entity
+            where TEntity : Entity, IEntity
         {
             TEntity entity = context.Set<TEntity>().Find(id);
             Delete(entity);
@@ -40,7 +40,7 @@ namespace HRHunters.Data
         }
 
         public virtual void Delete<TEntity>(TEntity entity)
-            where TEntity : Entity
+            where TEntity : Entity, IEntity
         {
             var dbSet = context.Set<TEntity>();
             if (context.Entry(entity).State == EntityState.Detached)
@@ -58,9 +58,9 @@ namespace HRHunters.Data
             {
                 context.SaveChanges();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-               
+                throw new Exception(e.Message);
             }
         }
 

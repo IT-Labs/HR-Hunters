@@ -166,6 +166,45 @@
             </div>
 
             <!-- Phone-number end -->
+
+            <!-- Location -->
+
+            
+             <label for="hpid__title" class="hp__form--label"
+             >Location <span class="u-required-star">*</span></label
+           >
+           <input
+             type="text"
+             id="hpid__title"
+             class="hp__form--input"
+             placeholder="Enter location..."
+             formControlName="location"
+             maxlength="30"
+           />
+           <div
+             *ngIf="
+               !clientProfileFormHP.controls['location'].valid &&
+               (clientProfileFormHP.controls['location'].dirty ||
+                 clientProfileFormHP.controls['location'].touched)
+             "
+             class="alert hp__form--alert-msg"
+           >
+             <div
+               *ngIf="
+                 clientProfileFormHP.controls['location'].errors?.required
+               "
+             >
+              Location is required.
+             </div>
+             <div
+               *ngIf="
+                 clientProfileFormHP.controls['location'].errors?.maxlength
+               "
+             >
+              Location must be up to 30 characters long.
+             </div>
+           </div>
+
           </div>
 
           <div class="hp__form--btn-container">

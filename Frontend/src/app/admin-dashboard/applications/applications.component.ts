@@ -22,6 +22,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   applicationQP = {
     postsPerPage: 10,
     currentPage: 1,
+    previousPage: 0,
     currentSortBy: "postedOn",
     lastSortBy: "",
     currentSortDirection: 0,
@@ -35,7 +36,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   constructor(private applicationService: ApplicationService) {}
 
   ngOnInit() {
-    const params = this.buildQueryParams(this.applicationQP)
+    const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
     this.applicationsSub = this.applicationService
       .getApplicationsUpdateListener()
@@ -47,15 +48,20 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
         this.applicationCount.interviewed = applicationsData.interviewed;
         this.applicationCount.hired = applicationsData.hired;
         this.applicationCount.rejected = applicationsData.rejected;
-        this.calculatePagination(this.applicationCount.all);
       });
   }
 
   buildQueryParams(data) {
     if (data.currentFilter === null) {
-      return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+      return `?pageSize=${data.postsPerPage}&currentPage=${
+        data.currentPage
+      }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
     }
-    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${
+      data.currentPage
+    }&sortedBy=${data.currentSortBy}&sortDir=${
+      data.currentSortDirection
+    }&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
   }
 
   buildApplicationsDataOnUpdate(
@@ -64,6 +70,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     applicantLastName: string,
     applicantEmail: string,
     jobTitle: string,
+    description: string,
     experience: number,
     postedOn: Date,
     status: string
@@ -74,102 +81,68 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       applicantLastName: applicantLastName,
       applicantEmail: applicantEmail,
       jobTitle: jobTitle,
+      description: description,
       experience: experience,
       postedOn: postedOn,
       status: status
     };
-
     return applicationData;
   }
 
-  calculatePagination(applicationCount: number) {
-    this.paginationSize = [];
-    const paginationSum = Math.ceil(applicationCount / 10);
-
-    if (paginationSum > 0 && paginationSum < 11) {
-      for (let i = 1; i < paginationSum + 1; i++) {
-        const num = i;
-        this.paginationSize.push(num);
-      }
-    } else if (paginationSum > 10) {
-      if (
-        this.applicationQP.currentPage - 10 < paginationSum - 10 &&
-        this.applicationQP.currentPage < 6
-      ) {
-        for (let i = 1; i < 11; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else if (this.applicationQP.currentPage - 10 < paginationSum - 10) {
-        for (
-          let i = this.applicationQP.currentPage - 5;
-          i < this.applicationQP.currentPage + 5;
-          i++
-        ) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else {
-        for (let i = paginationSum - 9; i < paginationSum + 1; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      }
-    }
-  }
-
   onChangedPage(page: number) {
-    this.applicationQP.currentPage = page;
-    const params = this.buildQueryParams(this.applicationQP)
-    this.applicationService.getApplications(params);
+    if (this.applicationQP.currentPage !== this.applicationQP.previousPage) {
+      this.applicationQP.previousPage = this.applicationQP.currentPage;
+      const params = this.buildQueryParams(this.applicationQP);
+      this.applicationService.getApplications(params);
+    }
   }
 
   onFilter(filterBy: string) {
-    
     if (filterBy === null) {
-      this.applicationQP.currentFilter = null
+      this.applicationQP.currentFilter = null;
     } else {
-      this.applicationQP.currentFilter = 'status'
+      this.applicationQP.currentFilter = "status";
     }
-
     this.applicationQP.currentFilterQuery = filterBy;
-    const params = this.buildQueryParams(this.applicationQP)
+    const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
   }
 
   onSort(sortBy: string) {
     if (this.applicationQP.lastSortBy === sortBy) {
-      this.applicationQP.currentSortDirection = 0;
-    } else {
-      this.applicationQP.currentSortDirection = 1;
+      if (this.applicationQP.currentSortDirection === 1) {
+        this.applicationQP.currentSortDirection = 0;
+      } else if (this.applicationQP.currentSortDirection === 0) {
+        this.applicationQP.currentSortDirection = 1;
+      }
+      this.applicationQP.lastSortBy = "";
+    } else if (this.applicationQP.lastSortBy !== sortBy) {
+      if (this.applicationQP.currentSortDirection === 1) {
+        this.applicationQP.currentSortDirection = 0;
+      } else if (this.applicationQP.currentSortDirection === 0) {
+        this.applicationQP.currentSortDirection = 1;
+      }
       this.applicationQP.lastSortBy = sortBy;
     }
     this.applicationQP.currentSortBy = sortBy;
-    const params = this.buildQueryParams(this.applicationQP)
+    const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
   }
 
   chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
     const currentId = id;
-    let currentApplication: Application;
-    for (let i = 0; i < this.applications.length; i++) {
-      if (currentId === this.applications[i].id) {
-        currentApplication = this.applications[i];
-      }
-    }
-
     const applicationData = this.buildApplicationsDataOnUpdate(
       currentId,
-      currentApplication.applicantFirstName,
-      currentApplication.applicantLastName,
-      currentApplication.applicantEmail,
-      currentApplication.jobTitle,
-      currentApplication.experience,
-      currentApplication.postedOn,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
       currentStatus
-    )
-
+    );
     this.applicationService.updateApplication(applicationData);
   }
 

@@ -7,4 +7,5 @@ export interface Application {
   experience: number;
   postedOn: Date;
   status: string;
+  description: string;
 }

@@ -1,4 +1,5 @@
-﻿using HRHunters.Common.Requests;
+﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Requests;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
 using Microsoft.AspNetCore.Identity;

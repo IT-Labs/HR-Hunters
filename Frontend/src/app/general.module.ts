@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { NgxPopper } from 'angular-popper';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { NgxLoadingModule } from 'ngx-loading';
 
 import { HeaderComponent } from './homepage/header/header.component';
 import { NavigationComponent } from './homepage/header/navigation/navigation.component';
@@ -28,6 +29,7 @@ import { ADJobPostingsComponent } from './admin-dashboard/job-postings/job-posti
 import { ADNewJobPostingComponent } from './admin-dashboard/job-postings/new-job-posting/new-job-posting.component';
 import { ErrorComponent } from './error/error.component';
 import { NgbModule, NgbPaginationModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { NewClientComponent } from './admin-dashboard/clients/new-client/new-client.component';
 
 @NgModule({
     declarations: [
@@ -52,7 +54,8 @@ import { NgbModule, NgbPaginationModule, NgbAlertModule } from '@ng-bootstrap/ng
         ADApplicationsComponent,
         ADJobPostingsComponent,
         ADNewJobPostingComponent,
-        LoginComponent
+        LoginComponent,
+        NewClientComponent
     ],
     imports: [
         CommonModule,
@@ -63,7 +66,8 @@ import { NgbModule, NgbPaginationModule, NgbAlertModule } from '@ng-bootstrap/ng
         InfiniteScrollModule,
         NgbModule,
         NgbPaginationModule,
-        NgbAlertModule
+        NgbAlertModule,
+        NgxLoadingModule.forRoot({})
     ]
 })
 
