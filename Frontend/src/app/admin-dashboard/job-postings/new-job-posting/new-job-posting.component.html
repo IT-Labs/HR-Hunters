@@ -19,7 +19,6 @@
           id="dashid__experience"
           class="dash__form--input"
           formControlName="companyName"
-          (change)="populateCompanyInfo($event.target.value)"
           >
           <option
             *ngFor="let client of clients; let i = index"

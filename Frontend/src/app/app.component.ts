@@ -15,7 +15,7 @@ export class AppComponent {
   }
 
   public ping() {
-    this.http.get('https://example.com/api/things')
+    this.http.get('')
       .subscribe(
         data => console.log(data),
         err => console.log(err)

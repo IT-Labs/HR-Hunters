@@ -4,7 +4,7 @@ import { Client } from "src/app/models/client.model";
 import { JobPostingService } from "src/app/services/job-posting.service";
 import { ClientService } from "src/app/services/client.service";
 import { Subscription } from "rxjs";
-import {NgbDate, NgbCalendar} from '@ng-bootstrap/ng-bootstrap';
+import { NgbDate, NgbCalendar } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: "app-ad-new-job-posting",
@@ -75,29 +75,29 @@ export class ADNewJobPostingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const params = this.buildQueryParams()
+    const params = this.buildQueryParams();
     this.clientService.getClients(params);
     this.clientsSub = this.clientService
       .getClientsUpdateListener()
       .subscribe(clientsData => {
         this.clients = clientsData.clients;
         this.clients.push({
-          companyName: 'Select company...',
-          email: ''
+          companyName: "Select company...",
+          email: ""
         });
       });
 
     this.todayDate = this.calendar.getToday();
     this.fromDate = this.calendar.getToday();
-    this.toDate = this.calendar.getNext(this.calendar.getToday(), 'd', 10);
+    this.toDate = this.calendar.getNext(this.calendar.getToday(), "d", 10);
 
-    if (this.fromDate >= this.todayDate ) {
+    if (this.fromDate >= this.todayDate) {
       this.validDate = true;
     } else {
       this.validDate = false;
     }
 
-    console.log(this.todayDate)
+    console.log(this.todayDate);
   }
 
   newJobPostingForm = this.fb.group({
@@ -170,7 +170,13 @@ export class ADNewJobPostingComponent implements OnInit {
   }
 
   isHovered(date: NgbDate) {
-    return this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate);
+    return (
+      this.fromDate &&
+      !this.toDate &&
+      this.hoveredDate &&
+      date.after(this.fromDate) &&
+      date.before(this.hoveredDate)
+    );
   }
 
   isInside(date: NgbDate) {
@@ -178,7 +184,12 @@ export class ADNewJobPostingComponent implements OnInit {
   }
 
   isRange(date: NgbDate) {
-    return date.equals(this.fromDate) || date.equals(this.toDate) || this.isInside(date) || this.isHovered(date);
+    return (
+      date.equals(this.fromDate) ||
+      date.equals(this.toDate) ||
+      this.isInside(date) ||
+      this.isHovered(date)
+    );
   }
 
   onSubmitNewJobPosting() {
@@ -188,7 +199,15 @@ export class ADNewJobPostingComponent implements OnInit {
     this.newJobPostingForm.controls["education"].markAsTouched();
     this.newJobPostingForm.controls["experience"].markAsTouched();
 
-    let monthToDate, monthFromDate, dayToDate, dayFromDate, dateFrom, dateTo, dateToday, monthTodayDate, dayTodayDate
+    let monthToDate,
+      monthFromDate,
+      dayToDate,
+      dayFromDate,
+      dateFrom,
+      dateTo,
+      dateToday,
+      monthTodayDate,
+      dayTodayDate;
 
     if (this.fromDate && this.toDate) {
       if (this.fromDate.month < 10) {
@@ -196,66 +215,64 @@ export class ADNewJobPostingComponent implements OnInit {
       } else {
         monthFromDate = this.fromDate.month;
       }
-      
+
       if (this.fromDate.day < 10) {
         dayFromDate = `0${this.fromDate.day}`;
       } else {
         dayFromDate = this.fromDate.day;
       }
-      
+
       if (this.toDate.month < 10) {
         monthToDate = `0${this.toDate.month}`;
       } else {
         monthToDate = this.toDate.month;
       }
-      
+
       if (this.fromDate.day < 10) {
         dayToDate = `0${this.toDate.day}`;
       } else {
         dayToDate = this.toDate.day;
       }
-      
+
       if (this.todayDate.month < 10) {
         monthTodayDate = `0${this.todayDate.month}`;
       } else {
         monthTodayDate = this.todayDate.month;
       }
-      
+
       if (this.todayDate.day < 10) {
         dayTodayDate = `0${this.todayDate.day}`;
       } else {
         dayTodayDate = this.todayDate.day;
       }
-  
-      dateFrom = `${this.fromDate.year}/${monthFromDate}/${dayFromDate}`
-      dateTo = `${this.toDate.year}/${monthToDate}/${dayToDate}`
-      dateToday = `${this.todayDate.year}/${monthTodayDate}/${dayTodayDate}`
-    }
 
-    if (this.fromDate >= this.todayDate ) {
-      this.validDate = true;
-    } else {
-      this.validDate = false;
+      dateFrom = `${this.fromDate.year}/${monthFromDate}/${dayFromDate}`;
+      dateTo = `${this.toDate.year}/${monthToDate}/${dayToDate}`;
+      dateToday = `${this.todayDate.year}/${monthTodayDate}/${dayTodayDate}`;
     }
 
     let jobPostingData = this.buildJobPostingDataOnAddJobPosting(
-        true,
-        this.selectedCompany.id,
-        null,
-        null,
-        null,
-        this.newJobPostingForm.value.title,
-        this.newJobPostingForm.value.description,
-        this.newJobPostingForm.value.jobType,
-        this.newJobPostingForm.value.education,
-        this.newJobPostingForm.value.experience,
-        dateFrom,
-        dateTo
-      );
+      true,
+      this.selectedCompany.id,
+      null,
+      null,
+      null,
+      this.newJobPostingForm.value.title,
+      this.newJobPostingForm.value.description,
+      this.newJobPostingForm.value.jobType,
+      this.newJobPostingForm.value.education,
+      this.newJobPostingForm.value.experience,
+      dateFrom,
+      dateTo
+    );
 
-    if (this.newJobPostingForm.valid && this.fromDate && this.toDate && this.validDate) {
+    if (
+      this.newJobPostingForm.valid &&
+      this.fromDate &&
+      this.toDate &&
+      this.validDate
+    ) {
       this.jobPostingService.addJobPosting(jobPostingData);
     }
-
   }
 }
