@@ -82,7 +82,7 @@ export class AuthService {
     localStorage.removeItem("token");
   }
 
-  // Saves the token to the local storage and deletes the old one if there already is a token saved
+  // Saves the userdata to the local storage and deletes the old one if there already is a token saved
   private saveUserData(user: any) {
     const hasUserData = localStorage.getItem('user');
     const userData = JSON.parse(hasUserData);
@@ -92,7 +92,7 @@ export class AuthService {
     localStorage.setItem("user", JSON.stringify(this.user));
   }
 
-  // Deletes the token from the local storage
+  // Deletes the userdata from the local storage
   private clearUserData() {
     localStorage.removeItem("user");
   }
