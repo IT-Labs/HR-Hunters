@@ -25,6 +25,5 @@ namespace HRHunters.Common.Requests.Users
         public string DateFrom { get; set; }
         [Required]
         public string DateTo { get; set; }
-        public string Status { get; set; }
     }
 }

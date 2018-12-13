@@ -51,6 +51,8 @@ namespace HRHunters.WebAPI.Helpers
                                                  .ForMember(x => x.DateTo, opt => opt.Ignore())
                                                  .ForMember(x => x.Education, opt => opt.Ignore())
                                                  .ForMember(x => x.EmpCategory, opt => opt.Ignore());
+            CreateMap<NewCompany, Client>().ForPath(x => x.User.FirstName, opt => opt.MapFrom(x => x.CompanyName))
+                                            .ForPath(x => x.User.Email, opt => opt.MapFrom(x => x.Email));
         }
     }
 }
