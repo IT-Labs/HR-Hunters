@@ -13,6 +13,11 @@ import { debounceTime, distinctUntilChanged, filter, map } from "rxjs/operators"
   styleUrls: ["./new-job-posting.component.scss"]
 })
 export class ADNewJobPostingComponent implements OnInit {
+
+  @ViewChild('instance') instance: NgbTypeahead;
+  focus$ = new Subject<string>();
+  click$ = new Subject<string>();
+
   jobTypes = ["Full-time", "Part-time", "Intership", "Select job type..."];
   education = [
     "High School degree",
@@ -100,21 +105,6 @@ export class ADNewJobPostingComponent implements OnInit {
     }
   }
 
-  @ViewChild('instance') instance: NgbTypeahead;
-  focus$ = new Subject<string>();
-  click$ = new Subject<string>();
-
-  search = (text$: Observable<string>) => {
-    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-    const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
-    const inputFocus$ = this.focus$;
-
-    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
-      map(term => (term === '' ? this.clientNames
-        : this.clientNames.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10))
-    );
-  }
-
   newJobPostingForm = this.fb.group({
     companyName: [
       "",
@@ -171,6 +161,17 @@ export class ADNewJobPostingComponent implements OnInit {
 
   buildQueryParams() {
     return `?pageSize=0&currentPage=0`;
+  }
+
+  search = (text$: Observable<string>) => {
+    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
+    const inputFocus$ = this.focus$;
+
+    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
+      map(term => (term === '' ? this.clientNames
+        : this.clientNames.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10))
+    );
   }
 
   onDateSelection(date: NgbDate) {

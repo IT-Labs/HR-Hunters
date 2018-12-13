@@ -12,6 +12,7 @@ using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ using Newtonsoft.Json.Linq;
 
 namespace HRHunters.WebAPI.Controllers
 {
-    //[Authorize]
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
@@ -33,7 +34,6 @@ namespace HRHunters.WebAPI.Controllers
         {
             _usersManager = usersManager;
         }
-
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterModel userRegisterModel)
         {
