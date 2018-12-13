@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
 using HRHunters.Common.Responses.AdminDashboard;
@@ -23,23 +24,25 @@ namespace HRHunters.WebAPI.Controllers
         {
             _clientManager = clientManager;
         }
-        [Authorize(policy: "RequireAdminRole")]
         [HttpGet]
         public ActionResult<ClientResponse> GetMultipleClients(int pageSize = 0, int currentPage = 0, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
             return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
-        [Authorize(policy: "RequireClientRole")]
         [HttpPut]
         public async Task<ActionResult<GeneralResponse>> UpdateClientProfile(ClientUpdate clientUpdate)
         {
             return Ok(await _clientManager.UpdateClientProfile(clientUpdate));
         }
-        [Authorize(policy: "RequireAdminRole")]
         [HttpPut("{id}")]
         public ActionResult<ClientInfo> UpdateClientStatus(int id, string status)
         {
             return Ok(_clientManager.UpdateClientStatus(id, status));
-        }      
+        }
+        [HttpPost]
+        public async Task<ActionResult<GeneralResponse>> CreateCompany(NewCompany newCompany)
+        {
+            return Ok(await _clientManager.CreateCompany(newCompany));
+        }
     }
 }

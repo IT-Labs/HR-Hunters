@@ -8,6 +8,7 @@ using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
 using HRHunters.Common.Requests.Users;
+using HRHunters.Common.Responses;
 using HRHunters.Common.Responses.AdminDashboard;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -42,10 +43,10 @@ namespace HRHunters.WebAPI.Controllers
         }
         [Authorize(policy:"RequireApplicantRole")]
         [HttpPost]
-        public async Task<object> CreateApplication(Apply apply)
+        public ActionResult<GeneralResponse> CreateApplication(Apply apply)
         {
             var currentUserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return Ok(await _applicationManager.CreateApplication(apply,currentUserId));
+            return Ok(_applicationManager.CreateApplication(apply,currentUserId));
         }
 
 

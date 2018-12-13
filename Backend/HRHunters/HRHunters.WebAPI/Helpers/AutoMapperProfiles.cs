@@ -9,6 +9,7 @@ using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
 using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Responses.AdminDashboard;
+using HRHunters.Common.Enums;
 
 namespace HRHunters.WebAPI.Helpers
 {
@@ -53,6 +54,12 @@ namespace HRHunters.WebAPI.Helpers
                                                  .ForMember(x => x.EmpCategory, opt => opt.Ignore());
             CreateMap<NewCompany, Client>().ForPath(x => x.User.FirstName, opt => opt.MapFrom(x => x.CompanyName))
                                             .ForPath(x => x.User.Email, opt => opt.MapFrom(x => x.Email));
+            CreateMap<Client, ClientInfo>().ForMember(x => x.CompanyName, opt => opt.MapFrom(x => x.User.FirstName))
+                                           .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
+                                           .ForMember(x => x.Id, opt => opt.MapFrom(x => x.UserId))
+                                           .ForMember(x => x.Status, opt => opt.MapFrom(x => x.Status.ToString()))
+                                           .ForMember(x => x.ActiveJobs, opt => opt.MapFrom(x => x.JobPostings.Count(y => y.DateTo < DateTime.UtcNow)))
+                                           .ForMember(x => x.AllJobs, opt => opt.MapFrom(x => x.JobPostings.Count()));
         }
     }
 }

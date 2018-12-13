@@ -97,7 +97,7 @@ namespace HRHunters.Domain.Managers
             _repo.Update(application, "Admin");
             return ToApplicationInfo(application);
         }
-        public async Task<object> CreateApplication(Apply apply, string currentUserId)
+        public GeneralResponse CreateApplication(Apply apply, string currentUserId)
         {
             var active = _repo.Get<JobPosting>(filter: x => x.Id == apply.JobId).FirstOrDefault();
             var applicant = _repo.Get<Applicant>(filter: x => x.Id == apply.ApplicantId, includeProperties: $"{nameof(User)}").FirstOrDefault();

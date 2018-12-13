@@ -1,5 +1,6 @@
 ﻿using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
+using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
 using HRHunters.Common.Responses.AdminDashboard;
@@ -17,5 +18,6 @@ namespace HRHunters.Common.Interfaces
             string sortedBy, SortDirection sortDir, string filterBy, string filterQuery);
         ClientInfo UpdateClientStatus(int id, string status);
         Task<GeneralResponse> UpdateClientProfile(ClientUpdate clientUpdate);
+        Task<GeneralResponse> CreateCompany(NewCompany newCompany);
     }
 }

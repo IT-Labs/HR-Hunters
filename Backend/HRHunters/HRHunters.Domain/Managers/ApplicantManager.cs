@@ -42,7 +42,7 @@ namespace HRHunters.Domain.Managers
                                             LastName = x.User.LastName,
                                             Email = x.User.Email,
                                             PhoneNumber = x.PhoneNumber,
-                                            Photo = "photo"
+                                            Photo = x.Logo
                                         })
                                         .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                         .ToList();

@@ -31,50 +31,23 @@ namespace HRHunters.Domain.Managers
         public ClientResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
-            
-            
-            if (pageSize == 0 && currentPage == 0)
-            {
-                var queryAll = _repo.GetAll<Client>(         
 
-                includeProperties: $"{nameof(User)}," +
-                                   $"{nameof(Client.JobPostings)}")
-                                   .Select(
-                                      x => new ClientInfo
-                                      {
-                                          Id = x.UserId,
-                                          CompanyName = x.User.FirstName,
-                                          Email = x.User.Email,
-                                          Location = x.Location,
-                                          Logo = "https://i.imgur.com/t0MRiAf.png"
-                                      })
-                                      .ToList();
-                response.Clients.AddRange(queryAll);
-            }
+            var queryy = _repo.GetAll<Client>(includeProperties: $"{nameof(User)}," +
+                                   $"{nameof(Client.JobPostings)}");
+            var selected = _mapper.ProjectTo<ClientInfo>(queryy);
+            if (pageSize == 0 && currentPage == 0)
+                selected.Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery).ToList();
             else
-            {
-               var query = _repo.GetAll<Client>(
-                    includeProperties: $"{nameof(User)}," +
-                                       $"{nameof(Client.JobPostings)}")
-                                       .Select(
-                                          x => new ClientInfo
-                                          {
-                                              Id = x.UserId,
-                                              CompanyName = x.User.FirstName,
-                                              Email = x.User.Email,
-                                              ActiveJobs = x.JobPostings.Count(y => y.DateTo < DateTime.UtcNow),
-                                              AllJobs = x.JobPostings.Count,
-                                              Status = x.Status.ToString(),
-                                              Logo = "https://i.imgur.com/t0MRiAf.png",
-                                              Location = x.Location
-                                          })
-                                          .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
-                                          .ToList();
-              response.Clients.AddRange(query);
-              response.MaxClients = _repo.GetAll<Client>().Count();
-              response.Active = _repo.GetCount<Client>(x => x.Status.Equals(ClientStatus.Active));
-              response.Inactive = _repo.GetCount<Client>(x => x.Status.Equals(ClientStatus.Inactive));
-            }
+                selected.ToList();
+
+            response.Clients.AddRange(selected);
+
+            var groupings = _repo.GetAll<Client>().GroupBy(x => x.Status).Select(x => new{ Status = x.Key, Count = x.Count() }).ToList();
+
+            response.MaxClients = groupings.Sum(x => x.Count);
+            response.Active = groupings.Where(x => x.Status.Equals(ClientStatus.Active)).Select(x => x.Count).FirstOrDefault();
+            response.Inactive = groupings.Where(x => x.Status.Equals(ClientStatus.Inactive)).Select(x => x.Count).FirstOrDefault();
+
             return response;
         }
 
@@ -86,17 +59,7 @@ namespace HRHunters.Domain.Managers
             Enum.TryParse(status, out ClientStatus statusToUpdate);
             client.Status = statusToUpdate;
             _repo.Update(client, "Admin");
-            return new ClientInfo
-            {
-                Id = client.Id,
-                CompanyName = client.User.FirstName,
-                Email = client.User.Email,
-                Location = client.Location,
-                ActiveJobs = client.JobPostings.Count(x => x.DateTo < DateTime.UtcNow),
-                AllJobs = client.JobPostings.Count,
-                Status = client.Status.ToString(),
-                Logo = client.Logo
-            };
+            return _mapper.Map<ClientInfo>(client);
         }
 
         public async Task<GeneralResponse> UpdateClientProfile(ClientUpdate clientUpdate)
@@ -133,27 +96,43 @@ namespace HRHunters.Domain.Managers
             return response;
         }
 
-        //public GeneralResponse CreateCompany(NewCompany newCompany)
-        //{
-        //    var response = new GeneralResponse()
-        //    {
-        //        Succeeded = true,
-        //        Errors = new Dictionary<string, List<string>>()
-        //        {
-        //            {"Error", new List<string>() }
-        //        }
-        //    };
-        //    var company = _mapper.Map<Client>(newCompany);
-        //    try
-        //    {
-        //        _repo.Create(company, "Admin");
-                
-        //    }catch(Exception e)
-        //    {
-        //        throw new Exception(e.Message);
-        //    }
+        public async Task<GeneralResponse> CreateCompany(NewCompany newCompany)
+        {
+            var response = new GeneralResponse()
+            {
+                Succeeded = true,
+                Errors = new Dictionary<string, List<string>>()
+            };
+            var user = new User()
+            {
+                FirstName = newCompany.CompanyName,
+                Email = newCompany.Email,
+                UserName = newCompany.Email.ToLower()
+            };
+            var result = await _userManager.CreateAsync(user, "ClientDefaultPassword");
+            //TODO: Notify client with email
+            if (!result.Succeeded)
+            {
+                response.Errors.Add("Error", new List<string>() { "Failed to create user." });
+                return response;
+            }
+            var company = new Client()
+            {
+                User = user,
+            };
+            company = _mapper.Map(newCompany, company);
+            try
+            {
+                _repo.Create(company, "Admin");
+                return response;
+            }
+            catch
+            {
+                response.Errors.Add("Error", new List<string>() { "Failed to create company." });
+                return response;
+            }
 
-            
-        //}
+
+        }
     }
 }
