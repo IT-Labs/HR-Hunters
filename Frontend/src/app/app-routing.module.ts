@@ -22,6 +22,7 @@ import { ADNewJobPostingComponent } from "./admin-dashboard/job-postings/new-job
 
 import { AuthGuard } from "./authentication/auth.guard";
 import { ApplicantComponent } from "./homepage/applicant/applicant.component";
+import { NewClientComponent } from "./admin-dashboard/clients/new-client/new-client.component";
 
 const routes: Routes = [
   { path: "", redirectTo: "welcome", pathMatch: "full" },
@@ -36,6 +37,7 @@ const routes: Routes = [
       { path: "applicants", component: ADApplicantsComponent },
       { path: "applications", component: ADApplicationsComponent },
       { path: "clients", component: ADClientsComponent },
+      { path: "new-client", component: NewClientComponent },
       { path: "job-postings", component: ADJobPostingsComponent },
       { path: "new-job-posting", component: ADNewJobPostingComponent }
     ]

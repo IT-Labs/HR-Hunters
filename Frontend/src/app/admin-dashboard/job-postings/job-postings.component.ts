@@ -17,11 +17,6 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     expired: 0
   };
 
-  selectedTab = {
-    jobs: true,
-    new: false
-  };
-
   jobPostingQP = {
     postsPerPage: 10,
     currentPage: 1,
@@ -51,7 +46,6 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
         this.jobPostingsCount.approved = jobPostingData.approved;
         this.jobPostingsCount.pending = jobPostingData.pending;
         this.jobPostingsCount.expired = jobPostingData.expired;
-        this.calculatePagination(this.jobPostingsCount.all);
       });
   }
 
@@ -97,45 +91,6 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
 
   onEditJobPosting(id: number) {
     this.jobPostingService.editJobPostingId = id;
-  }
-
-  calculatePagination(jobPostingsCount: number) {
-    this.paginationSize = [];
-    const paginationSum = Math.ceil(jobPostingsCount / 10);
-
-    if (paginationSum > 0 && paginationSum < 11) {
-      for (let i = 1; i < paginationSum + 1; i++) {
-        const num = i;
-        this.paginationSize.push(num);
-      }
-    } else if (paginationSum > 10) {
-      if (this.jobPostingQP.currentPage - 10 < paginationSum - 10 && this.jobPostingQP.currentPage < 6) {
-        for (let i = 1; i < 11; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else if (this.jobPostingQP.currentPage - 10 < paginationSum - 10) {
-        for (let i = this.jobPostingQP.currentPage - 5; i < this.jobPostingQP.currentPage + 5; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else {
-        for (let i = paginationSum - 9; i < paginationSum + 1; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      }
-    }
-  }
-
-  onChangeTab(event: string) {
-    if (event === "jobs") {
-      this.selectedTab.jobs = true;
-      this.selectedTab.new = false;
-    } else if (event === "new") {
-      this.selectedTab.jobs = false;
-      this.selectedTab.new = true;
-    }
   }
 
   onChangedPage(page: number) {

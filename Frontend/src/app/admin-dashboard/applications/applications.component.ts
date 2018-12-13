@@ -22,6 +22,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   applicationQP = {
     postsPerPage: 10,
     currentPage: 1,
+    previousPage: 0,
     currentSortBy: "postedOn",
     lastSortBy: "",
     currentSortDirection: 0,
@@ -35,7 +36,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   constructor(private applicationService: ApplicationService) {}
 
   ngOnInit() {
-    const params = this.buildQueryParams(this.applicationQP)
+    const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
     this.applicationsSub = this.applicationService
       .getApplicationsUpdateListener()
@@ -47,15 +48,20 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
         this.applicationCount.interviewed = applicationsData.interviewed;
         this.applicationCount.hired = applicationsData.hired;
         this.applicationCount.rejected = applicationsData.rejected;
-        this.calculatePagination(this.applicationCount.all);
       });
   }
 
   buildQueryParams(data) {
     if (data.currentFilter === null) {
-      return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+      return `?pageSize=${data.postsPerPage}&currentPage=${
+        data.currentPage
+      }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
     }
-    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${
+      data.currentPage
+    }&sortedBy=${data.currentSortBy}&sortDir=${
+      data.currentSortDirection
+    }&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
   }
 
   buildApplicationsDataOnUpdate(
@@ -82,58 +88,22 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     return applicationData;
   }
 
-  calculatePagination(applicationCount: number) {
-    this.paginationSize = [];
-    const paginationSum = Math.ceil(applicationCount / 10);
-
-    if (paginationSum > 0 && paginationSum < 11) {
-      for (let i = 1; i < paginationSum + 1; i++) {
-        const num = i;
-        this.paginationSize.push(num);
-      }
-    } else if (paginationSum > 10) {
-      if (
-        this.applicationQP.currentPage - 10 < paginationSum - 10 &&
-        this.applicationQP.currentPage < 6
-      ) {
-        for (let i = 1; i < 11; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else if (this.applicationQP.currentPage - 10 < paginationSum - 10) {
-        for (
-          let i = this.applicationQP.currentPage - 5;
-          i < this.applicationQP.currentPage + 5;
-          i++
-        ) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else {
-        for (let i = paginationSum - 9; i < paginationSum + 1; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      }
-    }
-  }
-
   onChangedPage(page: number) {
-    this.applicationQP.currentPage = page;
-    const params = this.buildQueryParams(this.applicationQP)
-    this.applicationService.getApplications(params);
+    if (this.applicationQP.currentPage !== this.applicationQP.previousPage) {
+      this.applicationQP.previousPage = this.applicationQP.currentPage;
+      const params = this.buildQueryParams(this.applicationQP);
+      this.applicationService.getApplications(params);
+    }
   }
 
   onFilter(filterBy: string) {
-    
     if (filterBy === null) {
-      this.applicationQP.currentFilter = null
+      this.applicationQP.currentFilter = null;
     } else {
-      this.applicationQP.currentFilter = 'status'
+      this.applicationQP.currentFilter = "status";
     }
-
     this.applicationQP.currentFilterQuery = filterBy;
-    const params = this.buildQueryParams(this.applicationQP)
+    const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
   }
 
@@ -144,7 +114,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       } else if (this.applicationQP.currentSortDirection === 0) {
         this.applicationQP.currentSortDirection = 1;
       }
-      this.applicationQP.lastSortBy = '';
+      this.applicationQP.lastSortBy = "";
     } else if (this.applicationQP.lastSortBy !== sortBy) {
       if (this.applicationQP.currentSortDirection === 1) {
         this.applicationQP.currentSortDirection = 0;
@@ -154,14 +124,13 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       this.applicationQP.lastSortBy = sortBy;
     }
     this.applicationQP.currentSortBy = sortBy;
-    const params = this.buildQueryParams(this.applicationQP)
+    const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
   }
 
   chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
     const currentId = id;
-
     const applicationData = this.buildApplicationsDataOnUpdate(
       currentId,
       null,
@@ -171,8 +140,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       null,
       null,
       currentStatus
-    )
-
+    );
     this.applicationService.updateApplication(applicationData);
   }
 

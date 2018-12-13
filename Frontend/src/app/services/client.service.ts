@@ -44,6 +44,14 @@ export class ClientService {
       });
   }
 
+  addClient(clientData) {
+    this.http
+    .post<{ client: Client }>(this.baseUrl + "/Clients", clientData)
+    .subscribe(response => {
+      this.router.navigate(["/admin-dashboard/clients"]);
+    });
+  }
+
   updateClient(clientData) {
     this.http
       .put(this.baseUrl + "/Clients" + clientData.id, clientData)

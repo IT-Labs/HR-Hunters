@@ -1,11 +1,10 @@
-<div class="dash__container" *ngIf="selectedTab.jobs">
+<div class="dash__container">
   <div class="dash__heading">
     <h2>Job Postings</h2>
     <button
       class="btn dash__heading--btn"
       type="button"
       routerLink="/admin-dashboard/new-job-posting"
-      (click)="onChangeTab('new')"
     >
       Add New
     </button>
@@ -96,8 +95,8 @@
     </table>
   </div>
      
-
   <ngb-pagination
+  *ngIf="jobPostingsCount.all > 10"
     [collectionSize]="jobPostingsCount.all"
     [(page)]="jobPostingQP.currentPage"
     [maxSize]="10"
@@ -107,6 +106,4 @@
     class="d-flex justify-content-center"
     (pageChange)="onChangedPage($event)"
   ></ngb-pagination>
-
-  <app-ad-new-job-posting *ngIf="selectedTab.new"></app-ad-new-job-posting>
 </div>

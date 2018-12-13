@@ -19,6 +19,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   clientQP = {
     postsPerPage: 10,
     currentPage: 1,
+    previousPage: 0,
     currentSortBy: "companyName",
     lastSortBy: "",
     currentSortDirection: 1,
@@ -42,7 +43,6 @@ export class ADClientsComponent implements OnInit, OnDestroy {
         this.clientsCount.all = clientsData.clientsCount;
         this.clientsCount.active = clientsData.active;
         this.clientsCount.inactive = clientsData.inactive;
-        this.calculatePagination(this.clientsCount.all)
       });
   }
   
@@ -89,40 +89,14 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     return clientData;
   }
 
-  calculatePagination(applicationCount: number) {
-    this.paginationSize = [];
-    const paginationSum = Math.ceil(applicationCount / 10);
-
-    if (paginationSum > 0 && paginationSum < 11) {
-      for (let i = 1; i < paginationSum + 1; i++) {
-        const num = i;
-        this.paginationSize.push(num);
-      }
-    } else if (paginationSum > 10) {
-      if (this.clientQP.currentPage - 10 < paginationSum - 10 && this.clientQP.currentPage < 6) {
-        for (let i = 1; i < 11; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else if (this.clientQP.currentPage - 10 < paginationSum - 10) {
-        for (let i = this.clientQP.currentPage - 5; i < this.clientQP.currentPage + 5; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      } else {
-        for (let i = paginationSum - 9; i < paginationSum + 1; i++) {
-          const num = i;
-          this.paginationSize.push(num);
-        }
-      }
+  onChangedPage(page: number) {
+    if (this.clientQP.currentPage !== this.clientQP.previousPage) {
+      this.clientQP.previousPage = this.clientQP.currentPage;
+      const params = this.buildQueryParams(this.clientQP);
+      this.clientService.getClients(params);
     }
   }
 
-  onChangedPage(page: number) {
-    this.clientQP.currentPage = page;
-    const params = this.buildQueryParams(this.clientQP)
-    this.clientService.getClients(params);
-  }
   onFilter(filterBy: string) {
     if (filterBy === null) {
       this.clientQP.currentFilter = null
