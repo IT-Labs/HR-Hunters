@@ -10,9 +10,9 @@ export interface JobPosting {
     status?: string;
     experience: number;
     companyId?: number;
-    companyName: string;
-    companyEmail: string;
-    companyLocation: string;
+    companyName?: string;
+    companyEmail?: string;
+    companyLocation?: string;
     allApplicationsCount?: number;
     activeApplicationsCount?: number;
     applicantName?: string;

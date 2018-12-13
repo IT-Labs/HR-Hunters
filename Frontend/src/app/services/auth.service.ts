@@ -128,7 +128,7 @@ export class AuthService {
     }
     this.http
       .post<{
-        succeeded: false;
+        succeeded: boolean;
         errors: {
           Error: string[] | null
         };

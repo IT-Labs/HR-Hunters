@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
-import { map } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { Application } from "../models/application.model";
 import { environment } from "../../environments/environment.prod";
@@ -55,7 +54,19 @@ export class ApplicationService {
 
   updateApplication(applicationData) {
     this.http
-      .put(this.baseUrl + "/Applications/" + applicationData.id, applicationData)
-      .subscribe(response => {});
+      .put<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        }
+      }>(this.baseUrl + "/Applications", applicationData)
+      .subscribe(response => {
+        if (response.succeeded) {
+          this.router.navigate(["/admin-dashboard/applications"]);
+        }
+      },
+      error => {
+        console.log(error)
+      });
   }
 }

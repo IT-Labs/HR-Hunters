@@ -54,15 +54,37 @@ export class JobPostingService {
   // Adding new job posting
   addJobPosting(jobPostingData) {
     this.http
-      .post<{ jobPosing: JobPosting }>(this.baseUrl + "/Jobs", jobPostingData)
+      .post<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        }
+      }>(this.baseUrl + "/Jobs", jobPostingData)
       .subscribe(response => {
-        this.router.navigate(["/admin-dashboard/job-postings"]);
+        if (response.succeeded) {
+          this.router.navigate(["/admin-dashboard/job-postings"]);
+        }
+      },
+      error => {
+        console.log(error)
       });
   }
 
   updateJobPosting(jobPostingData) {
     this.http
-      .put(this.baseUrl + "/Jobs/" + jobPostingData.id, jobPostingData)
-      .subscribe(response => {});
+      .put<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        }
+      }>(this.baseUrl + "/Jobs", jobPostingData)
+      .subscribe(response => {
+        if (response.succeeded) {
+          this.router.navigate(["/admin-dashboard/job-postings"]);
+        }
+      },
+      error => {
+        console.log(error)
+      });
   }
 }

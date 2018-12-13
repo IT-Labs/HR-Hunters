@@ -41,20 +41,45 @@ export class ClientService {
           active: clientsData.active,
           inactive: clientsData.inactive
         });
+      },
+      error => {
+        console.log(error)
       });
   }
 
   addClient(clientData) {
     this.http
-    .post<{ client: Client }>(this.baseUrl + "/Clients", clientData)
+    .post<{
+      succeeded: boolean;
+      errors: {
+        Error: string[] | null;
+      }
+    }>(this.baseUrl + "/Clients", clientData)
     .subscribe(response => {
-      this.router.navigate(["/admin-dashboard/clients"]);
+      if (response.succeeded) {
+        this.router.navigate(["/admin-dashboard/clients"]);
+      }
+    },
+    error => {
+      console.log(error)
     });
   }
 
   updateClient(clientData) {
     this.http
-      .put(this.baseUrl + "/Clients" + clientData.id, clientData)
-      .subscribe(response => {});
+      .put<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        }
+      }>(this.baseUrl + "/Clients", clientData)
+      .subscribe(response => {
+        if (response.succeeded) {
+          this.router.navigate(["/admin-dashboard/clients"]);
+        }
+      },
+      error => {
+        console.log(error)
+      });
   }
 }

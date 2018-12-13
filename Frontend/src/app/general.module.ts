@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { NgxPopper } from 'angular-popper';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { NgxLoadingModule } from 'ngx-loading';
 
 import { HeaderComponent } from './homepage/header/header.component';
 import { NavigationComponent } from './homepage/header/navigation/navigation.component';
@@ -65,7 +66,8 @@ import { NewClientComponent } from './admin-dashboard/clients/new-client/new-cli
         InfiniteScrollModule,
         NgbModule,
         NgbPaginationModule,
-        NgbAlertModule
+        NgbAlertModule,
+        NgxLoadingModule.forRoot({})
     ]
 })
 
