@@ -107,7 +107,11 @@ namespace HRHunters.Domain.Managers
             jobPost.DateTo = dateTo;
             jobPost.EmpCategory = empCategory;
             jobPost.Education = education;
-            
+            if (userRole.Contains("Client"))
+                jobPost.Status = JobPostingStatus.Pending;
+            else
+                jobPost.Status = JobPostingStatus.Approved;
+                
             _repo.Create(jobPost, "Admin");
 
             return response;

@@ -30,7 +30,8 @@ namespace HRHunters.WebAPI.Helpers
             CreateMap<JobUpdate, JobPosting>().ForMember(x => x.DateFrom, opt => opt.Ignore())
                                                 .ForMember(x => x.DateTo, opt => opt.Ignore())
                                                 .ForMember(x => x.EmpCategory, opt => opt.Ignore())
-                                                .ForMember(x => x.Education, opt => opt.Ignore());
+                                                .ForMember(x => x.Education, opt => opt.Ignore()).
+                                                ForMember(x => x.Title, opt => opt.MapFrom(x => x.JobTitle));
             CreateMap<JobPosting, JobInfo>().ForMember(x => x.CompanyEmail, opt => opt.MapFrom(x => x.Client.User.Email))
                                             .ForMember(x => x.CompanyName, opt => opt.MapFrom(x => x.Client.User.FirstName))
                                             .ForMember(x => x.AllApplicationsCount, opt => opt.MapFrom(x => x.Applications.Count))
