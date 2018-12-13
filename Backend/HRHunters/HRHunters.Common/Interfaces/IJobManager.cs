@@ -15,10 +15,10 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IJobManager : IBaseManager
     {
-        Task<JobResponse> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery, int id);
-        Task<object> CreateJobPosting(JobSubmit jobSubmit);
-        JobInfo GetOneJobPosting(int id);
-        GeneralResponse UpdateJob(JobUpdate jobSubmit);
+        Task<JobResponse> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery, int id, int currentUserId);
+        Task<GeneralResponse> CreateJobPosting(JobSubmit jobSubmit, int currentUserId);
+        JobInfo GetOneJobPosting(int id, int currentUserId);
+        GeneralResponse UpdateJob(JobUpdate jobSubmit, int currentUserId);
 
     }
 }

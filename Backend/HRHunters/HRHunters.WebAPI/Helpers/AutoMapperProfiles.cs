@@ -38,6 +38,18 @@ namespace HRHunters.WebAPI.Helpers
                                             .ForMember(x => x.JobType, opt => opt.MapFrom(x => x.EmpCategory.ToString()))
                                             .ForMember(x => x.Status, opt => opt.MapFrom(x => x.Status.ToString()))
                                             .ForMember(x => x.DateTo, opt => opt.MapFrom(x => x.DateTo.ToString()));
+            CreateMap<Client, ClientInfo>().ForMember(x => x.Id, opt => opt.MapFrom(x => x.UserId))
+                                            .ForMember(x => x.CompanyName, opt => opt.MapFrom(x => x.User.FirstName))
+                                            .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
+                                            .ForMember(x => x.ActiveJobs, opt => opt.MapFrom(x => x.JobPostings.Count))
+                                            .ForMember(x => x.Status, opt => opt.MapFrom(x => x.Status.ToString()))
+                                            .ForMember(x => x.Logo, opt => opt.Ignore())
+                                            .ForMember(x => x.AllJobs, opt => opt.MapFrom(x => x.JobPostings.Count(y => y.DateTo < DateTime.UtcNow)));
+            CreateMap<JobSubmit, JobPosting>().ForMember(x => x.Id, opt => opt.Ignore())
+                                                .ForMember(x => x.DateFrom, opt => opt.Ignore())
+                                                 .ForMember(x => x.DateTo, opt => opt.Ignore())
+                                                 .ForMember(x => x.Education, opt => opt.Ignore())
+                                                 .ForMember(x => x.EmpCategory, opt => opt.Ignore());
         }
     }
 }

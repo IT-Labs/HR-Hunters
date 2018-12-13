@@ -44,7 +44,8 @@ namespace HRHunters.Domain.Managers
                                           Id = x.UserId,
                                           CompanyName = x.User.FirstName,
                                           Email = x.User.Email,
-                                          Location = x.Location
+                                          Location = x.Location,
+                                          Logo = "https://i.imgur.com/t0MRiAf.png"
                                       })
                                       .ToList();
                 response.Clients.AddRange(queryAll);
@@ -63,7 +64,8 @@ namespace HRHunters.Domain.Managers
                                               ActiveJobs = x.JobPostings.Count(y => y.DateTo < DateTime.UtcNow),
                                               AllJobs = x.JobPostings.Count,
                                               Status = x.Status.ToString(),
-                                              Logo = "photo"
+                                              Logo = "https://i.imgur.com/t0MRiAf.png",
+                                              Location = x.Location
                                           })
                                           .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
                                           .ToList();

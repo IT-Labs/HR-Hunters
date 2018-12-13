@@ -83,7 +83,7 @@ namespace HRHunters.WebAPI
 
             services.AddTransient<SeedData>();
             services.AddDbContext<DataContext>(x => x.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-            
+            services.AddHttpContextAccessor();
             services.AddAutoMapper();
             services.AddCors(opt =>
             {

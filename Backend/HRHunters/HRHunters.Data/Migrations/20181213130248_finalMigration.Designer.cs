@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HRHunters.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20181212120931_finalMigration")]
+    [Migration("20181213130248_finalMigration")]
     partial class finalMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,6 +55,8 @@ namespace HRHunters.Data.Migrations
                     b.Property<string>("EducationType");
 
                     b.Property<string>("Experience");
+
+                    b.Property<string>("Logo");
 
                     b.Property<string>("ModifiedBy");
 
@@ -113,6 +115,8 @@ namespace HRHunters.Data.Migrations
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<string>("Location");
+
+                    b.Property<string>("Logo");
 
                     b.Property<string>("ModifiedBy");
 
