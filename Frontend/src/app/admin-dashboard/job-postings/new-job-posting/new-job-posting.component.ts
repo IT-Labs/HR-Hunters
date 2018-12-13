@@ -1,10 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { Client } from "src/app/models/client.model";
 import { JobPostingService } from "src/app/services/job-posting.service";
 import { ClientService } from "src/app/services/client.service";
-import { Subscription } from "rxjs";
-import { NgbDate, NgbCalendar } from "@ng-bootstrap/ng-bootstrap";
+import { Subscription, Subject, Observable, merge } from "rxjs";
+import { NgbDate, NgbCalendar, NgbTypeahead } from "@ng-bootstrap/ng-bootstrap";
+import { debounceTime, distinctUntilChanged, filter, map } from "rxjs/operators";
 
 @Component({
   selector: "app-ad-new-job-posting",
@@ -20,12 +21,14 @@ export class ADNewJobPostingComponent implements OnInit {
     "Doctoral degree",
     "Select education level..."
   ];
+
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
   validDate = false;
-
+  validClient = false;
   clients: Client[] = [];
+  clientNames: string[] = [];
   experience = [
     "<1",
     "1",
@@ -81,10 +84,9 @@ export class ADNewJobPostingComponent implements OnInit {
       .getClientsUpdateListener()
       .subscribe(clientsData => {
         this.clients = clientsData.clients;
-        this.clients.push({
-          companyName: "Select company...",
-          email: ""
-        });
+        clientsData.clients.forEach(c => {
+          this.clientNames.push(c.companyName);
+        })
       });
 
     this.todayDate = this.calendar.getToday();
@@ -96,8 +98,21 @@ export class ADNewJobPostingComponent implements OnInit {
     } else {
       this.validDate = false;
     }
+  }
 
-    console.log(this.todayDate);
+  @ViewChild('instance') instance: NgbTypeahead;
+  focus$ = new Subject<string>();
+  click$ = new Subject<string>();
+
+  search = (text$: Observable<string>) => {
+    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
+    const inputFocus$ = this.focus$;
+
+    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
+      map(term => (term === '' ? this.clientNames
+        : this.clientNames.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10))
+    );
   }
 
   newJobPostingForm = this.fb.group({
@@ -251,6 +266,12 @@ export class ADNewJobPostingComponent implements OnInit {
       dateToday = `${this.todayDate.year}/${monthTodayDate}/${dayTodayDate}`;
     }
 
+    this.clientNames.forEach(c => {
+      if (this.newJobPostingForm.value.companyName === c) {
+        this.validClient = true;
+      }
+    })
+
     let jobPostingData = this.buildJobPostingDataOnAddJobPosting(
       true,
       this.selectedCompany.id,
@@ -270,7 +291,8 @@ export class ADNewJobPostingComponent implements OnInit {
       this.newJobPostingForm.valid &&
       this.fromDate &&
       this.toDate &&
-      this.validDate
+      this.validDate &&
+      this.validClient
     ) {
       this.jobPostingService.addJobPosting(jobPostingData);
     }

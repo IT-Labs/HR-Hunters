@@ -30,8 +30,8 @@
           <td>
             <img
               class="dash__table--image"
-              src="{{ applicant.photo }}"
-              alt="{{ applicant.firstName }}"
+              [src]="applicant.photo"
+              [alt]="applicant.firstName"
             />
           </td>
           <td>{{ applicant.email }}</td>

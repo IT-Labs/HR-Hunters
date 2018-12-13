@@ -1,7 +1,5 @@
 <div class="dash__container">
-  <div class="dash__heading">
-    <h2>Add New Job Posting</h2>
-  </div>
+  <div class="dash__heading"><h2>Add New Job Posting</h2></div>
   <div class="dash__form__container">
     <form
       class="dash__form"
@@ -12,23 +10,20 @@
         <p>Company information</p>
 
         <!-- COMPANY NAME -->
-        <label for="dashidCompanyName" class="dash__form--label"
+        <label for="dashid_CompanyName" class="dash__form--label"
           >Company Name <span class="u-required-star">*</span></label
         >
-        <select
-          id="dashid__experience"
-          class="dash__form--input"
+        <input
+          id="dashid_CompanyName"
           formControlName="companyName"
-          >
-          <option
-            *ngFor="let client of clients; let i = index"
-            [value]="client.companyName"
-            [selected]="client.companyName === 'Select company...'"
-            [disabled]="client.companyName === 'Select company...'"
-            >{{ client.companyName }}
-          </option>
-        </select>
-        
+          type="text"
+          class="dash__form--input"
+          [ngbTypeahead]="search"
+          placeholder="Select company..."
+          (focus)="focus$.next($event.target.value)"
+          (click)="click$.next($event.target.value)"
+          #instance="ngbTypeahead"
+        />
         <div
           *ngIf="
             !newJobPostingForm.controls['companyName'].valid &&
@@ -43,7 +38,7 @@
             Company must be selected.
           </div>
         </div>
-        
+
         <p class="pt-3">Job information</p>
         <!-- TITLE -->
 
@@ -218,21 +213,19 @@
           </span>
         </ng-template>
 
-       <div
-          *ngIf="
-            !fromDate || !toDate || (fromDate && toDate && !validDate)
-          "
+        <div
+          *ngIf="!fromDate || !toDate || (fromDate && toDate && !validDate)"
           class="alert dash__form--alert-msg"
         >
-            Start date must be equal to today's date or a later date. End date
-            can't be earlier or equal to start date.
-        </div> 
+          Start date must be equal to today's date or a later date. End date
+          can't be earlier or equal to start date.
+        </div>
       </div>
 
       <button
         type="submit"
         class="btn dash__form--btn"
-        [disabled]="!newJobPostingForm.valid || !fromDate || !toDate"
+        [disabled]="!newJobPostingForm.valid || !fromDate || !toDate || !validClient"
       >
         Publish Job
       </button>
