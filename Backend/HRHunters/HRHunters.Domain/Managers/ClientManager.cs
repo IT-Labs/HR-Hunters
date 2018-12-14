@@ -34,7 +34,7 @@ namespace HRHunters.Domain.Managers
 
             var query = _repo.GetAll<Client>(includeProperties: $"{nameof(User)}," +
                                    $"{nameof(Client.JobPostings)}");
-            var selected = _mapper.ProjectTo<ClientInfo>(queryy);
+            var selected = _mapper.ProjectTo<ClientInfo>(query);
             if (pageSize != 0 && currentPage != 0)
                 selected = selected.Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
 
