@@ -1,6 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { mimeType } from "../../../validators/mime-type.validator";
+import { AuthService } from "src/app/services/auth.service";
+import { ApplicantService } from "src/app/services/applicant.service";
 
 @Component({
   selector: "app-applicant-profile",
@@ -15,7 +17,7 @@ export class ApplicantProfileComponent implements OnInit {
     "Doctor",
     "Select education level..."
   ];
-
+  loggedInUser;
   imagePreview: string | ArrayBuffer;
   imageValid = true;
   validEmail = new RegExp(
@@ -53,11 +55,17 @@ export class ApplicantProfileComponent implements OnInit {
   );
   //ex: format: +61 01 2345 6789
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private applicantService: ApplicantService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.imagePreview =
       "http://droidlessons.com/wp-content/uploads/2017/05/person-1824144_960_720-e1494184045144.png";
+
+    this.loggedInUser = this.authService.getUser();
   }
 
   applicantProfileFormHP = this.fb.group({
@@ -111,22 +119,26 @@ export class ApplicantProfileComponent implements OnInit {
   });
 
   buildApplicantDataOnUpdateApplicantProfile(
-    userId: number,
-    companyName: string,
-    companyEmail: string,
-    location: string,
+    userId: 0,
+    firstName: string,
+    lastName: string,
+    email: string,
     phoneNumber: string,
-    staus: string
+    educationType: string,
+    schoolUniversity: string,
+    experience: string
   ) {
-    const newClientData = {
+    const newApplicantData = {
       userId: userId,
-      companyName: companyName,
-      companyEmail: companyEmail,
-      location: location,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
       phoneNumber: phoneNumber,
-      staus: status
+      educationType: educationType,
+      schoolUniversity: schoolUniversity,
+      experience: experience
     };
-    return newClientData;
+    return newApplicantData;
   }
 
   onImagePicked(event: Event) {
@@ -158,11 +170,22 @@ export class ApplicantProfileComponent implements OnInit {
     this.applicantProfileFormHP.controls["school"].markAsTouched();
     this.applicantProfileFormHP.controls["experience"].markAsTouched();
 
+    let applicantData = this.buildApplicantDataOnUpdateApplicantProfile(
+      this.loggedInUser.id,
+      this.applicantProfileFormHP.value.firstName,
+      this.applicantProfileFormHP.value.lastName,
+      this.applicantProfileFormHP.value.email,
+      this.applicantProfileFormHP.value.phoneNumber,
+      this.applicantProfileFormHP.value.education,
+      this.applicantProfileFormHP.value.school,
+      this.applicantProfileFormHP.value.experience
+    );
+
     if (this.imagePreview === undefined) {
       this.imageValid = false;
     } else {
       if (this.applicantProfileFormHP.valid) {
-        this
+        this.applicantService.updateApplicant(applicantData);
       }
     }
   }
