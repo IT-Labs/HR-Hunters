@@ -1,7 +1,8 @@
-import { Component,OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
 import { mimeType } from "../../../validators/mime-type.validator";
+import { ClientService } from "src/app/services/client.service";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-client-profile",
@@ -11,18 +12,26 @@ import { mimeType } from "../../../validators/mime-type.validator";
 export class ClientProfileComponent implements OnInit {
   imagePreview: string | ArrayBuffer;
   imageValid = true;
+  loggedInUser;
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
-  // validPhonenumber = new RegExp("^(\+\s?)?((?<!\+.*)\(\+?\d+([\s\-\.]?\d+)?\)|\d+)([\s\-\.]?(\(\d+([\s\-\.]?\d+)?\)|\d+))*(\s?(x|ext\.?)\s?\d+)?$");
-  // validPhonenumber = new RegExp("/^[a-zA-Z0-9\-().\s]{10,15}$/");
-    validPhonenumber = new RegExp("^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$");
-    //ex: format: +61 01 2345 6789
+  validPhonenumber = new RegExp(
+    "^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$"
+  );
+  //ex: format: +61 01 2345 6789
 
-  constructor(private fb: FormBuilder, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private clientService: ClientService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
-    this.imagePreview = 'https://about.canva.com/wp-content/uploads/sites/3/2016/08/Band-Logo.png';
+    this.imagePreview =
+      "https://about.canva.com/wp-content/uploads/sites/3/2016/08/Band-Logo.png";
+
+    this.loggedInUser = this.authService.getUser();
   }
 
   clientProfileFormHP = this.fb.group({
@@ -35,16 +44,6 @@ export class ClientProfileComponent implements OnInit {
         Validators.pattern("[a-zA-Z0-9]*")
       ])
     ],
-
-    
-    phonenumber: ["", Validators.compose([Validators.required,Validators.pattern(this.validPhonenumber)])],
-    logo: [
-      "",
-      {
-        validators: [Validators.required],
-        asyncValidators: [mimeType]
-      }
-    ],
     companyEmail: [
       "",
       Validators.compose([
@@ -54,7 +53,14 @@ export class ClientProfileComponent implements OnInit {
         Validators.pattern(this.validEmail)
       ])
     ],
-    location:[
+    phonenumber: [
+      "",
+      Validators.compose([
+        Validators.required,
+        Validators.pattern(this.validPhonenumber)
+      ])
+    ],
+    location: [
       "",
       Validators.compose([
         Validators.required,
@@ -62,9 +68,34 @@ export class ClientProfileComponent implements OnInit {
         Validators.maxLength(30),
         Validators.pattern("[a-zA-Z0-9]*")
       ])
+    ],
+    logo: [
+      "",
+      {
+        validators: [Validators.required],
+        asyncValidators: [mimeType]
+      }
     ]
-    
   });
+
+  buildClientDataOnUpdateClientProfile(
+    userId: number,
+    companyName: string,
+    companyEmail: string,
+    location: string,
+    phoneNumber: string,
+    staus: string
+  ) {
+    const newClientData = {
+      userId: userId,
+      companyName: companyName,
+      companyEmail: companyEmail,
+      location: location,
+      phoneNumber: phoneNumber,
+      staus: status
+    };
+    return newClientData;
+  }
 
   onImagePicked(event: Event) {
     const file = (event.target as HTMLInputElement).files[0];
@@ -87,16 +118,25 @@ export class ClientProfileComponent implements OnInit {
   }
 
   onSubmitClientProfile() {
-    console.log(this.clientProfileFormHP);
     this.clientProfileFormHP.controls["companyName"].markAsTouched();
     this.clientProfileFormHP.controls["companyEmail"].markAsTouched();
     this.clientProfileFormHP.controls["phonenumber"].markAsTouched();
-    this.clientProfileFormHP.controls["logo"].markAsTouched();
-      if (this.imagePreview === undefined) {
+    this.clientProfileFormHP.controls["location"].markAsTouched();
+
+    let clientData = this.buildClientDataOnUpdateClientProfile(
+      this.loggedInUser.id,
+      this.clientProfileFormHP.value.companyName,
+      this.clientProfileFormHP.value.companyEmail,
+      this.clientProfileFormHP.value.location,
+      this.clientProfileFormHP.value.phonenumber,
+      null
+    );
+
+    if (this.imagePreview === undefined) {
       this.imageValid = false;
     } else {
       if (this.clientProfileFormHP.valid) {
-        console.log('something')
+        this.clientService.updateClient(clientData);
       }
     }
   }
