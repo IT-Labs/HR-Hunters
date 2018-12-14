@@ -32,7 +32,8 @@ namespace HRHunters.WebAPI.Helpers
                                                 .ForMember(x => x.DateTo, opt => opt.Ignore())
                                                 .ForMember(x => x.EmpCategory, opt => opt.Ignore())
                                                 .ForMember(x => x.Education, opt => opt.Ignore()).
-                                                ForMember(x => x.Title, opt => opt.MapFrom(x => x.JobTitle));
+                                                ForMember(x => x.Title, opt => opt.MapFrom(x => x.JobTitle))
+                                                .ForMember(x => x.NeededExperience, opt => opt.MapFrom(x => x.Experience));
             CreateMap<JobPosting, JobInfo>().ForMember(x => x.CompanyEmail, opt => opt.MapFrom(x => x.Client.User.Email))
                                             .ForMember(x => x.CompanyName, opt => opt.MapFrom(x => x.Client.User.FirstName))
                                             .ForMember(x => x.AllApplicationsCount, opt => opt.MapFrom(x => x.Applications.Count))
@@ -60,6 +61,19 @@ namespace HRHunters.WebAPI.Helpers
                                            .ForMember(x => x.Status, opt => opt.MapFrom(x => x.Status.ToString()))
                                            .ForMember(x => x.ActiveJobs, opt => opt.MapFrom(x => x.JobPostings.Count(y => y.DateTo < DateTime.UtcNow)))
                                            .ForMember(x => x.AllJobs, opt => opt.MapFrom(x => x.JobPostings.Count()));
+            CreateMap<Application, ApplicationInfo>().ForMember(x => x.ApplicantEmail, opt => opt.MapFrom(x => x.Applicant.User.Email))
+                                                        .ForMember(x => x.ApplicantFirstName, opt => opt.MapFrom(x => x.Applicant.User.FirstName))
+                                                        .ForMember(x => x.ApplicantLastName, opt => opt.MapFrom(x => x.Applicant.User.LastName))
+                                                        .ForMember(x => x.Experience, opt => opt.MapFrom(x => x.Applicant.Experience))
+                                                        .ForMember(x => x.JobTitle, opt => opt.MapFrom(x => x.JobPosting.Title))
+                                                        .ForMember(x => x.PostedOn, opt => opt.MapFrom(x => x.Date.ToString("yyy/MM/dd")))
+                                                        .ForMember(x => x.Status, opt => opt.MapFrom(x => x.Status.ToString()));
+
+            CreateMap<Applicant, ApplicantInfo>().ForMember(x => x.Id, opt => opt.MapFrom(x => x.UserId))
+                                                    .ForMember(x => x.FirstName, opt => opt.MapFrom(x => x.User.FirstName))
+                                                    .ForMember(x => x.LastName, opt => opt.MapFrom(x => x.User.LastName))
+                                                    .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
+                                                    .ForMember(x => x.Photo, opt => opt.MapFrom(x => x.Logo));
         }
     }
 }

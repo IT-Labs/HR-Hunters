@@ -30,9 +30,9 @@ namespace HRHunters.WebAPI.Controllers
             return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult<GeneralResponse>> UpdateClientProfile(ClientUpdate clientUpdate)
+        public async Task<ActionResult<GeneralResponse>> UpdateClientProfile(int id, ClientUpdate clientUpdate)
         {
-            return Ok(await _clientManager.UpdateClientProfile(clientUpdate));
+            return Ok(await _clientManager.UpdateClientProfile(id, clientUpdate));
         }
         [HttpPut]
         public ActionResult<GeneralResponse> UpdateClientStatus(ClientStatusUpdate clientStatusUpdate)

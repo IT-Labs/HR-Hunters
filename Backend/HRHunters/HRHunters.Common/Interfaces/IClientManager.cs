@@ -17,7 +17,7 @@ namespace HRHunters.Common.Interfaces
         ClientResponse GetMultiple(int pageSize, int currentPage, 
             string sortedBy, SortDirection sortDir, string filterBy, string filterQuery);
         GeneralResponse UpdateClientStatus(ClientStatusUpdate clientStatusUpdate);
-        Task<GeneralResponse> UpdateClientProfile(ClientUpdate clientUpdate);
+        Task<GeneralResponse> UpdateClientProfile(int id, ClientUpdate clientUpdate);
         Task<GeneralResponse> CreateCompany(NewCompany newCompany);
     }
 }

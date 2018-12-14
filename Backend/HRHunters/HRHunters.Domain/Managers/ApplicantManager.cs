@@ -32,35 +32,27 @@ namespace HRHunters.Domain.Managers
         public ApplicantResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             var response = new ApplicantResponse() { Applicants = new List<ApplicantInfo>()};
-                var query = _repo.GetAll<Applicant>(
-                    includeProperties: $"{nameof(Applicant.User)},")
-                                        .Select(
-                                        x =>  new ApplicantInfo
-                                        {
-                                            Id = x.UserId,
-                                            FirstName = x.User.FirstName,
-                                            LastName = x.User.LastName,
-                                            Email = x.User.Email,
-                                            PhoneNumber = x.PhoneNumber,
-                                            Photo = x.Logo
-                                        })
-                                        .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery)
-                                        .ToList();
-            response.Applicants.AddRange(query);
+
+            var query = _repo.GetAll<Applicant>(includeProperties: $"{nameof(Applicant.User)},");
+
+            var selected = _mapper.ProjectTo<ApplicantInfo>(query)
+                                        .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery).ToList();
+             
+            response.Applicants.AddRange(selected);
             response.MaxApplicants = _repo.GetCount<Applicant>();
             return response;
         }
 
-        public async Task<GeneralResponse> UpdateApplicantProfile(ApplicantUpdate applicantUpdate)
+        public async Task<GeneralResponse> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate)
         {
             var response = new GeneralResponse()
             {
                 Succeeded = true,
                 Errors = new Dictionary<string, List<string>>()
             };
-            var user = await _userManager.FindByIdAsync(applicantUpdate.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(id.ToString());
 
-            var applicant = _repo.GetById<Applicant>(applicantUpdate.UserId);
+            var applicant = _repo.GetById<Applicant>(id);
             if (user != null && applicantUpdate != null)
             {
                 applicant = _mapper.Map(applicantUpdate, applicant);

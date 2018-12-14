@@ -7,6 +7,7 @@ using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
+using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
 using HRHunters.Common.Responses.AdminDashboard;
@@ -33,16 +34,16 @@ namespace HRHunters.WebAPI.Controllers
         {
             return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery,id));
         }
-        [HttpPut("{id}")]
-        public ActionResult<ApplicationInfo> UpdateApplicationStatus(int id, string status)
+        [HttpPut]
+        public ActionResult<ApplicationInfo> UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
         {
-            return Ok(_applicationManager.UpdateApplicationStatus(id, status));
+            return Ok(_applicationManager.UpdateApplicationStatus(applicationStatusUpdate));
         }
         [HttpPost]
         public ActionResult<GeneralResponse> CreateApplication(Apply apply)
         {
-            var currentUserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return Ok(_applicationManager.CreateApplication(apply,currentUserId));
+            //var currentUserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            return Ok(_applicationManager.CreateApplication(apply));
         }
 
 
