@@ -29,12 +29,12 @@ namespace HRHunters.WebAPI.Controllers
         {
             return Ok(_clientManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
-        [HttpPut]
-        public async Task<ActionResult<GeneralResponse>> UpdateClientProfile(ClientUpdate clientUpdate)
-        {
-            return Ok(await _clientManager.UpdateClientProfile(clientUpdate));
-        }
         [HttpPut("{id}")]
+        public async Task<ActionResult<GeneralResponse>> UpdateClientProfile(int id, ClientUpdate clientUpdate)
+        {
+            return Ok(await _clientManager.UpdateClientProfile(id, clientUpdate));
+        }
+        [HttpPut]
         public ActionResult<ClientInfo> UpdateClientStatus(int id, string status)
         {
             return Ok(_clientManager.UpdateClientStatus(id, status));

@@ -35,12 +35,10 @@ namespace HRHunters.Domain.Managers
             var queryy = _repo.GetAll<Client>(includeProperties: $"{nameof(User)}," +
                                    $"{nameof(Client.JobPostings)}");
             var selected = _mapper.ProjectTo<ClientInfo>(queryy);
-            if (pageSize == 0 && currentPage == 0)
-                selected.Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery).ToList();
-            else
-                selected.ToList();
+            if (pageSize != 0 && currentPage != 0)
+                selected = selected.Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
 
-            response.Clients.AddRange(selected);
+            response.Clients.AddRange(selected.ToList());
 
             var groupings = _repo.GetAll<Client>().GroupBy(x => x.Status).Select(x => new{ Status = x.Key, Count = x.Count() }).ToList();
 
@@ -62,16 +60,16 @@ namespace HRHunters.Domain.Managers
             return _mapper.Map<ClientInfo>(client);
         }
 
-        public async Task<GeneralResponse> UpdateClientProfile(ClientUpdate clientUpdate)
+        public async Task<GeneralResponse> UpdateClientProfile(int id, ClientUpdate clientUpdate)
         {
             var response = new GeneralResponse()
             {
                 Succeeded = true,
                 Errors = new Dictionary<string, List<string>>()
             };
-            var user = await _userManager.FindByIdAsync(clientUpdate.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(id.ToString());
 
-            var client = _repo.GetById<Client>(clientUpdate.UserId);
+            var client = _repo.GetById<Client>(id);
             if (user != null && clientUpdate != null)
             {
                 client = _mapper.Map(clientUpdate, client);
