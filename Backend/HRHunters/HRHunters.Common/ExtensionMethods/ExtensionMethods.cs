@@ -49,6 +49,10 @@ namespace HRHunters.Common.ExtensionMethods
             var filter = typeof(T).GetProperty(filterBy);
             if (!string.IsNullOrWhiteSpace(filterBy) && filter != null )
             {
+                if (filter.PropertyType.Equals(typeof(int)))                
+                    a = a.Where(x => (int)filter.GetValue(x, null) == int.Parse(filterQuery));
+               
+                else 
                 a = a.Where(x => filter.GetValue(x, null).Equals(filterQuery));
 
             }
