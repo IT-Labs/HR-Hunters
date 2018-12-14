@@ -35,9 +35,9 @@ namespace HRHunters.WebAPI.Controllers
             return Ok(await _clientManager.UpdateClientProfile(id, clientUpdate));
         }
         [HttpPut]
-        public ActionResult<ClientInfo> UpdateClientStatus(int id, string status)
+        public ActionResult<GeneralResponse> UpdateClientStatus(ClientStatusUpdate clientStatusUpdate)
         {
-            return Ok(_clientManager.UpdateClientStatus(id, status));
+            return Ok(_clientManager.UpdateClientStatus(clientStatusUpdate));
         }
         [HttpPost]
         public async Task<ActionResult<GeneralResponse>> CreateCompany(NewCompany newCompany)

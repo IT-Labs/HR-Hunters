@@ -80,7 +80,8 @@
   </div>
   
   <ngb-pagination
-    [collectionSize]="clientsCount.all"
+    *ngIf="paginationMaxSize > 10"
+    [collectionSize]="paginationMaxSize"
     [(page)]="clientQP.currentPage"
     [maxSize]="10"
     [rotate]="true"

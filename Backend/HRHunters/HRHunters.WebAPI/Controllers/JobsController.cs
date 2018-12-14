@@ -37,7 +37,6 @@ namespace HRHunters.WebAPI.Controllers
         {
             return Ok(await _jobManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery, id, 0));
         }
-        [Authorize(policy:"RequireClientRole")]
         [HttpGet("{id}")]
         public ActionResult<JobResponse> GetOneJobPosting(int id)
         {
@@ -49,7 +48,6 @@ namespace HRHunters.WebAPI.Controllers
         {
             return Ok(await _jobManager.CreateJobPosting(jobSubmit, 0));
         }
-        [Authorize(policy: "RequireAdminRole")]
         [HttpPut]
         public ActionResult<GeneralResponse> UpdateJob(JobUpdate jobSubmit)
         {

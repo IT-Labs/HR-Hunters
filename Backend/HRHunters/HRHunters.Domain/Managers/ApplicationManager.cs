@@ -65,7 +65,9 @@ namespace HRHunters.Domain.Managers
         }
         public GeneralResponse CreateApplication(Apply apply, string currentUserId)
         {
-            var active = _repo.Get<JobPosting>(filter: x => x.Id == apply.JobId).FirstOrDefault();
+            var active = _repo.Get<JobPosting>(filter: x => x.Id == apply.JobId,
+                                              includeProperties: $"{nameof(JobPosting.Client)}").FirstOrDefault();
+            var company = _repo.Get<Client>(filter: x => x.Id == active.Client.Id).FirstOrDefault();
             var applicant = _repo.Get<Applicant>(filter: x => x.Id == apply.ApplicantId, includeProperties: $"{nameof(User)}").FirstOrDefault();
             var list = new List<string>();
             var response = new GeneralResponse()
@@ -74,12 +76,12 @@ namespace HRHunters.Domain.Managers
                 Errors = new Dictionary<string, List<string>>()
             };
 
-            if (apply.ApplicantId != (int.Parse(currentUserId)) || active == null)
+            if (apply.ApplicantId != (int.Parse(currentUserId)) || active == null || company.Status==ClientStatus.Inactive || active.Status != JobPostingStatus.Approved)
             {
                 response.Errors.Add("Error", new List<string> { "Invalid input" });
                 response.Succeeded = false;
             }
-            else if (active.Status == JobPostingStatus.Approved)
+            else 
             {                                               
                 var application = new Application()
                 {

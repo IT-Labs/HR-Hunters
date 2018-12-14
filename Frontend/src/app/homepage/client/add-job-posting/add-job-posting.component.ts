@@ -2,7 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { JobPostingService } from "src/app/services/job-posting.service";
 import { Router } from "@angular/router";
-import { DateValidator } from "../../../validators/date.validator";
+import { NgbDate, NgbCalendar } from "@ng-bootstrap/ng-bootstrap";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-add-job-posting",
@@ -10,15 +11,16 @@ import { DateValidator } from "../../../validators/date.validator";
   styleUrls: ["./add-job-posting.component.scss"]
 })
 export class AddJobPostingComponent implements OnInit {
-  jobTypes = ["Full-time", "Part-time", "Intership", 'Select job type...'];
+  jobTypes = ["Full-time", "Part-time", "Intern", "Select job type..."];
   education = [
-    "High School degree",
-    "Bachelor degree",
-    "Masters degree",
-    "Doctoral degree",
-    'Select education level...'
+    "Highschool",
+    "Bachelor",
+    "Master",
+    "Doctor",
+    "Select education level..."
   ];
 
+  loggedInUser;
   experience = [
     "<1",
     "1",
@@ -44,26 +46,31 @@ export class AddJobPostingComponent implements OnInit {
     "Select experience..."
   ];
 
-  formFocus = {
-    title: false,
-    description: false,
-    jobType: false,
-    education: false,
-    experience: false,
-    durationFrom: false,
-    durationTo: false
-  };
+  validDate = false;
+  hoveredDate: NgbDate;
+  todayDate: NgbDate;
+  fromDate: NgbDate;
+  toDate: NgbDate;
 
   constructor(
     private fb: FormBuilder,
     private jobPostingService: JobPostingService,
-    private router: Router
+    private calendar: NgbCalendar,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
-    this.newJobPostingFormHP.controls.durationFrom.valueChanges.subscribe(x =>
-      this.newJobPostingFormHP.controls.durationTo.updateValueAndValidity()
-    );
+    this.todayDate = this.calendar.getToday();
+    this.fromDate = this.calendar.getToday();
+    this.toDate = this.calendar.getNext(this.calendar.getToday(), "d", 10);
+
+    if (this.fromDate >= this.todayDate) {
+      this.validDate = true;
+    } else {
+      this.validDate = false;
+    }
+
+    this.loggedInUser = this.authService.getUser();
   }
 
   newJobPostingFormHP = this.fb.group({
@@ -75,8 +82,6 @@ export class AddJobPostingComponent implements OnInit {
         Validators.maxLength(50)
       ])
     ],
-    durationFrom: ["", Validators.compose([Validators.required])],
-    durationTo: ["", Validators.compose([Validators.required, DateValidator])],
     location: [
       "",
       Validators.compose([
@@ -94,49 +99,153 @@ export class AddJobPostingComponent implements OnInit {
     description: ["", Validators.compose([Validators.maxLength(300)])]
   });
 
-  onFocus(event: any) {
-    this.formFocus = {
-      title: false,
-      description: false,
-      jobType: false,
-      education: false,
-      experience: false,
-      durationFrom: false,
-      durationTo: false
+  buildJobPostingDataOnAddJobPosting(
+    id: number,
+    title: string,
+    description: string,
+    empCategory: string,
+    education: string,
+    neededExperience: number,
+    dateFrom: string,
+    dateTo: string
+  ) {
+    const newJobPostingData = {
+      id: id,
+      title: title,
+      description: description,
+      empCategory: empCategory,
+      education: education,
+      neededExperience: neededExperience,
+      dateFrom: dateFrom,
+      dateTo: dateTo
     };
-    this.formFocus[event] = true;
+    return newJobPostingData;
+  }
+
+  onDateSelection(date: NgbDate) {
+    if (!this.fromDate && !this.toDate) {
+      this.fromDate = date;
+    } else if (this.fromDate && !this.toDate && date.after(this.fromDate)) {
+      this.toDate = date;
+    } else {
+      this.toDate = null;
+      this.fromDate = date;
+    }
+  }
+
+  isHovered(date: NgbDate) {
+    return (
+      this.fromDate &&
+      !this.toDate &&
+      this.hoveredDate &&
+      date.after(this.fromDate) &&
+      date.before(this.hoveredDate)
+    );
+  }
+
+  isInside(date: NgbDate) {
+    return date.after(this.fromDate) && date.before(this.toDate);
+  }
+
+  isRange(date: NgbDate) {
+    return (
+      date.equals(this.fromDate) ||
+      date.equals(this.toDate) ||
+      this.isInside(date) ||
+      this.isHovered(date)
+    );
   }
 
   onSubmitNewJobPosting() {
-    this.newJobPostingFormHP.controls['title'].markAsTouched();
-    this.newJobPostingFormHP.controls['durationFrom'].markAsTouched();
-    this.newJobPostingFormHP.controls['durationTo'].markAsTouched();
-    this.newJobPostingFormHP.controls['location'].markAsTouched();
-    this.newJobPostingFormHP.controls['education'].markAsTouched();
-    this.newJobPostingFormHP.controls['experience'].markAsTouched();
-    this.newJobPostingFormHP.controls['jobType'].markAsTouched();
-    
-    console.log(this.newJobPostingFormHP)
-    
+    this.newJobPostingFormHP.controls["title"].markAsTouched();
+    this.newJobPostingFormHP.controls["location"].markAsTouched();
+    this.newJobPostingFormHP.controls["education"].markAsTouched();
+    this.newJobPostingFormHP.controls["experience"].markAsTouched();
+    this.newJobPostingFormHP.controls["jobType"].markAsTouched();
+
+    let monthToDate,
+      monthFromDate,
+      dayToDate,
+      dayFromDate,
+      dateFrom,
+      dateTo,
+      dateToday,
+      monthTodayDate,
+      dayTodayDate;
+
+    if (this.fromDate && this.toDate) {
+      if (this.fromDate.month < 10) {
+        monthFromDate = `0${this.fromDate.month}`;
+      } else {
+        monthFromDate = this.fromDate.month;
+      }
+
+      if (this.fromDate.day < 10) {
+        dayFromDate = `0${this.fromDate.day}`;
+      } else {
+        dayFromDate = this.fromDate.day;
+      }
+
+      if (this.toDate.month < 10) {
+        monthToDate = `0${this.toDate.month}`;
+      } else {
+        monthToDate = this.toDate.month;
+      }
+
+      if (this.fromDate.day < 10) {
+        dayToDate = `0${this.toDate.day}`;
+      } else {
+        dayToDate = this.toDate.day;
+      }
+
+      if (this.todayDate.month < 10) {
+        monthTodayDate = `0${this.todayDate.month}`;
+      } else {
+        monthTodayDate = this.todayDate.month;
+      }
+
+      if (this.todayDate.day < 10) {
+        dayTodayDate = `0${this.todayDate.day}`;
+      } else {
+        dayTodayDate = this.todayDate.day;
+      }
+
+      dateFrom = `${this.fromDate.year}/${monthFromDate}/${dayFromDate}`;
+      dateTo = `${this.toDate.year}/${monthToDate}/${dayToDate}`;
+      dateToday = `${this.todayDate.year}/${monthTodayDate}/${dayTodayDate}`;
+    }
+
+    let education;
+    switch (this.newJobPostingFormHP.value.education) {
+      case "Full-time":
+        education = "Full_time";
+        break;
+      case "Part-time":
+        education = "Part_time";
+        break;
+      case "Intern":
+        education = "Intern";
+        break;
+    }
+
+    let jobPostingData = this.buildJobPostingDataOnAddJobPosting(
+      this.loggedInUser.id,
+      this.newJobPostingFormHP.value.title,
+      this.newJobPostingFormHP.value.description,
+      this.newJobPostingFormHP.value.jobType,
+      education,
+      this.newJobPostingFormHP.value.experience,
+      dateFrom,
+      dateTo
+    );
+
     if (
-      this.newJobPostingFormHP.valid
-      ) {
-      // this.jobPostingService.addJobPosting(
-      //   'company name',
-      //   'company mail',
-      //   'company logo',
-      //   1,
-      //   this.newJobPostingFormHP.value.title,
-      //   this.newJobPostingFormHP.value.DateFrom,
-      //   this.newJobPostingFormHP.value.DateTo,
-      //   this.newJobPostingFormHP.value.location,
-      //   this.newJobPostingFormHP.value.description,
-      //   this.newJobPostingFormHP.value.jobType,
-      //   this.newJobPostingFormHP.value.education,
-      //   "Approved",
-      //   this.newJobPostingFormHP.value.experience
-      // );
-      this.router.navigate(["/client"]);
+      this.newJobPostingFormHP.valid &&
+      this.fromDate &&
+      this.toDate &&
+      this.validDate
+    ) {
+      this.jobPostingService.addJobPosting(jobPostingData);
     }
   }
 }
