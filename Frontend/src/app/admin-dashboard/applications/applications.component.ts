@@ -18,6 +18,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     rejected: 0
   };
   applications: Application[] = [];
+  paginationMaxSize = 0;
 
   applicationQP = {
     postsPerPage: 10,
@@ -49,6 +50,9 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
         this.applicationCount.hired = applicationsData.hired;
         this.applicationCount.rejected = applicationsData.rejected;
       });
+      setTimeout(() => {
+        this.paginationMaxSize = this.applicationCount.all
+      }, 1000);
   }
 
   buildQueryParams(data) {
@@ -103,6 +107,24 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     } else {
       this.applicationQP.currentFilter = "status";
     }
+
+    // CALCULATE PAGINATION
+    if (filterBy === null) {
+      this.paginationMaxSize = this.applicationCount.all
+    } else if (filterBy === 'Pending') {
+      this.paginationMaxSize = this.applicationCount.pending
+    } else if (filterBy === 'Contacted') {
+      this.paginationMaxSize = this.applicationCount.contacted
+    } else if (filterBy === 'Interviewed') {
+      this.paginationMaxSize = this.applicationCount.interviewed
+    } else if (filterBy === 'Hired') {
+      this.paginationMaxSize = this.applicationCount.hired
+    } else if (filterBy === 'Rejected') {
+      this.paginationMaxSize = this.applicationCount.rejected
+    }
+
+    console.log(filterBy, this.paginationMaxSize)
+
     this.applicationQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);

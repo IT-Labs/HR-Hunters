@@ -38,7 +38,8 @@ export class AuthService {
   }
 
   getUser() {
-    return this.user;
+    let user = localStorage.getItem('user');
+    return JSON.parse(user);
   }
 
   // Checks if the user is authenticated

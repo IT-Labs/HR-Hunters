@@ -23,17 +23,15 @@ namespace HRHunters.WebAPI.Controllers
         {
             _applicantManager = applicantManager;
         }
-        [Authorize(policy: "RequireAdminRole")]
         [HttpGet]
-        public ActionResult<ApplicantResponse> GetMultipleApplicants(int pageSize = 0, int currentPage = 0, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
+        public ActionResult<ApplicantResponse> GetMultipleApplicants(int pageSize = 10, int currentPage = 1, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
         {
             return Ok(_applicantManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
         }
-        [Authorize(policy: "RequireApplicantRole")]
-        [HttpPut]
-        public async Task<ActionResult<GeneralResponse>> UpdateApplicantProfile(ApplicantUpdate applicantUpdate)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<GeneralResponse>> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate)
         {
-            return Ok(await _applicantManager.UpdateApplicantProfile(applicantUpdate));
+            return Ok(await _applicantManager.UpdateApplicantProfile(id, applicantUpdate));
         }
     }
 }

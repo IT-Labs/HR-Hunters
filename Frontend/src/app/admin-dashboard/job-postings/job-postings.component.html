@@ -17,7 +17,7 @@
         <li (click)="onFilter('Approved')">
           Aproved<span>({{ jobPostingsCount.approved }})</span>
         </li>
-        <li (click)="onFilter('awaitingApproval')">
+        <li (click)="onFilter('Pending')">
           Pending<span>({{ jobPostingsCount.pending }})</span>
         </li>
         <li (click)="onFilter('Expired')">
@@ -96,8 +96,8 @@
   </div>
      
   <ngb-pagination
-  *ngIf="jobPostingsCount.all > 10"
-    [collectionSize]="jobPostingsCount.all"
+    *ngIf="paginationMaxSize > 10"
+    [collectionSize]="paginationMaxSize"
     [(page)]="jobPostingQP.currentPage"
     [maxSize]="10"
     [rotate]="true"

@@ -21,7 +21,6 @@
               placeholder="Enter job title..."
               formControlName="title"
               maxlength="50"
-              (focus)="onFocus('title')"
             />
 
             <div
@@ -44,54 +43,6 @@
               </div>
             </div>
 
-            <!-- DURATION -->
-
-            <label for="hpid__duration" class="hp__form--label"
-              >Duration <span class="u-required-star">*</span></label
-            >
-            <span>From:</span>
-            <input
-              type="date"
-              id="hpid__duration-from"
-              class="hp__form--date"
-              value="2018-07-22"
-              min="2018-01-01"
-              max="2019-12-31"
-              formControlName="durationFrom"
-              (focus)="onFocus('durationFrom')"
-            />
-            <span>To:</span>
-            <input
-              type="date"
-              id="hpid__duration-to"
-              class="hp__form--date"
-              value="2018-07-22"
-              min="2018-01-01"
-              max="2019-12-31"
-              formControlName="durationTo"
-              (focus)="onFocus('durationTo')"
-            />
-
-            <div
-              *ngIf="
-                (!newJobPostingFormHP.controls['durationFrom'].valid &&
-                  (newJobPostingFormHP.controls['durationFrom'].dirty ||
-                    newJobPostingFormHP.controls['durationFrom'].touched)) ||
-                (!newJobPostingFormHP.controls['durationTo'].valid &&
-                  (newJobPostingFormHP.controls['durationTo'].dirty ||
-                    newJobPostingFormHP.controls['durationTo'].touched))
-              "
-              class="alert hp__form--alert-msg"
-            >
-              <div
-                *ngIf="
-                  newJobPostingFormHP.controls['durationTo'].errors
-                "
-              >
-              Start date must be equal to today's date or a later date. End date can't be earlier or equal to start date.
-              </div>
-            </div>
-
             <!-- LOCATION -->
             <br />
             <label for="hpid__location" class="hp__form--label"
@@ -104,7 +55,6 @@
               placeholder="Enter location..."
               formControlName="location"
               maxlength="50"
-              (focus)="onFocus('location')"
               autocomplete="off"
             />
 
@@ -141,7 +91,6 @@
               id="dashidEducation"
               class="hp__form--input"
               formControlName="education"
-              (focus)="onFocus('education')"
             >
               <option
                 *ngFor="let edu of education"
@@ -179,7 +128,6 @@
               id="hpid__experience"
               class="hp__form--input"
               formControlName="experience"
-              (focus)="onFocus('experience')"
             >
               <option
                 *ngFor="let exp of experience"
@@ -192,9 +140,9 @@
 
             <div
               *ngIf="
-                (!newJobPostingFormHP.controls['experience'].valid &&
-                  (newJobPostingFormHP.controls['experience'].dirty ||
-                    newJobPostingFormHP.controls['experience'].touched))
+                !newJobPostingFormHP.controls['experience'].valid &&
+                (newJobPostingFormHP.controls['experience'].dirty ||
+                  newJobPostingFormHP.controls['experience'].touched)
               "
               class="alert hp__form--alert-msg"
             >
@@ -222,7 +170,6 @@
               id="hpid__job-type"
               class="hp__form--input"
               formControlName="jobType"
-              (focus)="onFocus('jobType')"
             >
               <option
                 *ngFor="let jobType of jobTypes"
@@ -263,26 +210,55 @@
               placeholder="Enter job description..."
               formControlName="description"
               maxlength="300"
-              (focus)="onFocus('description')"
             ></textarea>
+
+            <!-- DURATION -->
+
+            <label for="hpid__duration" class="hp__form--label"
+              >Duration <span class="u-required-star">*</span></label
+            >
+            <ngb-datepicker
+              #dp
+              (select)="onDateSelection($event)"
+              [displayMonths]="2"
+              [dayTemplate]="t"
+              outsideDays="hidden"
+            >
+            </ngb-datepicker>
+            <ng-template #t let-date let-focused="focused">
+              <span
+                class="custom-day"
+                [class.focused]="focused"
+                [class.range]="isRange(date)"
+                [class.faded]="isHovered(date) || isInside(date)"
+                (mouseenter)="hoveredDate = date"
+                (mouseleave)="hoveredDate = null"
+              >
+                {{ date.day }}
+              </span>
+            </ng-template>
+
+            <div
+              *ngIf="!fromDate || !toDate || (fromDate && toDate && !validDate)"
+              class="alert dash__form--alert-msg"
+            >
+              Start date must be equal to today's date or a later date. End date
+              can't be earlier or equal to start date.
+            </div>
           </div>
 
           <div class="hp__form--btn-container">
             <button
               type="reset"
               class="btn btn__danger"
-              [disabled]="
-                !newJobPostingFormHP.valid
-              "
+              [disabled]="!newJobPostingFormHP.valid"
             >
               Reset
             </button>
             <button
               type="submit"
               class="btn btn__success"
-              [disabled]="
-                !newJobPostingFormHP.valid
-              "
+              [disabled]="!newJobPostingFormHP.valid || !fromDate || !toDate"
             >
               Submit
             </button>

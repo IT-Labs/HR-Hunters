@@ -18,6 +18,8 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     rejected: 0
   };
 
+  paginationMaxSize = 0;
+
   jobPostingQP = {
     postsPerPage: 10,
     currentPage: 1,
@@ -49,6 +51,10 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
         this.jobPostingsCount.expired = jobPostingData.expired;
         this.jobPostingsCount.rejected = jobPostingData.rejected
       });
+
+      setTimeout(() => {
+        this.paginationMaxSize = this.jobPostingsCount.all
+      }, 1000);
   }
 
   buildQueryParams(data) {
@@ -97,11 +103,23 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   }
 
   onFilter(filterBy: string) {
-
     if (filterBy === null) {
       this.jobPostingQP.currentFilter = null
     } else {
       this.jobPostingQP.currentFilter = 'status'
+    }
+
+    // CALCULATE PAGINATION
+    if (filterBy === null) {
+      this.paginationMaxSize = this.jobPostingsCount.all
+    } else if (filterBy === 'Pending') {
+      this.paginationMaxSize = this.jobPostingsCount.pending
+    } else if (filterBy === 'Expired') {
+      this.paginationMaxSize = this.jobPostingsCount.expired
+    } else if (filterBy === 'Approved') {
+      this.paginationMaxSize = this.jobPostingsCount.approved
+    } else if (filterBy === 'Rejected') {
+      this.paginationMaxSize = this.jobPostingsCount.rejected
     }
 
     this.jobPostingQP.currentFilterQuery = filterBy;

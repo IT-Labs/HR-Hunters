@@ -7,8 +7,6 @@ namespace HRHunters.Common.Requests.Users
 {
     public class ClientUpdate
     {
-        [Required]
-        public int UserId { get; set; }
         [Required, StringLength(25, ErrorMessage = "Company name cannot be longer than 25 characters.")]
         public string CompanyName { get; set; }
         [Required, EmailAddress]

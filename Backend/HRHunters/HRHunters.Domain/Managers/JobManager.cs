@@ -50,12 +50,13 @@ namespace HRHunters.Domain.Managers
                 var queryApplicant = _repo.GetAll<JobPosting>(
                         includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}"
                         ).Where(x => role.Contains("Applicant")
-                                        ? x.Client.Status == ClientStatus.Active && x.Status == JobPostingStatus.Approved
+                                        ? x.Client.Status == ClientStatus.Active 
+                                                && x.Status == JobPostingStatus.Approved
                                             : role.Contains("Client") ? x.ClientId == id
                                                 : x.Status.GetType().IsEnum);
 
                 var selected = _mapper.ProjectTo<JobInfo>(queryApplicant)
-                    .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+                                        .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
 
                 response.JobPostings.AddRange(selected.ToList());
             }
