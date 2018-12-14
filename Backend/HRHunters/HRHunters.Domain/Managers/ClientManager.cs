@@ -32,13 +32,13 @@ namespace HRHunters.Domain.Managers
         {
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
 
-            var queryy = _repo.GetAll<Client>(includeProperties: $"{nameof(User)}," +
+            var query = _repo.GetAll<Client>(includeProperties: $"{nameof(User)}," +
                                    $"{nameof(Client.JobPostings)}");
-            var selected = _mapper.ProjectTo<ClientInfo>(queryy);
+            var selected = _mapper.ProjectTo<ClientInfo>(query);
             if (pageSize == 0 && currentPage == 0)
-                selected.Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery).ToList();
-            else
                 selected.ToList();
+            else
+                selected.Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery).ToList();
 
             response.Clients.AddRange(selected);
 
@@ -51,15 +51,28 @@ namespace HRHunters.Domain.Managers
             return response;
         }
 
-        public ClientInfo UpdateClientStatus(int id, string status)
+        public GeneralResponse UpdateClientStatus(ClientStatusUpdate clientStatusUpdate)
         {
-            var client = _repo.GetOne<Client>(filter: x => x.Id == id,
+            var client = _repo.GetOne<Client>(filter: x => x.Id == clientStatusUpdate.Id,
                                                     includeProperties: $"{nameof(User)},{nameof(Client.JobPostings)}");
+            var response = new GeneralResponse()
+            {
+                Succeeded = true,
+                Errors = new Dictionary<string, List<string>>()
+            };
+            if (client == null)
+            {
+                response.Errors.Add("Error", new List<string>() { "Invalid id." });
+                response.Succeeded = false;
 
-            Enum.TryParse(status, out ClientStatus statusToUpdate);
-            client.Status = statusToUpdate;
-            _repo.Update(client, "Admin");
-            return _mapper.Map<ClientInfo>(client);
+            }
+            else
+            {
+                Enum.TryParse(clientStatusUpdate.Status, out ClientStatus statusToUpdate);
+                client.Status = statusToUpdate;
+                _repo.Update(client, "Admin");
+            }
+            return response;
         }
 
         public async Task<GeneralResponse> UpdateClientProfile(ClientUpdate clientUpdate)

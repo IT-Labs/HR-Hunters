@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace HRHunters.WebAPI.Controllers
 {
     [Route("api/[controller]")]
-    [AllowAnonymous]
     [ApiController]
     public class ApplicationsController : ControllerBase
     {
@@ -29,19 +28,16 @@ namespace HRHunters.WebAPI.Controllers
             _applicationManager = applicationManager;
             _httpContextAccessor = httpContextAccessor;
         }
-        [Authorize(policy: "RequireApplicantRole")]
         [HttpGet]
         public ActionResult<ApplicationResponse> GetMultipleApplications(int pageSize = 10, int currentPage = 1, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "",int id=0)
         {
             return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery,id));
         }
-        [Authorize(policy: "RequireAdminRole")]
         [HttpPut("{id}")]
         public ActionResult<ApplicationInfo> UpdateApplicationStatus(int id, string status)
         {
             return Ok(_applicationManager.UpdateApplicationStatus(id, status));
         }
-        [Authorize(policy:"RequireApplicantRole")]
         [HttpPost]
         public ActionResult<GeneralResponse> CreateApplication(Apply apply)
         {

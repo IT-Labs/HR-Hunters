@@ -22,7 +22,6 @@ using Newtonsoft.Json.Linq;
 
 namespace HRHunters.WebAPI.Controllers
 {
-    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
