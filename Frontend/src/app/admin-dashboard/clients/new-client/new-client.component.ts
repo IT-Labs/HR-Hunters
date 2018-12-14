@@ -54,15 +54,15 @@ export class NewClientComponent implements OnInit {
 
   buildClientDataOnAddClient(
     companyName: string,
-    companyEmail: string,
-    companyPhoneNumber: string,
-    companyLocation: string
+    email: string,
+    phoneNumber: string,
+    location: string
   ) {
     const newClientData = {
       companyName: companyName,
-      companyEmail: companyEmail,
-      companyPhoneNumber: companyPhoneNumber,
-      companyLocation: companyLocation
+      email: email,
+      phoneNumber: phoneNumber,
+      location: location
     };
     return newClientData;
   }
