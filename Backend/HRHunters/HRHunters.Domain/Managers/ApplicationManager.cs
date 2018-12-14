@@ -31,13 +31,11 @@ namespace HRHunters.Domain.Managers
         public ApplicationResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery, int id)
         {
             var response = new ApplicationResponse() { Applications = new List<ApplicationInfo>() };
-            var query = _repo.GetAll<Application>(
+            var query = _repo.Get<Application>(filter: x => id != 0 ? x.ApplicantId == id : x.Status.GetType().IsEnum,
                includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
                                   $"{nameof(JobPosting)}");
             var selected = _mapper.ProjectTo<ApplicationInfo>(query);
 
-            if (id != 0)
-                selected.Where(x => x.Id == id);
             selected = selected.Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
 
             response.Applications.AddRange(selected.ToList());
@@ -63,7 +61,7 @@ namespace HRHunters.Domain.Managers
             _repo.Update(application, "Admin");
             return _mapper.Map(application, new ApplicationInfo());
         }
-        public GeneralResponse CreateApplication(Apply apply, string currentUserId)
+        public GeneralResponse CreateApplication(Apply apply)
         {
             var active = _repo.Get<JobPosting>(filter: x => x.Id == apply.JobId,
                                               includeProperties: $"{nameof(JobPosting.Client)}").FirstOrDefault();
@@ -76,7 +74,7 @@ namespace HRHunters.Domain.Managers
                 Errors = new Dictionary<string, List<string>>()
             };
 
-            if (apply.ApplicantId != (int.Parse(currentUserId)) || active == null || company.Status==ClientStatus.Inactive || active.Status != JobPostingStatus.Approved)
+            if (active == null || company.Status==ClientStatus.Inactive || active.Status != JobPostingStatus.Approved)
             {
                 response.Errors.Add("Error", new List<string> { "Invalid input" });
                 response.Succeeded = false;

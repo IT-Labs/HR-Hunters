@@ -18,6 +18,6 @@ namespace HRHunters.Common.Interfaces
     {
         ApplicationResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuer,int id);
         ApplicationInfo UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate);
-        GeneralResponse CreateApplication(Apply apply,string currentUserId);
+        GeneralResponse CreateApplication(Apply apply);
     }
 }

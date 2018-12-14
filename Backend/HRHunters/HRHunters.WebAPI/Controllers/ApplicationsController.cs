@@ -34,7 +34,7 @@ namespace HRHunters.WebAPI.Controllers
         {
             return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery,id));
         }
-        [HttpPut("{id}")]
+        [HttpPut]
         public ActionResult<ApplicationInfo> UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
         {
             return Ok(_applicationManager.UpdateApplicationStatus(applicationStatusUpdate));
@@ -42,8 +42,8 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPost]
         public ActionResult<GeneralResponse> CreateApplication(Apply apply)
         {
-            var currentUserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return Ok(_applicationManager.CreateApplication(apply,currentUserId));
+            //var currentUserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            return Ok(_applicationManager.CreateApplication(apply));
         }
 
 
