@@ -50,7 +50,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let jobPosting of jobPostings">
-          <td scope="row" (click)="onEditJobPosting(jobPosting.id)">
+          <td
+            scope="row"
+            (click)="onEditJobPosting(jobPosting.id)"
+            [routerLink]="['/admin-dashboard/new-job-posting/', jobPosting.id]"
+            [queryParams]="{edit: true}"
+          >
             {{ jobPosting.jobTitle }}
           </td>
           <td>{{ jobPosting.companyName }}</td>
@@ -94,7 +99,7 @@
       </tbody>
     </table>
   </div>
-     
+
   <ngb-pagination
     *ngIf="paginationMaxSize > 10"
     [collectionSize]="paginationMaxSize"

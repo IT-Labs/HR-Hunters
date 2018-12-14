@@ -68,10 +68,10 @@ export class NewClientComponent implements OnInit {
   }
 
   onSubmitNewClient() {
-    this.newClientForm.controls["companyName"].markAsTouched();
-    this.newClientForm.controls["companyEmail"].markAsTouched();
-    this.newClientForm.controls["companyPhoneNumber"].markAsTouched();
-    this.newClientForm.controls["companylocation"].markAsTouched();
+    this.newClientForm.controls.companyName.markAsTouched();
+    this.newClientForm.controls.companyEmail.markAsTouched();
+    this.newClientForm.controls.companyPhoneNumber.markAsTouched();
+    this.newClientForm.controls.companyLocation.markAsTouched();
 
     let clientData = this.buildClientDataOnAddClient(
       this.newClientForm.value.companyName,

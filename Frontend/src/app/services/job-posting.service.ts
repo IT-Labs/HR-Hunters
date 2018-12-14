@@ -20,6 +20,8 @@ export class JobPostingService {
     expired: number;
     rejected: number;
   }>();
+  
+  private jobPostingEdit = new Subject<any>();
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -45,10 +47,33 @@ export class JobPostingService {
         });
       });
   }
+  
+  // Get single job posting
+  getJobPosting(id) {
+    this.http
+      .get<{
+        id: number,
+        jobTitle: string,
+        companyName: string,
+        companyEmail: string,
+        jobType: string,
+        description: string,
+        dateTo: string,
+        allApplicationsCount: number,
+        status: string
+      }>(this.baseUrl + "/Jobs/" + id)
+      .subscribe(jobPostingData => {
+        this.jobPostingEdit.next(jobPostingData)
+      });
+  }
 
   // This method should be called within onInit within a component lising job postings
   getJobPostingUpdateListener() {
     return this.jobPostingsUpdated.asObservable();
+  }
+  
+  getJobPostingEditListener() {
+    return this.jobPostingEdit.asObservable();
   }
 
   // Adding new job posting

@@ -1,5 +1,8 @@
 <div class="dash__container">
-  <div class="dash__heading"><h2>Add New Job Posting</h2></div>
+  <div class="dash__heading">
+    <h2 *ngIf="!edit">Add New Job Posting</h2>
+    <h2 *ngIf="edit">Edit Job Posting</h2>
+  </div>
   <div class="dash__form__container">
     <form
       class="dash__form"
@@ -23,6 +26,7 @@
           (focus)="focus$.next($event.target.value)"
           (click)="click$.next($event.target.value)"
           #instance="ngbTypeahead"
+          (ngModelChange)="checkCompanyValidity()"
         />
         <div
           *ngIf="
@@ -225,7 +229,9 @@
       <button
         type="submit"
         class="btn dash__form--btn"
-        [disabled]="!newJobPostingForm.valid || !fromDate || !toDate || !validClient"
+        [disabled]="
+          !newJobPostingForm.valid || !fromDate || !toDate || !validClient
+        "
       >
         Publish Job
       </button>
