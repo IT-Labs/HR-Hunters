@@ -6,6 +6,8 @@ import { ClientService } from "src/app/services/client.service";
 import { Subscription, Subject, Observable, merge } from "rxjs";
 import { NgbDate, NgbCalendar, NgbTypeahead } from "@ng-bootstrap/ng-bootstrap";
 import { debounceTime, distinctUntilChanged, filter, map } from "rxjs/operators";
+import { ActivatedRoute } from "@angular/router";
+import { JobPosting } from "src/app/models/job-posting.model";
 
 @Component({
   selector: "app-ad-new-job-posting",
@@ -26,6 +28,8 @@ export class ADNewJobPostingComponent implements OnInit {
     "Doctoral",
     "Select education level..."
   ];
+
+  edit = false;
 
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
@@ -73,16 +77,39 @@ export class ADNewJobPostingComponent implements OnInit {
   fromDate: NgbDate;
   toDate: NgbDate;
 
+  private jobPostingSub: Subscription;
   private clientsSub: Subscription;
 
   constructor(
     private fb: FormBuilder,
     private jobPostingService: JobPostingService,
     private clientService: ClientService,
-    private calendar: NgbCalendar
+    private calendar: NgbCalendar,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit() {
+    const edit = this.activatedRoute.snapshot.queryParamMap.get('edit')
+    const id = this.activatedRoute.snapshot.paramMap.get('id')
+    if (edit === "true") {
+      this.edit = true;
+    }
+
+    if (this.edit) {
+      this.jobPostingService.getJobPosting(id)
+      this.jobPostingSub = this.jobPostingService.getJobPostingEditListener().subscribe(
+        jobPostingData => {
+          this.newJobPostingForm.controls.companyName.setValue(jobPostingData.companyName)
+          this.newJobPostingForm.controls.title.setValue(jobPostingData.jobTitle)
+          this.newJobPostingForm.controls.description.setValue(jobPostingData.description)
+          this.newJobPostingForm.controls.jobType.setValue(this.fixJobTypeName(jobPostingData.jobType))
+          this.newJobPostingForm.controls.education.setValue(jobPostingData.education)
+          this.newJobPostingForm.controls.experience.setValue(jobPostingData.experience)
+          this.checkCompanyValidity()
+        }
+      )
+    }
+
     const params = this.buildQueryParams();
     this.clientService.getClients(params);
     this.clientsSub = this.clientService
@@ -128,6 +155,16 @@ export class ADNewJobPostingComponent implements OnInit {
     experience: ["", Validators.compose([Validators.required])]
   });
 
+  fixJobTypeName(jobType: string) {
+    if (jobType === "Full_time") {
+      return 'Full-time'
+    } else if (jobType === 'Part_time') {
+      return 'Part-time'
+    } else if (jobType === 'Intern') {
+      return 'Intern'
+    }
+  }
+
   buildJobPostingDataOnAddJobPosting(
     id: number,
     title: string,
@@ -164,6 +201,16 @@ export class ADNewJobPostingComponent implements OnInit {
       map(term => (term === '' ? this.clientNames
         : this.clientNames.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10))
     );
+  }
+
+  checkCompanyValidity() {
+    this.validClient = false;
+    this.clientNames.forEach(c => {
+      if (this.newJobPostingForm.value.companyName === c) {
+        this.validClient = true;
+      }
+    })
+    console.log(this.validClient, this.newJobPostingForm.value.companyName)
   }
 
   onDateSelection(date: NgbDate) {
@@ -258,12 +305,6 @@ export class ADNewJobPostingComponent implements OnInit {
       dateTo = `${this.toDate.year}/${monthToDate}/${dayToDate}`;
       dateToday = `${this.todayDate.year}/${monthTodayDate}/${dayTodayDate}`;
     }
-
-    this.clientNames.forEach(c => {
-      if (this.newJobPostingForm.value.companyName === c) {
-        this.validClient = true;
-      }
-    })
 
     let education;
     switch (this.newJobPostingForm.value.education) {

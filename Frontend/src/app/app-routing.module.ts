@@ -39,7 +39,8 @@ const routes: Routes = [
       { path: "clients", component: ADClientsComponent },
       { path: "new-client", component: NewClientComponent },
       { path: "job-postings", component: ADJobPostingsComponent },
-      { path: "new-job-posting", component: ADNewJobPostingComponent }
+      { path: "new-job-posting", component: ADNewJobPostingComponent },
+      { path: "new-job-posting/:id", component: ADNewJobPostingComponent }
     ]
   },
   {
