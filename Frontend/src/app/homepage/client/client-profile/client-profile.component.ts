@@ -84,7 +84,7 @@ export class ClientProfileComponent implements OnInit {
     companyEmail: string,
     location: string,
     phoneNumber: string,
-    staus: string
+    status: string
   ) {
     const newClientData = {
       userId: userId,
@@ -92,7 +92,7 @@ export class ClientProfileComponent implements OnInit {
       companyEmail: companyEmail,
       location: location,
       phoneNumber: phoneNumber,
-      staus: status
+      status: status
     };
     return newClientData;
   }
