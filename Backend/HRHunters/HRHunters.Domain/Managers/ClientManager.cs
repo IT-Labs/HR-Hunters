@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using HRHunters.Common.Requests.Users;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
+using HRHunters.Common.Requests.Admin;
 
 namespace HRHunters.Domain.Managers
 {
@@ -94,7 +95,7 @@ namespace HRHunters.Domain.Managers
                 ActiveJobs = client.JobPostings.Count(x => x.DateTo < DateTime.UtcNow),
                 AllJobs = client.JobPostings.Count,
                 Status = client.Status.ToString(),
-                Logo = "photo.jpg"
+                Logo = client.Logo
             };
         }
 
@@ -131,5 +132,28 @@ namespace HRHunters.Domain.Managers
             response.Errors.Add("Error", list);
             return response;
         }
+
+        //public GeneralResponse CreateCompany(NewCompany newCompany)
+        //{
+        //    var response = new GeneralResponse()
+        //    {
+        //        Succeeded = true,
+        //        Errors = new Dictionary<string, List<string>>()
+        //        {
+        //            {"Error", new List<string>() }
+        //        }
+        //    };
+        //    var company = _mapper.Map<Client>(newCompany);
+        //    try
+        //    {
+        //        _repo.Create(company, "Admin");
+                
+        //    }catch(Exception e)
+        //    {
+        //        throw new Exception(e.Message);
+        //    }
+
+            
+        //}
     }
 }
