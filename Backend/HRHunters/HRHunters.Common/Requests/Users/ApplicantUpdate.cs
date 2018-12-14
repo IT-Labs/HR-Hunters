@@ -8,8 +8,6 @@ namespace HRHunters.Common.Requests.Users
     public class ApplicantUpdate
     {
         [Required]
-        public int UserId { get; set; }
-        [Required]
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
