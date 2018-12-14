@@ -100,8 +100,8 @@
   </div>
 
   <ngb-pagination
-    *ngIf="applicationCount.all > 10"
-    [collectionSize]="applicationCount.all"
+    *ngIf="paginationMaxSize > 10"
+    [collectionSize]="paginationMaxSize"
     [(page)]="applicationQP.currentPage"
     [maxSize]="10"
     [rotate]="true"
@@ -110,4 +110,5 @@
     class="d-flex justify-content-center"
     (pageChange)="onChangedPage($event)"
   ></ngb-pagination>
+
 </div>

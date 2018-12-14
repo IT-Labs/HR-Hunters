@@ -11,7 +11,6 @@ export class ApplicantComponent implements OnInit {
   constructor(private router: Router) { }
 
   ngOnInit() {
-    this.router.navigate(['/applicant/job-postings'])
   }
 
 }
