@@ -1,13 +1,13 @@
 <div
 infiniteScroll
-[infiniteScrollDistance]="2"
+[infiniteScrollDistance]="1"
 [infiniteScrollUpDistance]="1.5"
-[infiniteScrollThrottle]="50"
+[infiniteScrollThrottle]="150"
 (scrolled)="onScrollDown()"
 (scrolledUp)="onScrollUp()"
 >
   <div class="jp__container" *ngFor="let jp of jobPostings">
-    <h1 class="jp__heading">{{ jp.jobTitle }}</h1>
+    <h1 class="jp__heading" >{{ jp.jobTitle }}</h1>
     <p class="jp__sub-heading">{{ jp.jobType }}</p>
     <p class="jp__content" ng-init="limit = 150">{{ jp.description }}</p>
     <p class="jp__meta">

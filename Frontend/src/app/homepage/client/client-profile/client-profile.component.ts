@@ -79,7 +79,6 @@ export class ClientProfileComponent implements OnInit {
   });
 
   buildClientDataOnUpdateClientProfile(
-    userId: number,
     companyName: string,
     companyEmail: string,
     location: string,
@@ -87,7 +86,6 @@ export class ClientProfileComponent implements OnInit {
     status: string
   ) {
     const newClientData = {
-      userId: userId,
       companyName: companyName,
       companyEmail: companyEmail,
       location: location,
@@ -124,7 +122,6 @@ export class ClientProfileComponent implements OnInit {
     this.clientProfileFormHP.controls["location"].markAsTouched();
 
     let clientData = this.buildClientDataOnUpdateClientProfile(
-      this.loggedInUser.id,
       this.clientProfileFormHP.value.companyName,
       this.clientProfileFormHP.value.companyEmail,
       this.clientProfileFormHP.value.location,
@@ -136,7 +133,7 @@ export class ClientProfileComponent implements OnInit {
       this.imageValid = false;
     } else {
       if (this.clientProfileFormHP.valid) {
-        this.clientService.updateClient(clientData);
+        this.clientService.updateClientProfile(clientData, this.loggedInUser.id);
       }
     }
   }

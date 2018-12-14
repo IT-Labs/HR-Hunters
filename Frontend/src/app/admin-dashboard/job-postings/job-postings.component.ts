@@ -163,7 +163,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
       null,
       null
     )
-    this.jobPostingService.updateJobPosting(jobPostingData);
+    this.jobPostingService.updateJobPostingStatus(jobPostingData);
   }
 
   ngOnDestroy() {

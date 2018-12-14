@@ -12,270 +12,39 @@ export class JobPostingsListComponent implements OnInit {
 
   jobPostingQP = {
     postsPerPage: 10,
-    currentPage: 9,
+    currentPage: 1,
     currentSortBy: "dateTo",
-    lastSortBy: "",
-    currentSortDirection: 0,
-    currentFilter: 0
+    currentSortDirection: 0
   }
-
+  jobPostings: JobPosting[] = [];
   private jobPostingSub: Subscription;
 
   constructor(private jobPostingService: JobPostingService) { }
 
   ngOnInit() {
-    // const params = this.buildQueryParams(this.jobPostingQP);
-    // this.jobPostingService.getJobPostings(params);
-    // this.jobPostingSub = this.jobPostingService
-    //   .getJobPostingUpdateListener()
-    //   .subscribe(jobPostingData => {
-    //     this.jobPostings = jobPostingData.jobPostings;
-    //   });
+    const params = this.buildQueryParams(this.jobPostingQP);
+    this.jobPostingService.getJobPostings(params);
+    this.jobPostingSub = this.jobPostingService
+      .getJobPostingUpdateListener()
+      .subscribe(jobPostingData => {
+        this.jobPostings = this.jobPostings.concat(jobPostingData.jobPostings);
+      });
   }
 
   buildQueryParams(data) {
-    return `?pagesize=${data.postsPerPage}
-            &page=${data.currentPage}
-            &sort=${data.currentSortBy}
-            &sortDir=${data.currentSortDirection}
-            &filter=${data.currentFilter}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
   }
 
   onScrollDown() {
-    console.log('scrolled down!!');
-    this.jobPostings.push({
-      jobTitle: 'NOVOOO',
-      jobType: 'JavaScript',
-      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-      dateFrom: '12/12/2018',
-      dateTo: '20/12/2018',
-      companyEmail: 'company@comp.com',
-      companyName: 'Anhoch',
-      education: 'High-school',
-      experience: 5,
-      id: 123,
-      location: 'Skopje',
-      logo: 'logo.jpg',
-      status: 'Active'
-    })
+    this.jobPostingQP.currentPage++;
+    const params = this.buildQueryParams(this.jobPostingQP);
+    this.jobPostingService.getJobPostings(params);
+    console.log('scrolled down')
   }
  
-  onScrollUp() {
-    console.log('scrolled up!!');
+  onScrollUp() {}
+
+  ngOnDestroy() {
+    this.jobPostingSub.unsubscribe();
   }
-
-  jobPostings = [
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'POSLEDNO',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-  ]
-
-
 }

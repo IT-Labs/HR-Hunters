@@ -63,39 +63,37 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     }&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
   }
 
-  buildClientDataOnUpdate(
+  buildClientDataOnUpdateStatus(
+    id: number,
+    status: string
+  ) {
+    let clientData = {
+        id: id,
+        status: status
+      };
+    return clientData;
+  }
+
+
+  //DA SE PREMESTI SMESTA NA BOLJE MESTO
+  buildClientDataOnUpdateProfile(
     id: number,
     companyName: string,
-    logo: File | string,
     email: string,
     location: string,
     activeJobs: number,
     allJobs: number,
     status: string
   ) {
-    let clientData: Client | FormData;
-    if (typeof logo === "object") {
-      clientData = new FormData();
-      clientData.append("id", id.toString());
-      clientData.append("companyName", companyName);
-      clientData.append("logo", logo, companyName);
-      clientData.append("email", email);
-      clientData.append("location", location);
-      clientData.append("activeJobs", activeJobs.toString());
-      clientData.append("allJobs", allJobs.toString());
-      clientData.append("status", status);
-    } else {
-      clientData = {
+    let clientData: Client = {
         id: id,
         companyName: companyName,
-        logo: logo,
         email: email,
         location: location,
         activeJobs: activeJobs,
         allJobs: allJobs,
         status: status
       };
-    }
     return clientData;
   }
 
@@ -153,18 +151,11 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     const currentStatus = event.target.innerText;
     const currentId = id;
 
-    let clientData = this.buildClientDataOnUpdate(
+    let clientData = this.buildClientDataOnUpdateStatus(
       currentId,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
       currentStatus
     );
-
-    this.clientService.updateClient(clientData);
+    this.clientService.updateClientStatus(clientData);
   }
 
   ngOnDestroy() {

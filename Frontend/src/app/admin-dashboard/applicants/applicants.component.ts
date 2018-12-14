@@ -47,7 +47,6 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
   }
 
   buildApplicantDataOnUpdate(
-    userId: number,
     firstName: string,
     lastName: string,
     email: string,
@@ -57,7 +56,6 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
     experience: string
   ) {
     let applicantData = {
-      userId: userId,
       firstName: firstName,
       lastName: lastName,
       email: email,

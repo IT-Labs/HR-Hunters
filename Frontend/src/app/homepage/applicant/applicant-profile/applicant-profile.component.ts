@@ -119,7 +119,6 @@ export class ApplicantProfileComponent implements OnInit {
   });
 
   buildApplicantDataOnUpdateApplicantProfile(
-    userId: 0,
     firstName: string,
     lastName: string,
     email: string,
@@ -129,7 +128,6 @@ export class ApplicantProfileComponent implements OnInit {
     experience: string
   ) {
     const newApplicantData = {
-      userId: userId,
       firstName: firstName,
       lastName: lastName,
       email: email,
@@ -171,7 +169,6 @@ export class ApplicantProfileComponent implements OnInit {
     this.applicantProfileFormHP.controls["experience"].markAsTouched();
 
     let applicantData = this.buildApplicantDataOnUpdateApplicantProfile(
-      this.loggedInUser.id,
       this.applicantProfileFormHP.value.firstName,
       this.applicantProfileFormHP.value.lastName,
       this.applicantProfileFormHP.value.email,
@@ -185,7 +182,7 @@ export class ApplicantProfileComponent implements OnInit {
       this.imageValid = false;
     } else {
       if (this.applicantProfileFormHP.valid) {
-        this.applicantService.updateApplicant(applicantData);
+        this.applicantService.updateApplicant(applicantData, this.loggedInUser.id);
       }
     }
   }
