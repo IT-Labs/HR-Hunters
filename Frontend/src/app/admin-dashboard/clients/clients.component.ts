@@ -15,6 +15,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     inactive: 0
   };
   clients: Client[] = [];
+  paginationMaxSize = 0;
 
   clientQP = {
     postsPerPage: 10,
@@ -25,7 +26,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     currentSortDirection: 1,
     currentFilter: null,
     currentFilterQuery: null
-  }
+  };
 
   paginationSize: number[] = [];
 
@@ -34,7 +35,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   constructor(private clientService: ClientService) {}
 
   ngOnInit() {
-    const params = this.buildQueryParams(this.clientQP)
+    const params = this.buildQueryParams(this.clientQP);
     this.clientService.getClients(params);
     this.clientsSub = this.clientService
       .getClientsUpdateListener()
@@ -44,13 +45,22 @@ export class ADClientsComponent implements OnInit, OnDestroy {
         this.clientsCount.active = clientsData.active;
         this.clientsCount.inactive = clientsData.inactive;
       });
+    setTimeout(() => {
+      this.paginationMaxSize = this.clientsCount.all;
+    }, 1000);
   }
-  
+
   buildQueryParams(data) {
     if (data.currentFilter === null) {
-    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+      return `?pageSize=${data.postsPerPage}&currentPage=${
+        data.currentPage
+      }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
     }
-    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${
+      data.currentPage
+    }&sortedBy=${data.currentSortBy}&sortDir=${
+      data.currentSortDirection
+    }&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
   }
 
   buildClientDataOnUpdate(
@@ -61,7 +71,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     location: string,
     activeJobs: number,
     allJobs: number,
-    status: string,
+    status: string
   ) {
     let clientData: Client | FormData;
     if (typeof logo === "object") {
@@ -83,7 +93,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
         location: location,
         activeJobs: activeJobs,
         allJobs: allJobs,
-        status: status,
+        status: status
       };
     }
     return clientData;
@@ -99,12 +109,22 @@ export class ADClientsComponent implements OnInit, OnDestroy {
 
   onFilter(filterBy: string) {
     if (filterBy === null) {
-      this.clientQP.currentFilter = null
+      this.clientQP.currentFilter = null;
     } else {
-      this.clientQP.currentFilter = 'status'
+      this.clientQP.currentFilter = "status";
     }
+
+    // CALCULATE PAGINATION
+    if (filterBy === null) {
+      this.paginationMaxSize = this.clientsCount.all
+    } else if (filterBy === 'Active') {
+      this.paginationMaxSize = this.clientsCount.active
+    } else if (filterBy === 'Inactive') {
+      this.paginationMaxSize = this.clientsCount.inactive
+    }
+
     this.clientQP.currentFilterQuery = filterBy;
-    const params = this.buildQueryParams(this.clientQP)
+    const params = this.buildQueryParams(this.clientQP);
     this.clientService.getClients(params);
   }
 
@@ -115,7 +135,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       } else if (this.clientQP.currentSortDirection === 0) {
         this.clientQP.currentSortDirection = 1;
       }
-      this.clientQP.lastSortBy = '';
+      this.clientQP.lastSortBy = "";
     } else if (this.clientQP.lastSortBy !== sortBy) {
       if (this.clientQP.currentSortDirection === 1) {
         this.clientQP.currentSortDirection = 0;
@@ -125,14 +145,14 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       this.clientQP.lastSortBy = sortBy;
     }
     this.clientQP.currentSortBy = sortBy;
-    const params = this.buildQueryParams(this.clientQP)
+    const params = this.buildQueryParams(this.clientQP);
     this.clientService.getClients(params);
   }
 
   chooseStatus(event: any, id: number) {
     const currentStatus = event.target.innerText;
     const currentId = id;
-    
+
     let clientData = this.buildClientDataOnUpdate(
       currentId,
       null,
@@ -141,9 +161,9 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       null,
       null,
       null,
-      currentStatus,
+      currentStatus
     );
-    
+
     this.clientService.updateClient(clientData);
   }
 
