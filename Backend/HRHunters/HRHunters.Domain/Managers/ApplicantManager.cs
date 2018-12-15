@@ -60,7 +60,7 @@ namespace HRHunters.Domain.Managers
                 applicant.ModifiedDate = DateTime.UtcNow;
                 try
                 {
-                    _repo.Update(applicant, "User");
+                    _repo.Update(applicant, applicant.User.FirstName);
                     await _userManager.UpdateAsync(user);
                     return response;
                 }

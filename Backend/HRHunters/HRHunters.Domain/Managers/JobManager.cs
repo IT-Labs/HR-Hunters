@@ -47,6 +47,7 @@ namespace HRHunters.Domain.Managers
            
             if (role != null || id == 0)
             {
+
                 var queryApplicant = _repo.GetAll<JobPosting>(
                         includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}"
                         ).Where(x => role.Contains("Applicant")

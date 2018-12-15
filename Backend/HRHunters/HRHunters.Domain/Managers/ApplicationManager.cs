@@ -31,7 +31,7 @@ namespace HRHunters.Domain.Managers
         public ApplicationResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery, int id)
         {
             var response = new ApplicationResponse() { Applications = new List<ApplicationInfo>() };
-            var query = _repo.Get<Application>(filter: x => id != 0 ? x.ApplicantId == id : x.Status.GetType().IsEnum,
+            var query = _repo.Get<Application>(filter: x => id != 0 ? x.ApplicantId == id : true,
                includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
                                   $"{nameof(JobPosting)}");
             var selected = _mapper.ProjectTo<ApplicationInfo>(query);
@@ -54,7 +54,8 @@ namespace HRHunters.Domain.Managers
         public ApplicationInfo UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
         {
             var application = _repo.Get<Application>(filter: x => x.Id == applicationStatusUpdate.Id,
-                                                    includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)},{nameof(JobPosting)}").FirstOrDefault();
+                                                    includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
+                                                                       $"{nameof(JobPosting)}").FirstOrDefault();
 
             Enum.TryParse(applicationStatusUpdate.Status, out ApplicationStatus statusToUpdate);
             application.Status = statusToUpdate;
@@ -68,13 +69,14 @@ namespace HRHunters.Domain.Managers
             var company = _repo.Get<Client>(filter: x => x.Id == active.Client.Id).FirstOrDefault();
             var applicant = _repo.Get<Applicant>(filter: x => x.Id == apply.ApplicantId, includeProperties: $"{nameof(User)}").FirstOrDefault();
             var list = new List<string>();
+            var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == apply.ApplicantId).ToList();
+
             var response = new GeneralResponse()
             {
                 Succeeded = false,
                 Errors = new Dictionary<string, List<string>>()
             };
-
-            if (active == null || company.Status==ClientStatus.Inactive || active.Status != JobPostingStatus.Approved)
+            if (active == null || company.Status==ClientStatus.Inactive || active.Status != JobPostingStatus.Approved || applied.Where(x => x.JobPostingId == active.Id).Any())
             {
                 response.Errors.Add("Error", new List<string> { "Invalid input" });
                 response.Succeeded = false;
