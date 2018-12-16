@@ -9,6 +9,5 @@ namespace HRHunters.Common.Responses.AdminDashboard
     {
         public List<ApplicantInfo> Applicants { get; set; }
         public int MaxApplicants { get; set; }
-
     }
 }
