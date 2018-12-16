@@ -18,6 +18,7 @@ namespace HRHunters.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class JobsController : ControllerBase
     {
         private readonly IJobManager _jobManager;
@@ -37,17 +38,22 @@ namespace HRHunters.WebAPI.Controllers
         {
             return Ok(await _jobManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery, id, 0));
         }
+
+        [Authorize(Roles = "Applicant")]
         [HttpGet("{id}")]
         public ActionResult<JobResponse> GetOneJobPosting(int id)
         {
             return Ok(_jobManager.GetOneJobPosting(id, 0));
         }
 
+
         [HttpPost]
         public async Task<ActionResult<GeneralResponse>> CreateJobPosting(JobSubmit jobSubmit)
         {
             return Ok(await _jobManager.CreateJobPosting(jobSubmit, 0));
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public ActionResult<GeneralResponse> UpdateJob(JobUpdate jobSubmit)
         {
