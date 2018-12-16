@@ -14,6 +14,7 @@ using HRHunters.Common.Requests.Users;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using HRHunters.Common.Requests.Admin;
+using HRHunters.Common.Requests;
 
 namespace HRHunters.Domain.Managers
 {
@@ -28,7 +29,7 @@ namespace HRHunters.Domain.Managers
             _mapper = mapper;
             _repo = repo;
         }
-        public ClientResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ClientResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir,string filterBy, string filterQuery)
         {
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
 
@@ -36,7 +37,7 @@ namespace HRHunters.Domain.Managers
                                    $"{nameof(Client.JobPostings)}");
             var selected = _mapper.ProjectTo<ClientInfo>(query);
             if (pageSize != 0 && currentPage != 0)
-                selected = selected.Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+                selected = selected.Applyfilters(pageSize,currentPage,sortedBy,sortDir,filterBy,filterQuery);
 
             response.Clients.AddRange(selected.ToList());
 

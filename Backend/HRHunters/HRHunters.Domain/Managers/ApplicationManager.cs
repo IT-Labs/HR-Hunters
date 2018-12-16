@@ -69,14 +69,19 @@ namespace HRHunters.Domain.Managers
             var company = _repo.Get<Client>(filter: x => x.Id == active.Client.Id).FirstOrDefault();
             var applicant = _repo.Get<Applicant>(filter: x => x.Id == apply.ApplicantId, includeProperties: $"{nameof(User)}").FirstOrDefault();
             var list = new List<string>();
-            var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == apply.ApplicantId).ToList();
+            var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == apply.ApplicantId && x.JobPostingId==active.Id).Any();
 
             var response = new GeneralResponse()
             {
                 Succeeded = false,
                 Errors = new Dictionary<string, List<string>>()
             };
-            if (active == null || company.Status==ClientStatus.Inactive || active.Status != JobPostingStatus.Approved || applied.Where(x => x.JobPostingId == active.Id).Any())
+            if (
+                active == null ||
+                company.Status==ClientStatus.Inactive || 
+                active.Status != JobPostingStatus.Approved ||
+                applied
+               )
             {
                 response.Errors.Add("Error", new List<string> { "Invalid input" });
                 response.Succeeded = false;
