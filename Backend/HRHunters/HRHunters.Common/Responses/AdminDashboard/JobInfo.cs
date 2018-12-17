@@ -14,6 +14,9 @@ namespace HRHunters.Common.Responses.AdminDashboard
         public string JobType { get; set; }
         public string Description { get; set; }
         public string DateTo { get; set; }
+        public string DateFrom { get; set; }
+        public string Education { get; set; }
+        public string Experience { get; set; }
         public int AllApplicationsCount { get; set; }
         public string Status { get; set; }
     }

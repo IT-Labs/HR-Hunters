@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Requests;
 using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
@@ -18,6 +19,7 @@ namespace HRHunters.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class JobsController : ControllerBase
     {
         private readonly IJobManager _jobManager;
@@ -31,27 +33,32 @@ namespace HRHunters.WebAPI.Controllers
         {
             return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
+
         [HttpGet]
-        public async Task<ActionResult<JobResponse>> GetJobs(int pageSize = 10, int currentPage = 1, string sortedBy = "Id", 
-            SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "", int id=0)
+        public async Task<ActionResult<JobResponse>> GetJobs([FromQuery]SearchRequest request)
         {
-            return Ok(await _jobManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery, id, 0));
+            return Ok(await _jobManager.GetMultiple(request, GetCurrentUserId()));
         }
+
+        [Authorize(Roles = "Applicant, Client")]
         [HttpGet("{id}")]
         public ActionResult<JobResponse> GetOneJobPosting(int id)
         {
-            return Ok(_jobManager.GetOneJobPosting(id, 0));
+            return Ok(_jobManager.GetOneJobPosting(id));
         }
 
+        [Authorize(Roles ="Admin, Client")]
         [HttpPost]
         public async Task<ActionResult<GeneralResponse>> CreateJobPosting(JobSubmit jobSubmit)
         {
-            return Ok(await _jobManager.CreateJobPosting(jobSubmit, 0));
+            return Ok(await _jobManager.CreateJobPosting(jobSubmit, GetCurrentUserId()));
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public ActionResult<GeneralResponse> UpdateJob(JobUpdate jobSubmit)
         {
-            return Ok(_jobManager.UpdateJob(jobSubmit, 0));
+            return Ok(_jobManager.UpdateJob(jobSubmit, GetCurrentUserId()));
         }
     }
 }

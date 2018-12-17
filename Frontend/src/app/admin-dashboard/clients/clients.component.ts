@@ -28,6 +28,8 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     currentFilterQuery: null
   };
 
+  loading = false;
+
   paginationSize: number[] = [];
 
   private clientsSub: Subscription;
@@ -35,6 +37,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   constructor(private clientService: ClientService) {}
 
   ngOnInit() {
+    this.loading = true;
     const params = this.buildQueryParams(this.clientQP);
     this.clientService.getClients(params);
     this.clientsSub = this.clientService
@@ -44,6 +47,7 @@ export class ADClientsComponent implements OnInit, OnDestroy {
         this.clientsCount.all = clientsData.clientsCount;
         this.clientsCount.active = clientsData.active;
         this.clientsCount.inactive = clientsData.inactive;
+        this.loading = false;
       });
     setTimeout(() => {
       this.paginationMaxSize = this.clientsCount.all;
@@ -98,14 +102,17 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   }
 
   onChangedPage(page: number) {
+    this.loading = true;
     if (this.clientQP.currentPage !== this.clientQP.previousPage) {
       this.clientQP.previousPage = this.clientQP.currentPage;
       const params = this.buildQueryParams(this.clientQP);
       this.clientService.getClients(params);
+      this.loading = false;
     }
   }
 
   onFilter(filterBy: string) {
+    this.loading = true;
     if (filterBy === null) {
       this.clientQP.currentFilter = null;
     } else {
@@ -124,9 +131,11 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     this.clientQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.clientQP);
     this.clientService.getClients(params);
+    this.loading = false;
   }
 
   onSort(sortBy: string) {
+    this.loading = true;
     if (this.clientQP.lastSortBy === sortBy) {
       if (this.clientQP.currentSortDirection === 1) {
         this.clientQP.currentSortDirection = 0;
@@ -145,9 +154,11 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     this.clientQP.currentSortBy = sortBy;
     const params = this.buildQueryParams(this.clientQP);
     this.clientService.getClients(params);
+    this.loading = false;
   }
 
   chooseStatus(event: any, id: number) {
+    this.loading = true;
     const currentStatus = event.target.innerText;
     const currentId = id;
 
@@ -156,6 +167,11 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       currentStatus
     );
     this.clientService.updateClientStatus(clientData);
+    setTimeout(() => {
+      const params = this.buildQueryParams(this.clientQP);
+      this.clientService.getClients(params);
+      this.loading = false;
+    }, 1000);
   }
 
   ngOnDestroy() {

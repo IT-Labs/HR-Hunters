@@ -12,7 +12,7 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { ClientComponent } from './homepage/client/client.component';
 import { ApplicantComponent } from './homepage/applicant/applicant.component';
 import { ClientJobPostingsComponent } from './homepage/client/client-job-postings/client-job-postings.component';
-import { JobPostingDetailsComponent } from './homepage/applicant/job-posting-details/job-posting-details.component';
+import { JobPostingDetailsComponent } from './homepage/job-posting-details/job-posting-details.component';
 import { ApplicantRegisterComponent } from './authentication/applicants/register/register.component';
 import { ClientRegisterComponent } from './authentication/clients/register/register.component';
 import { AddJobPostingComponent } from './homepage/client/add-job-posting/add-job-posting.component';

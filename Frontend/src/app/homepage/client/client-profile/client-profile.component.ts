@@ -21,6 +21,8 @@ export class ClientProfileComponent implements OnInit {
   );
   //ex: format: +61 01 2345 6789
 
+  loading = false;
+
   constructor(
     private fb: FormBuilder,
     private clientService: ClientService,
@@ -28,10 +30,12 @@ export class ClientProfileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading = true;
     this.imagePreview =
       "https://about.canva.com/wp-content/uploads/sites/3/2016/08/Band-Logo.png";
 
     this.loggedInUser = this.authService.getUser();
+    this.loading = false;
   }
 
   clientProfileFormHP = this.fb.group({
@@ -39,7 +43,6 @@ export class ClientProfileComponent implements OnInit {
       "",
       Validators.compose([
         Validators.required,
-        Validators.minLength(1),
         Validators.maxLength(50),
         Validators.pattern("[a-zA-Z0-9]*")
       ])
@@ -64,11 +67,13 @@ export class ClientProfileComponent implements OnInit {
       "",
       Validators.compose([
         Validators.required,
-        Validators.minLength(1),
         Validators.maxLength(30),
         Validators.pattern("[a-zA-Z0-9]*")
       ])
-    ],
+    ]
+  });
+
+  /*
     logo: [
       "",
       {
@@ -76,7 +81,7 @@ export class ClientProfileComponent implements OnInit {
         asyncValidators: [mimeType]
       }
     ]
-  });
+  */
 
   buildClientDataOnUpdateClientProfile(
     companyName: string,
@@ -96,6 +101,7 @@ export class ClientProfileComponent implements OnInit {
   }
 
   onImagePicked(event: Event) {
+    this.loading = true;
     const file = (event.target as HTMLInputElement).files[0];
     const reader = new FileReader();
     reader.onload = () => {
@@ -113,9 +119,11 @@ export class ClientProfileComponent implements OnInit {
       }, 1000);
     };
     reader.readAsDataURL(file);
+    this.loading = false;
   }
 
   onSubmitClientProfile() {
+    this.loading = true;
     this.clientProfileFormHP.controls["companyName"].markAsTouched();
     this.clientProfileFormHP.controls["companyEmail"].markAsTouched();
     this.clientProfileFormHP.controls["phonenumber"].markAsTouched();
@@ -129,12 +137,9 @@ export class ClientProfileComponent implements OnInit {
       null
     );
 
-    if (this.imagePreview === undefined) {
-      this.imageValid = false;
-    } else {
-      if (this.clientProfileFormHP.valid) {
-        this.clientService.updateClientProfile(clientData, this.loggedInUser.id);
-      }
+    if (this.clientProfileFormHP.valid) {
+      this.clientService.updateClientProfile(clientData, this.loggedInUser.id);
     }
+    this.loading = false;
   }
 }

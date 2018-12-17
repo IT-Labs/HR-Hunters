@@ -1,93 +1,103 @@
-<div class="dash__container">
-  <div class="dash__heading">
-    <h2>Clients</h2>
-    <button
-      class="btn dash__heading--btn"
-      type="button"
-      routerLink="/admin-dashboard/new-client"
-    >
-      Add New
-    </button>
-    <div class=" text-muted dash__filtering">
-      <ul>
-        <li (click)="onFilter(null)">
-          All<span>({{ clientsCount.all }})</span>
-        </li>
-        <li (click)="onFilter('Active')">
-          Active<span>({{ clientsCount.active }})</span>
-        </li>
-        <li (click)="onFilter('Inactive')">
-          Inactive<span>({{ clientsCount.inactive }})</span>
-        </li>
-      </ul>
+<div class="my-container">
+  <ng-template #customLoadingTemplate>
+  </ng-template>
+
+  <ngx-loading
+    [show]="loading"
+    [config]="{ backdropBorderRadius: '3px' }"
+    [template]="customLoadingTemplate"
+  ></ngx-loading>
+  <div class="dash__container">
+    <div class="dash__heading">
+      <h2>Clients</h2>
+      <button
+        class="btn dash__heading--btn"
+        type="button"
+        routerLink="/admin-dashboard/new-client"
+      >
+        Add New
+      </button>
+      <div class=" text-muted dash__filtering">
+        <ul>
+          <li (click)="onFilter(null)">
+            All<span>({{ clientsCount.all }})</span>
+          </li>
+          <li (click)="onFilter('Active')">
+            Active<span>({{ clientsCount.active }})</span>
+          </li>
+          <li (click)="onFilter('Inactive')">
+            Inactive<span>({{ clientsCount.inactive }})</span>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-  <!-- table -->
-  <div class="dash__table">
-    <table
-      class="table table-hover table-responsive-sm table-striped table-bordered"
-    >
-      <thead>
-        <tr class="dash__table__header">
-          <th scope="col" (click)="onSort('companyName')">Company Name</th>
-          <th scope="col">Logo</th>
-          <th scope="col" (click)="onSort('email')">E-mail</th>
-          <th scope="col" (click)="onSort('allJobs')">Jobs(active/all)</th>
-          <th scope="col" (click)="onSort('status')">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let client of clients">
-          <td scope="row">{{ client.companyName }}</td>
-          <td>
-            <img
-              class="dash__table--image"
-              [src]="client.logo"
-              [alt]="client.companyName"
-            />
-          </td>
-          <td>{{ client.email }}</td>
-          <td>{{ client.activeJobs }} / {{ client.allJobs }}</td>
-          <td>
-            <div class="dropdown dash__table--dropdown-btn__container">
-              <button
-                class="btn dropdown-toggle"
-                type="button"
-                id="dropdownMenuButton"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                {{ client.status }}
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <span
-                  class="dropdown-item"
-                  (click)="chooseStatus($event, client.id)"
-                  >active</span
+    <!-- table -->
+    <div class="dash__table">
+      <table
+        class="table table-hover table-responsive-sm table-striped table-bordered"
+      >
+        <thead>
+          <tr class="dash__table__header">
+            <th scope="col" (click)="onSort('companyName')">Company Name</th>
+            <th scope="col">Logo</th>
+            <th scope="col" (click)="onSort('email')">E-mail</th>
+            <th scope="col" (click)="onSort('allJobs')">Jobs(active/all)</th>
+            <th scope="col" (click)="onSort('status')">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let client of clients">
+            <td scope="row">{{ client.companyName }}</td>
+            <td>
+              <img
+                class="dash__table--image"
+                [src]="client.logo"
+                [alt]="client.companyName"
+              />
+            </td>
+            <td>{{ client.email }}</td>
+            <td>{{ client.activeJobs }} / {{ client.allJobs }}</td>
+            <td>
+              <div class="dropdown dash__table--dropdown-btn__container">
+                <button
+                  class="btn dropdown-toggle"
+                  type="button"
+                  id="dropdownMenuButton"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
                 >
-                <span
-                  class="dropdown-item"
-                  (click)="chooseStatus($event, client.id)"
-                  >inactive</span
-                >
+                  {{ client.status }}
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <span
+                    class="dropdown-item"
+                    (click)="chooseStatus($event, client.id)"
+                    >Active</span
+                  >
+                  <span
+                    class="dropdown-item"
+                    (click)="chooseStatus($event, client.id)"
+                    >Inactive</span
+                  >
+                </div>
               </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ngb-pagination
+      *ngIf="paginationMaxSize > 10"
+      [collectionSize]="paginationMaxSize"
+      [(page)]="clientQP.currentPage"
+      [maxSize]="10"
+      [rotate]="true"
+      [ellipses]="false"
+      [boundaryLinks]="true"
+      class="d-flex justify-content-center"
+      (pageChange)="onChangedPage($event)"
+    ></ngb-pagination>
   </div>
-  
-  <ngb-pagination
-    *ngIf="paginationMaxSize > 10"
-    [collectionSize]="paginationMaxSize"
-    [(page)]="clientQP.currentPage"
-    [maxSize]="10"
-    [rotate]="true"
-    [ellipses]="false"
-    [boundaryLinks]="true"
-    class="d-flex justify-content-center"
-    (pageChange)="onChangedPage($event)"
-  ></ngb-pagination>
 </div>

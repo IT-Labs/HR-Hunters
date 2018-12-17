@@ -1,5 +1,6 @@
 ﻿using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
+using HRHunters.Common.Requests;
 using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
@@ -15,10 +16,10 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IJobManager : IBaseManager
     {
-        Task<JobResponse> GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery, int id, int currentUserId);
+        Task<JobResponse> GetMultiple(SearchRequest request, int currentUserId);
         Task<GeneralResponse> CreateJobPosting(JobSubmit jobSubmit, int currentUserId);
-        JobInfo GetOneJobPosting(int id, int currentUserId);
-        GeneralResponse UpdateJob(JobUpdate jobSubmit, int currentUserId);
+        JobInfo GetOneJobPosting(int id);
+        Task<GeneralResponse> UpdateJob(JobUpdate jobSubmit, int currentUserId);
 
     }
 }

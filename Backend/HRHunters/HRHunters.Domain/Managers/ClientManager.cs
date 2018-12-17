@@ -14,6 +14,8 @@ using HRHunters.Common.Requests.Users;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using HRHunters.Common.Requests.Admin;
+using HRHunters.Common.Requests;
+using HRHunters.Common.Exceptions;
 
 namespace HRHunters.Domain.Managers
 {
@@ -28,15 +30,19 @@ namespace HRHunters.Domain.Managers
             _mapper = mapper;
             _repo = repo;
         }
-        public ClientResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ClientResponse GetMultiple(SearchRequest request, int currentUserId)
         {
+            if (currentUserId != request.Id)
+            {
+                throw new InvalidUserException("Invalid user id");
+            }
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
 
             var query = _repo.GetAll<Client>(includeProperties: $"{nameof(User)}," +
                                    $"{nameof(Client.JobPostings)}");
             var selected = _mapper.ProjectTo<ClientInfo>(query);
-            if (pageSize != 0 && currentPage != 0)
-                selected = selected.Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+            if (request.PageSize != 0 && request.CurrentPage != 0)
+                selected = selected.Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery);
 
             response.Clients.AddRange(selected.ToList());
 
@@ -73,8 +79,13 @@ namespace HRHunters.Domain.Managers
             return response;
         }
 
-        public async Task<GeneralResponse> UpdateClientProfile(int id, ClientUpdate clientUpdate)
+        public async Task<GeneralResponse> UpdateClientProfile(int id, ClientUpdate clientUpdate,int currentUserId)
         {
+            if (currentUserId != id)
+            {
+                throw new InvalidUserException("Invalid user id");
+            }
+
             var response = new GeneralResponse()
             {
                 Succeeded = true,
@@ -87,10 +98,10 @@ namespace HRHunters.Domain.Managers
             {
                 client = _mapper.Map(clientUpdate, client);
                 client.User.ModifiedDate = DateTime.UtcNow;
-                client.User.ModifiedBy = "User";
+                client.User.ModifiedBy = client.User.FirstName;
                 try
                 {
-                    _repo.Update(client, "User");
+                    _repo.Update(client, client.User.FirstName);
                     await _userManager.UpdateAsync(user);
                     return response;
                 }
@@ -98,17 +109,19 @@ namespace HRHunters.Domain.Managers
                 {
                     throw new Exception(e.Message);
                 }
-            }
-            var list = new List<string>()
-            {
-                "Error occured, client-side validation failed."
-            };
-            response.Errors.Add("Error", list);
+            }           
+            
             return response;
         }
 
-        public async Task<GeneralResponse> CreateCompany(NewCompany newCompany)
+        public async Task<GeneralResponse> CreateCompany(NewCompany newCompany,int currentUserId)
         {
+            var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
+            var roles = await _userManager.GetRolesAsync(currentUser);
+            if (!roles.Contains("Admin"))
+            {
+                throw new InvalidUserException("Invalid user");
+            }
             var response = new GeneralResponse()
             {
                 Succeeded = true,

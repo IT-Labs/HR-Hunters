@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using HRHunters.Common.Requests.Users;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
+using HRHunters.Common.Exceptions;
 
 namespace HRHunters.Domain.Managers
 {
@@ -29,22 +30,26 @@ namespace HRHunters.Domain.Managers
             _userManager = userManager;
         }
 
-        public ApplicantResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ApplicantResponse GetMultiple(SearchRequest request)
         {
             var response = new ApplicantResponse() { Applicants = new List<ApplicantInfo>()};
 
             var query = _repo.GetAll<Applicant>(includeProperties: $"{nameof(Applicant.User)},");
 
             var selected = _mapper.ProjectTo<ApplicantInfo>(query)
-                                        .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery).ToList();
+                                        .Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery).ToList();
              
             response.Applicants.AddRange(selected);
             response.MaxApplicants = _repo.GetCount<Applicant>();
             return response;
         }
 
-        public async Task<GeneralResponse> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate)
+        public async Task<GeneralResponse> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate, int currentUserId)
         {
+            if (currentUserId != id)
+            {
+                throw new InvalidUserException("Invalid user id");
+            }
             var response = new GeneralResponse()
             {
                 Succeeded = true,
@@ -53,14 +58,15 @@ namespace HRHunters.Domain.Managers
             var user = await _userManager.FindByIdAsync(id.ToString());
 
             var applicant = _repo.GetById<Applicant>(id);
+
             if (user != null && applicantUpdate != null)
             {
                 applicant = _mapper.Map(applicantUpdate, applicant);
-                applicant.ModifiedBy = "User";
-                applicant.ModifiedDate = DateTime.UtcNow;
+                applicant.User.ModifiedBy = applicant.User.FirstName;
+                applicant.User.ModifiedDate = DateTime.UtcNow;
                 try
                 {
-                    _repo.Update(applicant, "User");
+                    _repo.Update(applicant, applicant.User.FirstName);
                     await _userManager.UpdateAsync(user);
                     return response;
                 }
@@ -69,11 +75,8 @@ namespace HRHunters.Domain.Managers
                     throw new Exception(e.Message);
                 }
             }
-            var list = new List<string>()
-            {
-                "This is bad."
-            };
-            response.Errors.Add("Error", list);
+           
+           
             return response;
         }
     }

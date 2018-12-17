@@ -12,6 +12,7 @@ using HRHunters.Data;
 using HRHunters.Data.Context;
 using HRHunters.Domain.Managers;
 using HRHunters.WebAPI.Helpers;
+using JwtSwaggerDemo.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,8 +44,8 @@ namespace HRHunters.WebAPI
         //  This method gets called by the runtime.Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            
-            IdentityBuilder builder = services.AddIdentityCore<User>(opt =>
+
+            IdentityBuilder builder = services.AddIdentity<User, Role>(opt =>
             {
                 opt.Password.RequiredLength = 8;
                 opt.User.RequireUniqueEmail = true;
@@ -59,6 +60,7 @@ namespace HRHunters.WebAPI
             builder.AddRoleValidator<RoleValidator<Role>>();
             builder.AddRoleManager<RoleManager<Role>>();
             builder.AddSignInManager<SignInManager<User>>();
+            builder.AddDefaultTokenProviders();
 
             services.AddAuthentication(opt =>
             {
@@ -68,18 +70,12 @@ namespace HRHunters.WebAPI
             }).AddJwtBearer(opt => opt.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
                     .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 });
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
-                options.AddPolicy("RequireApplicantRole", policy => policy.RequireRole("Applicant"));
-                options.AddPolicy("RequireClientRole", policy => policy.RequireRole("Client"));
-
-            });
+            services.AddAuthorization();
 
             services.AddTransient<SeedData>();
             services.AddDbContext<DataContext>(x => x.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
@@ -109,10 +105,7 @@ namespace HRHunters.WebAPI
                 };
             });
             // Register the Swagger generator, defining 1 or more Swagger documents
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
-            });
+            services.AddSwaggerDocumentation();
             var container = new Container();
 
             container.Configure(config =>
@@ -132,6 +125,7 @@ namespace HRHunters.WebAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwaggerDocumentation();
             }
             else
             {  
