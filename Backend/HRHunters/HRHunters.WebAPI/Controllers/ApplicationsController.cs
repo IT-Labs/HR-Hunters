@@ -30,9 +30,9 @@ namespace HRHunters.WebAPI.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
         [HttpGet]
-        public ActionResult<ApplicationResponse> GetMultipleApplications(int pageSize = 10, int currentPage = 1, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "",int id=0)
+        public ActionResult<ApplicationResponse> GetMultipleApplications([FromQuery]SearchRequest request)
         {
-            return Ok(_applicationManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery,id));
+            return Ok(_applicationManager.GetMultiple(request));
         }
         [HttpPut]
         public ActionResult<ApplicationInfo> UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)

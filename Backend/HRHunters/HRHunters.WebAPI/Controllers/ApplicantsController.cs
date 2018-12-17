@@ -24,9 +24,9 @@ namespace HRHunters.WebAPI.Controllers
             _applicantManager = applicantManager;
         }
         [HttpGet]
-        public ActionResult<ApplicantResponse> GetMultipleApplicants(int pageSize = 10, int currentPage = 1, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = "", string filterQuery = "")
+        public ActionResult<ApplicantResponse> GetMultipleApplicants([FromQuery]SearchRequest request)
         {
-            return Ok(_applicantManager.GetMultiple(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery));
+            return Ok(_applicantManager.GetMultiple(request));
         }
         [HttpPut("{id}")]
         public async Task<ActionResult<GeneralResponse>> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate)
