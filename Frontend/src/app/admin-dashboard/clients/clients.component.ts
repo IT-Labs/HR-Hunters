@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Client } from "src/app/models/client.model";
 import { Subscription } from "rxjs";
 import { ClientService } from "src/app/services/client.service";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-ad-clients",
@@ -29,15 +30,20 @@ export class ADClientsComponent implements OnInit, OnDestroy {
   };
 
   loading = false;
+  loggedInUser;
 
   paginationSize: number[] = [];
 
   private clientsSub: Subscription;
 
-  constructor(private clientService: ClientService) {}
+  constructor(
+    private clientService: ClientService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.loading = true;
+    this.loggedInUser = this.authService.getUser();
     const params = this.buildQueryParams(this.clientQP);
     this.clientService.getClients(params);
     this.clientsSub = this.clientService
@@ -58,26 +64,26 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     if (data.currentFilter === null) {
       return `?pageSize=${data.postsPerPage}&currentPage=${
         data.currentPage
-      }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+      }&sortedBy=${data.currentSortBy}&sortDir=${
+        data.currentSortDirection
+      }&id=${this.loggedInUser.id}`;
     }
     return `?pageSize=${data.postsPerPage}&currentPage=${
       data.currentPage
     }&sortedBy=${data.currentSortBy}&sortDir=${
       data.currentSortDirection
-    }&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
+    }&filterBy=${data.currentFilter}&filterQuery=${
+      data.currentFilterQuery
+    }&id=${this.loggedInUser.id}`;
   }
 
-  buildClientDataOnUpdateStatus(
-    id: number,
-    status: string
-  ) {
+  buildClientDataOnUpdateStatus(id: number, status: string) {
     let clientData = {
-        id: id,
-        status: status
-      };
+      id: id,
+      status: status
+    };
     return clientData;
   }
-
 
   //DA SE PREMESTI SMESTA NA BOLJE MESTO
   buildClientDataOnUpdateProfile(
@@ -90,14 +96,14 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     status: string
   ) {
     let clientData: Client = {
-        id: id,
-        companyName: companyName,
-        email: email,
-        location: location,
-        activeJobs: activeJobs,
-        allJobs: allJobs,
-        status: status
-      };
+      id: id,
+      companyName: companyName,
+      email: email,
+      location: location,
+      activeJobs: activeJobs,
+      allJobs: allJobs,
+      status: status
+    };
     return clientData;
   }
 
@@ -121,11 +127,11 @@ export class ADClientsComponent implements OnInit, OnDestroy {
 
     // CALCULATE PAGINATION
     if (filterBy === null) {
-      this.paginationMaxSize = this.clientsCount.all
-    } else if (filterBy === 'Active') {
-      this.paginationMaxSize = this.clientsCount.active
-    } else if (filterBy === 'Inactive') {
-      this.paginationMaxSize = this.clientsCount.inactive
+      this.paginationMaxSize = this.clientsCount.all;
+    } else if (filterBy === "Active") {
+      this.paginationMaxSize = this.clientsCount.active;
+    } else if (filterBy === "Inactive") {
+      this.paginationMaxSize = this.clientsCount.inactive;
     }
 
     this.clientQP.currentFilterQuery = filterBy;
