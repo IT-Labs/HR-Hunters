@@ -156,6 +156,10 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       currentStatus
     );
     this.clientService.updateClientStatus(clientData);
+    setTimeout(() => {
+      const params = this.buildQueryParams(this.clientQP);
+      this.clientService.getClients(params);
+    }, 1000);
   }
 
   ngOnDestroy() {

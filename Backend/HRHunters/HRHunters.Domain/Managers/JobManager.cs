@@ -43,15 +43,12 @@ namespace HRHunters.Domain.Managers
 
             var response = new JobResponse() { JobPostings = new List<JobInfo>() };
             var user = await _userManager.FindByIdAsync(request.Id.ToString());
+            IList<string> role = _userManager.GetRolesAsync(user).Result;
 
             var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == request.Id).Select(x => x.JobPostingId).ToList();
             var query = _repo.GetAll<JobPosting>(includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," +
                                                                     $"{nameof(JobPosting.Applications)}");
-            if (user == null)
-            {
-                throw new InvalidUserException("invalid user");
-            }
-            IList<string> role = _userManager.GetRolesAsync(user).Result;
+            
 
             if (role.Contains("Applicant"))
             {

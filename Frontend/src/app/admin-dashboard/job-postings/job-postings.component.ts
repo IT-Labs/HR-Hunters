@@ -164,6 +164,11 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
       null
     )
     this.jobPostingService.updateJobPostingStatus(jobPostingData);
+
+    setTimeout(() => {
+      const params = this.buildQueryParams(this.jobPostingQP);
+      this.jobPostingService.getJobPostings(params);
+    }, 1000);
   }
 
   ngOnDestroy() {
