@@ -70,24 +70,10 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
 
   buildApplicationsDataOnUpdate(
     id: number,
-    applicantFirstName: string,
-    applicantLastName: string,
-    applicantEmail: string,
-    jobTitle: string,
-    description: string,
-    experience: number,
-    postedOn: Date,
     status: string
   ) {
-    let applicationData: Application = {
+    let applicationData = {
       id: id,
-      applicantFirstName: applicantFirstName,
-      applicantLastName: applicantLastName,
-      applicantEmail: applicantEmail,
-      jobTitle: jobTitle,
-      description: description,
-      experience: experience,
-      postedOn: postedOn,
       status: status
     };
     return applicationData;
@@ -123,8 +109,6 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       this.paginationMaxSize = this.applicationCount.rejected
     }
 
-    console.log(filterBy, this.paginationMaxSize)
-
     this.applicationQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
@@ -156,16 +140,14 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     const currentId = id;
     const applicationData = this.buildApplicationsDataOnUpdate(
       currentId,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
       currentStatus
     );
     this.applicationService.updateApplication(applicationData);
+
+    setTimeout(() => {
+      const params = this.buildQueryParams(this.applicationQP);
+      this.applicationService.getApplications(params);
+    }, 1000);
   }
 
   ngOnDestroy() {
