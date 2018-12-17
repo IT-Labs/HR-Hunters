@@ -29,10 +29,14 @@ namespace HRHunters.WebAPI.Controllers
             _applicationManager = applicationManager;
             _httpContextAccessor = httpContextAccessor;
         }
+        private int GetCurrentUserId()
+        {
+            return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        }
         [HttpGet]
         public ActionResult<ApplicationResponse> GetMultipleApplications([FromQuery]SearchRequest request)
         {
-            return Ok(_applicationManager.GetMultiple(request));
+            return Ok(_applicationManager.GetMultiple(request,GetCurrentUserId()));
         }
         [HttpPut]
         public ActionResult<ApplicationInfo> UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)

@@ -29,7 +29,7 @@ namespace HRHunters.Domain.Managers
             _mapper = mapper;
             _repo = repo;
         }
-        public ClientResponse GetMultiple(SearchRequest request)
+        public ClientResponse GetMultiple(SearchRequest request, int currentUserId)
         {
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
 

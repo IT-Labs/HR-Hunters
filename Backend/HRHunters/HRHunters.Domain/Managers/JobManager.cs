@@ -43,15 +43,12 @@ namespace HRHunters.Domain.Managers
 
             var response = new JobResponse() { JobPostings = new List<JobInfo>() };
             var user = await _userManager.FindByIdAsync(request.Id.ToString());
+            IList<string> role = _userManager.GetRolesAsync(user).Result;
 
             var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == request.Id).Select(x => x.JobPostingId).ToList();
             var query = _repo.GetAll<JobPosting>(includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," +
                                                                     $"{nameof(JobPosting.Applications)}");
-            if (user == null)
-            {
-                throw new InvalidUserException("invalid user");
-            }
-            IList<string> role = _userManager.GetRolesAsync(user).Result;
+            
 
             if (role.Contains("Applicant"))
             {
@@ -61,10 +58,10 @@ namespace HRHunters.Domain.Managers
 
             if (role.Contains("Client"))
             {
-                query= query.Where(x => x.ClientId == id);
+                query= query.Where(x => x.ClientId == request.Id);
             }
 
-            var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+            var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery);
             response.JobPostings.AddRange(selected.ToList());
             var groupings = _repo.GetAll<JobPosting>()
                                         .GroupBy(x => x.Status)
