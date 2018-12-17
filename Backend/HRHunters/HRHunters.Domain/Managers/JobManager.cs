@@ -20,6 +20,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using HRHunters.Common.Exceptions;
 using HRHunters.Common.Requests;
+using Microsoft.Extensions.Logging;
 
 namespace HRHunters.Domain.Managers
 {
@@ -28,18 +29,21 @@ namespace HRHunters.Domain.Managers
         private readonly IRepository _repo;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
-        public JobManager(IRepository repo, UserManager<User> userManager, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(repo)
+        private readonly ILogger<JobManager> _logger;
+        public JobManager(IRepository repo, UserManager<User> userManager, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<JobManager> logger) : base(repo)
         {
             _repo = repo;
             _userManager = userManager;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<JobResponse> GetMultiple(SearchRequest request, int currentUserId)
         {
             if (request.Id != currentUserId)
             {
-                throw new InvalidUserException("Bad request");
+                _logger.LogCritical("Unauthorized user tried to access this method!.");
+                throw new UnauthorizedAccessException();
             }
             var current = await _userManager.FindByIdAsync(currentUserId.ToString());
             IList<string> role = _userManager.GetRolesAsync(current).Result;
