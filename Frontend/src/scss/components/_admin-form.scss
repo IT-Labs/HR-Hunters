@@ -26,6 +26,15 @@
       padding: 0.1rem 0.3rem;
     }
 
+    &--info {
+      display: inline-block;
+      width: calc(100% - 30rem);
+      margin-bottom: 1rem;
+      margin-top: 1rem;
+      padding: 0.1rem 0.3rem;
+      font-size: 1.4rem;
+    }
+
     &--alert-msg {
       color: $color-alert-msg;
       padding: 0;
