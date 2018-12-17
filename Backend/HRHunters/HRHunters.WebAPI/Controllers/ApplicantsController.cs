@@ -17,6 +17,7 @@ namespace HRHunters.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ApplicantsController : ControllerBase
     {
         private readonly IApplicantManager _applicantManager;
@@ -31,11 +32,13 @@ namespace HRHunters.WebAPI.Controllers
         {
             return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public ActionResult<ApplicantResponse> GetMultipleApplicants([FromQuery]SearchRequest request)
         {
             return Ok(_applicantManager.GetMultiple(request));
         }
+        [Authorize(Roles = "Applicant")]
         [HttpPut("{id}")]
         public async Task<ActionResult<GeneralResponse>> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate)
         {
