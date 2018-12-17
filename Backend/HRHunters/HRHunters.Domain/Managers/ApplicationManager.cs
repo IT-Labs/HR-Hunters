@@ -48,7 +48,7 @@ namespace HRHunters.Domain.Managers
                 if (role.Contains("Applicant"))
                 {
                     query = query.Where(x=>x.ApplicantId == request.Id);
-                }                
+                }
             }
 
             var response = new ApplicationResponse() { Applications = new List<ApplicationInfo>() };          
@@ -64,6 +64,7 @@ namespace HRHunters.Domain.Managers
             response.Hired = groupings.Where(x => x.Status.Equals(ApplicationStatus.Hired)).Select(x => x.Count).FirstOrDefault();
             response.Interviewed = groupings.Where(x => x.Status.Equals(ApplicationStatus.Interviewed)).Select(x => x.Count).FirstOrDefault();
             response.Rejected = groupings.Where(x => x.Status.Equals(ApplicationStatus.Rejected)).Select(x => x.Count).FirstOrDefault();
+
             return response;
 
         }
@@ -79,8 +80,13 @@ namespace HRHunters.Domain.Managers
             _repo.Update(application, "Admin");
             return _mapper.Map(application, new ApplicationInfo());
         }
-        public GeneralResponse CreateApplication(Apply apply)
+        public GeneralResponse CreateApplication(Apply apply,int currentUserId)
         {
+            if (currentUserId != apply.ApplicantId)
+            {
+                throw new InvalidUserException("Invalid user id");
+            }
+
             var active = _repo.Get<JobPosting>(filter: x => x.Id == apply.JobId,
                                               includeProperties: $"{nameof(JobPosting.Client)}").FirstOrDefault();
             var company = _repo.Get<Client>(filter: x => x.Id == active.Client.Id).FirstOrDefault();
