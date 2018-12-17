@@ -29,14 +29,14 @@ namespace HRHunters.Domain.Managers
             _userManager = userManager;
         }
 
-        public ApplicantResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
+        public ApplicantResponse GetMultiple(SearchRequest request)
         {
             var response = new ApplicantResponse() { Applicants = new List<ApplicantInfo>()};
 
             var query = _repo.GetAll<Applicant>(includeProperties: $"{nameof(Applicant.User)},");
 
             var selected = _mapper.ProjectTo<ApplicantInfo>(query)
-                                        .Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery).ToList();
+                                        .Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery).ToList();
              
             response.Applicants.AddRange(selected);
             response.MaxApplicants = _repo.GetCount<Applicant>();
@@ -60,7 +60,7 @@ namespace HRHunters.Domain.Managers
                 applicant.ModifiedDate = DateTime.UtcNow;
                 try
                 {
-                    _repo.Update(applicant, "User");
+                    _repo.Update(applicant, applicant.User.FirstName);
                     await _userManager.UpdateAsync(user);
                     return response;
                 }

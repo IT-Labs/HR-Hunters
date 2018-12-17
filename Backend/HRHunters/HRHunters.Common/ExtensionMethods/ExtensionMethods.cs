@@ -39,7 +39,7 @@ namespace HRHunters.Common.ExtensionMethods
 
             return sample;
         }
-        public static IQueryable<T> Applyfilters<T>(this IQueryable<T> a, int pageSize = 3, int currentPage = 1, string sortedBy = "Id", SortDirection sortDir = SortDirection.ASC, string filterBy = null, string filterQuery = null)
+        public static IQueryable<T> Applyfilters<T>(this IQueryable<T> a, int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery)
         {
             //Convert first character from client side to upper to match the model naming convention
             sortedBy = char.ToUpper(sortedBy[0]) + sortedBy.Substring(1);

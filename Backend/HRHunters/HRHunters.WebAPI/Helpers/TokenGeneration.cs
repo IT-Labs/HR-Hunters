@@ -1,6 +1,7 @@
 ﻿using HRHunters.Common.Entities;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -16,17 +17,24 @@ namespace HRHunters.WebAPI.Helpers
     public class TokenGeneration : ITokenGeneration
     {
         private readonly IConfiguration _configuration;
-        public TokenGeneration(IConfiguration configuration)
+        private readonly UserManager<User> _userManager;
+        public TokenGeneration(IConfiguration configuration, UserManager<User> userManager)
         {
+            _userManager = userManager;
             _configuration = configuration;
         }
-        public string GenerateJwtToken(User user)
+        public async Task<string> GenerateJwtToken(User user)
         {
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
             };
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach(var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
 
@@ -36,11 +44,10 @@ namespace HRHunters.WebAPI.Helpers
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddHours(1),
-                SigningCredentials = creds
+                SigningCredentials = creds,
             };
-
+            
             var tokenHandler = new JwtSecurityTokenHandler();
-
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);

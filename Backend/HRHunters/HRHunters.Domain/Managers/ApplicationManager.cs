@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
+using HRHunters.Common.Exceptions;
 using HRHunters.Common.ExtensionMethods;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
@@ -28,19 +29,23 @@ namespace HRHunters.Domain.Managers
             _mapper = mapper;
         }
 
-        public ApplicationResponse GetMultiple(int pageSize, int currentPage, string sortedBy, SortDirection sortDir, string filterBy, string filterQuery, int id)
+        public ApplicationResponse GetMultiple(SearchRequest request, int currentUserId)
         {
+            //If the request is sent by an applicant user, check if the current logged user is the same as the ID sent 
+            if (request.Id != 0 && request.Id != currentUserId)
+                throw new UnauthorizedAccessException("Unauthorized user accessed.");
+
             var response = new ApplicationResponse() { Applications = new List<ApplicationInfo>() };
-            var query = _repo.Get<Application>(filter: x => id != 0 ? x.ApplicantId == id : x.Status.GetType().IsEnum,
+            var query = _repo.Get<Application>(filter: x => request.Id != 0 ? x.ApplicantId == request.Id : true,
                includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
                                   $"{nameof(JobPosting)}");
             var selected = _mapper.ProjectTo<ApplicationInfo>(query);
 
-            selected = selected.Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+            selected = selected.Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery);
 
             response.Applications.AddRange(selected.ToList());
             var groupings = _repo.GetAll<Application>().GroupBy(x => x.Status).Select(x => new { Status = x.Key, Count = x.Count() }).ToList();
-
+            
             response.MaxApplications = groupings.Sum(x => x.Count);
             response.Contacted = groupings.Where(x => x.Status.Equals(ApplicationStatus.Contacted)).Select(x => x.Count).FirstOrDefault();
             response.Pending = groupings.Where(x => x.Status.Equals(ApplicationStatus.Pending)).Select(x => x.Count).FirstOrDefault();
@@ -54,7 +59,8 @@ namespace HRHunters.Domain.Managers
         public ApplicationInfo UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
         {
             var application = _repo.Get<Application>(filter: x => x.Id == applicationStatusUpdate.Id,
-                                                    includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)},{nameof(JobPosting)}").FirstOrDefault();
+                                                    includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
+                                                                       $"{nameof(JobPosting)}").FirstOrDefault();
 
             Enum.TryParse(applicationStatusUpdate.Status, out ApplicationStatus statusToUpdate);
             application.Status = statusToUpdate;
@@ -68,13 +74,19 @@ namespace HRHunters.Domain.Managers
             var company = _repo.Get<Client>(filter: x => x.Id == active.Client.Id).FirstOrDefault();
             var applicant = _repo.Get<Applicant>(filter: x => x.Id == apply.ApplicantId, includeProperties: $"{nameof(User)}").FirstOrDefault();
             var list = new List<string>();
+            var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == apply.ApplicantId && x.JobPostingId==active.Id).Any();
+
             var response = new GeneralResponse()
             {
                 Succeeded = false,
                 Errors = new Dictionary<string, List<string>>()
             };
-
-            if (active == null || company.Status==ClientStatus.Inactive || active.Status != JobPostingStatus.Approved)
+            if (
+                active == null ||
+                company.Status==ClientStatus.Inactive || 
+                active.Status != JobPostingStatus.Approved ||
+                applied
+               )
             {
                 response.Errors.Add("Error", new List<string> { "Invalid input" });
                 response.Succeeded = false;
