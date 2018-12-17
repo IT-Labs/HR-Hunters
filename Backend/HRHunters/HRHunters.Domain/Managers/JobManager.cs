@@ -61,10 +61,10 @@ namespace HRHunters.Domain.Managers
 
             if (role.Contains("Client"))
             {
-                query= query.Where(x => x.ClientId == id);
+                query= query.Where(x => x.ClientId == request.Id);
             }
 
-            var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+            var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery);
             response.JobPostings.AddRange(selected.ToList());
             var groupings = _repo.GetAll<JobPosting>()
                                         .GroupBy(x => x.Status)
