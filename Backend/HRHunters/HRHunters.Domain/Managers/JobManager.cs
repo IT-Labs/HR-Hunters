@@ -43,27 +43,29 @@ namespace HRHunters.Domain.Managers
 
             var response = new JobResponse() { JobPostings = new List<JobInfo>() };
             var user = await _userManager.FindByIdAsync(request.Id.ToString());
-            IList<string> role = new List<string>();
-            if (user != null)
-                role = await _userManager.GetRolesAsync(user);
-           
-            if (role != null || request.Id == 0)
+
+            var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == request.Id).Select(x => x.JobPostingId).ToList();
+            var query = _repo.GetAll<JobPosting>(includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," +
+                                                                    $"{nameof(JobPosting.Applications)}");
+            if (user == null)
             {
-
-                var queryApplicant = _repo.GetAll<JobPosting>(
-                        includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}",
-                        skip: (request.CurrentPage - 1)*request.PageSize, take: request.PageSize)
-                        .Where(x => role.Contains("Applicant")
-                                        ? x.Client.Status == ClientStatus.Active 
-                                                && x.Status == JobPostingStatus.Approved
-                                            : role.Contains("Client") ? x.ClientId == request.Id
-                                                : x.Status.GetType().IsEnum);
-
-                var selected = _mapper.ProjectTo<JobInfo>(queryApplicant)
-                                        .Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery);
-
-                response.JobPostings.AddRange(selected.ToList());
+                throw new InvalidUserException("invalid user");
             }
+            IList<string> role = _userManager.GetRolesAsync(user).Result;
+
+            if (role.Contains("Applicant"))
+            {
+                query= query.Where(x => x.Client.Status == ClientStatus.Active && x.Status == JobPostingStatus.Approved)
+                    .Where(x => !applied.Contains(x.Id));
+            }
+
+            if (role.Contains("Client"))
+            {
+                query= query.Where(x => x.ClientId == id);
+            }
+
+            var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+            response.JobPostings.AddRange(selected.ToList());
             var groupings = _repo.GetAll<JobPosting>()
                                         .GroupBy(x => x.Status)
                                         .Select(x => new
@@ -71,7 +73,7 @@ namespace HRHunters.Domain.Managers
                                             Status = x.Key,
                                             Count = x.Count()
                                         }).ToList();
-            
+
             response.MaxJobPosts = groupings.Sum(x => x.Count);
             response.Approved = groupings.Where(x => x.Status.Equals(JobPostingStatus.Approved)).Select(x => x.Count).FirstOrDefault();
             response.Pending = groupings.Where(x => x.Status.Equals(JobPostingStatus.Pending)).Select(x => x.Count).FirstOrDefault();
@@ -116,7 +118,7 @@ namespace HRHunters.Domain.Managers
                 jobPost.Status = JobPostingStatus.Pending;
             else
                 jobPost.Status = JobPostingStatus.Approved;
-                
+
             _repo.Create(jobPost, "Admin");
 
             return response;
@@ -140,9 +142,9 @@ namespace HRHunters.Domain.Managers
             };
             var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
-                                                    
+
             if (!string.IsNullOrEmpty(jobUpdate.Status) && jobPost != null)
-            { 
+            {
 
                 Enum.TryParse(jobUpdate.Status, out JobPostingStatus statusToUpdate);
                 jobPost.Status = statusToUpdate;
