@@ -1,55 +1,65 @@
-<div class="dash__container">
-  <div class="dash__heading">
-    <h2>Applicants</h2>
-    <div class="text-muted dash__filtering">
-      <ul>
-        <li>
-          All<span>({{ applicantsCount.all }})</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <!-- table -->
-  <div class="dash__table">
-    <table
-      class="table table-hover table-responsive-sm table-striped table-bordered"
-    >
-      <thead>
-        <tr class="dash__table__header">
-          <th scope="col" (click)="onSort('firstName')">Name</th>
-          <th scope="col">Photo</th>
-          <th scope="col" (click)="onSort('email')">Email</th>
-          <th scope="col" (click)="onSort('phoneNumber')">Phone</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let applicant of applicants">
-          <td scope="row">
-            {{ applicant.firstName }} {{ applicant.lastName }}
-          </td>
-          <td>
-            <img
-              class="dash__table--image"
-              [src]="applicant.photo"
-              [alt]="applicant.firstName"
-            />
-          </td>
-          <td>{{ applicant.email }}</td>
-          <td>{{ applicant.phoneNumber }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+<div class="my-container">
+  <ng-template #customLoadingTemplate>
+  </ng-template>
 
-  <ngb-pagination 
-    *ngIf="applicantsCount.all > 10"
-    [collectionSize]="applicantsCount.all"
-    [(page)]="applicantsQP.currentPage"
-    [maxSize]="10"
-    [rotate]="true"
-    [ellipses]="false"
-    [boundaryLinks]="true"
-    class="d-flex justify-content-center"
-    (pageChange)="onChangedPage($event)"
-  ></ngb-pagination>
+  <ngx-loading
+    [show]="loading"
+    [config]="{ backdropBorderRadius: '3px' }"
+    [template]="customLoadingTemplate"
+  ></ngx-loading>
+  <div class="dash__container">
+    <div class="dash__heading">
+      <h2>Applicants</h2>
+      <div class="text-muted dash__filtering">
+        <ul>
+          <li>
+            All<span>({{ applicantsCount.all }})</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- table -->
+    <div class="dash__table">
+      <table
+        class="table table-hover table-responsive-sm table-striped table-bordered"
+      >
+        <thead>
+          <tr class="dash__table__header">
+            <th scope="col" (click)="onSort('firstName')">Name</th>
+            <th scope="col">Photo</th>
+            <th scope="col" (click)="onSort('email')">Email</th>
+            <th scope="col" (click)="onSort('phoneNumber')">Phone</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let applicant of applicants">
+            <td scope="row">
+              {{ applicant.firstName }} {{ applicant.lastName }}
+            </td>
+            <td>
+              <img
+                class="dash__table--image"
+                [src]="applicant.photo"
+                [alt]="applicant.firstName"
+              />
+            </td>
+            <td>{{ applicant.email }}</td>
+            <td>{{ applicant.phoneNumber }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ngb-pagination
+      *ngIf="applicantsCount.all > 10"
+      [collectionSize]="applicantsCount.all"
+      [(page)]="applicantsQP.currentPage"
+      [maxSize]="10"
+      [rotate]="true"
+      [ellipses]="false"
+      [boundaryLinks]="true"
+      class="d-flex justify-content-center"
+      (pageChange)="onChangedPage($event)"
+    ></ngb-pagination>
+  </div>
 </div>

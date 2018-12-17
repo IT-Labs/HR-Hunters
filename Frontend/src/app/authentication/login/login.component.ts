@@ -11,8 +11,9 @@ import { Router } from "@angular/router";
 })
 export class LoginComponent implements OnInit {
   role = 3;
-
+  loading = false;
   authError;
+
   private authErrorStatusSub: Subscription;
   private roleStatusSub: Subscription;
 
@@ -23,6 +24,7 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading = true;
     this.role = this.authService.getRole();
     
     this.authErrorStatusSub = this.authService
@@ -30,6 +32,7 @@ export class LoginComponent implements OnInit {
       .subscribe(error => {
         this.authError = error.error;
       });
+      this.loading = false;
   }
 
   loginForm = this.fb.group({
@@ -48,6 +51,7 @@ export class LoginComponent implements OnInit {
   });
 
   onLogin() {
+    this.loading = true;
     if (this.loginForm.invalid) {
       return;
     }
@@ -55,6 +59,7 @@ export class LoginComponent implements OnInit {
       this.loginForm.value.email,
       this.loginForm.value.password
     );
+    this.loading = false;
   }
 
   ngOnDestroy() {

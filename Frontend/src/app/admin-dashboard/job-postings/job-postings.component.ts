@@ -3,6 +3,7 @@ import { JobPosting } from "src/app/models/job-posting.model";
 import { Subscription } from "rxjs";
 import { JobPostingService } from "src/app/services/job-posting.service";
 import { Router } from "@angular/router";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-ad-job-postings",
@@ -34,11 +35,15 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   jobPostings: JobPosting[] = [];
   paginationSize: number[] = [];
 
+  loading = false;
+  loggedInUser;
+
   private jobPostingSub: Subscription;
 
-  constructor(private jobPostingService: JobPostingService, private router: Router) {}
+  constructor(private jobPostingService: JobPostingService, private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
+    this.loading = true;
     const params = this.buildQueryParams(this.jobPostingQP);
     this.jobPostingService.getJobPostings(params);
     this.jobPostingSub = this.jobPostingService
@@ -50,18 +55,19 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
         this.jobPostingsCount.pending = jobPostingData.pending;
         this.jobPostingsCount.expired = jobPostingData.expired;
         this.jobPostingsCount.rejected = jobPostingData.rejected
+        this.loading = false;
       });
-
       setTimeout(() => {
         this.paginationMaxSize = this.jobPostingsCount.all
       }, 1000);
+      this.loggedInUser = this.authService.getUser()
   }
 
   buildQueryParams(data) {
     if (data.currentFilter === null) {
-    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&id=${this.loggedInUser.id}`;
     }
-    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}&id=${this.loggedInUser.id}`;
   }
 
   buildJobPostingDataOnUpdate(
@@ -95,14 +101,17 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   }
 
   onChangedPage(page: number) {
+    this.loading = true;
     if (this.jobPostingQP.currentPage !== this.jobPostingQP.previousPage) {
       this.jobPostingQP.previousPage = this.jobPostingQP.currentPage;
       const params = this.buildQueryParams(this.jobPostingQP);
       this.jobPostingService.getJobPostings(params);
+      this.loading = false;
     }
   }
 
   onFilter(filterBy: string) {
+    this.loading = true;
     if (filterBy === null) {
       this.jobPostingQP.currentFilter = null
     } else {
@@ -125,6 +134,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     this.jobPostingQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.jobPostingQP);
     this.jobPostingService.getJobPostings(params);
+    this.loading = false;
   }
 
   onSort(sortBy: any) {
@@ -149,6 +159,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   }
 
   chooseStatus(event: any, id: number) {
+    this.loading = true;
     const currentStatus = event.target.innerText;
     const currentId = id;
 
@@ -168,6 +179,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       const params = this.buildQueryParams(this.jobPostingQP);
       this.jobPostingService.getJobPostings(params);
+      this.loading = false;
     }, 1000);
   }
 

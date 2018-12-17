@@ -5,7 +5,7 @@ import { ApplicantRegisterComponent } from "./authentication/applicants/register
 import { AddJobPostingComponent } from "./homepage/client/add-job-posting/add-job-posting.component";
 import { ClientComponent } from "./homepage/client/client.component";
 import { ClientJobPostingsComponent } from "./homepage/client/client-job-postings/client-job-postings.component";
-import { JobPostingDetailsComponent } from "./homepage/applicant/job-posting-details/job-posting-details.component";
+import { JobPostingDetailsComponent } from "./homepage/job-posting-details/job-posting-details.component";
 import { ApplicantApplicationsComponent } from "./homepage/applicant/applicant-applications/applicant-applications.component";
 import { ErrorComponent } from "./error/error.component";
 import { JobPostingsListComponent } from "./homepage/applicant/job-postings-list/job-postings-list.component";
@@ -20,9 +20,11 @@ import { ADClientsComponent } from "./admin-dashboard/clients/clients.component"
 import { ADJobPostingsComponent } from "./admin-dashboard/job-postings/job-postings.component";
 import { ADNewJobPostingComponent } from "./admin-dashboard/job-postings/new-job-posting/new-job-posting.component";
 
-import { AuthGuard } from "./authentication/auth.guard";
 import { ApplicantComponent } from "./homepage/applicant/applicant.component";
 import { NewClientComponent } from "./admin-dashboard/clients/new-client/new-client.component";
+import { AuthAdminGuard } from "./auth-guards/auth-admin.guard";
+import { AuthClientGuard } from "./auth-guards/auth-client.guard";
+import { AuthApplicantGuard } from "./auth-guards/auth-applicant.guard";
 
 const routes: Routes = [
   { path: "", redirectTo: "welcome", pathMatch: "full" },
@@ -33,6 +35,7 @@ const routes: Routes = [
   {
     path: "admin-dashboard",
     component: AdminDashboardComponent,
+    canActivate: [AuthAdminGuard],
     children: [
       { path: "applicants", component: ADApplicantsComponent },
       { path: "applications", component: ADApplicationsComponent },
@@ -46,6 +49,7 @@ const routes: Routes = [
   {
     path: "client",
     component: ClientComponent,
+    canActivate: [AuthClientGuard],
     children: [
       { path: "profile", component: ClientProfileComponent },
       { path: "job-postings", component: ClientJobPostingsComponent },
@@ -56,6 +60,7 @@ const routes: Routes = [
   {
     path: "applicant",
     component: ApplicantComponent,
+    canActivate: [AuthApplicantGuard],
     children: [
       { path: "profile", component: ApplicantProfileComponent },
       { path: "job-postings", component: JobPostingsListComponent },
@@ -69,6 +74,6 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [AuthGuard]
+  providers: [AuthAdminGuard, AuthApplicantGuard, AuthClientGuard]
 })
 export class AppRoutingModule {}

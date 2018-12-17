@@ -1,75 +1,88 @@
-<div class="auth-page__container">
-  <div class="auth-page__container--image">
-    <div class="auth-page__container--opacity">
-      <div class="auth-page__logo-container">
-        <img src="../../assets/img/hr-hunters-logo.png" alt="Hr Hunters logo" />
-        <div class="auth-page__logo-container__title">HR Hunters</div>
-      </div>
-      <div class="auth-form__container">
-        <div class="auth-form__container--bg-color">
-          <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-            <!-- EMAIL INPUT -->
-            <input
-              type="email"
-              class="form-control auth-form__input"
-              placeholder="Email"
-              formControlName="email"
-              maxlength="30"
-            />
-            <div
-              *ngIf="
-                !loginForm.controls['email'].valid &&
-                (loginForm.controls['email'].dirty ||
-                  loginForm.controls['email'].touched)
-              "
-              class="alert alert-warning auth-form__alert"
-            >
-              <div *ngIf="loginForm.controls['email'].errors">
-                Please enter your valid email.
+<div class="my-container">
+  <ng-template #customLoadingTemplate> </ng-template>
+
+  <ngx-loading
+    [show]="loading"
+    [config]="{ backdropBorderRadius: '3px' }"
+    [template]="customLoadingTemplate"
+  ></ngx-loading>
+  <div class="auth-page__container">
+    <div class="auth-page__container--image">
+      <div class="auth-page__container--opacity">
+        <div class="auth-page__logo-container">
+          <img
+            src="../../assets/img/hr-hunters-logo.png"
+            alt="Hr Hunters logo"
+          />
+          <div class="auth-page__logo-container__title">HR Hunters</div>
+        </div>
+        <div class="auth-form__container">
+          <div class="auth-form__container--bg-color">
+            <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+              <!-- EMAIL INPUT -->
+              <input
+                type="email"
+                class="form-control auth-form__input"
+                placeholder="Email"
+                formControlName="email"
+                maxlength="30"
+              />
+              <div
+                *ngIf="
+                  !loginForm.controls['email'].valid &&
+                  (loginForm.controls['email'].dirty ||
+                    loginForm.controls['email'].touched)
+                "
+                class="alert alert-warning auth-form__alert"
+              >
+                <div *ngIf="loginForm.controls['email'].errors">
+                  Please enter your valid email.
+                </div>
               </div>
-            </div>
 
-            <!-- SERVER ERROR -->
+              <!-- SERVER ERROR -->
 
-            <div
-              *ngIf="authError"
-              class="alert alert-warning auth-form__alert"
-            > {{ authError }}
-            </div>
-
-            <!-- PASSWORD INPUT -->
-            <input
-              type="password"
-              class="form-control auth-form__input"
-              placeholder="Password"
-              formControlName="password"
-              maxlength="20"
-            />
-            <div
-              *ngIf="
-                !loginForm.controls['password'].valid &&
-                (loginForm.controls['password'].dirty ||
-                  loginForm.controls['password'].touched)
-              "
-              class="alert alert-warning auth-form__alert"
-            >
-              <div *ngIf="loginForm.controls['password'].errors">
-                Please enter your valid password.
+              <div
+                *ngIf="authError"
+                class="alert alert-warning auth-form__alert"
+              >
+                {{ authError }}
               </div>
-            </div>
-            <p class="auth-form__text" *ngIf="role === 1 || role === 2">
-              You don't have an account?<br />Register
-              <a routerLink="/applicant-register" *ngIf="role === 1">here</a>
-              <a routerLink="/client-register" *ngIf="role === 2">here</a>.
-            </p>
-            <button
-              class="btn btn-auth"
-              type="submit"
-              [disabled]="!loginForm.valid"
-            >
-              Login
-            </button>
-          </form>
+
+              <!-- PASSWORD INPUT -->
+              <input
+                type="password"
+                class="form-control auth-form__input"
+                placeholder="Password"
+                formControlName="password"
+                maxlength="20"
+              />
+              <div
+                *ngIf="
+                  !loginForm.controls['password'].valid &&
+                  (loginForm.controls['password'].dirty ||
+                    loginForm.controls['password'].touched)
+                "
+                class="alert alert-warning auth-form__alert"
+              >
+                <div *ngIf="loginForm.controls['password'].errors">
+                  Please enter your valid password.
+                </div>
+              </div>
+              <p class="auth-form__text" *ngIf="role === 1 || role === 2">
+                You don't have an account?<br />Register
+                <a routerLink="/applicant-register" *ngIf="role === 1">here</a>
+                <a routerLink="/client-register" *ngIf="role === 2">here</a>.
+              </p>
+              <button
+                class="btn btn-auth"
+                type="submit"
+                [disabled]="!loginForm.valid"
+              >
+                Login
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
