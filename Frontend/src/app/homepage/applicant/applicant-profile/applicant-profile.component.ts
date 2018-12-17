@@ -108,15 +108,18 @@ export class ApplicantProfileComponent implements OnInit {
     experience: [
       "",
       Validators.compose([Validators.required, Validators.maxLength(3)])
-    ],
-    logo: [
-      "",
-      {
-        validators: [Validators.required],
-        asyncValidators: [mimeType]
-      }
     ]
   });
+
+  /*
+  logo: [
+    "",
+    {
+      validators: [Validators.required],
+      asyncValidators: [mimeType]
+    }
+  ]
+  */
 
   buildApplicantDataOnUpdateApplicantProfile(
     firstName: string,
@@ -178,12 +181,9 @@ export class ApplicantProfileComponent implements OnInit {
       this.applicantProfileFormHP.value.experience
     );
 
-    if (this.imagePreview === undefined) {
-      this.imageValid = false;
-    } else {
-      if (this.applicantProfileFormHP.valid) {
-        this.applicantService.updateApplicant(applicantData, this.loggedInUser.id);
-      }
+    
+    if (this.applicantProfileFormHP.valid) {
+      this.applicantService.updateApplicant(applicantData, this.loggedInUser.id);
     }
   }
 }

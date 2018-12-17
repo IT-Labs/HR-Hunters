@@ -68,7 +68,10 @@ export class ClientProfileComponent implements OnInit {
         Validators.maxLength(30),
         Validators.pattern("[a-zA-Z0-9]*")
       ])
-    ],
+    ]
+  });
+
+  /*
     logo: [
       "",
       {
@@ -76,7 +79,7 @@ export class ClientProfileComponent implements OnInit {
         asyncValidators: [mimeType]
       }
     ]
-  });
+  */
 
   buildClientDataOnUpdateClientProfile(
     companyName: string,
@@ -129,12 +132,8 @@ export class ClientProfileComponent implements OnInit {
       null
     );
 
-    if (this.imagePreview === undefined) {
-      this.imageValid = false;
-    } else {
-      if (this.clientProfileFormHP.valid) {
-        this.clientService.updateClientProfile(clientData, this.loggedInUser.id);
-      }
+    if (this.clientProfileFormHP.valid) {
+      this.clientService.updateClientProfile(clientData, this.loggedInUser.id);
     }
   }
 }
