@@ -10,18 +10,12 @@ import { Router } from "@angular/router";
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
 
-  adminIsAuthenticated = false;
   dropdownOpen = false;
-  
-  private authListenerSubs: Subscription;
   
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
-    //this.adminIsAuthenticated = this.authService.getIsAuth();
-    this.authListenerSubs = this.authService.getAuthStatusListener().subscribe(isAuthenticated => {
-      this.adminIsAuthenticated = isAuthenticated;
-    })
+
   }
 
   // Closing the dropdown on click on link
@@ -39,6 +33,5 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.authListenerSubs.unsubscribe();
   }
 }
