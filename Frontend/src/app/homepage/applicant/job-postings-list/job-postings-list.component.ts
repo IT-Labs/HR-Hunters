@@ -47,7 +47,7 @@ export class JobPostingsListComponent implements OnInit {
   buildQueryParams(data) {
     return `?pageSize=${data.postsPerPage}&currentPage=${
       data.currentPage
-    }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+    }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&id=${this.loggedInUser.id}`;
   }
 
   buildApplicationData(applicantId: number, jobId: number) {

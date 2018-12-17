@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
       .subscribe(error => {
         this.authError = error.error;
       });
-      this.loading = false;
+    this.loading = false;
   }
 
   loginForm = this.fb.group({
@@ -71,11 +71,11 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.invalid) {
       return;
     }
+    this.loading = false;
     this.authService.loginUser(
       this.loginForm.value.email,
       this.loginForm.value.password
     );
-    this.loading = false;
   }
 
   ngOnDestroy() {
