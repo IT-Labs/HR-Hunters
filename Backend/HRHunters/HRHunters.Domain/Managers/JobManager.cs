@@ -37,42 +37,32 @@ namespace HRHunters.Domain.Managers
 
         public async Task<JobResponse> GetMultiple(SearchRequest request, int currentUserId)
         {
-            //If a user that is not Admin sent this reuqest, and it is not found (Id == 0 => admin)
-            if (request.Id != 0 && request.Id != currentUserId)
-                throw new InvalidUserException("Bad Request.");
+            if (request.Id != currentUserId)
+            {
+                throw new InvalidUserException("Bad request");
+            }
+            var current = await _userManager.FindByIdAsync(currentUserId.ToString());
+            IList<string> role = _userManager.GetRolesAsync(current).Result;
+            var query = _repo.GetAll<JobPosting>(includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," + $"{nameof(JobPosting.Applications)}");
+            var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == request.Id).Select(x => x.JobPostingId).ToList();
+            if (!role.Contains("Admin"))
+            {
+                if (role.Contains("Applicant"))
+                {
+                    query = query.Where(x => x.Client.Status == ClientStatus.Active && x.Status == JobPostingStatus.Approved).Where(x => !applied.Contains(x.Id));
+                }
+
+                if (role.Contains("Client"))
+                {
+                    query = query.Where(x => x.ClientId == request.Id);
+                }
+            }
 
             var response = new JobResponse() { JobPostings = new List<JobInfo>() };
-            var user = await _userManager.FindByIdAsync(request.Id.ToString());
 
-            var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == request.Id).Select(x => x.JobPostingId).ToList();
-            var query = _repo.GetAll<JobPosting>(includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," +
-                                                                    $"{nameof(JobPosting.Applications)}");
-            if (user == null)
-            {
-                throw new InvalidUserException("invalid user");
-            }
-            IList<string> role = _userManager.GetRolesAsync(user).Result;
-
-            if (role.Contains("Applicant"))
-            {
-                query= query.Where(x => x.Client.Status == ClientStatus.Active && x.Status == JobPostingStatus.Approved)
-                    .Where(x => !applied.Contains(x.Id));
-            }
-
-            if (role.Contains("Client"))
-            {
-                query= query.Where(x => x.ClientId == id);
-            }
-
-            var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(pageSize, currentPage, sortedBy, sortDir, filterBy, filterQuery);
+            var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery);
             response.JobPostings.AddRange(selected.ToList());
-            var groupings = _repo.GetAll<JobPosting>()
-                                        .GroupBy(x => x.Status)
-                                        .Select(x => new
-                                        {
-                                            Status = x.Key,
-                                            Count = x.Count()
-                                        }).ToList();
+            var groupings = _repo.GetAll<JobPosting>().GroupBy(x => x.Status).Select(x => new { Status = x.Key, Count = x.Count() }).ToList();
 
             response.MaxJobPosts = groupings.Sum(x => x.Count);
             response.Approved = groupings.Where(x => x.Status.Equals(JobPostingStatus.Approved)).Select(x => x.Count).FirstOrDefault();
@@ -85,11 +75,11 @@ namespace HRHunters.Domain.Managers
 
         public async Task<GeneralResponse> CreateJobPosting(JobSubmit jobSubmit, int currentUserId)
         {
-            var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(jobSubmit.Id.ToString()));
+            var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(currentUserId.ToString()));
 
             if (jobSubmit.Id != currentUserId && !userRole.Contains("Admin"))
             {
-                throw new UnauthorizedAccessException("Unautherized access!");
+                throw new UnauthorizedAccessException();
             }
             var company = new Client();
             var list = new List<string>();
@@ -115,17 +105,23 @@ namespace HRHunters.Domain.Managers
             jobPost.EmpCategory = empCategory;
             jobPost.Education = education;
             if (userRole.Contains("Client"))
+            {
                 jobPost.Status = JobPostingStatus.Pending;
+                _repo.Create(jobPost, company.User.FirstName);
+            }
             else
+            {
                 jobPost.Status = JobPostingStatus.Approved;
+                _repo.Create(jobPost, "Admin");                
+            }
 
-            _repo.Create(jobPost, "Admin");
 
             return response;
         }
 
-        public JobInfo GetOneJobPosting(int id, int currentUserId)
+        public JobInfo GetOneJobPosting(int id)
         {
+
             var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
 
@@ -133,8 +129,14 @@ namespace HRHunters.Domain.Managers
 
         }
 
-        public GeneralResponse UpdateJob(JobUpdate jobUpdate, int currentUserId)
+        public async Task<GeneralResponse> UpdateJob(JobUpdate jobUpdate, int currentUserId)
         {
+            var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(currentUserId.ToString()));
+
+            if (!userRole.Contains("Admin"))
+            {
+                throw new UnauthorizedAccessException();
+            }
             var response = new GeneralResponse()
             {
                 Succeeded = true,

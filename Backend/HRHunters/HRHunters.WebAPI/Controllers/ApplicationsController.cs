@@ -19,6 +19,7 @@ namespace HRHunters.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ApplicationsController : ControllerBase
     {
         private readonly IApplicationManager _applicationManager;
@@ -29,21 +30,27 @@ namespace HRHunters.WebAPI.Controllers
             _applicationManager = applicationManager;
             _httpContextAccessor = httpContextAccessor;
         }
-        [HttpGet]
-        public ActionResult<ApplicationResponse> GetMultipleApplications([FromQuery]SearchRequest request)
+        private int GetCurrentUserId()
         {
-            return Ok(_applicationManager.GetMultiple(request));
+            return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
+        [Authorize(Roles = "Admin, Applicant")]
+        [HttpGet]
+        public async Task<ActionResult<ApplicationResponse>> GetMultipleApplications([FromQuery]SearchRequest request)
+        {
+            return Ok(await _applicationManager.GetMultiple(request, GetCurrentUserId()));
+        }        
+        [Authorize(Roles="Admin")]
         [HttpPut]
         public ActionResult<ApplicationInfo> UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
         {
             return Ok(_applicationManager.UpdateApplicationStatus(applicationStatusUpdate));
         }
+        [Authorize(Roles = "Applicant")]
         [HttpPost]
         public ActionResult<GeneralResponse> CreateApplication(Apply apply)
         {
-            //var currentUserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return Ok(_applicationManager.CreateApplication(apply));
+            return Ok(_applicationManager.CreateApplication(apply, GetCurrentUserId()));
         }
 
 

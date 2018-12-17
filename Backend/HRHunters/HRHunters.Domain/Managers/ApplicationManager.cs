@@ -10,6 +10,7 @@ using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,24 +24,35 @@ namespace HRHunters.Domain.Managers
     {
         private readonly IRepository _repo;
         private readonly IMapper _mapper;
-        public ApplicationManager(IRepository repo, IMapper mapper) : base(repo)
+        private readonly UserManager<User> _userManager;
+
+        public ApplicationManager(IRepository repo, IMapper mapper, UserManager<User> userManager) : base(repo)
         {
             _repo = repo;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
-        public ApplicationResponse GetMultiple(SearchRequest request, int currentUserId)
+        public async Task<ApplicationResponse> GetMultiple(SearchRequest request, int currentUserId)
         {
-            //If the request is sent by an applicant user, check if the current logged user is the same as the ID sent 
-            if (request.Id != 0 && request.Id != currentUserId)
-                throw new UnauthorizedAccessException("Unauthorized user accessed.");
+            if (request.Id != currentUserId)
+            {
+                throw new InvalidUserException("Bad request");
+            }
+            var current = await _userManager.FindByIdAsync(currentUserId.ToString());
+            IList<string> role = _userManager.GetRolesAsync(current).Result;
+            var query = _repo.GetAll<Application>(includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
+                                                                     $"{nameof(JobPosting)}");
+            if (!role.Contains("Admin"))
+            {                
+                if (role.Contains("Applicant"))
+                {
+                    query = query.Where(x=>x.ApplicantId == request.Id);
+                }
+            }
 
-            var response = new ApplicationResponse() { Applications = new List<ApplicationInfo>() };
-            var query = _repo.Get<Application>(filter: x => request.Id != 0 ? x.ApplicantId == request.Id : true,
-               includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
-                                  $"{nameof(JobPosting)}");
+            var response = new ApplicationResponse() { Applications = new List<ApplicationInfo>() };          
             var selected = _mapper.ProjectTo<ApplicationInfo>(query);
-
             selected = selected.Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery);
 
             response.Applications.AddRange(selected.ToList());
@@ -52,6 +64,7 @@ namespace HRHunters.Domain.Managers
             response.Hired = groupings.Where(x => x.Status.Equals(ApplicationStatus.Hired)).Select(x => x.Count).FirstOrDefault();
             response.Interviewed = groupings.Where(x => x.Status.Equals(ApplicationStatus.Interviewed)).Select(x => x.Count).FirstOrDefault();
             response.Rejected = groupings.Where(x => x.Status.Equals(ApplicationStatus.Rejected)).Select(x => x.Count).FirstOrDefault();
+
             return response;
 
         }
@@ -67,8 +80,13 @@ namespace HRHunters.Domain.Managers
             _repo.Update(application, "Admin");
             return _mapper.Map(application, new ApplicationInfo());
         }
-        public GeneralResponse CreateApplication(Apply apply)
+        public GeneralResponse CreateApplication(Apply apply,int currentUserId)
         {
+            if (currentUserId != apply.ApplicantId)
+            {
+                throw new InvalidUserException("Invalid user id");
+            }
+
             var active = _repo.Get<JobPosting>(filter: x => x.Id == apply.JobId,
                                               includeProperties: $"{nameof(JobPosting.Client)}").FirstOrDefault();
             var company = _repo.Get<Client>(filter: x => x.Id == active.Client.Id).FirstOrDefault();

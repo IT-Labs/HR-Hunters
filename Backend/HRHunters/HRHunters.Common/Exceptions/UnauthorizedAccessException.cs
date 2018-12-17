@@ -6,9 +6,11 @@ namespace HRHunters.Common.Exceptions
 {
     class UnauthorizedAccessException : Exception
     {
-        public UnauthorizedAccessException() : base("Unauthorized access to method")
+        public new string Message { get; set; }
+     
+        public UnauthorizedAccessException()
         {
-
+            Message = "Unauthorized access";
         }
     }
 }

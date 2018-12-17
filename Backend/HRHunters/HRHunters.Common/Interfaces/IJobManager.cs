@@ -18,8 +18,8 @@ namespace HRHunters.Common.Interfaces
     {
         Task<JobResponse> GetMultiple(SearchRequest request, int currentUserId);
         Task<GeneralResponse> CreateJobPosting(JobSubmit jobSubmit, int currentUserId);
-        JobInfo GetOneJobPosting(int id, int currentUserId);
-        GeneralResponse UpdateJob(JobUpdate jobSubmit, int currentUserId);
+        JobInfo GetOneJobPosting(int id);
+        Task<GeneralResponse> UpdateJob(JobUpdate jobSubmit, int currentUserId);
 
     }
 }
