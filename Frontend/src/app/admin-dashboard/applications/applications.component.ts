@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
 import { Application } from "src/app/models/application.model";
 import { ApplicationService } from "src/app/services/application.service";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-ad-applications",
@@ -32,11 +33,16 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   };
   paginationSize: number[] = [];
 
+  loading = false;
+  loggedInUser;
+
   private applicationsSub: Subscription;
 
-  constructor(private applicationService: ApplicationService) {}
+  constructor(private applicationService: ApplicationService, private authService: AuthService) {}
 
   ngOnInit() {
+    this.loading = true;
+    this.loggedInUser = this.authService.getUser()
     const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
     this.applicationsSub = this.applicationService
@@ -49,6 +55,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
         this.applicationCount.interviewed = applicationsData.interviewed;
         this.applicationCount.hired = applicationsData.hired;
         this.applicationCount.rejected = applicationsData.rejected;
+        this.loading = false;
       });
       setTimeout(() => {
         this.paginationMaxSize = this.applicationCount.all
@@ -59,13 +66,13 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     if (data.currentFilter === null) {
       return `?pageSize=${data.postsPerPage}&currentPage=${
         data.currentPage
-      }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+      }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&id=${this.loggedInUser.id}`;
     }
     return `?pageSize=${data.postsPerPage}&currentPage=${
       data.currentPage
     }&sortedBy=${data.currentSortBy}&sortDir=${
       data.currentSortDirection
-    }&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
+    }&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}&id=${this.loggedInUser.id}`;
   }
 
   buildApplicationsDataOnUpdate(
@@ -80,14 +87,17 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   }
 
   onChangedPage(page: number) {
+    this.loading = true;
     if (this.applicationQP.currentPage !== this.applicationQP.previousPage) {
       this.applicationQP.previousPage = this.applicationQP.currentPage;
       const params = this.buildQueryParams(this.applicationQP);
       this.applicationService.getApplications(params);
     }
+    this.loading = false;
   }
 
   onFilter(filterBy: string) {
+    this.loading = true;
     if (filterBy === null) {
       this.applicationQP.currentFilter = null;
     } else {
@@ -112,6 +122,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     this.applicationQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
+    this.loading = false;
   }
 
   onSort(sortBy: string) {
@@ -136,6 +147,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   }
 
   chooseStatus(event: any, id: number) {
+    this.loading = true;
     const currentStatus = event.target.innerText;
     const currentId = id;
     const applicationData = this.buildApplicationsDataOnUpdate(
@@ -147,6 +159,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       const params = this.buildQueryParams(this.applicationQP);
       this.applicationService.getApplications(params);
+      this.loading = false;
     }, 1000);
   }
 

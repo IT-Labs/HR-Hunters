@@ -7,7 +7,7 @@ import { Subscription, Subject, Observable, merge } from "rxjs";
 import { NgbDate, NgbCalendar, NgbTypeahead } from "@ng-bootstrap/ng-bootstrap";
 import { debounceTime, distinctUntilChanged, filter, map } from "rxjs/operators";
 import { ActivatedRoute } from "@angular/router";
-import { JobPosting } from "src/app/models/job-posting.model";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-ad-new-job-posting",
@@ -77,6 +77,9 @@ export class ADNewJobPostingComponent implements OnInit {
   fromDate: NgbDate;
   toDate: NgbDate;
 
+  loading = false;
+  loggedInUser;
+
   private jobPostingSub: Subscription;
   private clientsSub: Subscription;
 
@@ -85,10 +88,13 @@ export class ADNewJobPostingComponent implements OnInit {
     private jobPostingService: JobPostingService,
     private clientService: ClientService,
     private calendar: NgbCalendar,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    this.loading = true;
+    this.loggedInUser = this.authService.getUser();
     const edit = this.activatedRoute.snapshot.queryParamMap.get('edit')
     const id = this.activatedRoute.snapshot.paramMap.get('id')
     if (edit === "true") {
@@ -130,6 +136,7 @@ export class ADNewJobPostingComponent implements OnInit {
     } else {
       this.validDate = false;
     }
+    this.loading = false;
   }
 
   newJobPostingForm = this.fb.group({
@@ -189,7 +196,7 @@ export class ADNewJobPostingComponent implements OnInit {
   }
 
   buildQueryParams() {
-    return `?pageSize=0&currentPage=0`;
+    return `?pageSize=0&currentPage=0&id=${this.loggedInUser.id}`;
   }
 
   search = (text$: Observable<string>) => {
@@ -205,12 +212,12 @@ export class ADNewJobPostingComponent implements OnInit {
 
   checkCompanyValidity() {
     this.validClient = false;
-    this.clientNames.forEach(c => {
-      if (this.newJobPostingForm.value.companyName === c) {
+    this.clients.forEach(c => {
+      if (this.newJobPostingForm.value.companyName === c.companyName) {
         this.validClient = true;
+        this.selectedCompany = c;
       }
     })
-    console.log(this.validClient, this.newJobPostingForm.value.companyName)
   }
 
   onDateSelection(date: NgbDate) {
@@ -248,6 +255,7 @@ export class ADNewJobPostingComponent implements OnInit {
   }
 
   onSubmitNewJobPosting() {
+    this.loading = true;
     this.newJobPostingForm.controls["companyName"].markAsTouched();
     this.newJobPostingForm.controls["title"].markAsTouched();
     this.newJobPostingForm.controls["jobType"].markAsTouched();
@@ -306,30 +314,28 @@ export class ADNewJobPostingComponent implements OnInit {
       dateToday = `${this.todayDate.year}/${monthTodayDate}/${dayTodayDate}`;
     }
 
-    let education;
-    switch (this.newJobPostingForm.value.education) {
-      case "Full-time": 
-        education = "Full_time"
-        break;
-      case "Part-time":
-        education = "Part_time"
-        break;
-      case "Intern": 
-        education = "Intern"
-        break;
+    let empCategory;
+
+    if (this.newJobPostingForm.value.jobType === "Full-time") {
+      empCategory = "Full_time"
+    } else if (this.newJobPostingForm.value.jobType === "Part-time") {
+      empCategory = "Part_time"
+    } else  if (this.newJobPostingForm.value.jobType === "Intern") {
+      empCategory = "Intern"
     }
 
     let jobPostingData = this.buildJobPostingDataOnAddJobPosting(
       this.selectedCompany.id,
       this.newJobPostingForm.value.title,
       this.newJobPostingForm.value.description,
-      this.newJobPostingForm.value.jobType,
-      education,
+      empCategory,
+      this.newJobPostingForm.value.education,
       this.newJobPostingForm.value.experience,
       dateFrom,
       dateTo
     );
-
+    
+    console.log(this.selectedCompany)
     if (
       this.newJobPostingForm.valid &&
       this.fromDate &&
@@ -339,5 +345,6 @@ export class ADNewJobPostingComponent implements OnInit {
     ) {
       this.jobPostingService.addJobPosting(jobPostingData);
     }
+    this.loading = false;
   }
 }

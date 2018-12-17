@@ -43,9 +43,24 @@ export class AuthService {
   }
 
   // Checks if the user is authenticated
-  getIsAuth() {
-    this.autoAuthUser();
-    return this.isAuthenticated;
+  // getIsAuth() {
+  //   this.autoAuthUser();
+  //   return this.isAuthenticated;
+  // }
+
+  getAuthData() {
+    let token = this.getToken()
+    let loggedInUser = this.getUser()
+    if (!token || !loggedInUser) {
+      return;
+    }
+    this.user.role = loggedInUser.role;
+
+    // if (!this.checkTokenValidity(token).isvalid) {
+    //   return;
+    // }
+    // token = this.checkTokenValidity(token).token;
+    return this.user
   }
 
   // Check users authentication status
@@ -81,6 +96,7 @@ export class AuthService {
   // Deletes the token from the local storage
   private clearAuthData() {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
   }
 
   // Saves the userdata to the local storage and deletes the old one if there already is a token saved
@@ -182,9 +198,9 @@ export class AuthService {
               this.saveAuthData(token);
               this.saveUserData(JSON.stringify(this.user));
               if (response.role === 1) {
-                this.router.navigate(["/applicant"]);
+                this.router.navigate(["/applicant/job-postings"]);
               } else if (response.role === 2) {
-                this.router.navigate(["/client"]);
+                this.router.navigate(["/client/job-postings"]);
               } else if (response.role === 3) {
                 this.router.navigate(["/admin-dashboard/job-postings"]);
               }
@@ -201,52 +217,37 @@ export class AuthService {
       );
   }
 
-  checkTokenValidity(token: string) {
-    let validToken;
-    this.http
-      .post<{
-        isValid: boolean;
-        token: string;
-      }>("BACKEND_URL", token)
-      .subscribe(response => {
-        if (!response.isValid) {
-          return { isvalid: false, token: "" };
-        }
-        this.user.token = response.token;
-        this.isAuthenticated = true;
-        this.authStatusListener.next(true);
-        this.saveAuthData(token);
-        validToken = response.token;
-      });
-    return { isvalid: true, token: validToken };
-  }
+  // checkTokenValidity(token: string) {
+  //   let validToken;
+  //   this.http
+  //     .post<{
+  //       isValid: boolean;
+  //       token: string;
+  //     }>("BACKEND_URL", token)
+  //     .subscribe(response => {
+  //       if (!response.isValid) {
+  //         return { isvalid: false, token: "" };
+  //       }
+  //       this.user.token = response.token;
+  //       this.isAuthenticated = true;
+  //       this.authStatusListener.next(true);
+  //       this.saveAuthData(token);
+  //       validToken = response.token;
+  //     });
+  //   return { isvalid: true, token: validToken };
+  // }
 
   // Call the func for getting the token from local storage on when user comes back to website
-  autoAuthUser() {
-    const token = this.getAuthData();
-    if (!token) {
-      return;
-    } else if (token) {
-    }
-    this.isAuthenticated = true;
-    this.user.token = token.token;
-    this.authStatusListener.next(true);
-  }
-
-  // Get token from local storage
-  private getAuthData() {
-    let token = localStorage.getItem("token");
-    if (!token) {
-      return;
-    }
-    if (!this.checkTokenValidity(token).isvalid) {
-      return;
-    }
-    token = this.checkTokenValidity(token).token;
-    return {
-      token: token
-    };
-  }
+  // autoAuthUser() {
+  //   const token = this.getAuthData();
+  //   if (!token) {
+  //     return;
+  //   } else if (token) {
+  //   }
+  //   this.isAuthenticated = true;
+  //   this.user.token = token.token;
+  //   this.authStatusListener.next(true);
+  // }
 
   // Caching unauthorized requests
 

@@ -1,247 +1,257 @@
-<div class="dash__container">
-  <div class="dash__heading">
-    <h2 *ngIf="!edit">Add New Job Posting</h2>
-    <h2 *ngIf="edit">Edit Job Posting</h2>
-  </div>
-  <div class="dash__form__container">
-    <form
-      class="dash__form"
-      [formGroup]="newJobPostingForm"
-      (ngSubmit)="onSubmitNewJobPosting()"
-    >
-      <div class="dash__form--section">
-        <p>Company information</p>
+<div class="my-container">
+  <ng-template #customLoadingTemplate>
+  </ng-template>
 
-        <!-- COMPANY NAME -->
-        <label for="dashid_CompanyName" class="dash__form--label"
-          >Company Name <span class="u-required-star">*</span></label
-        >
-        <input
-          id="dashid_CompanyName"
-          formControlName="companyName"
-          type="text"
-          class="dash__form--input"
-          [ngbTypeahead]="search"
-          placeholder="Select company..."
-          (focus)="focus$.next($event.target.value)"
-          (click)="click$.next($event.target.value)"
-          #instance="ngbTypeahead"
-          (ngModelChange)="checkCompanyValidity()"
-        />
-        <div
-          *ngIf="
-            !newJobPostingForm.controls['companyName'].valid &&
-            (newJobPostingForm.controls['companyName'].dirty ||
-              newJobPostingForm.controls['companyName'].touched)
-          "
-          class="alert dash__form--alert-msg"
-        >
-          <div
-            *ngIf="newJobPostingForm.controls['companyName'].errors?.required"
-          >
-            Company must be selected.
-          </div>
-        </div>
-        <label class="dash__form--label"
-          ></label
-        >
-        <div class="dash__form--info">
-          If the company you are looking for is not on this list, you can
-          <a routerLink="/admin-dashboard/new-client">add a new company</a>.
-        </div>
-
-        <p class="pt-3">Job information</p>
-        <!-- TITLE -->
-
-        <label for="dashid__title" class="dash__form--label"
-          >Title <span class="u-required-star">*</span></label
-        >
-        <input
-          type="text"
-          id="dashid__title"
-          class="dash__form--input"
-          placeholder="Enter job title..."
-          formControlName="title"
-          maxlength="50"
-        />
-
-        <div
-          *ngIf="
-            !newJobPostingForm.controls['title'].valid &&
-            (newJobPostingForm.controls['title'].dirty ||
-              newJobPostingForm.controls['title'].touched)
-          "
-          class="alert dash__form--alert-msg"
-        >
-          <div *ngIf="newJobPostingForm.controls['title'].errors?.required">
-            Title is required.
-          </div>
-          <div *ngIf="newJobPostingForm.controls['title'].errors?.maxlength">
-            Title must be up to 50 characters long.
-          </div>
-        </div>
-
-        <!-- DESCRIPTION -->
-
-        <label
-          for="dashid__description"
-          class="dash__form--label"
-          id="desc-height"
-          >Description</label
-        >
-        <textarea
-          type="text"
-          id="dashid__description"
-          class="dash__form--textarea"
-          placeholder="Enter job description..."
-          formControlName="description"
-          maxlength="300"
-        ></textarea>
-
-        <!-- JOB TYPE -->
-
-        <label for="dashid__job-type" class="dash__form--label"
-          >Job Type <span class="u-required-star">*</span></label
-        >
-        <select
-          id="dashid__job-type"
-          class="dash__form--input"
-          formControlName="jobType"
-        >
-          <option
-            *ngFor="let jobType of jobTypes"
-            [ngValue]="jobType"
-            [selected]="jobType === 'Select job type...'"
-            [disabled]="jobType === 'Select job type...'"
-            >{{ jobType }}
-          </option>
-        </select>
-
-        <div
-          *ngIf="
-            !newJobPostingForm.controls['jobType'].valid &&
-            (newJobPostingForm.controls['jobType'].dirty ||
-              newJobPostingForm.controls['jobType'].touched)
-          "
-          class="alert dash__form--alert-msg"
-        >
-          <div *ngIf="newJobPostingForm.controls['jobType'].errors?.required">
-            Job type must be selected.
-          </div>
-        </div>
-
-        <!-- EDUCATION -->
-
-        <label for="dashid__education" class="dash__form--label"
-          >Education <span class="u-required-star">*</span></label
-        >
-        <select
-          id="dashidEducation"
-          class="dash__form--input"
-          formControlName="education"
-        >
-          <option
-            *ngFor="let edu of education"
-            [ngValue]="edu"
-            [selected]="edu === 'Select education level...'"
-            [disabled]="edu === 'Select education level...'"
-            >{{ edu }}
-          </option>
-        </select>
-
-        <div
-          *ngIf="
-            !newJobPostingForm.controls['education'].valid &&
-            (newJobPostingForm.controls['education'].dirty ||
-              newJobPostingForm.controls['education'].touched)
-          "
-          class="alert dash__form--alert-msg"
-        >
-          <div *ngIf="newJobPostingForm.controls['education'].errors?.required">
-            Education must be selected.
-          </div>
-        </div>
-
-        <!-- NEEDED EXPERIENCE -->
-
-        <label for="dashid__experience" class="dash__form--label"
-          >Experience (in years) <span class="u-required-star">*</span></label
-        >
-        <select
-          id="dashid__experience"
-          class="dash__form--input"
-          formControlName="experience"
-        >
-          <option
-            *ngFor="let exp of experience"
-            [ngValue]="exp"
-            [selected]="exp === 'Select experience...'"
-            [disabled]="exp === 'Select experience...'"
-            >{{ exp }}
-          </option>
-        </select>
-
-        <div
-          *ngIf="
-            !newJobPostingForm.controls['experience'].valid &&
-            (newJobPostingForm.controls['experience'].dirty ||
-              newJobPostingForm.controls['experience'].touched)
-          "
-          class="alert dash__form--alert-msg"
-        >
-          <div
-            *ngIf="newJobPostingForm.controls['experience'].errors?.required"
-          >
-            Experience must be selected.
-          </div>
-        </div>
-
-        <!-- DURATION -->
-
-        <label for="dashid__duration" class="dash__form--label"
-          >Duration <span class="u-required-star">*</span></label
-        >
-
-        <ngb-datepicker
-          #dp
-          (select)="onDateSelection($event)"
-          [displayMonths]="2"
-          [dayTemplate]="t"
-          outsideDays="hidden"
-        >
-        </ngb-datepicker>
-
-        <ng-template #t let-date let-focused="focused">
-          <span
-            class="custom-day"
-            [class.focused]="focused"
-            [class.range]="isRange(date)"
-            [class.faded]="isHovered(date) || isInside(date)"
-            (mouseenter)="hoveredDate = date"
-            (mouseleave)="hoveredDate = null"
-          >
-            {{ date.day }}
-          </span>
-        </ng-template>
-
-        <div
-          *ngIf="!fromDate || !toDate || (fromDate && toDate && !validDate)"
-          class="alert dash__form--alert-msg"
-        >
-          Start date must be equal to today's date or a later date. End date
-          can't be earlier or equal to start date.
-        </div>
-      </div>
-
-      <button
-        type="submit"
-        class="btn dash__form--btn"
-        [disabled]="
-          !newJobPostingForm.valid || !fromDate || !toDate || !validClient
-        "
+  <ngx-loading
+    [show]="loading"
+    [config]="{ backdropBorderRadius: '3px' }"
+    [template]="customLoadingTemplate"
+  ></ngx-loading>
+  <div class="dash__container">
+    <div class="dash__heading">
+      <h2 *ngIf="!edit">Add New Job Posting</h2>
+      <h2 *ngIf="edit">Edit Job Posting</h2>
+    </div>
+    <div class="dash__form__container">
+      <form
+        class="dash__form"
+        [formGroup]="newJobPostingForm"
+        (ngSubmit)="onSubmitNewJobPosting()"
       >
-        Publish Job
-      </button>
-    </form>
+        <div class="dash__form--section">
+          <p>Company information</p>
+
+          <!-- COMPANY NAME -->
+          <label for="dashid_CompanyName" class="dash__form--label"
+            >Company Name <span class="u-required-star">*</span></label
+          >
+          <input
+            id="dashid_CompanyName"
+            formControlName="companyName"
+            type="text"
+            class="dash__form--input"
+            [ngbTypeahead]="search"
+            placeholder="Select company..."
+            (focus)="focus$.next($event.target.value)"
+            (click)="click$.next($event.target.value)"
+            #instance="ngbTypeahead"
+            (ngModelChange)="checkCompanyValidity()"
+          />
+          <div
+            *ngIf="
+              !newJobPostingForm.controls['companyName'].valid &&
+              (newJobPostingForm.controls['companyName'].dirty ||
+                newJobPostingForm.controls['companyName'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div
+              *ngIf="newJobPostingForm.controls['companyName'].errors?.required"
+            >
+              Company must be selected.
+            </div>
+          </div>
+          <label class="dash__form--label"></label>
+          <div class="dash__form--info">
+            If the company you are looking for is not on this list, you can
+            <a routerLink="/admin-dashboard/new-client">add a new company</a>.
+          </div>
+
+          <p class="pt-3">Job information</p>
+          <!-- TITLE -->
+
+          <label for="dashid__title" class="dash__form--label"
+            >Title <span class="u-required-star">*</span></label
+          >
+          <input
+            type="text"
+            id="dashid__title"
+            class="dash__form--input"
+            placeholder="Enter job title..."
+            formControlName="title"
+            maxlength="50"
+          />
+
+          <div
+            *ngIf="
+              !newJobPostingForm.controls['title'].valid &&
+              (newJobPostingForm.controls['title'].dirty ||
+                newJobPostingForm.controls['title'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div *ngIf="newJobPostingForm.controls['title'].errors?.required">
+              Title is required.
+            </div>
+            <div *ngIf="newJobPostingForm.controls['title'].errors?.maxlength">
+              Title must be up to 50 characters long.
+            </div>
+          </div>
+
+          <!-- DESCRIPTION -->
+
+          <label
+            for="dashid__description"
+            class="dash__form--label"
+            id="desc-height"
+            >Description</label
+          >
+          <textarea
+            type="text"
+            id="dashid__description"
+            class="dash__form--textarea"
+            placeholder="Enter job description..."
+            formControlName="description"
+            maxlength="300"
+          ></textarea>
+
+          <!-- JOB TYPE -->
+
+          <label for="dashid__job-type" class="dash__form--label"
+            >Job Type <span class="u-required-star">*</span></label
+          >
+          <select
+            id="dashid__job-type"
+            class="dash__form--input"
+            formControlName="jobType"
+          >
+            <option
+              *ngFor="let jobType of jobTypes"
+              [ngValue]="jobType"
+              [selected]="jobType === 'Select job type...'"
+              [disabled]="jobType === 'Select job type...'"
+              >{{ jobType }}
+            </option>
+          </select>
+
+          <div
+            *ngIf="
+              !newJobPostingForm.controls['jobType'].valid &&
+              (newJobPostingForm.controls['jobType'].dirty ||
+                newJobPostingForm.controls['jobType'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div *ngIf="newJobPostingForm.controls['jobType'].errors?.required">
+              Job type must be selected.
+            </div>
+          </div>
+
+          <!-- EDUCATION -->
+
+          <label for="dashid__education" class="dash__form--label"
+            >Education <span class="u-required-star">*</span></label
+          >
+          <select
+            id="dashidEducation"
+            class="dash__form--input"
+            formControlName="education"
+          >
+            <option
+              *ngFor="let edu of education"
+              [ngValue]="edu"
+              [selected]="edu === 'Select education level...'"
+              [disabled]="edu === 'Select education level...'"
+              >{{ edu }}
+            </option>
+          </select>
+
+          <div
+            *ngIf="
+              !newJobPostingForm.controls['education'].valid &&
+              (newJobPostingForm.controls['education'].dirty ||
+                newJobPostingForm.controls['education'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div
+              *ngIf="newJobPostingForm.controls['education'].errors?.required"
+            >
+              Education must be selected.
+            </div>
+          </div>
+
+          <!-- NEEDED EXPERIENCE -->
+
+          <label for="dashid__experience" class="dash__form--label"
+            >Experience (in years) <span class="u-required-star">*</span></label
+          >
+          <select
+            id="dashid__experience"
+            class="dash__form--input"
+            formControlName="experience"
+          >
+            <option
+              *ngFor="let exp of experience"
+              [ngValue]="exp"
+              [selected]="exp === 'Select experience...'"
+              [disabled]="exp === 'Select experience...'"
+              >{{ exp }}
+            </option>
+          </select>
+
+          <div
+            *ngIf="
+              !newJobPostingForm.controls['experience'].valid &&
+              (newJobPostingForm.controls['experience'].dirty ||
+                newJobPostingForm.controls['experience'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div
+              *ngIf="newJobPostingForm.controls['experience'].errors?.required"
+            >
+              Experience must be selected.
+            </div>
+          </div>
+
+          <!-- DURATION -->
+
+          <label for="dashid__duration" class="dash__form--label"
+            >Duration <span class="u-required-star">*</span></label
+          >
+
+          <ngb-datepicker
+            #dp
+            (select)="onDateSelection($event)"
+            [displayMonths]="2"
+            [dayTemplate]="t"
+            outsideDays="hidden"
+          >
+          </ngb-datepicker>
+
+          <ng-template #t let-date let-focused="focused">
+            <span
+              class="custom-day"
+              [class.focused]="focused"
+              [class.range]="isRange(date)"
+              [class.faded]="isHovered(date) || isInside(date)"
+              (mouseenter)="hoveredDate = date"
+              (mouseleave)="hoveredDate = null"
+            >
+              {{ date.day }}
+            </span>
+          </ng-template>
+
+          <div
+            *ngIf="!fromDate || !toDate || (fromDate && toDate && !validDate)"
+            class="alert dash__form--alert-msg"
+          >
+            Start date must be equal to today's date or a later date. End date
+            can't be earlier or equal to start date.
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="btn dash__form--btn"
+          [disabled]="
+            !newJobPostingForm.valid || !fromDate || !toDate || !validClient
+          "
+        >
+          Publish Job
+        </button>
+      </form>
+    </div>
   </div>
 </div>

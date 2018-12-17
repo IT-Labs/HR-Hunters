@@ -1,0 +1,21 @@
+<div class="my-container">
+  <ng-template #customLoadingTemplate> </ng-template>
+
+  <ngx-loading
+    [show]="loading"
+    [config]="{ backdropBorderRadius: '3px' }"
+    [template]="customLoadingTemplate"
+  ></ngx-loading>
+  <div class="jp__container">
+      <h1 class="jp__heading">{{ jobPosting.jobTitle }}</h1>
+      <p class="jp__sub-heading">{{ jobPosting.jobType }}</p>
+      <p class="jp__content">{{ jobPosting.description }}</p>
+      <p class="jp__meta">
+        Job Posting added on: {{ jobPosting.dateFrom }}, available until:
+        {{ jobPosting.dateTo }}
+      </p>
+      <div class="jp__btn-container" *ngIf="isApplicant">
+        <button class="btn btn__primary" (click)="onApply()">Apply</button>
+      </div>
+    </div>
+</div>

@@ -1,347 +1,367 @@
-<div class="container">
-  <form
-    class="hp__form"
-    [formGroup]="applicantProfileFormHP"
-    (ngSubmit)="onSubmitApplicantProfile()"
-  >
-    <div class="row">
-      <!-- LEFT SIDEBAR -->
-      <div class="col-xs-12 col-md-3">
-        <div class="company-logo">
-          <img
-            [src]="imagePreview"
-            class="company-logo__img"
-            [alt]="applicantProfileFormHP.controls['applicantFirstName'].value"
-          />
-          <div class="company-logo__text" (click)="filePicker.click()">
-            <i class="fa fa-camera u-color-dark" aria-hidden="true"></i
-            >Applicant photo
-            <input
-              type="file"
-              id="hpid__logo"
-              class="dash__form--input"
-              #filePicker
-              (change)="onImagePicked($event)"
+<div class="my-container">
+  <ng-template #customLoadingTemplate> </ng-template>
+
+  <ngx-loading
+    [show]="loading"
+    [config]="{ backdropBorderRadius: '3px' }"
+    [template]="customLoadingTemplate"
+  ></ngx-loading>
+  <div class="container">
+    <form
+      class="hp__form"
+      [formGroup]="applicantProfileFormHP"
+      (ngSubmit)="onSubmitApplicantProfile()"
+    >
+      <div class="row">
+        <!-- LEFT SIDEBAR -->
+        <div class="col-xs-12 col-md-3">
+          <div class="company-logo">
+            <img
+              [src]="imagePreview"
+              class="company-logo__img"
+              [alt]="
+                applicantProfileFormHP.controls['applicantFirstName'].value
+              "
             />
-          </div>
-        </div>
-
-        <div class="hp__form--btn-container-linkedin">
-          <button type="submit" class="btn btn__linkedin">
-            Linked
-            <span class="btn__linkedin--span"
-              ><i class="fa fa-linkedin-square"></i
-            ></span>
-          </button>
-        </div>
-
-        <div *ngIf="!imageValid" class="alert hp__form--alert-msg">
-          Photo is required.<br /><br />
-          Please upload a propper image file in .png or .jpg format. Maximum
-          size for the image is 600px x 600px
-        </div>
-      </div>
-
-      <!-- RIGHT SIDEBAR -->
-      <div class="col-xs-12 col-md-9">
-        <div class="hp__form__container">
-          <div class="hp__form--section">
-
-            <!-- APPLICANT First name -->
-            <label for="hpid__title" class="hp__form--label"
-              >First name <span class="u-required-star">*</span></label
-            >
-            <input
-              type="text"
-              id="hpid__title"
-              class="hp__form--input"
-              placeholder="Enter first name..."
-              formControlName="applicantFirstName"
-              maxlength="30"
-            />
-            <div
-              *ngIf="
-                !applicantProfileFormHP.controls['applicantFirstName'].valid &&
-                (applicantProfileFormHP.controls['applicantFirstName'].dirty ||
-                  applicantProfileFormHP.controls['applicantFirstName'].touched)
-              "
-              class="alert hp__form--alert-msg"
-            >
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['applicantFirstName'].errors?.required
-                "
-              >
-                First name is required.
-              </div>
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['applicantFirstName'].errors?.maxlength
-                "
-              >
-                First name must be up to 30 characters long.
-              </div>
-            </div>
-
-            <!-- Applicant last name -->
-            <label for="hpid__title" class="hp__form--label"
-              >Last name <span class="u-required-star">*</span></label
-            >
-            <input
-              type="text"
-              id="hpid__title"
-              class="hp__form--input"
-              placeholder="Enter last name..."
-              formControlName="applicantLastName"
-              maxlength="30"
-            />
-            <div
-              *ngIf="
-                !applicantProfileFormHP.controls['applicantLastName'].valid &&
-                (applicantProfileFormHP.controls['applicantLastName'].dirty ||
-                  applicantProfileFormHP.controls['applicantLastName'].touched)
-              "
-              class="alert hp__form--alert-msg"
-            >
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['applicantLastName'].errors?.required
-                "
-              >
-                Last name is required.
-              </div>
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['applicantLastName'].errors?.maxlength
-                "
-              >
-                Last name must be up to 30 characters long.
-              </div>
-            </div>
-
-            <!-- E-mail -->
-            <label for="hpid__title" class="hp__form--label"
-              >E-mail <span class="u-required-star">*</span></label
-            >
-            <input
-              type="text"
-              id="hpid__title"
-              class="hp__form--input"
-              placeholder="Enter email..."
-              formControlName="applicantEmail"
-              maxlength="30"
-            />
-
-            <div
-              *ngIf="
-                !applicantProfileFormHP.controls['applicantEmail'].valid &&
-                (applicantProfileFormHP.controls['applicantEmail'].dirty ||
-                  applicantProfileFormHP.controls['applicantEmail'].touched)
-              "
-              class="alert hp__form--alert-msg"
-            >
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['applicantEmail'].errors
-                    ?.pattern
-                "
-              >
-                Email is required.
-              </div>
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['applicantEmail'].errors
-                    ?.required
-                "
-              >
-                Email is required.
-              </div>
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['applicantEmail'].errors
-                    ?.minlength
-                "
-              >
-                Email must be at least 6 characters long.
-              </div>
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['applicantEmail'].errors
-                    ?.maxlength
-                "
-              >
-                Email must be up to 30 characters long.
-              </div>
-            </div>
-
-            <!-- Phone-number start -->
-            <label for="hpid__title" class="hp__form--label"
-              >Phone number <span class="u-required-star">*</span></label
-            >
-            <input
-              type="text"
-              id="hpid__title"
-              class="hp__form--input"
-              placeholder="Enter phone number..."
-              formControlName="phonenumber"
-            />
-            <div
-              *ngIf="
-                !applicantProfileFormHP.controls['phonenumber'].valid &&
-                (applicantProfileFormHP.controls['phonenumber'].dirty ||
-                  applicantProfileFormHP.controls['phonenumber'].touched)
-              "
-              class="alert hp__form--alert-msg"
-            >
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['phonenumber'].errors
-                    ?.required
-                "
-              >
-                Phone number is required.
-              </div>
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['phonenumber'].errors
-                    ?.maxlength
-                "
-              >
-                Phone number must be E.164 format.
-              </div>
-            </div>
-
-            <!-- EDUCATION -->
-            <label for="hpid__education" class="hp__form--label"
-              >Education <span class="u-required-star">*</span></label
-            >
-            <select
-              id="dashidEducation"
-              class="hp__form--input"
-              formControlName="education"
-            >
-              <option
-                *ngFor="let edu of education"
-                [ngValue]="edu"
-                [selected]="edu === 'Select education level...'"
-                [disabled]="edu === 'Select education level...'"
-                >{{ edu }}
-              </option>
-            </select>
-
-            <div
-              *ngIf="
-                !applicantProfileFormHP.controls['education'].valid &&
-                (applicantProfileFormHP.controls['education'].dirty ||
-                  applicantProfileFormHP.controls['education'].touched)
-              "
-              class="alert hp__form--alert-msg"
-            >
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['education'].errors?.required
-                "
-              >
-                Education must be selected.
-              </div>
-            </div>
-
-            <!-- SCHOOL/University -->
-            <label for="hpid__title" class="hp__form--label"
-              >School/University <span class="u-required-star">*</span></label
-            >
-            <input
-              type="text"
-              id="hpid__title"
-              class="hp__form--input"
-              placeholder="Enter school/university..."
-              formControlName="school"
-              maxlength="30"
-            />
-
-            <div
-              *ngIf="
-                !applicantProfileFormHP.controls['school'].valid &&
-                (applicantProfileFormHP.controls['school'].dirty ||
-                  applicantProfileFormHP.controls['school'].touched)
-              "
-              class="alert hp__form--alert-msg"
-            >
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['school'].errors?.required
-                "
-              >
-                School/Universitye is required.
-              </div>
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['school'].errors?.maxlength
-                "
-              >
-                School/University must be up to 50 characters long.
-              </div>
-            </div>
-
-            <!-- NEEDED EXPERIENCE -->
-            <label for="hpid__experience" class="hp__form--label"
-              >Experience (in years)
-              <span class="u-required-star">*</span></label
-            >
-
-            <select
-              id="hpid__experience"
-              class="hp__form--input"
-              formControlName="experience"
-            >
-              <option
-                *ngFor="let exp of experience"
-                [ngValue]="exp"
-                [selected]="exp === 'Select experience...'"
-                [disabled]="exp === 'Select experience...'"
-                >{{ exp }}
-              </option>
-            </select>
-
-            <div
-              *ngIf="
-                (!applicantProfileFormHP.controls['experience'].valid &&
-                  (applicantProfileFormHP.controls['experience'].dirty ||
-                    applicantProfileFormHP.controls['experience'].touched))
-              "
-              class="alert hp__form--alert-msg"
-            >
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['experience'].errors?.required
-                "
-              >
-                Experience is required.
-              </div>
-
-              <div
-                *ngIf="
-                  applicantProfileFormHP.controls['experience'].errors
-                    ?.maxlength
-                "
-              >
-                Experience must be up to 2 characters long.
-              </div>
+            <div class="company-logo__text" (click)="filePicker.click()">
+              <i class="fa fa-camera u-color-dark" aria-hidden="true"></i
+              >Applicant photo
+              <input
+                type="file"
+                id="hpid__logo"
+                class="dash__form--input"
+                #filePicker
+                (change)="onImagePicked($event)"
+              />
             </div>
           </div>
 
-          <div class="hp__form--btn-container">
-            <button type="reset" class="btn btn__danger">Cancel</button>
-            <button
-              type="submit"
-              class="btn btn__success"
-              [disabled]="!applicantProfileFormHP.valid"
-            >
-              Save
+          <div class="hp__form--btn-container-linkedin">
+            <button type="submit" class="btn btn__linkedin">
+              Linked
+              <span class="btn__linkedin--span"
+                ><i class="fa fa-linkedin-square"></i
+              ></span>
             </button>
           </div>
+
+          <div *ngIf="!imageValid" class="alert hp__form--alert-msg">
+            Photo is required.<br /><br />
+            Please upload a propper image file in .png or .jpg format. Maximum
+            size for the image is 600px x 600px
+          </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div class="col-xs-12 col-md-9">
+          <div class="hp__form__container">
+            <div class="hp__form--section">
+              <!-- APPLICANT First name -->
+              <label for="hpid__title" class="hp__form--label"
+                >First name <span class="u-required-star">*</span></label
+              >
+              <input
+                type="text"
+                id="hpid__title"
+                class="hp__form--input"
+                placeholder="Enter first name..."
+                formControlName="applicantFirstName"
+                maxlength="30"
+              />
+              <div
+                *ngIf="
+                  !applicantProfileFormHP.controls['applicantFirstName']
+                    .valid &&
+                  (applicantProfileFormHP.controls['applicantFirstName']
+                    .dirty ||
+                    applicantProfileFormHP.controls['applicantFirstName']
+                      .touched)
+                "
+                class="alert hp__form--alert-msg"
+              >
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['applicantFirstName'].errors
+                      ?.required
+                  "
+                >
+                  First name is required.
+                </div>
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['applicantFirstName'].errors
+                      ?.maxlength
+                  "
+                >
+                  First name must be up to 30 characters long.
+                </div>
+              </div>
+
+              <!-- Applicant last name -->
+              <label for="hpid__title" class="hp__form--label"
+                >Last name <span class="u-required-star">*</span></label
+              >
+              <input
+                type="text"
+                id="hpid__title"
+                class="hp__form--input"
+                placeholder="Enter last name..."
+                formControlName="applicantLastName"
+                maxlength="30"
+              />
+              <div
+                *ngIf="
+                  !applicantProfileFormHP.controls['applicantLastName'].valid &&
+                  (applicantProfileFormHP.controls['applicantLastName'].dirty ||
+                    applicantProfileFormHP.controls['applicantLastName']
+                      .touched)
+                "
+                class="alert hp__form--alert-msg"
+              >
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['applicantLastName'].errors
+                      ?.required
+                  "
+                >
+                  Last name is required.
+                </div>
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['applicantLastName'].errors
+                      ?.maxlength
+                  "
+                >
+                  Last name must be up to 30 characters long.
+                </div>
+              </div>
+
+              <!-- E-mail -->
+              <label for="hpid__title" class="hp__form--label"
+                >E-mail <span class="u-required-star">*</span></label
+              >
+              <input
+                type="text"
+                id="hpid__title"
+                class="hp__form--input"
+                placeholder="Enter email..."
+                formControlName="applicantEmail"
+                maxlength="30"
+              />
+
+              <div
+                *ngIf="
+                  !applicantProfileFormHP.controls['applicantEmail'].valid &&
+                  (applicantProfileFormHP.controls['applicantEmail'].dirty ||
+                    applicantProfileFormHP.controls['applicantEmail'].touched)
+                "
+                class="alert hp__form--alert-msg"
+              >
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['applicantEmail'].errors
+                      ?.pattern
+                  "
+                >
+                  Email is required.
+                </div>
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['applicantEmail'].errors
+                      ?.required
+                  "
+                >
+                  Email is required.
+                </div>
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['applicantEmail'].errors
+                      ?.minlength
+                  "
+                >
+                  Email must be at least 6 characters long.
+                </div>
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['applicantEmail'].errors
+                      ?.maxlength
+                  "
+                >
+                  Email must be up to 30 characters long.
+                </div>
+              </div>
+
+              <!-- Phone-number start -->
+              <label for="hpid__title" class="hp__form--label"
+                >Phone number <span class="u-required-star">*</span></label
+              >
+              <input
+                type="text"
+                id="hpid__title"
+                class="hp__form--input"
+                placeholder="Enter phone number..."
+                formControlName="phonenumber"
+              />
+              <div
+                *ngIf="
+                  !applicantProfileFormHP.controls['phonenumber'].valid &&
+                  (applicantProfileFormHP.controls['phonenumber'].dirty ||
+                    applicantProfileFormHP.controls['phonenumber'].touched)
+                "
+                class="alert hp__form--alert-msg"
+              >
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['phonenumber'].errors
+                      ?.required
+                  "
+                >
+                  Phone number is required.
+                </div>
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['phonenumber'].errors
+                      ?.maxlength
+                  "
+                >
+                  Phone number must be E.164 format.
+                </div>
+              </div>
+
+              <!-- EDUCATION -->
+              <label for="hpid__education" class="hp__form--label"
+                >Education <span class="u-required-star">*</span></label
+              >
+              <select
+                id="dashidEducation"
+                class="hp__form--input"
+                formControlName="education"
+              >
+                <option
+                  *ngFor="let edu of education"
+                  [ngValue]="edu"
+                  [selected]="edu === 'Select education level...'"
+                  [disabled]="edu === 'Select education level...'"
+                  >{{ edu }}
+                </option>
+              </select>
+
+              <div
+                *ngIf="
+                  !applicantProfileFormHP.controls['education'].valid &&
+                  (applicantProfileFormHP.controls['education'].dirty ||
+                    applicantProfileFormHP.controls['education'].touched)
+                "
+                class="alert hp__form--alert-msg"
+              >
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['education'].errors
+                      ?.required
+                  "
+                >
+                  Education must be selected.
+                </div>
+              </div>
+
+              <!-- SCHOOL/University -->
+              <label for="hpid__title" class="hp__form--label"
+                >School/University <span class="u-required-star">*</span></label
+              >
+              <input
+                type="text"
+                id="hpid__title"
+                class="hp__form--input"
+                placeholder="Enter school/university..."
+                formControlName="school"
+                maxlength="30"
+              />
+
+              <div
+                *ngIf="
+                  !applicantProfileFormHP.controls['school'].valid &&
+                  (applicantProfileFormHP.controls['school'].dirty ||
+                    applicantProfileFormHP.controls['school'].touched)
+                "
+                class="alert hp__form--alert-msg"
+              >
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['school'].errors?.required
+                  "
+                >
+                  School/Universitye is required.
+                </div>
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['school'].errors?.maxlength
+                  "
+                >
+                  School/University must be up to 50 characters long.
+                </div>
+              </div>
+
+              <!-- NEEDED EXPERIENCE -->
+              <label for="hpid__experience" class="hp__form--label"
+                >Experience (in years)
+                <span class="u-required-star">*</span></label
+              >
+
+              <select
+                id="hpid__experience"
+                class="hp__form--input"
+                formControlName="experience"
+              >
+                <option
+                  *ngFor="let exp of experience"
+                  [ngValue]="exp"
+                  [selected]="exp === 'Select experience...'"
+                  [disabled]="exp === 'Select experience...'"
+                  >{{ exp }}
+                </option>
+              </select>
+
+              <div
+                *ngIf="
+                  !applicantProfileFormHP.controls['experience'].valid &&
+                  (applicantProfileFormHP.controls['experience'].dirty ||
+                    applicantProfileFormHP.controls['experience'].touched)
+                "
+                class="alert hp__form--alert-msg"
+              >
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['experience'].errors
+                      ?.required
+                  "
+                >
+                  Experience is required.
+                </div>
+
+                <div
+                  *ngIf="
+                    applicantProfileFormHP.controls['experience'].errors
+                      ?.maxlength
+                  "
+                >
+                  Experience must be up to 2 characters long.
+                </div>
+              </div>
+            </div>
+
+            <div class="hp__form--btn-container">
+              <button type="reset" class="btn btn__danger">Cancel</button>
+              <button
+                type="submit"
+                class="btn btn__success"
+                [disabled]="!applicantProfileFormHP.valid"
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>

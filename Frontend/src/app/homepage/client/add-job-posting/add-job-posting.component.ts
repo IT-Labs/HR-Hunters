@@ -52,6 +52,8 @@ export class AddJobPostingComponent implements OnInit {
   fromDate: NgbDate;
   toDate: NgbDate;
 
+  loading = false;
+
   constructor(
     private fb: FormBuilder,
     private jobPostingService: JobPostingService,
@@ -60,6 +62,7 @@ export class AddJobPostingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading = true;
     this.todayDate = this.calendar.getToday();
     this.fromDate = this.calendar.getToday();
     this.toDate = this.calendar.getNext(this.calendar.getToday(), "d", 10);
@@ -71,6 +74,7 @@ export class AddJobPostingComponent implements OnInit {
     }
 
     this.loggedInUser = this.authService.getUser();
+    this.loading = false;
   }
 
   newJobPostingFormHP = this.fb.group({
@@ -157,6 +161,7 @@ export class AddJobPostingComponent implements OnInit {
   }
 
   onSubmitNewJobPosting() {
+    this.loading = true;
     this.newJobPostingFormHP.controls["title"].markAsTouched();
     this.newJobPostingFormHP.controls["location"].markAsTouched();
     this.newJobPostingFormHP.controls["education"].markAsTouched();
@@ -247,5 +252,6 @@ export class AddJobPostingComponent implements OnInit {
     ) {
       this.jobPostingService.addJobPosting(jobPostingData);
     }
+    this.loading = false;
   }
 }

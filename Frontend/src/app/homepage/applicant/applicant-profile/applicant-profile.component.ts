@@ -24,6 +24,8 @@ export class ApplicantProfileComponent implements OnInit {
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
 
+  loading = false;
+
   experience = [
     "<1",
     "1",
@@ -62,10 +64,12 @@ export class ApplicantProfileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading = true;
     this.imagePreview =
       "http://droidlessons.com/wp-content/uploads/2017/05/person-1824144_960_720-e1494184045144.png";
 
     this.loggedInUser = this.authService.getUser();
+    this.loading = false;
   }
 
   applicantProfileFormHP = this.fb.group({
@@ -143,6 +147,7 @@ export class ApplicantProfileComponent implements OnInit {
   }
 
   onImagePicked(event: Event) {
+    this.loading = true;
     const file = (event.target as HTMLInputElement).files[0];
     const reader = new FileReader();
     reader.onload = () => {
@@ -160,9 +165,11 @@ export class ApplicantProfileComponent implements OnInit {
       }, 1000);
     };
     reader.readAsDataURL(file);
+    this.loading = false;
   }
 
   onSubmitApplicantProfile() {
+    this.loading = true;
     this.applicantProfileFormHP.controls["applicantFirstName"].markAsTouched();
     this.applicantProfileFormHP.controls["applicantLastName"].markAsTouched();
     this.applicantProfileFormHP.controls["applicantEmail"].markAsTouched();
@@ -185,5 +192,6 @@ export class ApplicantProfileComponent implements OnInit {
     if (this.applicantProfileFormHP.valid) {
       this.applicantService.updateApplicant(applicantData, this.loggedInUser.id);
     }
+    this.loading = false;
   }
 }

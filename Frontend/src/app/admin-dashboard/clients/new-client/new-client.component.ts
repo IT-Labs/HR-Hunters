@@ -11,6 +11,12 @@ export class NewClientComponent implements OnInit {
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
+  validPhonenumber = new RegExp(
+    "^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$"
+  );
+  //ex: format: +61 01 2345 6789
+
+  loading = false;
 
   constructor(private fb: FormBuilder, private clientService: ClientService) {}
 
@@ -21,7 +27,6 @@ export class NewClientComponent implements OnInit {
       "",
       Validators.compose([
         Validators.required,
-        Validators.minLength(2),
         Validators.maxLength(30)
       ])
     ],
@@ -29,7 +34,6 @@ export class NewClientComponent implements OnInit {
       "",
       Validators.compose([
         Validators.required,
-        Validators.minLength(2),
         Validators.maxLength(30),
         Validators.pattern(this.validEmail)
       ])
@@ -38,15 +42,13 @@ export class NewClientComponent implements OnInit {
       "",
       Validators.compose([
         Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(30)
+        Validators.pattern(this.validPhonenumber)
       ])
     ],
     companyLocation: [
       "",
       Validators.compose([
         Validators.required,
-        Validators.minLength(2),
         Validators.maxLength(30)
       ])
     ]
@@ -68,6 +70,7 @@ export class NewClientComponent implements OnInit {
   }
 
   onSubmitNewClient() {
+    this.loading = true;
     this.newClientForm.controls.companyName.markAsTouched();
     this.newClientForm.controls.companyEmail.markAsTouched();
     this.newClientForm.controls.companyPhoneNumber.markAsTouched();
@@ -82,6 +85,7 @@ export class NewClientComponent implements OnInit {
 
     if (this.newClientForm.valid) {
       this.clientService.addClient(clientData);
+      this.loading = false;
     }
   }
 }
