@@ -20,6 +20,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using HRHunters.Common.Exceptions;
 using HRHunters.Common.Requests;
+using System.IO;
 
 namespace HRHunters.Domain.Managers
 {
@@ -112,7 +113,7 @@ namespace HRHunters.Domain.Managers
             else
             {
                 jobPost.Status = JobPostingStatus.Approved;
-                _repo.Create(jobPost, "Admin");                
+                _repo.Create(jobPost, "Admin");
             }
 
 
@@ -174,5 +175,51 @@ namespace HRHunters.Domain.Managers
 
             return response;
         }
+
+        //public JobSubmit ValidateCsvFile(IFormFile formFile)
+        //{
+        //    var addMultiple = new JobSubmit();
+        //    var errors = new Dictionary<string, List<string>>();
+
+
+
+        //    var result = string.Empty;
+        //    using (var reader = new StreamReader(formFile.OpenReadStream()))
+        //    {
+        //        int iteration = 1;
+        //        while (((result = reader.ReadLine()) != null))
+        //        {
+        //            if (string.IsNullOrEmpty(result) || string.IsNullOrWhiteSpace(result))
+        //            {
+        //                iteration++;
+        //                continue;
+        //            }
+
+        //            var parts = result.Split(",");
+        //            parts = parts.Where(str => str != "").ToArray();
+        //            if (parts.Length == 0)
+        //            {
+        //                iteration++;
+        //                continue;
+        //            }
+        //            if (parts.Length > 2 || parts.Length < 2)
+        //            {
+        //                if (!errors.ContainsKey("InvalidFormat"))
+        //                {
+        //                    errors.Add("InvalidFormat", new List<string>() { iteration.ToString() });
+        //                }
+        //                else
+        //                {
+        //                    errors.TryGetValue("InvalidFormat", out List<string> rows);
+        //                    rows.Add(iteration);
+        //                    errors["InvalidFormat"] = rows;
+        //                }
+        //                iteration++;
+        //                continue;
+        //            }
+        //        }
+
+        //    }
+        }
     }
-}
+

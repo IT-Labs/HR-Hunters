@@ -99,6 +99,13 @@ namespace HRHunters.Domain.Managers
                 client = _mapper.Map(clientUpdate, client);
                 client.User.ModifiedDate = DateTime.UtcNow;
                 client.User.ModifiedBy = client.User.FirstName;
+                var exists = await _userManager.FindByEmailAsync(client.User.Email);
+                if (exists != null)
+                {
+                    response.Succeeded = false;
+                    response.Errors.Add("Error", new List<string> { "Email is already in use" });
+                    return response;
+                }
                 try
                 {
                     _repo.Update(client, client.User.FirstName);
