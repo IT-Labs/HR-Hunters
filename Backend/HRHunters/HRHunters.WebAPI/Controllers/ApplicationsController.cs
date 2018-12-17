@@ -50,8 +50,7 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPost]
         public ActionResult<GeneralResponse> CreateApplication(Apply apply)
         {
-            //var currentUserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return Ok(_applicationManager.CreateApplication(apply));
+            return Ok(_applicationManager.CreateApplication(apply, GetCurrentUserId()));
         }
 
 

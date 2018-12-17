@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests;
+using HRHunters.Common.Exceptions;
 
 namespace HRHunters.Domain.Managers
 {
@@ -31,6 +32,10 @@ namespace HRHunters.Domain.Managers
         }
         public ClientResponse GetMultiple(SearchRequest request, int currentUserId)
         {
+            if (currentUserId != request.Id)
+            {
+                throw new InvalidUserException("Invalid user id");
+            }
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
 
             var query = _repo.GetAll<Client>(includeProperties: $"{nameof(User)}," +
@@ -74,8 +79,13 @@ namespace HRHunters.Domain.Managers
             return response;
         }
 
-        public async Task<GeneralResponse> UpdateClientProfile(int id, ClientUpdate clientUpdate)
+        public async Task<GeneralResponse> UpdateClientProfile(int id, ClientUpdate clientUpdate,int currentUserId)
         {
+            if (currentUserId != id)
+            {
+                throw new InvalidUserException("Invalid user id");
+            }
+
             var response = new GeneralResponse()
             {
                 Succeeded = true,
@@ -88,10 +98,10 @@ namespace HRHunters.Domain.Managers
             {
                 client = _mapper.Map(clientUpdate, client);
                 client.User.ModifiedDate = DateTime.UtcNow;
-                client.User.ModifiedBy = "User";
+                client.User.ModifiedBy = client.User.FirstName;
                 try
                 {
-                    _repo.Update(client, "User");
+                    _repo.Update(client, client.User.FirstName);
                     await _userManager.UpdateAsync(user);
                     return response;
                 }
@@ -99,17 +109,19 @@ namespace HRHunters.Domain.Managers
                 {
                     throw new Exception(e.Message);
                 }
-            }
-            var list = new List<string>()
-            {
-                "Error occured, client-side validation failed."
-            };
-            response.Errors.Add("Error", list);
+            }           
+            
             return response;
         }
 
-        public async Task<GeneralResponse> CreateCompany(NewCompany newCompany)
+        public async Task<GeneralResponse> CreateCompany(NewCompany newCompany,int currentUserId)
         {
+            var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
+            var roles = await _userManager.GetRolesAsync(currentUser);
+            if (!roles.Contains("Admin"))
+            {
+                throw new InvalidUserException("Invalid user");
+            }
             var response = new GeneralResponse()
             {
                 Succeeded = true,

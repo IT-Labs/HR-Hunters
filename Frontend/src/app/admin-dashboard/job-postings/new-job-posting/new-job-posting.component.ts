@@ -77,6 +77,8 @@ export class ADNewJobPostingComponent implements OnInit {
   fromDate: NgbDate;
   toDate: NgbDate;
 
+  loading = false;
+
   private jobPostingSub: Subscription;
   private clientsSub: Subscription;
 
@@ -89,6 +91,7 @@ export class ADNewJobPostingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loading = true;
     const edit = this.activatedRoute.snapshot.queryParamMap.get('edit')
     const id = this.activatedRoute.snapshot.paramMap.get('id')
     if (edit === "true") {
@@ -130,6 +133,7 @@ export class ADNewJobPostingComponent implements OnInit {
     } else {
       this.validDate = false;
     }
+    this.loading = false;
   }
 
   newJobPostingForm = this.fb.group({
@@ -248,6 +252,7 @@ export class ADNewJobPostingComponent implements OnInit {
   }
 
   onSubmitNewJobPosting() {
+    this.loading = true;
     this.newJobPostingForm.controls["companyName"].markAsTouched();
     this.newJobPostingForm.controls["title"].markAsTouched();
     this.newJobPostingForm.controls["jobType"].markAsTouched();
@@ -339,5 +344,6 @@ export class ADNewJobPostingComponent implements OnInit {
     ) {
       this.jobPostingService.addJobPosting(jobPostingData);
     }
+    this.loading = false;
   }
 }

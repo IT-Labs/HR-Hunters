@@ -16,9 +16,12 @@ export class ClientRegisterComponent {
   private authErrorStatusSub: Subscription;
   private authStatusSub: Subscription;
 
+  loading = false;
+
   constructor(private fb: FormBuilder, private authService: AuthService) {}
 
   ngOnInit() {
+    this.loading = true;
     this.authStatusSub = this.authService
     .getAuthStatusListener()
     .subscribe(authStatus => {});
@@ -31,6 +34,8 @@ export class ClientRegisterComponent {
     this.clientRegisterForm.controls.clientPassword.valueChanges.subscribe(
       x => this.clientRegisterForm.controls.clientConfirmPassword.updateValueAndValidity()
     );
+
+    this.loading = false;
   }
 
   clientRegisterForm = this.fb.group({
@@ -71,7 +76,7 @@ export class ClientRegisterComponent {
   });
 
   onClientRegister() {
-
+    this.loading = true;
     if (this.clientRegisterForm.invalid) {
       return;
     }
@@ -83,6 +88,7 @@ export class ClientRegisterComponent {
       this.clientRegisterForm.value.clientPassword,
       2
     );
+    this.loading = false;
   }
 
   ngOnDestroy() {

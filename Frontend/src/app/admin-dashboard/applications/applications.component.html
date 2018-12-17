@@ -1,114 +1,123 @@
-<div class="dash__container">
-  <div class="dash__heading">
-    <h2>Applications</h2>
-    <div class="text-muted dash__filtering">
-      <ul>
-        <li (click)="onFilter(null)">
-          All<span>({{ applicationCount.all }})</span>
-        </li>
-        <li (click)="onFilter('Pending')">
-          Pending<span>({{ applicationCount.pending }})</span>
-        </li>
-        <li (click)="onFilter('Contacted')">
-          Contacted<span>({{ applicationCount.contacted }})</span>
-        </li>
-        <li (click)="onFilter('Interviewed')">
-          Interviewed<span>({{ applicationCount.interviewed }})</span>
-        </li>
-        <li (click)="onFilter('Hired')">
-          Hired<span>({{ applicationCount.hired }})</span>
-        </li>
-        <li (click)="onFilter('Rejected')">
-          Rejected<span>({{ applicationCount.rejected }})</span>
-        </li>
-      </ul>
+<div class="my-container">
+  <ng-template #customLoadingTemplate>
+  </ng-template>
+
+  <ngx-loading
+    [show]="loading"
+    [config]="{ backdropBorderRadius: '3px' }"
+    [template]="customLoadingTemplate"
+  ></ngx-loading>
+  <div class="dash__container">
+    <div class="dash__heading">
+      <h2>Applications</h2>
+      <div class="text-muted dash__filtering">
+        <ul>
+          <li (click)="onFilter(null)">
+            All<span>({{ applicationCount.all }})</span>
+          </li>
+          <li (click)="onFilter('Pending')">
+            Pending<span>({{ applicationCount.pending }})</span>
+          </li>
+          <li (click)="onFilter('Contacted')">
+            Contacted<span>({{ applicationCount.contacted }})</span>
+          </li>
+          <li (click)="onFilter('Interviewed')">
+            Interviewed<span>({{ applicationCount.interviewed }})</span>
+          </li>
+          <li (click)="onFilter('Hired')">
+            Hired<span>({{ applicationCount.hired }})</span>
+          </li>
+          <li (click)="onFilter('Rejected')">
+            Rejected<span>({{ applicationCount.rejected }})</span>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-  <!-- table -->
-  <div class="dash__table">
-    <table
-      class="table table-hover table-responsive-sm table-striped table-bordered"
-    >
-      <thead>
-        <tr class="dash__table__header">
-          <th scope="col" (click)="onSort('applicantFirstName')">
-            Applicant Name
-          </th>
-          <th scope="col" (click)="onSort('applicantEmail')">
-            Applicant E-mail
-          </th>
-          <th scope="col" (click)="onSort('jobTitle')">Job title</th>
-          <th scope="col" (click)="onSort('experience')">Experience</th>
-          <th scope="col" (click)="onSort('postedOn')">Posted</th>
-          <th scope="col" (click)="onSort('status')">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let application of applications">
-          <td scope="row">
-            {{ application.applicantFirstName }}
-            {{ application.applicantLastName }}
-          </td>
-          <td>{{ application.applicantEmail }}</td>
-          <td>{{ application.jobTitle }}</td>
-          <td>{{ application.experience }}</td>
-          <td>{{ application.postedOn }}</td>
-          <td>
-            <div class="dropdown dash__table--dropdown-btn__container">
-              <button
-                class="btn dropdown-toggle"
-                type="button"
-                id="dropdownMenuButton"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                {{ application.status }}
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <span
-                  class="dropdown-item"
-                  (click)="chooseStatus($event, application.id)"
-                  >Interviewed</span
+    <!-- table -->
+    <div class="dash__table">
+      <table
+        class="table table-hover table-responsive-sm table-striped table-bordered"
+      >
+        <thead>
+          <tr class="dash__table__header">
+            <th scope="col" (click)="onSort('applicantFirstName')">
+              Applicant Name
+            </th>
+            <th scope="col" (click)="onSort('applicantEmail')">
+              Applicant E-mail
+            </th>
+            <th scope="col" (click)="onSort('jobTitle')">Job title</th>
+            <th scope="col" (click)="onSort('experience')">Experience</th>
+            <th scope="col" (click)="onSort('postedOn')">Posted</th>
+            <th scope="col" (click)="onSort('status')">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let application of applications">
+            <td scope="row">
+              {{ application.applicantFirstName }}
+              {{ application.applicantLastName }}
+            </td>
+            <td>{{ application.applicantEmail }}</td>
+            <td>{{ application.jobTitle }}</td>
+            <td>{{ application.experience }}</td>
+            <td>{{ application.postedOn }}</td>
+            <td>
+              <div class="dropdown dash__table--dropdown-btn__container">
+                <button
+                  class="btn dropdown-toggle"
+                  type="button"
+                  id="dropdownMenuButton"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
                 >
-                <span
-                  class="dropdown-item"
-                  (click)="chooseStatus($event, application.id)"
-                  >Contacted</span
-                >
-                <span
-                  class="dropdown-item"
-                  (click)="chooseStatus($event, application.id)"
-                  >Rejeceted</span
-                >
-                <span
-                  class="dropdown-item"
-                  (click)="chooseStatus($event, application.id)"
-                  >Hired</span
-                >
-                <span
-                  class="dropdown-item"
-                  (click)="chooseStatus($event, application.id)"
-                  >Pending</span
-                >
+                  {{ application.status }}
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <span
+                    class="dropdown-item"
+                    (click)="chooseStatus($event, application.id)"
+                    >Interviewed</span
+                  >
+                  <span
+                    class="dropdown-item"
+                    (click)="chooseStatus($event, application.id)"
+                    >Contacted</span
+                  >
+                  <span
+                    class="dropdown-item"
+                    (click)="chooseStatus($event, application.id)"
+                    >Rejeceted</span
+                  >
+                  <span
+                    class="dropdown-item"
+                    (click)="chooseStatus($event, application.id)"
+                    >Hired</span
+                  >
+                  <span
+                    class="dropdown-item"
+                    (click)="chooseStatus($event, application.id)"
+                    >Pending</span
+                  >
+                </div>
               </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ngb-pagination
+      *ngIf="paginationMaxSize > 10"
+      [collectionSize]="paginationMaxSize"
+      [(page)]="applicationQP.currentPage"
+      [maxSize]="10"
+      [rotate]="true"
+      [ellipses]="false"
+      [boundaryLinks]="true"
+      class="d-flex justify-content-center"
+      (pageChange)="onChangedPage($event)"
+    ></ngb-pagination>
   </div>
-
-  <ngb-pagination
-    *ngIf="paginationMaxSize > 10"
-    [collectionSize]="paginationMaxSize"
-    [(page)]="applicationQP.currentPage"
-    [maxSize]="10"
-    [rotate]="true"
-    [ellipses]="false"
-    [boundaryLinks]="true"
-    class="d-flex justify-content-center"
-    (pageChange)="onChangedPage($event)"
-  ></ngb-pagination>
-
 </div>

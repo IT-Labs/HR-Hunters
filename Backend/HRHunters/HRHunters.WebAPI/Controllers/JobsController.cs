@@ -44,9 +44,10 @@ namespace HRHunters.WebAPI.Controllers
         [HttpGet("{id}")]
         public ActionResult<JobResponse> GetOneJobPosting(int id)
         {
-            return Ok(_jobManager.GetOneJobPosting(id, GetCurrentUserId()));
+            return Ok(_jobManager.GetOneJobPosting(id));
         }
 
+        [Authorize(Roles ="Admin, Client")]
         [HttpPost]
         public async Task<ActionResult<GeneralResponse>> CreateJobPosting(JobSubmit jobSubmit)
         {

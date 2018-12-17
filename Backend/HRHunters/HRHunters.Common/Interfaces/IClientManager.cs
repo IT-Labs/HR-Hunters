@@ -17,7 +17,7 @@ namespace HRHunters.Common.Interfaces
     {
         ClientResponse GetMultiple(SearchRequest request, int currentUserId);
         GeneralResponse UpdateClientStatus(ClientStatusUpdate clientStatusUpdate);
-        Task<GeneralResponse> UpdateClientProfile(int id, ClientUpdate clientUpdate);
-        Task<GeneralResponse> CreateCompany(NewCompany newCompany);
+        Task<GeneralResponse> UpdateClientProfile(int id, ClientUpdate clientUpdate,int currentUserId);
+        Task<GeneralResponse> CreateCompany(NewCompany newCompany, int currentUserId);
     }
 }

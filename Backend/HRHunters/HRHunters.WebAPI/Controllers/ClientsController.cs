@@ -46,7 +46,7 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<GeneralResponse>> UpdateClientProfile(int id, ClientUpdate clientUpdate)
         {
-            return Ok(await _clientManager.UpdateClientProfile(id, clientUpdate));
+            return Ok(await _clientManager.UpdateClientProfile(id, clientUpdate,GetCurrentUserId()));
         }
 
         [Authorize(Roles = "Admin")]
@@ -60,7 +60,7 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<GeneralResponse>> CreateCompany(NewCompany newCompany)
         {
-            return Ok(await _clientManager.CreateCompany(newCompany));
+            return Ok(await _clientManager.CreateCompany(newCompany, GetCurrentUserId()));
         }
     }
 }

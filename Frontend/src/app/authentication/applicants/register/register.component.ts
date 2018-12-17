@@ -13,12 +13,16 @@ export class ApplicantRegisterComponent implements OnInit {
   authError: string;
   strongPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
   validEmail = new RegExp("[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}");
+
+  loading = false;
+
   private authStatusSub: Subscription;
   private authErrorStatusSub: Subscription;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {}
 
   ngOnInit() {
+    this.loading = true;
     this.authStatusSub = this.authService
       .getAuthStatusListener()
       .subscribe(authStatus => {});
@@ -29,6 +33,7 @@ export class ApplicantRegisterComponent implements OnInit {
     this.applicantRegisterForm.controls.applicantPassword.valueChanges.subscribe(
       x => this.applicantRegisterForm.controls.applicantConfirmPassword.updateValueAndValidity()
     );
+    this.loading = false;
   }
 
   applicantRegisterForm = this.fb.group({
@@ -78,7 +83,7 @@ export class ApplicantRegisterComponent implements OnInit {
   });
   
   onApplicantRegister() {
-
+    this.loading = true;
     if (this.applicantRegisterForm.invalid) {
       return;
     }
@@ -88,6 +93,7 @@ export class ApplicantRegisterComponent implements OnInit {
       this.applicantRegisterForm.value.applicantEmail,
       this.applicantRegisterForm.value.applicantPassword, 1
     );
+    this.loading = false;
   }
 
   ngOnDestroy() {
