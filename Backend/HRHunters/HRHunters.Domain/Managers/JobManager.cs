@@ -37,30 +37,29 @@ namespace HRHunters.Domain.Managers
 
         public async Task<JobResponse> GetMultiple(SearchRequest request, int currentUserId)
         {
-            //If a user that is not Admin sent this reuqest, and it is not found (Id == 0 => admin)
-            if (request.Id != 0 && request.Id != currentUserId)
-                throw new InvalidUserException("Bad Request.");
-
-            var response = new JobResponse() { JobPostings = new List<JobInfo>() };
-            var user = await _userManager.FindByIdAsync(request.Id.ToString());
-            IList<string> role = _userManager.GetRolesAsync(user).Result;
-
+            if (request.Id != currentUserId)
+            {
+                throw new InvalidUserException("Bad request");
+            }
+            var current = await _userManager.FindByIdAsync(currentUserId.ToString());
+            IList<string>  role = _userManager.GetRolesAsync(current).Result;
+            var query = _repo.GetAll<JobPosting>(includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," + $"{nameof(JobPosting.Applications)}");
             var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == request.Id).Select(x => x.JobPostingId).ToList();
-            var query = _repo.GetAll<JobPosting>(includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," +
-                                                                    $"{nameof(JobPosting.Applications)}");
-            
+            if (!role.Contains("Admin"))
+            {                            
+                if (role.Contains("Applicant"))
+                {
+                    query = query.Where(x => x.Client.Status == ClientStatus.Active && x.Status == JobPostingStatus.Approved).Where(x => !applied.Contains(x.Id));
+                }
 
-            if (role.Contains("Applicant"))
-            {
-                query= query.Where(x => x.Client.Status == ClientStatus.Active && x.Status == JobPostingStatus.Approved)
-                    .Where(x => !applied.Contains(x.Id));
-            }
+                if (role.Contains("Client"))
+                {
+                    query = query.Where(x => x.ClientId == request.Id);
+                }
+            }   
 
-            if (role.Contains("Client"))
-            {
-                query= query.Where(x => x.ClientId == request.Id);
-            }
-
+            var response = new JobResponse() { JobPostings = new List<JobInfo>() };        
+                       
             var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery);
             response.JobPostings.AddRange(selected.ToList());
             var groupings = _repo.GetAll<JobPosting>()
@@ -82,7 +81,7 @@ namespace HRHunters.Domain.Managers
 
         public async Task<GeneralResponse> CreateJobPosting(JobSubmit jobSubmit, int currentUserId)
         {
-            var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(jobSubmit.Id.ToString()));
+            var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(currentUserId.ToString()));
 
             if (jobSubmit.Id != currentUserId && !userRole.Contains("Admin"))
             {

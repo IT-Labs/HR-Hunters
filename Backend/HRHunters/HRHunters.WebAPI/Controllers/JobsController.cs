@@ -46,8 +46,9 @@ namespace HRHunters.WebAPI.Controllers
             return Ok(_jobManager.GetOneJobPosting(id, GetCurrentUserId()));
         }
 
-
+        [Authorize(Roles ="Admin")]
         [HttpPost]
+        
         public async Task<ActionResult<GeneralResponse>> CreateJobPosting(JobSubmit jobSubmit)
         {
             return Ok(await _jobManager.CreateJobPosting(jobSubmit, GetCurrentUserId()));

@@ -33,11 +33,12 @@ namespace HRHunters.WebAPI.Controllers
         {
             return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
+        [Authorize(Roles ="Admin,Applicant")]
         [HttpGet]
-        public ActionResult<ApplicationResponse> GetMultipleApplications([FromQuery]SearchRequest request)
+        public async Task<ActionResult<ApplicationResponse>> GetMultipleApplications([FromQuery]SearchRequest request)
         {
-            return Ok(_applicationManager.GetMultiple(request,GetCurrentUserId()));
-        }
+            return Ok(await _applicationManager.GetMultiple(request, GetCurrentUserId()));
+        }        
         [HttpPut]
         public ActionResult<ApplicationInfo> UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
         {
