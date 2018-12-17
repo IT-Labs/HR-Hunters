@@ -1,281 +1,82 @@
-import { Component, OnInit } from '@angular/core';
-import { JobPosting } from 'src/app/models/job-posting.model';
-import { JobPostingService } from 'src/app/services/job-posting.service';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from "@angular/core";
+import { JobPosting } from "src/app/models/job-posting.model";
+import { JobPostingService } from "src/app/services/job-posting.service";
+import { Subscription } from "rxjs";
+import { ApplicationService } from "src/app/services/application.service";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
-  selector: 'app-job-postings-list',
-  templateUrl: './job-postings-list.component.html',
-  styleUrls: ['./job-postings-list.component.scss']
+  selector: "app-job-postings-list",
+  templateUrl: "./job-postings-list.component.html",
+  styleUrls: ["./job-postings-list.component.scss"]
 })
 export class JobPostingsListComponent implements OnInit {
-
   jobPostingQP = {
     postsPerPage: 10,
-    currentPage: 9,
+    currentPage: 1,
     currentSortBy: "dateTo",
-    lastSortBy: "",
-    currentSortDirection: 0,
-    currentFilter: 0
-  }
+    currentSortDirection: 0
+  };
+  jobPostings: JobPosting[] = [];
+
+  loggedInUser;
+
+  loading = false;
 
   private jobPostingSub: Subscription;
 
-  constructor(private jobPostingService: JobPostingService) { }
+  constructor(
+    private jobPostingService: JobPostingService,
+    private applicationService: ApplicationService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
-    // const params = this.buildQueryParams(this.jobPostingQP);
-    // this.jobPostingService.getJobPostings(params);
-    // this.jobPostingSub = this.jobPostingService
-    //   .getJobPostingUpdateListener()
-    //   .subscribe(jobPostingData => {
-    //     this.jobPostings = jobPostingData.jobPostings;
-    //   });
+    this.loading = true;
+    this.loggedInUser = this.authService.getUser();
+    const params = this.buildQueryParams(this.jobPostingQP);
+    this.jobPostingService.getJobPostings(params);
+    this.jobPostingSub = this.jobPostingService
+      .getJobPostingUpdateListener()
+      .subscribe(jobPostingData => {
+        this.jobPostings = this.jobPostings.concat(jobPostingData.jobPostings);
+        this.loading = false;
+      });
   }
 
   buildQueryParams(data) {
-    return `?pagesize=${data.postsPerPage}
-            &page=${data.currentPage}
-            &sort=${data.currentSortBy}
-            &sortDir=${data.currentSortDirection}
-            &filter=${data.currentFilter}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${
+      data.currentPage
+    }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+  }
+
+  buildApplicationData(applicantId: number, jobId: number) {
+    const applicationData = {
+      applicantId: applicantId,
+      jobId: jobId
+    };
+    return applicationData;
   }
 
   onScrollDown() {
-    console.log('scrolled down!!');
-    this.jobPostings.push({
-      jobTitle: 'NOVOOO',
-      jobType: 'JavaScript',
-      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-      dateFrom: '12/12/2018',
-      dateTo: '20/12/2018',
-      companyEmail: 'company@comp.com',
-      companyName: 'Anhoch',
-      education: 'High-school',
-      experience: 5,
-      id: 123,
-      location: 'Skopje',
-      logo: 'logo.jpg',
-      status: 'Active'
-    })
-  }
- 
-  onScrollUp() {
-    console.log('scrolled up!!');
+    this.loading = true;
+    this.jobPostingQP.currentPage++;
+    const params = this.buildQueryParams(this.jobPostingQP);
+    this.jobPostingService.getJobPostings(params);
+    this.loading = false;
   }
 
-  jobPostings = [
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'JavaScript Developer wanted',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-    {
-    jobTitle: 'POSLEDNO',
-    jobType: 'JavaScript',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laboriosam facilis quod molestias autem ipsum maiores aliquid suscipit quis perferendis sed voluptatum ullam laudantium soluta nulla eveniet aliquam, impedit est?',
-    dateFrom: '12/12/2018',
-    dateTo: '20/12/2018',
-    companyEmail: 'company@comp.com',
-    companyName: 'Anhoch',
-    education: 'High-school',
-    experience: 5,
-    id: 123,
-    location: 'Skopje',
-    logo: 'logo.jpg',
-    status: 'Active'
-  },
-  ]
+  onApply(jobId: number) {
+    this.loading = true;
+    let applicationData = this.buildApplicationData(
+      this.loggedInUser.id,
+      jobId
+    );
+    this.applicationService.addApplication(applicationData);
+    this.loading = false;
+  }
 
-
+  ngOnDestroy() {
+    this.jobPostingSub.unsubscribe();
+  }
 }

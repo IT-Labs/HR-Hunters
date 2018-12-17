@@ -1,139 +1,154 @@
-<div class="dash__container">
-  <div class="dash__heading"><h2>Add New Client</h2></div>
-  <div class="dash__form__container">
-    <form
-      class="dash__form"
-      [formGroup]="newClientForm"
-      (ngSubmit)="onSubmitNewClient()"
-    >
-      <div class="dash__form--section">
-        <p>Company information</p>
+<div class="my-container">
+  <ng-template #customLoadingTemplate>
+  </ng-template>
 
-        <!-- COMPANY NAME -->
-        <label for="dashid_CompanyName" class="dash__form--label"
-          >Company Name <span class="u-required-star">*</span></label
-        >
-        <input
-          type="text"
-          id="dashid__companyName"
-          class="dash__form--input"
-          placeholder="Enter company name..."
-          formControlName="companyName"
-          maxlength="30"
-        />
-
-        <div
-          *ngIf="
-            !newClientForm.controls['companyName'].valid &&
-            (newClientForm.controls['companyName'].dirty ||
-              newClientForm.controls['companyName'].touched)
-          "
-          class="alert dash__form--alert-msg"
-        >
-          <div
-            *ngIf="newClientForm.controls['companyName'].errors?.required"
-          >
-            Company name is required.
-          </div>
-          <div
-            *ngIf="newClientForm.controls['companyName'].errors?.min"
-          >
-            Company name is required.
-          </div>
-        </div>
-
-        <!-- COMPANY EMAIL -->
-        <label for="dashid_CompanyEmail" class="dash__form--label"
-          >Email <span class="u-required-star">*</span></label
-        >
-        <input
-          type="text"
-          id="dashid__companyEmail"
-          class="dash__form--input"
-          placeholder="Enter company email..."
-          formControlName="companyEmail"
-          maxlength="30"
-        />
-
-        <div
-          *ngIf="
-            !newClientForm.controls['companyEmail'].valid &&
-            (newClientForm.controls['companyEmail'].dirty ||
-              newClientForm.controls['companyEmail'].touched)
-          "
-          class="alert dash__form--alert-msg"
-        >
-          <div
-            *ngIf="newClientForm.controls['companyEmail'].errors?.required"
-          >
-            Company email is required.
-          </div>
-        </div>
-
-        <!-- COMPANY PHONE NUMBER -->
-        <label for="dashid_CompanyPhoneNumber" class="dash__form--label"
-          >Phone number <span class="u-required-star">*</span></label
-        >
-        <input
-          type="text"
-          id="dashid__companyPhonenumber"
-          class="dash__form--input"
-          placeholder="Enter company phone number..."
-          formControlName="companyPhoneNumber"
-          maxlength="30"
-        />
-
-        <div
-          *ngIf="
-            !newClientForm.controls['companyPhoneNumber'].valid &&
-            (newClientForm.controls['companyPhoneNumber'].dirty ||
-              newClientForm.controls['companyPhoneNumber'].touched)
-          "
-          class="alert dash__form--alert-msg"
-        >
-          <div
-            *ngIf="newClientForm.controls['companyPhoneNumber'].errors?.required"
-          >
-            Company phone number is required.
-          </div>
-        </div>
-        
-        <!-- COMPANY PHONE NUMBER -->
-        <label for="dashid_CompanyLocation" class="dash__form--label"
-          >Location <span class="u-required-star">*</span></label
-        >
-        <input
-          type="text"
-          id="dashid__companyLocation"
-          class="dash__form--input"
-          placeholder="Enter company location..."
-          formControlName="companyLocation"
-          maxlength="30"
-        />
-
-        <div
-          *ngIf="
-            !newClientForm.controls['companyLocation'].valid &&
-            (newClientForm.controls['companyLocation'].dirty ||
-              newClientForm.controls['companyLocation'].touched)
-          "
-          class="alert dash__form--alert-msg"
-        >
-          <div
-            *ngIf="newClientForm.controls['companyLocation'].errors?.required"
-          >
-            Company location is required.
-          </div>
-        </div>
-      </div>
-
-      <button
-        type="submit"
-        class="btn dash__form--btn"
-        [disabled]="!newClientForm.valid"
+  <ngx-loading
+    [show]="loading"
+    [config]="{ backdropBorderRadius: '3px' }"
+    [template]="customLoadingTemplate"
+  ></ngx-loading>
+  <div class="dash__container">
+    <div class="dash__heading"><h2>Add New Client</h2></div>
+    <div class="dash__form__container">
+      <form
+        class="dash__form"
+        [formGroup]="newClientForm"
+        (ngSubmit)="onSubmitNewClient()"
       >
-        Publish Job
-      </button>
-    </form>
+        <div class="dash__form--section">
+          <p>Company information</p>
+
+          <!-- COMPANY NAME -->
+          <label for="dashid_CompanyName" class="dash__form--label"
+            >Company Name <span class="u-required-star">*</span></label
+          >
+          <input
+            type="text"
+            id="dashid__companyName"
+            class="dash__form--input"
+            placeholder="Enter company name..."
+            formControlName="companyName"
+            maxlength="30"
+          />
+
+          <div
+            *ngIf="
+              !newClientForm.controls['companyName'].valid &&
+              (newClientForm.controls['companyName'].dirty ||
+                newClientForm.controls['companyName'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div *ngIf="newClientForm.controls['companyName'].errors?.required">
+              Company name is required.
+            </div>
+          </div>
+
+          <!-- COMPANY EMAIL -->
+          <label for="dashid_CompanyEmail" class="dash__form--label"
+            >Email <span class="u-required-star">*</span></label
+          >
+          <input
+            type="text"
+            id="dashid__companyEmail"
+            class="dash__form--input"
+            placeholder="Enter company email..."
+            formControlName="companyEmail"
+            maxlength="30"
+          />
+
+          <div
+            *ngIf="
+              !newClientForm.controls['companyEmail'].valid &&
+              (newClientForm.controls['companyEmail'].dirty ||
+                newClientForm.controls['companyEmail'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div
+              *ngIf="newClientForm.controls['companyEmail'].errors?.required"
+            >
+              Company email is required.
+            </div>
+            <div *ngIf="newClientForm.controls['companyEmail'].errors?.pattern">
+              Email must be in valid format.
+            </div>
+          </div>
+
+          <!-- COMPANY PHONE NUMBER -->
+          <label for="dashid_CompanyPhoneNumber" class="dash__form--label"
+            >Phone number <span class="u-required-star">*</span></label
+          >
+          <input
+            type="text"
+            id="dashid__companyPhonenumber"
+            class="dash__form--input"
+            placeholder="Enter company phone number..."
+            formControlName="companyPhoneNumber"
+            maxlength="30"
+          />
+
+          <div
+            *ngIf="
+              !newClientForm.controls['companyPhoneNumber'].valid &&
+              (newClientForm.controls['companyPhoneNumber'].dirty ||
+                newClientForm.controls['companyPhoneNumber'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div
+              *ngIf="
+                newClientForm.controls['companyPhoneNumber'].errors?.required
+              "
+            >
+              Company phone number is required.
+            </div>
+            <div
+              *ngIf="
+                newClientForm.controls['companyPhoneNumber'].errors?.required
+              "
+            >
+              Phone number must be in valid format. Example: +XX XX XXXX XXXX
+            </div>
+          </div>
+
+          <!-- COMPANY LOCATION -->
+          <label for="dashid_CompanyLocation" class="dash__form--label"
+            >Location <span class="u-required-star">*</span></label
+          >
+          <input
+            type="text"
+            id="dashid__companyLocation"
+            class="dash__form--input"
+            placeholder="Enter company location..."
+            formControlName="companyLocation"
+            maxlength="30"
+          />
+
+          <div
+            *ngIf="
+              !newClientForm.controls['companyLocation'].valid &&
+              (newClientForm.controls['companyLocation'].dirty ||
+                newClientForm.controls['companyLocation'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div
+              *ngIf="newClientForm.controls['companyLocation'].errors?.required"
+            >
+              Company location is required.
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="btn dash__form--btn"
+          [disabled]="!newClientForm.valid"
+        >
+          Publish Job
+        </button>
+      </form>
+    </div>
   </div>
 </div>

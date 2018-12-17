@@ -65,7 +65,7 @@ export class ClientService {
     });
   }
 
-  updateClient(clientData) {
+  updateClientStatus(clientData) {
     this.http
       .put<{
         succeeded: boolean;
@@ -73,6 +73,24 @@ export class ClientService {
           Error: string[] | null;
         }
       }>(this.baseUrl + "/Clients", clientData)
+      .subscribe(response => {
+        if (response.succeeded) {
+          this.router.navigate(["/admin-dashboard/clients"]);
+        }
+      },
+      error => {
+        console.log(error)
+      });
+  }
+
+  updateClientProfile(clientData, clientId) {
+    this.http
+      .put<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        }
+      }>(this.baseUrl + "/Clients/" + clientId, clientData)
       .subscribe(response => {
         if (response.succeeded) {
           this.router.navigate(["/admin-dashboard/clients"]);

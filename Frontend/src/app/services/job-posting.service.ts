@@ -20,6 +20,8 @@ export class JobPostingService {
     expired: number;
     rejected: number;
   }>();
+  
+  private jobPostingEdit = new Subject<any>();
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -45,10 +47,33 @@ export class JobPostingService {
         });
       });
   }
+  
+  // Get single job posting
+  getJobPosting(id) {
+    this.http
+      .get<{
+        id: number,
+        jobTitle: string,
+        companyName: string,
+        companyEmail: string,
+        jobType: string,
+        description: string,
+        dateTo: string,
+        allApplicationsCount: number,
+        status: string
+      }>(this.baseUrl + "/Jobs/" + id)
+      .subscribe(jobPostingData => {
+        this.jobPostingEdit.next(jobPostingData)
+      });
+  }
 
   // This method should be called within onInit within a component lising job postings
   getJobPostingUpdateListener() {
     return this.jobPostingsUpdated.asObservable();
+  }
+  
+  getJobPostingEditListener() {
+    return this.jobPostingEdit.asObservable();
   }
 
   // Adding new job posting
@@ -70,7 +95,7 @@ export class JobPostingService {
       });
   }
 
-  updateJobPosting(jobPostingData) {
+  updateJobPostingStatus(jobPostingData) {
     this.http
       .put<{
         succeeded: boolean;
@@ -78,6 +103,24 @@ export class JobPostingService {
           Error: string[] | null;
         }
       }>(this.baseUrl + "/Jobs", jobPostingData)
+      .subscribe(response => {
+        if (response.succeeded) {
+          this.router.navigate(["/admin-dashboard/job-postings"]);
+        }
+      },
+      error => {
+        console.log(error)
+      });
+  }
+  
+  updateJobPostingProfile(jobPostingData, jobPostingId) {
+    this.http
+      .put<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        }
+      }>(this.baseUrl + "/Jobs/" + jobPostingId, jobPostingData)
       .subscribe(response => {
         if (response.succeeded) {
           this.router.navigate(["/admin-dashboard/job-postings"]);

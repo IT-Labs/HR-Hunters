@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
 import { Application } from "src/app/models/application.model";
 import { ApplicationService } from "src/app/services/application.service";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-ad-applications",
@@ -32,11 +33,15 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   };
   paginationSize: number[] = [];
 
+  loading = false;
+  loggedInUser;
+
   private applicationsSub: Subscription;
 
-  constructor(private applicationService: ApplicationService) {}
+  constructor(private applicationService: ApplicationService, private authService: AuthService) {}
 
   ngOnInit() {
+    this.loading = true;
     const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
     this.applicationsSub = this.applicationService
@@ -49,59 +54,50 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
         this.applicationCount.interviewed = applicationsData.interviewed;
         this.applicationCount.hired = applicationsData.hired;
         this.applicationCount.rejected = applicationsData.rejected;
+        this.loading = false;
       });
       setTimeout(() => {
         this.paginationMaxSize = this.applicationCount.all
       }, 1000);
+      this.loggedInUser = this.authService.getUser()
   }
 
   buildQueryParams(data) {
     if (data.currentFilter === null) {
       return `?pageSize=${data.postsPerPage}&currentPage=${
         data.currentPage
-      }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+      }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&id=${this.loggedInUser.id}`;
     }
     return `?pageSize=${data.postsPerPage}&currentPage=${
       data.currentPage
     }&sortedBy=${data.currentSortBy}&sortDir=${
       data.currentSortDirection
-    }&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}`;
+    }&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}&id=${this.loggedInUser.id}`;
   }
 
   buildApplicationsDataOnUpdate(
     id: number,
-    applicantFirstName: string,
-    applicantLastName: string,
-    applicantEmail: string,
-    jobTitle: string,
-    description: string,
-    experience: number,
-    postedOn: Date,
     status: string
   ) {
-    let applicationData: Application = {
+    let applicationData = {
       id: id,
-      applicantFirstName: applicantFirstName,
-      applicantLastName: applicantLastName,
-      applicantEmail: applicantEmail,
-      jobTitle: jobTitle,
-      description: description,
-      experience: experience,
-      postedOn: postedOn,
       status: status
     };
     return applicationData;
   }
 
   onChangedPage(page: number) {
+    this.loading = true;
     if (this.applicationQP.currentPage !== this.applicationQP.previousPage) {
       this.applicationQP.previousPage = this.applicationQP.currentPage;
       const params = this.buildQueryParams(this.applicationQP);
       this.applicationService.getApplications(params);
     }
+    this.loading = false;
   }
 
   onFilter(filterBy: string) {
+    this.loading = true;
     if (filterBy === null) {
       this.applicationQP.currentFilter = null;
     } else {
@@ -123,11 +119,10 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       this.paginationMaxSize = this.applicationCount.rejected
     }
 
-    console.log(filterBy, this.paginationMaxSize)
-
     this.applicationQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
+    this.loading = false;
   }
 
   onSort(sortBy: string) {
@@ -152,20 +147,20 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   }
 
   chooseStatus(event: any, id: number) {
+    this.loading = true;
     const currentStatus = event.target.innerText;
     const currentId = id;
     const applicationData = this.buildApplicationsDataOnUpdate(
       currentId,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
       currentStatus
     );
     this.applicationService.updateApplication(applicationData);
+
+    setTimeout(() => {
+      const params = this.buildQueryParams(this.applicationQP);
+      this.applicationService.getApplications(params);
+      this.loading = false;
+    }, 1000);
   }
 
   ngOnDestroy() {

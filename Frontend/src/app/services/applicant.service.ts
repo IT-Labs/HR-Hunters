@@ -37,14 +37,14 @@ export class ApplicantService {
       });
   }
 
-  updateApplicant(applicantData) {
+  updateApplicant(applicantData, applicantId) {
     this.http
       .put<{
         succeeded: boolean;
         errors: {
           Error: string[] | null;
         };
-      }>(this.baseUrl + "/Applicants", applicantData)
+      }>(this.baseUrl + "/Applicants/" + applicantId, applicantData)
       .subscribe(response => {
         if (response.succeeded) {
           this.router.navigate(["/admin-dashboard/applicants"]);

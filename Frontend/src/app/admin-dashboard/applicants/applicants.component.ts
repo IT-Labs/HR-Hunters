@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Applicant } from "src/app/models/applicant.model";
 import { Subscription } from "rxjs";
 import { ApplicantService } from "src/app/services/applicant.service";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-ad-applicants",
@@ -12,9 +13,7 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
   applicantsCount = {
     all: 0
   };
-
   applicants: Applicant[] = [];
-
   applicantsQP = {
     postsPerPage: 10,
     currentPage: 1,
@@ -23,13 +22,16 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
     lastSortBy: "",
     currentSortDirection: 0
   };
-
   paginationSize: number[] = [];
+
+  loading = false;
+
   private applicantsSub: Subscription;
 
   constructor(private applicantService: ApplicantService) {}
 
   ngOnInit() {
+    this.loading = true;
     const params = this.buildQueryParams(this.applicantsQP);
     this.applicantService.getApplicants(params);
     this.applicantsSub = this.applicantService
@@ -37,6 +39,7 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
       .subscribe(applicantData => {
         this.applicants = applicantData.applicants;
         this.applicantsCount.all = applicantData.applicantsCount;
+        this.loading = false;
       });
   }
 
@@ -47,7 +50,6 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
   }
 
   buildApplicantDataOnUpdate(
-    userId: number,
     firstName: string,
     lastName: string,
     email: string,
@@ -57,7 +59,6 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
     experience: string
   ) {
     let applicantData = {
-      userId: userId,
       firstName: firstName,
       lastName: lastName,
       email: email,
@@ -70,14 +71,17 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
   }
 
   onChangedPage(page: number) {
+    this.loading = true;
     if (this.applicantsQP.currentPage !== this.applicantsQP.previousPage) {
       this.applicantsQP.previousPage = this.applicantsQP.currentPage;
       const params = this.buildQueryParams(this.applicantsQP);
       this.applicantService.getApplicants(params);
+      this.loading = false;
     }
   }
 
   onSort(sortBy: any) {
+    this.loading = true;
     if (this.applicantsQP.lastSortBy === sortBy) {
       if (this.applicantsQP.currentSortDirection === 1) {
         this.applicantsQP.currentSortDirection = 0;
@@ -96,6 +100,7 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
     this.applicantsQP.currentSortBy = sortBy;
     const params = this.buildQueryParams(this.applicantsQP);
     this.applicantService.getApplicants(params);
+    this.loading = false;
   }
 
   ngOnDestroy() {

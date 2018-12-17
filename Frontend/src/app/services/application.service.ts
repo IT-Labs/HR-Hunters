@@ -69,4 +69,22 @@ export class ApplicationService {
         console.log(error)
       });
   }
+
+  addApplication(applicationData) {
+    this.http
+      .post<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        }
+      }>(this.baseUrl + "/Applications", applicationData)
+      .subscribe(response => {
+        if (response.succeeded) {
+          this.router.navigate(["/applicant/job-postings"]);
+        }
+      },
+      error => {
+        console.log(error)
+      });
+  }
 }

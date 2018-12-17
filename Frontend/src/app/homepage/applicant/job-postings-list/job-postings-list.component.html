@@ -1,22 +1,35 @@
-<div
-infiniteScroll
-[infiniteScrollDistance]="2"
-[infiniteScrollUpDistance]="1.5"
-[infiniteScrollThrottle]="50"
-(scrolled)="onScrollDown()"
-(scrolledUp)="onScrollUp()"
->
-  <div class="jp__container" *ngFor="let jp of jobPostings">
-    <h1 class="jp__heading">{{ jp.jobTitle }}</h1>
-    <p class="jp__sub-heading">{{ jp.jobType }}</p>
-    <p class="jp__content" ng-init="limit = 150">{{ jp.description }}</p>
-    <p class="jp__meta">
-      Job Posting added on: {{ jp.dateFrom }}, available until:
-      {{ jp.dateTo }}
-    </p>
-    <div class="jp__btn-container">
-      <button class="btn btn__secondary">See more...</button>
-      <button class="btn btn__primary">Apply</button>
+<div class="my-container">
+  <ng-template #customLoadingTemplate> </ng-template>
+
+  <ngx-loading
+    [show]="loading"
+    [config]="{ backdropBorderRadius: '3px' }"
+    [template]="customLoadingTemplate"
+  ></ngx-loading>
+  <div
+    infiniteScroll
+    [infiniteScrollDistance]="1"
+    [infiniteScrollUpDistance]="1.5"
+    [infiniteScrollThrottle]="150"
+    (scrolled)="onScrollDown()"
+  >
+    <div class="jp__container" *ngFor="let jp of jobPostings">
+      <h1 class="jp__heading">{{ jp.jobTitle }}</h1>
+      <p class="jp__sub-heading">{{ jp.jobType }}</p>
+      <p class="jp__content" ng-init="limit = 150">{{ jp.description }}</p>
+      <p class="jp__meta">
+        Job Posting added on: {{ jp.dateFrom }}, available until:
+        {{ jp.dateTo }}
+      </p>
+      <div class="jp__btn-container">
+        <button
+          class="btn btn__secondary"
+          [routerLink]="['/applicant/job-postings/', jp.id]"
+        >
+          See more...
+        </button>
+        <button class="btn btn__primary" (click)="onApply(jp.id)">Apply</button>
+      </div>
     </div>
   </div>
 </div>
