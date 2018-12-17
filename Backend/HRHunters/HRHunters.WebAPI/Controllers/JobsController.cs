@@ -33,19 +33,19 @@ namespace HRHunters.WebAPI.Controllers
         {
             return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
+
         [HttpGet]
         public async Task<ActionResult<JobResponse>> GetJobs([FromQuery]SearchRequest request)
         {
             return Ok(await _jobManager.GetMultiple(request, GetCurrentUserId()));
         }
 
-        [Authorize(Roles = "Applicant")]
+        [Authorize(Roles = "Applicant, Client")]
         [HttpGet("{id}")]
         public ActionResult<JobResponse> GetOneJobPosting(int id)
         {
             return Ok(_jobManager.GetOneJobPosting(id, GetCurrentUserId()));
         }
-
 
         [HttpPost]
         public async Task<ActionResult<GeneralResponse>> CreateJobPosting(JobSubmit jobSubmit)
