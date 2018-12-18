@@ -42,6 +42,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loading = true;
+    this.loggedInUser = this.authService.getUser()
     const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
     this.applicationsSub = this.applicationService
@@ -59,7 +60,6 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.paginationMaxSize = this.applicationCount.all
       }, 1000);
-      this.loggedInUser = this.authService.getUser()
   }
 
   buildQueryParams(data) {

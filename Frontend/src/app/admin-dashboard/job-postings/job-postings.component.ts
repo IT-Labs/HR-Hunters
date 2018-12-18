@@ -44,6 +44,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loading = true;
+    this.loggedInUser = this.authService.getUser()
     const params = this.buildQueryParams(this.jobPostingQP);
     this.jobPostingService.getJobPostings(params);
     this.jobPostingSub = this.jobPostingService
@@ -60,7 +61,6 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.paginationMaxSize = this.jobPostingsCount.all
       }, 1000);
-      this.loggedInUser = this.authService.getUser()
   }
 
   buildQueryParams(data) {

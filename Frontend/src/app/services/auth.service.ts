@@ -96,6 +96,7 @@ export class AuthService {
   // Deletes the token from the local storage
   private clearAuthData() {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
   }
 
   // Saves the userdata to the local storage and deletes the old one if there already is a token saved

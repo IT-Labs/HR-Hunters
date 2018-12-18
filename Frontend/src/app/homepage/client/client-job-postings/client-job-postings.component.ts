@@ -28,6 +28,7 @@ export class ClientJobPostingsComponent  {
 
   ngOnInit() {
     this.loading = true;
+    this.loggedInUser = this.authService.getUser()
     const params = this.buildQueryParams(this.jobPostingQP);
     this.jobPostingService.getJobPostings(params);
     this.jobPostingSub = this.jobPostingService
@@ -36,7 +37,6 @@ export class ClientJobPostingsComponent  {
         this.jobPostings = this.jobPostings.concat(jobPostingData.jobPostings);
         this.loading = false;
       });
-    this.loggedInUser = this.authService.getUser()
   }
 
   buildQueryParams(data) {
