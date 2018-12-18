@@ -33,6 +33,7 @@ import { ADNewJobPostingComponent } from './admin-dashboard/job-postings/new-job
 import { ErrorComponent } from './error/error.component';
 import { NgbModule, NgbPaginationModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { NewClientComponent } from './admin-dashboard/clients/new-client/new-client.component';
+import { AddCSVComponent } from './admin-dashboard/job-postings/add-csv/add-csv.component';
 
 @NgModule({
     declarations: [
@@ -58,7 +59,8 @@ import { NewClientComponent } from './admin-dashboard/clients/new-client/new-cli
         ADJobPostingsComponent,
         ADNewJobPostingComponent,
         LoginComponent,
-        NewClientComponent
+        NewClientComponent,
+        AddCSVComponent
     ],
     imports: [
         CommonModule,

@@ -1,0 +1,81 @@
+<div class="my-container">
+  <ng-template #customLoadingTemplate> </ng-template>
+
+  <ngx-loading
+    [show]="loading"
+    [config]="{ backdropBorderRadius: '3px' }"
+    [template]="customLoadingTemplate"
+  ></ngx-loading>
+  <div class="dash__container">
+    <div class="dash__heading">
+      <h2 *ngIf="!edit">Add New Job Posting</h2>
+      <h2 *ngIf="edit">Edit Job Posting</h2>
+    </div>
+    <div class="dash__form__container">
+      <div class="dash__form--section">
+        <p>Company information</p>
+
+        <!-- COMPANY NAME -->
+        <label for="dashid_CompanyName" class="dash__form--label"
+          >Company Name <span class="u-required-star">*</span></label
+        >
+        <input
+          id="dashid_CompanyName"
+          formControlName="companyName"
+          type="text"
+          class="dash__form--input"
+          [ngbTypeahead]="search"
+          placeholder="Select company..."
+          (focus)="focus$.next($event.target.value)"
+          (click)="click$.next($event.target.value)"
+          #instance="ngbTypeahead"
+          (ngModelChange)="checkCompanyValidity()"
+        />
+        <div
+          *ngIf="
+            !newJobPostingForm.controls['companyName'].valid &&
+            (newJobPostingForm.controls['companyName'].dirty ||
+              newJobPostingForm.controls['companyName'].touched)
+          "
+          class="alert dash__form--alert-msg"
+        >
+          <div
+            *ngIf="newJobPostingForm.controls['companyName'].errors?.required"
+          >
+            Company must be selected.
+          </div>
+        </div>
+        <label class="dash__form--label"></label>
+        <div class="dash__form--info">
+          If the company you are looking for is not on this list, you can
+          <a routerLink="/admin-dashboard/new-client">add a new company</a>.
+        </div>
+
+        <p class="pt-3">Job information</p>
+        <!-- TITLE -->
+
+        <label for="dashid__title" class="dash__form--label"
+          >Title <span class="u-required-star">*</span></label
+        >
+        <input
+          type="text"
+          id="dashid__title"
+          class="dash__form--input"
+          placeholder="Enter job title..."
+          formControlName="title"
+          maxlength="50"
+        />
+
+        <button
+          type="submit"
+          class="btn dash__form--btn"
+          [disabled]="
+            !newJobPostingForm.valid || !fromDate || !toDate || !validClient
+          "
+        >
+          Upload CSV
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
