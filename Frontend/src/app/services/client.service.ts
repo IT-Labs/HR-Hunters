@@ -17,12 +17,16 @@ export class ClientService {
     active: number;
     inactive: number;
   }>();
-  
+
   private clientProfile = new Subject<{
-    client: Client
+    client: Client;
   }>();
 
-  constructor(private http: HttpClient, private router: Router, private toastrService: ToastrService) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private toastrService: ToastrService
+  ) {}
 
   // This method should be called within onInit within a component clients postings
   getClientsUpdateListener() {
@@ -38,63 +42,79 @@ export class ClientService {
         active: number;
         inactive: number;
       }>(this.baseUrl + "/Clients" + queryParams)
-      .subscribe(clientsData => {
-        this.clientsUpdated.next({
-          clients: clientsData.clients,
-          clientsCount: clientsData.maxClients,
-          active: clientsData.active,
-          inactive: clientsData.inactive
-        });
-      },
-      error => {
-        if (error) {
-          this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
+      .subscribe(
+        clientsData => {
+          this.clientsUpdated.next({
+            clients: clientsData.clients,
+            clientsCount: clientsData.maxClients,
+            active: clientsData.active,
+            inactive: clientsData.inactive
+          });
+        },
+        error => {
+          if (error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
         }
-      });
+      );
   }
 
   getClient(clientId) {
     this.http
       .get<{
-        id: number,
-        companyName: string,
-        logo: string,
-        email: string,
-        location: string,
-        activeJobs: number,
-        allJobs: number,
-        status: string
+        id: number;
+        companyName: string;
+        logo: string;
+        email: string;
+        location: string;
+        activeJobs: number;
+        allJobs: number;
+        status: string;
       }>(this.baseUrl + "/Clients/" + clientId)
-      .subscribe(clientsData => {
-        this.clientProfile.next({
-          client: clientsData
-        });
-      },
-      error => {
-        if (error) {
-          this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
+      .subscribe(
+        clientsData => {
+          this.clientProfile.next({
+            client: clientsData
+          });
+        },
+        error => {
+          if (error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
         }
-      });
+      );
   }
 
   addClient(clientData) {
     this.http
-    .post<{
-      succeeded: boolean;
-      errors: {
-        Error: string[] | null;
-      }
-    }>(this.baseUrl + "/Clients", clientData)
-    .subscribe(response => {
-      if (response.succeeded) {
-        this.router.navigate(["/admin-dashboard/clients"]);
-      }
-    },
-    error => {
-      if (error) {
-        this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
-      }
-    });
+      .post<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        };
+      }>(this.baseUrl + "/Clients", clientData)
+      .subscribe(
+        response => {
+          if (response.succeeded) {
+            this.router.navigate(["/admin-dashboard/clients"]);
+            this.toastrService.success("", "Client added successfully!");
+          }
+        },
+        error => {
+          if (error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
+        }
+      );
   }
 
   updateClientStatus(clientData) {
@@ -103,18 +123,27 @@ export class ClientService {
         succeeded: boolean;
         errors: {
           Error: string[] | null;
-        }
+        };
       }>(this.baseUrl + "/Clients", clientData)
-      .subscribe(response => {
-        if (response.succeeded) {
-          this.router.navigate(["/admin-dashboard/clients"]);
+      .subscribe(
+        response => {
+          if (response.succeeded) {
+            this.router.navigate(["/admin-dashboard/clients"]);
+            this.toastrService.success(
+              "",
+              "Client status updated successfully!"
+            );
+          }
+        },
+        error => {
+          if (error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
         }
-      },
-      error => {
-        if (error) {
-          this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
-        }
-      });
+      );
   }
 
   updateClientProfile(clientData, clientId) {
@@ -123,17 +152,23 @@ export class ClientService {
         succeeded: boolean;
         errors: {
           Error: string[] | null;
-        }
+        };
       }>(this.baseUrl + "/Clients/" + clientId, clientData)
-      .subscribe(response => {
-        if (response.succeeded) {
-          this.router.navigate(["/admin-dashboard/clients"]);
+      .subscribe(
+        response => {
+          if (response.succeeded) {
+            this.router.navigate(["/admin-dashboard/clients"]);
+            this.toastrService.success("", "Profile updated successfully!");
+          }
+        },
+        error => {
+          if (error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
         }
-      },
-      error => {
-        if (error) {
-          this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
-        }
-      });
+      );
   }
 }

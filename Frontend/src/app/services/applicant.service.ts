@@ -43,7 +43,6 @@ export class ApplicantService {
             applicants: applicantsData.applicants,
             applicantsCount: applicantsData.maxApplicants
           });
-          this.toastrService.success("", "Applicants fetched successfully!");
         },
         error => {
           if (error) {

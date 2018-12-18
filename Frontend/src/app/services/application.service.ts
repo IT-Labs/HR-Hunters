@@ -44,22 +44,28 @@ export class ApplicationService {
         hired: number;
         rejected: number;
       }>(this.baseUrl + "/Applications" + queryParams)
-      .subscribe(applicationsData => {
-        this.applicationsUpdated.next({
-          applications: applicationsData.applications,
-          applicationsCount: applicationsData.maxApplications,
-          pending: applicationsData.pending,
-          contacted: applicationsData.contacted,
-          interviewed: applicationsData.interviewed,
-          hired: applicationsData.hired,
-          rejected: applicationsData.rejected
-        });
-        this.toastrService.success("", "Applications fetched successfully!");
-      }, error => {
-        if (error) {
-          this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
+      .subscribe(
+        applicationsData => {
+          this.applicationsUpdated.next({
+            applications: applicationsData.applications,
+            applicationsCount: applicationsData.maxApplications,
+            pending: applicationsData.pending,
+            contacted: applicationsData.contacted,
+            interviewed: applicationsData.interviewed,
+            hired: applicationsData.hired,
+            rejected: applicationsData.rejected
+          });
+          this.toastrService.success("", "Applications fetched successfully!");
+        },
+        error => {
+          if (error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
         }
-      });
+      );
   }
 
   updateApplication(applicationData) {
@@ -79,7 +85,10 @@ export class ApplicationService {
         },
         error => {
           if (error) {
-            this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
           }
         }
       );
@@ -97,12 +106,18 @@ export class ApplicationService {
         response => {
           if (response.succeeded) {
             this.router.navigate(["/applicant/job-postings"]);
-            this.toastrService.success("", "You've applied to this job successfully!");
+            this.toastrService.success(
+              "",
+              "You've applied to this job successfully!"
+            );
           }
         },
         error => {
           if (error) {
-            this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
           }
         }
       );

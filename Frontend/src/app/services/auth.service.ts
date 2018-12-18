@@ -162,7 +162,6 @@ export class AuthService {
             this.authErrorStatusListener.next({
               error: error.error.errors.Error[0]
             });
-            this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
           }
         }
       );
@@ -215,10 +214,6 @@ export class AuthService {
             this.authErrorStatusListener.next({
               error: error.error.errors.Error[0]
             });
-            this.toastrService.error(
-              error.error.errors.Error[0],
-              "Error occured!"
-            );
           }
         }
       );
