@@ -94,41 +94,33 @@ namespace HRHunters.Domain.Managers
         {
             if (currentUserId != id)
             {
-                throw new InvalidUserException("Invalid user id");
+                _logger.LogError(Constants.UnauthorizedAccess);
             }
 
-            var response = new GeneralResponse()
-            {
-                Succeeded = true,
-                Errors = new Dictionary<string, List<string>>()
-            };
+            var response = new GeneralResponse();
             var user = await _userManager.FindByIdAsync(id.ToString());
 
             var client = _repo.GetById<Client>(id);
-            if (user != null && clientUpdate != null)
+            client = _mapper.Map(clientUpdate, client);
+            client.User.ModifiedDate = DateTime.UtcNow;
+            client.User.ModifiedBy = client.User.FirstName;
+            var exists = await _userManager.FindByEmailAsync(client.User.Email);
+            if (exists != null && user != exists)
             {
-                client = _mapper.Map(clientUpdate, client);
-                client.User.ModifiedDate = DateTime.UtcNow;
-                client.User.ModifiedBy = client.User.FirstName;
-                var exists = await _userManager.FindByEmailAsync(client.User.Email);
-                if (exists != null)
-                {
-                    response.Succeeded = false;
-                    response.Errors.Add("Error", new List<string> { "Email is already in use" });
-                    return response;
-                }
-                try
-                {
-                    _repo.Update(client, client.User.FirstName);
-                    await _userManager.UpdateAsync(user);
-                    return response;
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(e.Message);
-                }
-            }           
-            
+                response.Succeeded = false;
+                response.Errors["Error"].Add("Email is already in use");
+                return response;
+            }
+            try
+            {
+                _repo.Update(client, client.User.FirstName);
+                await _userManager.UpdateAsync(user);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            response.Succeeded = true;
             return response;
         }
 
@@ -140,11 +132,7 @@ namespace HRHunters.Domain.Managers
             {
                 throw new InvalidUserException("Invalid user");
             }
-            var response = new GeneralResponse()
-            {
-                Succeeded = true,
-                Errors = new Dictionary<string, List<string>>()
-            };
+            var response = new GeneralResponse();
             var user = new User()
             {
                 FirstName = newCompany.CompanyName,
@@ -166,15 +154,13 @@ namespace HRHunters.Domain.Managers
             try
             {
                 _repo.Create(company, "Admin");
-                return response;
+                response.Succeeded = true;
             }
             catch
             {
                 response.Errors.Add("Error", new List<string>() { "Failed to create company." });
-                return response;
             }
-
-
+            return response;
         }
     }
 }
