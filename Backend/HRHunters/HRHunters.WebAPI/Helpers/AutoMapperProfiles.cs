@@ -76,7 +76,9 @@ namespace HRHunters.WebAPI.Helpers
                                                     .ForMember(x => x.FirstName, opt => opt.MapFrom(x => x.User.FirstName))
                                                     .ForMember(x => x.LastName, opt => opt.MapFrom(x => x.User.LastName))
                                                     .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
-                                                    .ForMember(x => x.Photo, opt => opt.MapFrom(x => x.Logo));
+                                                    .ForMember(x => x.Photo, opt => opt.MapFrom(x => x.Logo))
+                                                    .ForMember(x => x.Education, opt => opt.MapFrom(x => x.EducationType.ToString()))
+                                                    .ForMember(x => x.School, opt => opt.MapFrom(x => x.SchoolUniversity));
         }
     }
 }

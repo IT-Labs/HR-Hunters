@@ -37,28 +37,32 @@ namespace HRHunters.WebAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public ActionResult<ClientResponse> GetMultipleClients([FromQuery]SearchRequest request)
+        public IActionResult GetMultipleClients([FromQuery]SearchRequest request)
         {
             return Ok(_clientManager.GetMultiple(request,GetCurrentUserId()));
         }
-
+        [HttpGet("{id}")]
+        public IActionResult GetOneClient(int id)
+        {
+            return Ok(_clientManager.GetOneClient(id));
+        }
         [Authorize(Roles = "Client")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<GeneralResponse>> UpdateClientProfile(int id, ClientUpdate clientUpdate)
+        public async Task<IActionResult> UpdateClientProfile(int id, ClientUpdate clientUpdate)
         {
             return Ok(await _clientManager.UpdateClientProfile(id, clientUpdate,GetCurrentUserId()));
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPut]
-        public ActionResult<GeneralResponse> UpdateClientStatus(ClientStatusUpdate clientStatusUpdate)
+        public IActionResult UpdateClientStatus(ClientStatusUpdate clientStatusUpdate)
         {
             return Ok(_clientManager.UpdateClientStatus(clientStatusUpdate));
         }
         
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<GeneralResponse>> CreateCompany(NewCompany newCompany)
+        public async Task<IActionResult> CreateCompany(NewCompany newCompany)
         {
             return Ok(await _clientManager.CreateCompany(newCompany, GetCurrentUserId()));
         }

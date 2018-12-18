@@ -15,6 +15,7 @@ namespace HRHunters.Common.Interfaces
     public  interface IApplicantManager : IBaseManager
     {
         ApplicantResponse GetMultiple(SearchRequest request);
+        ApplicantInfo GetOneApplicant(int id);
         Task<GeneralResponse> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate, int currentUserId);
     }
 }

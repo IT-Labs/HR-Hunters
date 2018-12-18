@@ -48,6 +48,12 @@ namespace HRHunters.Domain.Managers
             return response;
         }
 
+        public ApplicantInfo GetOneApplicant(int id)
+        {
+            var query = _repo.GetOne<Applicant>(x => x.Id == id, includeProperties: $"{nameof(User)}");
+            return _mapper.Map<ApplicantInfo>(query);
+        }
+
         public async Task<GeneralResponse> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate, int currentUserId)
         {
             var response = new GeneralResponse();

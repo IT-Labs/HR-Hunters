@@ -36,19 +36,19 @@ namespace HRHunters.WebAPI.Controllers
         }
         [Authorize(Roles = "Admin, Applicant")]
         [HttpGet]
-        public async Task<ActionResult<ApplicationResponse>> GetMultipleApplications([FromQuery]SearchRequest request)
+        public async Task<IActionResult> GetMultipleApplications([FromQuery]SearchRequest request)
         {
             return Ok(await _applicationManager.GetMultiple(request, GetCurrentUserId()));
         }        
         [Authorize(Roles="Admin")]
         [HttpPut]
-        public ActionResult<ApplicationInfo> UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
+        public IActionResult UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
         {
             return Ok(_applicationManager.UpdateApplicationStatus(applicationStatusUpdate));
         }
         [Authorize(Roles = "Applicant")]
         [HttpPost]
-        public ActionResult<GeneralResponse> CreateApplication(Apply apply)
+        public IActionResult CreateApplication(Apply apply)
         {
             return Ok(_applicationManager.CreateApplication(apply, GetCurrentUserId()));
         }

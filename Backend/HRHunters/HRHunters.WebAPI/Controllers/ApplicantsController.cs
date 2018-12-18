@@ -32,15 +32,20 @@ namespace HRHunters.WebAPI.Controllers
         {
             return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
+        [HttpGet("{id}")]
+        public IActionResult GetOneApplicant(int id)
+        {
+            return Ok(_applicantManager.GetOneApplicant(id));
+        }
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public ActionResult<ApplicantResponse> GetMultipleApplicants([FromQuery]SearchRequest request)
+        public IActionResult GetMultipleApplicants([FromQuery]SearchRequest request)
         {
             return Ok(_applicantManager.GetMultiple(request));
         }
         [Authorize(Roles = "Applicant")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<GeneralResponse>> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate)
+        public async Task<IActionResult> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate)
         {
             return Ok(await _applicantManager.UpdateApplicantProfile(id, applicantUpdate, GetCurrentUserId()));
         }

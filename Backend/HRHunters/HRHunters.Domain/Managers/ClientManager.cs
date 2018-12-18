@@ -60,6 +60,12 @@ namespace HRHunters.Domain.Managers
             return response;
         }
 
+        public ClientInfo GetOneClient(int id)
+        {
+            var query = _repo.GetOne<Client>(x => x.Id == id, includeProperties: $"{nameof(User)}");
+            return _mapper.Map<ClientInfo>(query);
+        }
+
         public GeneralResponse UpdateClientStatus(ClientStatusUpdate clientStatusUpdate)
         {
             var client = _repo.GetOne<Client>(filter: x => x.Id == clientStatusUpdate.Id,
