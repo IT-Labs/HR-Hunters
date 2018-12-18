@@ -10,6 +10,8 @@ using HRHunters.Common.Entities;
 using System.Globalization;
 using System.Web;
 using HRHunters.Common.Requests;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace HRHunters.Common.ExtensionMethods
 {
@@ -100,6 +102,37 @@ namespace HRHunters.Common.ExtensionMethods
 
             return string.Join("&", properties.ToArray());
         }
+        //public bool ValidateCsvFile(IFormFile formFile)
+        //{
+        //    var result = string.Empty;
+        //    using (var reader = new StreamReader(formFile.OpenReadStream()))
+        //    {
+        //        int iteration = 1;
+        //        while (((result = reader.ReadLine()) != null))
+        //        {
+        //            if (string.IsNullOrEmpty(result) || string.IsNullOrWhiteSpace(result))
+        //            {
+        //                iteration++;
+        //                continue;
+        //            }
+
+        //            var parts = result.Split(",");
+        //            parts = parts.Where(str => str != "").ToArray();
+        //            if (parts.Length == 0)
+        //            {
+        //                iteration++;
+        //                continue;
+        //            }
+        //            if (parts.Length > 2 || parts.Length < 2)
+        //            {
+
+        //                iteration++;
+        //                continue;
+        //            }
+        //        }
+        //    }
+
+        //}
     }
     
         

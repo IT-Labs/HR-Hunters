@@ -86,6 +86,7 @@
             placeholder="Enter company phone number..."
             formControlName="companyPhoneNumber"
             maxlength="30"
+            ngxPhoneMask
           />
 
           <div
@@ -105,10 +106,10 @@
             </div>
             <div
               *ngIf="
-                newClientForm.controls['companyPhoneNumber'].errors?.required
+                newClientForm.controls['companyPhoneNumber'].errors
               "
             >
-              Phone number must be in valid format. Example: +XX XX XXXX XXXX
+              Phone number must be in valid format. Example: +1 (222) 333-444-55
             </div>
           </div>
 

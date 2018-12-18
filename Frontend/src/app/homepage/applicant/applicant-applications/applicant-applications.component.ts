@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { JobPosting } from 'src/app/models/job-posting.model';
-import { JobPostingService } from 'src/app/services/job-posting.service';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { ApplicationService } from 'src/app/services/application.service';
+import { Application } from 'src/app/models/application.model';
 
 @Component({
   selector: 'app-applicant-applications',
@@ -11,30 +11,30 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class ApplicantApplicationsComponent implements OnInit {
 
-  jobPostingQP = {
+  applicationsQP = {
     postsPerPage: 10,
     currentPage: 1,
     currentSortBy: "dateTo",
     currentSortDirection: 0
   }
-  jobPostings: JobPosting[] = [];
+  applications: Application[] = [];
 
   loggedInUser;
 
   loading = false;
-  private jobPostingSub: Subscription;
+  private applicationSub: Subscription;
 
-  constructor(private jobPostingService: JobPostingService, private authService: AuthService) { }
+  constructor(private applicationService: ApplicationService, private authService: AuthService) { }
 
   ngOnInit() {
     this.loading = true;
     this.loggedInUser = this.authService.getUser()
-    const params = this.buildQueryParams(this.jobPostingQP);
-    this.jobPostingService.getJobPostings(params);
-    this.jobPostingSub = this.jobPostingService
-      .getJobPostingUpdateListener()
-      .subscribe(jobPostingData => {
-        this.jobPostings = this.jobPostings.concat(jobPostingData.jobPostings);
+    const params = this.buildQueryParams(this.applicationsQP);
+    this.applicationService.getApplications(params)
+    this.applicationSub = this.applicationService
+      .getApplicationsUpdateListener()
+      .subscribe(applicationData => {
+        this.applications = this.applications.concat(applicationData.applications);
         this.loading = false;
       });
   }
@@ -45,14 +45,14 @@ export class ApplicantApplicationsComponent implements OnInit {
 
   onScrollDown() {
     this.loading = true;
-    this.jobPostingQP.currentPage++;
-    const params = this.buildQueryParams(this.jobPostingQP);
-    this.jobPostingService.getJobPostings(params);
+    this.applicationsQP.currentPage++;
+    const params = this.buildQueryParams(this.applicationsQP);
+    this.applicationService.getApplications(params)
     this.loading = false;
   }
 
   ngOnDestroy() {
-    this.jobPostingSub.unsubscribe();
+    this.applicationSub.unsubscribe();
   }
 
 }
