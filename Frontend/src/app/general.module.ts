@@ -72,7 +72,11 @@ import { NewClientComponent } from './admin-dashboard/clients/new-client/new-cli
         NgbAlertModule,
         NgxLoadingModule.forRoot({}),
         BrowserAnimationsModule,
-        ToastrModule.forRoot(),
+        ToastrModule.forRoot({
+            timeOut: 3000,
+            positionClass: 'toast-bottom-right',
+            preventDuplicates: true
+        }),
         NgxPhoneMaskModule
     ]
 })

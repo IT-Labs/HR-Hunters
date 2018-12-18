@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Applicant } from "src/app/models/applicant.model";
 import { Subscription } from "rxjs";
 import { ApplicantService } from "src/app/services/applicant.service";
-import { AuthService } from "src/app/services/auth.service";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-ad-applicants",
@@ -28,7 +28,10 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
 
   private applicantsSub: Subscription;
 
-  constructor(private applicantService: ApplicantService) {}
+  constructor(
+    private applicantService: ApplicantService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.loading = true;
@@ -66,7 +69,7 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
       educationType: educationType,
       schoolUniversity: schoolUniversity,
       experience: experience
-      };
+    };
     return applicantData;
   }
 
@@ -88,7 +91,7 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
       } else if (this.applicantsQP.currentSortDirection === 0) {
         this.applicantsQP.currentSortDirection = 1;
       }
-      this.applicantsQP.lastSortBy = '';
+      this.applicantsQP.lastSortBy = "";
     } else if (this.applicantsQP.lastSortBy !== sortBy) {
       if (this.applicantsQP.currentSortDirection === 1) {
         this.applicantsQP.currentSortDirection = 0;

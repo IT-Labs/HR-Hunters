@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
-import { map } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { Client } from "../models/client.model";
 import { environment } from "../../environments/environment.prod";
+import { ToastrService } from "ngx-toastr";
 
 @Injectable({ providedIn: "root" })
 export class ClientService {
@@ -17,8 +17,12 @@ export class ClientService {
     active: number;
     inactive: number;
   }>();
+  
+  private clientProfile = new Subject<{
+    client: Client
+  }>();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private toastrService: ToastrService) {}
 
   // This method should be called within onInit within a component clients postings
   getClientsUpdateListener() {
@@ -43,7 +47,33 @@ export class ClientService {
         });
       },
       error => {
-        console.log(error)
+        if (error) {
+          this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
+        }
+      });
+  }
+
+  getClient(clientId) {
+    this.http
+      .get<{
+        id: number,
+        companyName: string,
+        logo: string,
+        email: string,
+        location: string,
+        activeJobs: number,
+        allJobs: number,
+        status: string
+      }>(this.baseUrl + "/Clients/" + clientId)
+      .subscribe(clientsData => {
+        this.clientProfile.next({
+          client: clientsData
+        });
+      },
+      error => {
+        if (error) {
+          this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
+        }
       });
   }
 
@@ -61,7 +91,9 @@ export class ClientService {
       }
     },
     error => {
-      console.log(error)
+      if (error) {
+        this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
+      }
     });
   }
 
@@ -79,7 +111,9 @@ export class ClientService {
         }
       },
       error => {
-        console.log(error)
+        if (error) {
+          this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
+        }
       });
   }
 
@@ -97,7 +131,9 @@ export class ClientService {
         }
       },
       error => {
-        console.log(error)
+        if (error) {
+          this.toastrService.error(error.error.errors.Error[0], 'Error occured!')
+        }
       });
   }
 }
