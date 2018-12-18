@@ -15,6 +15,8 @@ using HRHunters.Common.Requests.Users;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using HRHunters.Common.Exceptions;
+using Microsoft.Extensions.Logging;
+using HRHunters.Common.Constants;
 
 namespace HRHunters.Domain.Managers
 {
@@ -23,8 +25,10 @@ namespace HRHunters.Domain.Managers
         private readonly IRepository _repo;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
-        public ApplicantManager(IRepository repo, UserManager<User> userManager, IMapper mapper) : base(repo)
+        private readonly ILogger<ApplicantManager> _logger;
+        public ApplicantManager(IRepository repo, UserManager<User> userManager, IMapper mapper, ILogger<ApplicantManager> logger) : base(repo)
         {
+            _logger = logger;
             _repo = repo;
             _mapper = mapper;
             _userManager = userManager;
@@ -46,15 +50,13 @@ namespace HRHunters.Domain.Managers
 
         public async Task<GeneralResponse> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate, int currentUserId)
         {
+            var response = new GeneralResponse();
             if (currentUserId != id)
             {
-                throw new InvalidUserException("Invalid user id");
+                _logger.LogError(Constants.UnauthorizedAccess);
+                response.Errors["Error"].Add(Constants.UnauthorizedAccess);
+                return response;
             }
-            var response = new GeneralResponse()
-            {
-                Succeeded = true,
-                Errors = new Dictionary<string, List<string>>()
-            };
             var user = await _userManager.FindByIdAsync(id.ToString());
 
             var applicant = _repo.GetById<Applicant>(id);
@@ -68,15 +70,18 @@ namespace HRHunters.Domain.Managers
                 {
                     _repo.Update(applicant, applicant.User.FirstName);
                     await _userManager.UpdateAsync(user);
+                    response.Succeeded = true;
                     return response;
                 }
                 catch (Exception e)
                 {
-                    throw new Exception(e.Message);
+                    _logger.LogError(Constants.FailedToUpdateDatabase, applicant);
+                    response.Errors["Error"].Add(Constants.FailedToUpdateDatabase);
+                    return response;
                 }
             }
-           
-           
+            _logger.LogError(Constants.NullValue);
+            response.Errors["Error"].Add(Constants.NullValue);
             return response;
         }
     }
