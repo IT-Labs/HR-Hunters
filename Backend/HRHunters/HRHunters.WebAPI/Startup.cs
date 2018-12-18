@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Amazon.S3;
 using AutoMapper;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Interfaces;
@@ -92,6 +93,7 @@ namespace HRHunters.WebAPI
                         .AllowCredentials();
                 });
             });
+            services.AddAWSService<IAmazonS3>();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);

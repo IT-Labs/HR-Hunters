@@ -22,6 +22,7 @@ using HRHunters.Common.Exceptions;
 using HRHunters.Common.Requests;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using HRHunters.Common.Constants;
 
 namespace HRHunters.Domain.Managers
 {
@@ -137,16 +138,14 @@ namespace HRHunters.Domain.Managers
         public async Task<GeneralResponse> UpdateJob(JobUpdate jobUpdate, int currentUserId)
         {
             var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(currentUserId.ToString()));
-
+            var response = new GeneralResponse();
             if (!userRole.Contains("Admin"))
             {
-                throw new UnauthorizedAccessException();
+                _logger.LogError(Constants.UnauthorizedAccess);
+                response.Errors["Error"].Add(Constants.UnauthorizedAccess);
+                return response;
             }
-            var response = new GeneralResponse()
-            {
-                Succeeded = true,
-                Errors = new Dictionary<string, List<string>>(),
-            };
+            
             var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
 
@@ -171,8 +170,7 @@ namespace HRHunters.Domain.Managers
             }
             else
             {
-                response.Errors.Add("Error", new List<string> { "Front-end sends wrong information!" });
-                response.Succeeded = false;
+                response.Errors["Error"].Add(Constants.NullValue);
                 return response;
             }
             _repo.Update(jobPost, "Admin");

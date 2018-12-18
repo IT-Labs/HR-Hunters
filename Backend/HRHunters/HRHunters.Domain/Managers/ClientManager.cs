@@ -16,6 +16,8 @@ using AutoMapper;
 using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests;
 using HRHunters.Common.Exceptions;
+using Microsoft.Extensions.Logging;
+using HRHunters.Common.Constants;
 
 namespace HRHunters.Domain.Managers
 {
@@ -24,8 +26,10 @@ namespace HRHunters.Domain.Managers
         private readonly IRepository _repo;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
-        public ClientManager(IRepository repo, UserManager<User> userManager, IMapper mapper) : base(repo)
+        private readonly ILogger<ClientManager> _logger;
+        public ClientManager(IRepository repo, UserManager<User> userManager, IMapper mapper, ILogger<ClientManager> logger) : base(repo)
         {
+            _logger = logger;
             _userManager = userManager;
             _mapper = mapper;
             _repo = repo;
@@ -34,7 +38,8 @@ namespace HRHunters.Domain.Managers
         {
             if (currentUserId != request.Id)
             {
-                throw new InvalidUserException("Invalid user id");
+                _logger.LogError(Constants.UnauthorizedAccess);
+                throw new UnauthorizedAccessException();
             }
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
 
