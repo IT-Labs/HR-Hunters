@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Applicant } from "src/app/models/applicant.model";
 import { Subscription } from "rxjs";
 import { ApplicantService } from "src/app/services/applicant.service";
-import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-ad-applicants",
@@ -29,8 +28,7 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
   private applicantsSub: Subscription;
 
   constructor(
-    private applicantService: ApplicantService,
-    private toastr: ToastrService
+    private applicantService: ApplicantService
   ) {}
 
   ngOnInit() {
