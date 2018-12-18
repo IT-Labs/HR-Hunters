@@ -62,6 +62,7 @@ namespace HRHunters.Domain.Managers
             var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userLoginModel.Email.ToLower());
             userToReturn = _mapper.Map<UserLoginReturnModel>(appUser);
             var roles = await _userManager.GetRolesAsync(appUser);
+
             userToReturn.Succeeded = true;
             userToReturn.Token = await _tokenGeneration.GenerateJwtToken(user);
             userToReturn.Role = roles.Contains("Applicant") ? 1 : roles.Contains("Client") ? 2 : 3 ;

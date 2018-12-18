@@ -93,7 +93,7 @@ namespace HRHunters.WebAPI
                         .AllowCredentials();
                 });
             });
-            services.AddAWSService<IAmazonS3>();
+            //services.AddAWSService<IAmazonS3>();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
