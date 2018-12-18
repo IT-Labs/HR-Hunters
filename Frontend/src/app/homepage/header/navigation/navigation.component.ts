@@ -19,6 +19,8 @@ export class NavigationComponent implements OnInit {
   ngOnInit() {  
    this.loggedInUser = this.authService.getUser();
 
+   this.name = `${this.loggedInUser.firstName} ${this.loggedInUser.lastName}`;
+
    if (this.loggedInUser.role === 1) {
      this.activeApplicant = true;
    } else if (this.loggedInUser.role === 2) {

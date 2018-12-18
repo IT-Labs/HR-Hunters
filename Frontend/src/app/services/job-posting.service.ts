@@ -113,14 +113,14 @@ export class JobPostingService {
       });
   }
   
-  updateJobPostingProfile(jobPostingData, jobPostingId) {
+  updateJobPosting(jobPostingData) {
     this.http
       .put<{
         succeeded: boolean;
         errors: {
           Error: string[] | null;
         }
-      }>(this.baseUrl + "/Jobs/" + jobPostingId, jobPostingData)
+      }>(this.baseUrl + "/Jobs", jobPostingData)
       .subscribe(response => {
         if (response.succeeded) {
           this.router.navigate(["/admin-dashboard/job-postings"]);

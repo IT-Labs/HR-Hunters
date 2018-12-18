@@ -12,7 +12,15 @@ import { ApplicationService } from "src/app/services/application.service";
   styleUrls: ["./job-posting-details.component.scss"]
 })
 export class JobPostingDetailsComponent implements OnInit {
-  jobPosting: JobPosting;
+  jobPosting: JobPosting = {
+    jobTitle: '',
+    jobType: '',
+    description: '',
+    dateFrom: '',
+    dateTo: '',
+    education: '',
+    experience: 0
+  };
   jobPostingId;
   isApplicant = false;
   loggedInUser;
