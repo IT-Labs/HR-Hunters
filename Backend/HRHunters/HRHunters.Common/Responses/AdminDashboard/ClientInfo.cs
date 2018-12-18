@@ -15,5 +15,6 @@ namespace HRHunters.Common.Responses.AdminDashboard
         public int ActiveJobs { get; set; }
         public int AllJobs { get; set; }
         public string Status { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

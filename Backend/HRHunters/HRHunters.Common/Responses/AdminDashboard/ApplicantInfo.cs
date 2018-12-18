@@ -12,5 +12,8 @@ namespace HRHunters.Common.Responses.AdminDashboard
         public string PhoneNumber { get; set; }
         public string Photo { get; set; }
         public string Email { get; set; }
+        public string Education { get; set; }
+        public string School { get; set; }
+        public string Experience { get; set; }
     }
 }

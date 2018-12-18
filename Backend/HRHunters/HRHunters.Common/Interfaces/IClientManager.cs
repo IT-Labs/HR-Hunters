@@ -19,5 +19,6 @@ namespace HRHunters.Common.Interfaces
         GeneralResponse UpdateClientStatus(ClientStatusUpdate clientStatusUpdate);
         Task<GeneralResponse> UpdateClientProfile(int id, ClientUpdate clientUpdate,int currentUserId);
         Task<GeneralResponse> CreateCompany(NewCompany newCompany, int currentUserId);
+        ClientInfo GetOneClient(int id);
     }
 }

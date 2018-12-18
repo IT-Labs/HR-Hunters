@@ -38,7 +38,7 @@ namespace HRHunters.Domain.Managers
         {
             var response = new ApplicantResponse() { Applicants = new List<ApplicantInfo>()};
 
-            var query = _repo.GetAll<Applicant>(includeProperties: $"{nameof(Applicant.User)},");
+            var query = _repo.GetAll<Applicant>(includeProperties: $"{nameof(User)},");
 
             var selected = _mapper.ProjectTo<ApplicantInfo>(query)
                                         .Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery).ToList();
@@ -46,6 +46,12 @@ namespace HRHunters.Domain.Managers
             response.Applicants.AddRange(selected);
             response.MaxApplicants = _repo.GetCount<Applicant>();
             return response;
+        }
+
+        public ApplicantInfo GetOneApplicant(int id)
+        {
+            var query = _repo.GetOne<Applicant>(x => x.Id == id, includeProperties: $"{nameof(User)}");
+            return _mapper.Map<ApplicantInfo>(query);
         }
 
         public async Task<GeneralResponse> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate, int currentUserId)

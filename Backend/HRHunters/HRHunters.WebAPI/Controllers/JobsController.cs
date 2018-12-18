@@ -35,36 +35,36 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<JobResponse>> GetJobs([FromQuery]SearchRequest request)
+        public async Task<IActionResult> GetJobs([FromQuery]SearchRequest request)
         {
             return Ok(await _jobManager.GetMultiple(request, GetCurrentUserId()));
         }
 
         [Authorize(Roles = "Applicant, Client")]
         [HttpGet("{id}")]
-        public ActionResult<JobResponse> GetOneJobPosting(int id)
+        public IActionResult GetOneJobPosting(int id)
         {
             return Ok(_jobManager.GetOneJobPosting(id));
         }
 
         [Authorize(Roles ="Admin, Client")]
         [HttpPost]
-        public async Task<ActionResult<GeneralResponse>> CreateJobPosting(JobSubmit jobSubmit)
+        public async Task<IActionResult> CreateJobPosting(JobSubmit jobSubmit)
         {
             return Ok(await _jobManager.CreateJobPosting(jobSubmit, GetCurrentUserId()));
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPut]
-        public ActionResult<GeneralResponse> UpdateJob(JobUpdate jobSubmit)
+        public IActionResult UpdateJob(JobUpdate jobSubmit)
         {
             return Ok(_jobManager.UpdateJob(jobSubmit, GetCurrentUserId()));
         }
-        [Authorize(Roles="Admin")]
-        [HttpPost]
-        public ActionResult<GeneralResponse> CreateMultipleJobPostings(IFormFile formFile,int id)
-        {
-            return Ok(_jobManager.CreateMultipleJobPostings(formFile, id));
-        }
+        //[Authorize(Roles="Admin")]
+        //[HttpPost]
+        //public ActionResult<GeneralResponse> CreateMultipleJobPostings(IFormFile formFile,int id)
+        //{
+        //    return Ok(_jobManager.CreateMultipleJobPostings(formFile, id));
+        //}
     }
 }

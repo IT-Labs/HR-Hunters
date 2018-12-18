@@ -178,43 +178,16 @@ namespace HRHunters.Domain.Managers
             return response;
         }
 
-        public GeneralResponse CreateMultipleJobPostings(IFormFile formFile, int id)
-        {
-            var addMultiple = new JobSubmit();
-            var errors = new Dictionary<string, List<string>>();
+        //public GeneralResponse CreateMultipleJobPostings(IFormFile formFile, int id)
+        //{
+           
+        //    var errors = new Dictionary<string, List<string>>();
 
 
 
-            var result = string.Empty;
-            using (var reader = new StreamReader(formFile.OpenReadStream()))
-            {
-                int iteration = 1;
-                while (((result = reader.ReadLine()) != null))
-                {
-                    if (string.IsNullOrEmpty(result) || string.IsNullOrWhiteSpace(result))
-                    {
-                        iteration++;
-                        continue;
-                    }
-
-                    var parts = result.Split(",");
-                    parts = parts.Where(str => str != "").ToArray();
-                    if (parts.Length == 0)
-                    {
-                        iteration++;
-                        continue;
-                    }
-                    if (parts.Length > 2 || parts.Length < 2)
-                    {
-
-                        iteration++;
-                        continue;
-                    }
-                }
-
-            }
-            return null;
-        }
+           
+        //    return null;
+        //}
     }
 }
 
