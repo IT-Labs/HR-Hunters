@@ -13,6 +13,7 @@ export class LoginComponent implements OnInit {
   role = 3;
   loading = false;
   authError;
+  loggedInUser = null;
 
   private authErrorStatusSub: Subscription;
   private roleStatusSub: Subscription;
@@ -25,6 +26,21 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
+    this.loggedInUser = this.authService.getUser();
+
+    if (this.loggedInUser !== null) {
+      if (this.loggedInUser.role === 1) {
+        this.router.navigate(['/applicant/job-postings'])
+        return
+      } else if (this.loggedInUser.role === 2) {
+        this.router.navigate(['/client/job-postings'])
+        return
+      } else if (this.loggedInUser.role === 3) {
+        this.router.navigate(['/admin-dashboard/job-postings'])
+        return
+      }
+    }
+
     this.role = this.authService.getRole();
     
     this.authErrorStatusSub = this.authService
@@ -32,7 +48,7 @@ export class LoginComponent implements OnInit {
       .subscribe(error => {
         this.authError = error.error;
       });
-      this.loading = false;
+    this.loading = false;
   }
 
   loginForm = this.fb.group({
@@ -55,14 +71,13 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.invalid) {
       return;
     }
+    this.loading = false;
     this.authService.loginUser(
       this.loginForm.value.email,
       this.loginForm.value.password
     );
-    this.loading = false;
   }
 
   ngOnDestroy() {
-    this.authErrorStatusSub.unsubscribe();
   }
 }

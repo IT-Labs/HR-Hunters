@@ -5,6 +5,8 @@ import { RouterModule } from "@angular/router";
 import { NgxPopper } from 'angular-popper';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgxLoadingModule } from 'ngx-loading';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 import { HeaderComponent } from './homepage/header/header.component';
 import { NavigationComponent } from './homepage/header/navigation/navigation.component';
@@ -67,7 +69,9 @@ import { NewClientComponent } from './admin-dashboard/clients/new-client/new-cli
         NgbModule,
         NgbPaginationModule,
         NgbAlertModule,
-        NgxLoadingModule.forRoot({})
+        NgxLoadingModule.forRoot({}),
+        BrowserAnimationsModule,
+        ToastrModule.forRoot()
     ]
 })
 
