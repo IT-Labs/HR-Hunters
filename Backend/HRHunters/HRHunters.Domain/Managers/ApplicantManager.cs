@@ -38,7 +38,7 @@ namespace HRHunters.Domain.Managers
         {
             var response = new ApplicantResponse() { Applicants = new List<ApplicantInfo>()};
 
-            var query = _repo.GetAll<Applicant>(includeProperties: $"{nameof(Applicant.User)},");
+            var query = _repo.GetAll<Applicant>(includeProperties: $"{nameof(User)},");
 
             var selected = _mapper.ProjectTo<ApplicantInfo>(query)
                                         .Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery).ToList();
