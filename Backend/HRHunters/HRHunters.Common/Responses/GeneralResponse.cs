@@ -10,10 +10,13 @@ namespace HRHunters.Common.Responses
     {
         public bool Succeeded { get; set; }
         public IDictionary<string, List<string>> Errors { get; set; }
-
         public GeneralResponse()
         {
-            Errors = new Dictionary<string, List<string>>(); 
+            Succeeded = false;
+            Errors = new Dictionary<string, List<string>>
+            {
+                { "Error", new List<string>() }
+            };
         }
         public GeneralResponse(ModelStateDictionary modelState)
         {

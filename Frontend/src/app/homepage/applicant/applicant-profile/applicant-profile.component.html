@@ -201,6 +201,7 @@
                 class="hp__form--input"
                 placeholder="Enter phone number..."
                 formControlName="phonenumber"
+                ngxPhoneMask
               />
               <div
                 *ngIf="
@@ -219,12 +220,10 @@
                   Phone number is required.
                 </div>
                 <div
-                  *ngIf="
-                    applicantProfileFormHP.controls['phonenumber'].errors
-                      ?.maxlength
-                  "
+                  *ngIf="newClientForm.controls['companyPhoneNumber'].errors"
                 >
-                  Phone number must be E.164 format.
+                  Phone number must be in valid format. Example: +1 (222)
+                  333-444-55
                 </div>
               </div>
 

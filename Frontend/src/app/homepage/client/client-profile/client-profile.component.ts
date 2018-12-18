@@ -13,14 +13,10 @@ export class ClientProfileComponent implements OnInit {
   imagePreview: string | ArrayBuffer;
   imageValid = true;
   loggedInUser;
+  loggedInClient;
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
-  validPhonenumber = new RegExp(
-    "^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$"
-  );
-  //ex: format: +61 01 2345 6789
-
   loading = false;
 
   constructor(
@@ -31,10 +27,18 @@ export class ClientProfileComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
+    this.loggedInUser = this.authService.getUser();
+    this.loggedInClient = this.clientService.getClient(this.loggedInUser.id)
+
+    this.clientProfileFormHP.controls.companyName.setValue(this.loggedInClient.companyName)
+    this.clientProfileFormHP.controls.companyEmail.setValue(this.loggedInClient.email)
+    this.clientProfileFormHP.controls.location.setValue(this.loggedInClient.location)
+    this.clientProfileFormHP.controls.phonenumber.setValue(this.loggedInClient.phoneNumber)
+    this.imagePreview = this.loggedInClient.logo
+
     this.imagePreview =
       "https://about.canva.com/wp-content/uploads/sites/3/2016/08/Band-Logo.png";
 
-    this.loggedInUser = this.authService.getUser();
     this.loading = false;
   }
 
@@ -60,7 +64,7 @@ export class ClientProfileComponent implements OnInit {
       "",
       Validators.compose([
         Validators.required,
-        Validators.pattern(this.validPhonenumber)
+        Validators.minLength(10)
       ])
     ],
     location: [

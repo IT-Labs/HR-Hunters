@@ -22,7 +22,7 @@ namespace HRHunters.WebAPI
                 CreateWebHostBuilder(args).Build().Run();
             } catch (Exception ex)
             {
-                logger.Error(ex, "Stopped program because of expcetion.");
+                logger.Error(ex, "Stopped program because of exception.");
             }
             finally
             {

@@ -16,6 +16,8 @@ using AutoMapper;
 using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Requests;
 using HRHunters.Common.Exceptions;
+using Microsoft.Extensions.Logging;
+using HRHunters.Common.Constants;
 
 namespace HRHunters.Domain.Managers
 {
@@ -24,8 +26,10 @@ namespace HRHunters.Domain.Managers
         private readonly IRepository _repo;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
-        public ClientManager(IRepository repo, UserManager<User> userManager, IMapper mapper) : base(repo)
+        private readonly ILogger<ClientManager> _logger;
+        public ClientManager(IRepository repo, UserManager<User> userManager, IMapper mapper, ILogger<ClientManager> logger) : base(repo)
         {
+            _logger = logger;
             _userManager = userManager;
             _mapper = mapper;
             _repo = repo;
@@ -34,7 +38,8 @@ namespace HRHunters.Domain.Managers
         {
             if (currentUserId != request.Id)
             {
-                throw new InvalidUserException("Invalid user id");
+                _logger.LogError(Constants.UnauthorizedAccess);
+                throw new UnauthorizedAccessException();
             }
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
 
@@ -53,6 +58,12 @@ namespace HRHunters.Domain.Managers
             response.Inactive = groupings.Where(x => x.Status.Equals(ClientStatus.Inactive)).Select(x => x.Count).FirstOrDefault();
 
             return response;
+        }
+
+        public ClientInfo GetOneClient(int id)
+        {
+            var query = _repo.GetOne<Client>(x => x.Id == id, includeProperties: $"{nameof(User)}");
+            return _mapper.Map<ClientInfo>(query);
         }
 
         public GeneralResponse UpdateClientStatus(ClientStatusUpdate clientStatusUpdate)
@@ -99,6 +110,13 @@ namespace HRHunters.Domain.Managers
                 client = _mapper.Map(clientUpdate, client);
                 client.User.ModifiedDate = DateTime.UtcNow;
                 client.User.ModifiedBy = client.User.FirstName;
+                var exists = await _userManager.FindByEmailAsync(client.User.Email);
+                if (exists != null)
+                {
+                    response.Succeeded = false;
+                    response.Errors.Add("Error", new List<string> { "Email is already in use" });
+                    return response;
+                }
                 try
                 {
                     _repo.Update(client, client.User.FirstName);

@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { JobPosting } from "../models/job-posting.model";
 import { Subject } from "rxjs";
 import { environment } from "../../environments/environment.prod";
+import { ToastrService } from "ngx-toastr";
 
 @Injectable({ providedIn: "root" })
 export class JobPostingService {
@@ -20,10 +21,14 @@ export class JobPostingService {
     expired: number;
     rejected: number;
   }>();
-  
+
   private jobPostingEdit = new Subject<any>();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private toastrService: ToastrService
+  ) {}
 
   // Get all job postings
   getJobPostings(queryParams) {
@@ -45,33 +50,50 @@ export class JobPostingService {
           expired: jobPostingData.expired,
           rejected: jobPostingData.rejected
         });
+      }, error => {
+        if (error) {
+          this.toastrService.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
+        }
       });
   }
-  
+
   // Get single job posting
   getJobPosting(id) {
     this.http
       .get<{
-        id: number,
-        jobTitle: string,
-        companyName: string,
-        companyEmail: string,
-        jobType: string,
-        description: string,
-        dateTo: string,
-        allApplicationsCount: number,
-        status: string
+        id: number;
+        jobTitle: string;
+        companyName: string;
+        companyEmail: string;
+        jobType: string;
+        description: string;
+        dateTo: string;
+        allApplicationsCount: number;
+        status: string;
       }>(this.baseUrl + "/Jobs/" + id)
-      .subscribe(jobPostingData => {
-        this.jobPostingEdit.next(jobPostingData)
-      });
+      .subscribe(
+        jobPostingData => {
+          this.jobPostingEdit.next(jobPostingData);
+        },
+        error => {
+          if (error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
+        }
+      );
   }
 
   // This method should be called within onInit within a component lising job postings
   getJobPostingUpdateListener() {
     return this.jobPostingsUpdated.asObservable();
   }
-  
+
   getJobPostingEditListener() {
     return this.jobPostingEdit.asObservable();
   }
@@ -83,16 +105,24 @@ export class JobPostingService {
         succeeded: boolean;
         errors: {
           Error: string[] | null;
-        }
+        };
       }>(this.baseUrl + "/Jobs", jobPostingData)
-      .subscribe(response => {
-        if (response.succeeded) {
-          this.router.navigate(["/admin-dashboard/job-postings"]);
+      .subscribe(
+        response => {
+          if (response.succeeded) {
+            this.router.navigate(["/admin-dashboard/job-postings"]);
+            this.toastrService.success("", "Job posting added successfully!");
+          }
+        },
+        error => {
+          if (error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
         }
-      },
-      error => {
-        console.log(error)
-      });
+      );
   }
 
   updateJobPostingStatus(jobPostingData) {
@@ -101,33 +131,49 @@ export class JobPostingService {
         succeeded: boolean;
         errors: {
           Error: string[] | null;
-        }
+        };
       }>(this.baseUrl + "/Jobs", jobPostingData)
-      .subscribe(response => {
-        if (response.succeeded) {
-          this.router.navigate(["/admin-dashboard/job-postings"]);
+      .subscribe(
+        response => {
+          if (response.succeeded) {
+            this.router.navigate(["/admin-dashboard/job-postings"]);
+            this.toastrService.success("", "Job posting status updated successfully!");
+          }
+        },
+        error => {
+          if (error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
         }
-      },
-      error => {
-        console.log(error)
-      });
+      );
   }
-  
-  updateJobPostingProfile(jobPostingData, jobPostingId) {
+
+  updateJobPosting(jobPostingData) {
     this.http
       .put<{
         succeeded: boolean;
         errors: {
           Error: string[] | null;
+        };
+      }>(this.baseUrl + "/Jobs", jobPostingData)
+      .subscribe(
+        response => {
+          if (response.succeeded) {
+            this.router.navigate(["/admin-dashboard/job-postings"]);
+            this.toastrService.success("", "Job posting updated successfully!");
+          }
+        },
+        error => {
+          if (error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
         }
-      }>(this.baseUrl + "/Jobs/" + jobPostingId, jobPostingData)
-      .subscribe(response => {
-        if (response.succeeded) {
-          this.router.navigate(["/admin-dashboard/job-postings"]);
-        }
-      },
-      error => {
-        console.log(error)
-      });
+      );
   }
 }

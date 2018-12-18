@@ -335,16 +335,28 @@ export class ADNewJobPostingComponent implements OnInit {
       dateTo
     );
     
-    console.log(this.selectedCompany)
     if (
       this.newJobPostingForm.valid &&
       this.fromDate &&
       this.toDate &&
       this.validDate &&
-      this.validClient
+      this.validClient &&
+      !this.edit
     ) {
       this.jobPostingService.addJobPosting(jobPostingData);
+    } else if (
+      this.newJobPostingForm.valid &&
+      this.fromDate &&
+      this.toDate &&
+      this.validDate &&
+      this.validClient &&
+      this.edit
+    ) {
+      this.jobPostingService.updateJobPosting(jobPostingData);
     }
+
+
+
     this.loading = false;
   }
 }
