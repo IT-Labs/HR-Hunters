@@ -6,6 +6,7 @@ import { Subject } from "rxjs";
 import { Client } from "../models/client.model";
 import { Applicant } from "../models/applicant.model";
 import { environment } from "../../environments/environment";
+import { ToastrService } from "ngx-toastr";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
@@ -14,13 +15,13 @@ export class AuthService {
   private isAuthenticated = false;
   private user = {
     id: null,
-    firstName: '',
-    lastName: '',
+    firstName: "",
+    lastName: "",
     token: "",
     email: "",
     role: 0
   };
-  
+
   private roleStatusListener = new Subject<{
     role: number;
   }>();
@@ -30,15 +31,19 @@ export class AuthService {
     error: string;
   }>();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private toastrService: ToastrService
+  ) {}
 
   // Gets the users token
   getToken() {
-    return localStorage.getItem('token');
+    return localStorage.getItem("token");
   }
 
   getUser() {
-    let user = localStorage.getItem('user');
+    let user = localStorage.getItem("user");
     return JSON.parse(user);
   }
 
@@ -49,8 +54,8 @@ export class AuthService {
   // }
 
   getAuthData() {
-    let token = this.getToken()
-    let loggedInUser = this.getUser()
+    let token = this.getToken();
+    let loggedInUser = this.getUser();
     if (!token || !loggedInUser) {
       return;
     }
@@ -60,7 +65,7 @@ export class AuthService {
     //   return;
     // }
     // token = this.checkTokenValidity(token).token;
-    return this.user
+    return this.user;
   }
 
   // Check users authentication status
@@ -101,17 +106,12 @@ export class AuthService {
 
   // Saves the userdata to the local storage and deletes the old one if there already is a token saved
   private saveUserData(user: any) {
-    const hasUserData = localStorage.getItem('user');
+    const hasUserData = localStorage.getItem("user");
     const userData = JSON.parse(hasUserData);
     if (userData) {
       localStorage.removeItem("user");
     }
     localStorage.setItem("user", JSON.stringify(this.user));
-  }
-
-  // Deletes the userdata from the local storage
-  private clearUserData() {
-    localStorage.removeItem("user");
   }
 
   // REGISTER
@@ -147,13 +147,14 @@ export class AuthService {
       .post<{
         succeeded: boolean;
         errors: {
-          Error: string[] | null
+          Error: string[] | null;
         };
       }>(this.baseUrl + "/Authentication/register", authData)
       .subscribe(
         response => {
           if (response.succeeded) {
             this.router.navigate(["login"]);
+            this.toastrService.success("", "You've registered successfully!");
           }
         },
         error => {
@@ -205,6 +206,7 @@ export class AuthService {
                 this.router.navigate(["/admin-dashboard/job-postings"]);
               }
             }
+            this.toastrService.success("", "Logged in successfully!");
           }
         },
         error => {
@@ -270,7 +272,6 @@ export class AuthService {
     this.isAuthenticated = false;
     this.authStatusListener.next(false);
     this.clearAuthData();
-    this.clearUserData
     this.router.navigate(["/login"]);
   }
 }

@@ -3,6 +3,7 @@ import { Subscription } from "rxjs";
 import { Application } from "src/app/models/application.model";
 import { ApplicationService } from "src/app/services/application.service";
 import { AuthService } from "src/app/services/auth.service";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-ad-applications",
@@ -38,11 +39,15 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
 
   private applicationsSub: Subscription;
 
-  constructor(private applicationService: ApplicationService, private authService: AuthService) {}
+  constructor(
+    private applicationService: ApplicationService,
+    private authService: AuthService,
+    private toastrService: ToastrService
+  ) {}
 
   ngOnInit() {
     this.loading = true;
-    this.loggedInUser = this.authService.getUser()
+    this.loggedInUser = this.authService.getUser();
     const params = this.buildQueryParams(this.applicationQP);
     this.applicationService.getApplications(params);
     this.applicationsSub = this.applicationService
@@ -57,28 +62,29 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
         this.applicationCount.rejected = applicationsData.rejected;
         this.loading = false;
       });
-      setTimeout(() => {
-        this.paginationMaxSize = this.applicationCount.all
-      }, 1000);
+    setTimeout(() => {
+      this.paginationMaxSize = this.applicationCount.all;
+    }, 1000);
   }
 
   buildQueryParams(data) {
     if (data.currentFilter === null) {
       return `?pageSize=${data.postsPerPage}&currentPage=${
         data.currentPage
-      }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&id=${this.loggedInUser.id}`;
+      }&sortedBy=${data.currentSortBy}&sortDir=${
+        data.currentSortDirection
+      }&id=${this.loggedInUser.id}`;
     }
     return `?pageSize=${data.postsPerPage}&currentPage=${
       data.currentPage
     }&sortedBy=${data.currentSortBy}&sortDir=${
       data.currentSortDirection
-    }&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}&id=${this.loggedInUser.id}`;
+    }&filterBy=${data.currentFilter}&filterQuery=${
+      data.currentFilterQuery
+    }&id=${this.loggedInUser.id}`;
   }
 
-  buildApplicationsDataOnUpdate(
-    id: number,
-    status: string
-  ) {
+  buildApplicationsDataOnUpdate(id: number, status: string) {
     let applicationData = {
       id: id,
       status: status
@@ -106,17 +112,17 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
 
     // CALCULATE PAGINATION
     if (filterBy === null) {
-      this.paginationMaxSize = this.applicationCount.all
-    } else if (filterBy === 'Pending') {
-      this.paginationMaxSize = this.applicationCount.pending
-    } else if (filterBy === 'Contacted') {
-      this.paginationMaxSize = this.applicationCount.contacted
-    } else if (filterBy === 'Interviewed') {
-      this.paginationMaxSize = this.applicationCount.interviewed
-    } else if (filterBy === 'Hired') {
-      this.paginationMaxSize = this.applicationCount.hired
-    } else if (filterBy === 'Rejected') {
-      this.paginationMaxSize = this.applicationCount.rejected
+      this.paginationMaxSize = this.applicationCount.all;
+    } else if (filterBy === "Pending") {
+      this.paginationMaxSize = this.applicationCount.pending;
+    } else if (filterBy === "Contacted") {
+      this.paginationMaxSize = this.applicationCount.contacted;
+    } else if (filterBy === "Interviewed") {
+      this.paginationMaxSize = this.applicationCount.interviewed;
+    } else if (filterBy === "Hired") {
+      this.paginationMaxSize = this.applicationCount.hired;
+    } else if (filterBy === "Rejected") {
+      this.paginationMaxSize = this.applicationCount.rejected;
     }
 
     this.applicationQP.currentFilterQuery = filterBy;
@@ -160,6 +166,7 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       const params = this.buildQueryParams(this.applicationQP);
       this.applicationService.getApplications(params);
       this.loading = false;
+      this.toastrService.success('', 'Status changed successfully!');
     }, 1000);
   }
 

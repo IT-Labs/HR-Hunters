@@ -18,6 +18,7 @@ export class ApplicantProfileComponent implements OnInit {
     "Select education level..."
   ];
   loggedInUser;
+  loggedInApplicant;
   imagePreview: string | ArrayBuffer;
   imageValid = true;
   validEmail = new RegExp(
@@ -65,10 +66,17 @@ export class ApplicantProfileComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
-    this.imagePreview =
-      "http://droidlessons.com/wp-content/uploads/2017/05/person-1824144_960_720-e1494184045144.png";
-
     this.loggedInUser = this.authService.getUser();
+    this.loggedInApplicant = this.applicantService.getApplicant(this.loggedInUser.id)
+
+    this.applicantProfileFormHP.controls.applicantFirstName.setValue(this.loggedInApplicant.firstName)
+    this.applicantProfileFormHP.controls.applicantLastName.setValue(this.loggedInApplicant.lastName)
+    this.applicantProfileFormHP.controls.applicantEmail.setValue(this.loggedInApplicant.email)
+    this.applicantProfileFormHP.controls.phonenumber.setValue(this.loggedInApplicant.phoneNumber)
+    this.applicantProfileFormHP.controls.education.setValue(this.loggedInApplicant.education)
+    this.applicantProfileFormHP.controls.school.setValue(this.loggedInApplicant.school)
+    this.applicantProfileFormHP.controls.experience.setValue(this.loggedInApplicant.experience)
+    this.imagePreview = this.loggedInApplicant.photo
     this.loading = false;
   }
 
