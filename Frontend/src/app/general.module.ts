@@ -7,6 +7,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgxLoadingModule } from 'ngx-loading';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { NgxPhoneMaskModule } from 'ngx-phone-mask';
 
 import { HeaderComponent } from './homepage/header/header.component';
 import { NavigationComponent } from './homepage/header/navigation/navigation.component';
@@ -71,7 +72,8 @@ import { NewClientComponent } from './admin-dashboard/clients/new-client/new-cli
         NgbAlertModule,
         NgxLoadingModule.forRoot({}),
         BrowserAnimationsModule,
-        ToastrModule.forRoot()
+        ToastrModule.forRoot(),
+        NgxPhoneMaskModule
     ]
 })
 

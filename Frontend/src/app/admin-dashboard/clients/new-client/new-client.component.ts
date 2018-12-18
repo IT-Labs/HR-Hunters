@@ -11,10 +11,6 @@ export class NewClientComponent implements OnInit {
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
-  validPhonenumber = new RegExp(
-    "^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$"
-  );
-  //ex: format: +61 01 2345 6789
 
   loading = false;
 
@@ -42,7 +38,7 @@ export class NewClientComponent implements OnInit {
       "",
       Validators.compose([
         Validators.required,
-        Validators.pattern(this.validPhonenumber)
+        Validators.minLength(11)
       ])
     ],
     companyLocation: [
