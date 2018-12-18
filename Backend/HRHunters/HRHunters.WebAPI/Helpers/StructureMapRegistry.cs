@@ -25,6 +25,7 @@ namespace HRHunters.WebAPI.Helpers
             For<IJobManager>().LifecycleIs(Lifecycles.Container).Use<JobManager>();
             For<ITokenGeneration>().LifecycleIs(Lifecycles.Container).Use<TokenGeneration>();
             For<IUsersManager>().LifecycleIs(Lifecycles.Container).Use<UsersManager>();
+            For<IS3Service>().LifecycleIs(Lifecycles.Container).Use<S3Service>();
         }
     }
 }

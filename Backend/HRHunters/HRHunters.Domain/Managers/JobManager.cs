@@ -21,6 +21,8 @@ using Microsoft.AspNetCore.Http;
 using HRHunters.Common.Exceptions;
 using HRHunters.Common.Requests;
 using Microsoft.Extensions.Logging;
+using System.IO;
+using HRHunters.Common.Constants;
 
 namespace HRHunters.Domain.Managers
 {
@@ -136,16 +138,14 @@ namespace HRHunters.Domain.Managers
         public async Task<GeneralResponse> UpdateJob(JobUpdate jobUpdate, int currentUserId)
         {
             var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(currentUserId.ToString()));
-
+            var response = new GeneralResponse();
             if (!userRole.Contains("Admin"))
             {
-                throw new UnauthorizedAccessException();
+                _logger.LogError(Constants.UnauthorizedAccess);
+                response.Errors["Error"].Add(Constants.UnauthorizedAccess);
+                return response;
             }
-            var response = new GeneralResponse()
-            {
-                Succeeded = true,
-                Errors = new Dictionary<string, List<string>>(),
-            };
+            
             var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
 
@@ -170,8 +170,7 @@ namespace HRHunters.Domain.Managers
             }
             else
             {
-                response.Errors.Add("Error", new List<string> { "Front-end sends wrong information!" });
-                response.Succeeded = false;
+                response.Errors["Error"].Add(Constants.NullValue);
                 return response;
             }
             _repo.Update(jobPost, "Admin");
@@ -179,50 +178,43 @@ namespace HRHunters.Domain.Managers
             return response;
         }
 
-        //public JobSubmit ValidateCsvFile(IFormFile formFile)
-        //{
-        //    var addMultiple = new JobSubmit();
-        //    var errors = new Dictionary<string, List<string>>();
+        public GeneralResponse CreateMultipleJobPostings(IFormFile formFile, int id)
+        {
+            var addMultiple = new JobSubmit();
+            var errors = new Dictionary<string, List<string>>();
 
 
 
-        //    var result = string.Empty;
-        //    using (var reader = new StreamReader(formFile.OpenReadStream()))
-        //    {
-        //        int iteration = 1;
-        //        while (((result = reader.ReadLine()) != null))
-        //        {
-        //            if (string.IsNullOrEmpty(result) || string.IsNullOrWhiteSpace(result))
-        //            {
-        //                iteration++;
-        //                continue;
-        //            }
+            var result = string.Empty;
+            using (var reader = new StreamReader(formFile.OpenReadStream()))
+            {
+                int iteration = 1;
+                while (((result = reader.ReadLine()) != null))
+                {
+                    if (string.IsNullOrEmpty(result) || string.IsNullOrWhiteSpace(result))
+                    {
+                        iteration++;
+                        continue;
+                    }
 
-        //            var parts = result.Split(",");
-        //            parts = parts.Where(str => str != "").ToArray();
-        //            if (parts.Length == 0)
-        //            {
-        //                iteration++;
-        //                continue;
-        //            }
-        //            if (parts.Length > 2 || parts.Length < 2)
-        //            {
-        //                if (!errors.ContainsKey("InvalidFormat"))
-        //                {
-        //                    errors.Add("InvalidFormat", new List<string>() { iteration.ToString() });
-        //                }
-        //                else
-        //                {
-        //                    errors.TryGetValue("InvalidFormat", out List<string> rows);
-        //                    rows.Add(iteration);
-        //                    errors["InvalidFormat"] = rows;
-        //                }
-        //                iteration++;
-        //                continue;
-        //            }
-        //        }
+                    var parts = result.Split(",");
+                    parts = parts.Where(str => str != "").ToArray();
+                    if (parts.Length == 0)
+                    {
+                        iteration++;
+                        continue;
+                    }
+                    if (parts.Length > 2 || parts.Length < 2)
+                    {
 
-        //    }
+                        iteration++;
+                        continue;
+                    }
+                }
+
+            }
+            return null;
         }
     }
+}
 

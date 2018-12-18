@@ -12,7 +12,7 @@ namespace JwtSwaggerDemo.Infrastructure
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1.0", new Info { Title = "Main API v1.0", Version = "v1.0" });
+                c.SwaggerDoc("v1", new Info { Title = "Main API v1.0", Version = "v1.0" });
 
                 // Swagger 2.+ support
                 var security = new Dictionary<string, IEnumerable<string>>
@@ -38,7 +38,7 @@ namespace JwtSwaggerDemo.Infrastructure
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Versioned API v1.0");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Versioned API v1.0");
 
                 c.DocumentTitle = "Title Documentation";
                 c.DocExpansion(DocExpansion.None);
