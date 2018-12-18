@@ -71,8 +71,8 @@ namespace HRHunters.WebAPI.Helpers
                                                      .ForMember(x => x.JobTitle, opt => opt.MapFrom(x => x.JobPosting.Title))
                                                      .ForMember(x => x.PostedOn, opt => opt.MapFrom(x => x.Date.ToString("yyy/MM/dd")))
                                                      .ForMember(x => x.Status, opt => opt.MapFrom(x => x.Status.ToString()))
-                                                     .ForMember(x => x.DateFrom, opt => opt.MapFrom(x=>x.JobPosting.DateFrom.ToString()))
-                                                     .ForMember(x => x.DateTo, opt => opt.MapFrom(x => x.JobPosting.DateTo.ToString()))
+                                                     .ForMember(x => x.DateFrom, opt => opt.MapFrom(x=>x.JobPosting.DateFrom.ToString("yyy/MM/dd")))
+                                                     .ForMember(x => x.DateTo, opt => opt.MapFrom(x => x.JobPosting.DateTo.ToString("yyy/MM/dd")))
                                                      .ForMember(x => x.JobType, opt => opt.MapFrom(x => x.JobPosting.EmpCategory.ToString()));
 
             CreateMap<Applicant, ApplicantInfo>().ForMember(x => x.Id, opt => opt.MapFrom(x => x.UserId))
