@@ -39,6 +39,7 @@ namespace HRHunters.Domain.Managers
             //User not found by email
             if (user == null)
             {
+                userToReturn.Errors["Error"].Add("Invalid email or password.");
                 return userToReturn;
             }
             //If user exists, check password
