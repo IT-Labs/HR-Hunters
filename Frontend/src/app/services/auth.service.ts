@@ -158,7 +158,7 @@ export class AuthService {
           }
         },
         error => {
-          if (error.error.errors) {
+          if (error.error) {
             this.authErrorStatusListener.next({
               error: error.error.errors.Error[0]
             });
@@ -179,6 +179,7 @@ export class AuthService {
         email: string | null;
         id: number | null;
         role: number;
+        newUser: boolean;
         errors: {
           Error: string[] | null;
         };
@@ -199,9 +200,17 @@ export class AuthService {
               this.saveAuthData(token);
               this.saveUserData(JSON.stringify(this.user));
               if (response.role === 1) {
-                this.router.navigate(["/applicant/job-postings"]);
+                if (response.newUser) {
+                  this.router.navigate(["/applicant/profile"]);
+                } else if (!response.newUser) {
+                  this.router.navigate(["/applicant/job-postings"]);
+                }
               } else if (response.role === 2) {
-                this.router.navigate(["/client/job-postings"]);
+                if (response.newUser) {
+                  this.router.navigate(["/client/profile"]);
+                } else if (!response.newUser) {
+                  this.router.navigate(["/client/job-postings"]);
+                }
               } else if (response.role === 3) {
                 this.router.navigate(["/admin-dashboard/job-postings"]);
               }
@@ -210,7 +219,7 @@ export class AuthService {
           }
         },
         error => {
-          if (error.error.errors) {
+          if (error.error) {
             this.authErrorStatusListener.next({
               error: error.error.errors.Error[0]
             });

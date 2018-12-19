@@ -50,6 +50,10 @@
         display: inline-block;
         cursor: pointer;
 
+        &:hover {
+          color: $color-heading-table-cell;
+        }
+
         span {
           margin-left: 0.5rem;
         }
@@ -99,6 +103,15 @@
     }
   }
 }
+
+.dropdown-item {
+  cursor: pointer;
+  &:hover {
+    color: white;
+    background-color: #007bff;
+  }
+}
+
 @media (max-width: 991px) {
   .dash {
     &__container {

@@ -19,9 +19,6 @@
             <img
               [src]="imagePreview"
               class="company-logo__img"
-              [alt]="
-                applicantProfileFormHP.controls['applicantFirstName'].value
-              "
             />
             <div class="company-logo__text" (click)="filePicker.click()">
               <i class="fa fa-camera u-color-dark" aria-hidden="true"></i
@@ -90,10 +87,11 @@
                 <div
                   *ngIf="
                     applicantProfileFormHP.controls['applicantFirstName'].errors
-                      ?.maxlength
+                      ?.pattern
                   "
                 >
-                  First name must be up to 30 characters long.
+                  First name can be contain letters from the English alphabet,
+                  numbers and the the spetical characters "- @ . # & ! ' , _"
                 </div>
               </div>
 
@@ -129,10 +127,11 @@
                 <div
                   *ngIf="
                     applicantProfileFormHP.controls['applicantLastName'].errors
-                      ?.maxlength
+                      ?.pattern
                   "
                 >
-                  Last name must be up to 30 characters long.
+                  Last name can be contain letters from the English alphabet,
+                  numbers and the the spetical characters "- @ . # & ! ' , _"
                 </div>
               </div>
 
@@ -220,7 +219,7 @@
                   Phone number is required.
                 </div>
                 <div
-                  *ngIf="newClientForm.controls['companyPhoneNumber'].errors"
+                  *ngIf="newClientForm.controls['phonenumber'].errors"
                 >
                   Phone number must be in valid format. Example: +1 (222)
                   333-444-55
@@ -293,10 +292,11 @@
                 </div>
                 <div
                   *ngIf="
-                    applicantProfileFormHP.controls['school'].errors?.maxlength
+                    applicantProfileFormHP.controls['school'].errors?.pattern
                   "
                 >
-                  School/University must be up to 50 characters long.
+                  School/University can be contain letters from the English alphabet,
+                  numbers and the the spetical characters "- @ . # & ! ' , _"
                 </div>
               </div>
 

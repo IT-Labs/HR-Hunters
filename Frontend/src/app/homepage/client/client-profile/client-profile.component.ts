@@ -3,6 +3,8 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { mimeType } from "../../../validators/mime-type.validator";
 import { ClientService } from "src/app/services/client.service";
 import { AuthService } from "src/app/services/auth.service";
+import { Subscription } from "rxjs";
+import { Client } from "src/app/models/client.model";
 
 @Component({
   selector: "app-client-profile",
@@ -10,14 +12,25 @@ import { AuthService } from "src/app/services/auth.service";
   styleUrls: ["./client-profile.component.scss"]
 })
 export class ClientProfileComponent implements OnInit {
+
+  validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
   imagePreview: string | ArrayBuffer;
   imageValid = true;
   loggedInUser;
-  loggedInClient;
+  loggedInClient: Client = {
+    id: null,
+    companyName: null,
+    email: null,
+    location: null,
+    phoneNumber: null,
+    logo: null,
+  };
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
   loading = false;
+
+  private clientProfileSub: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -28,18 +41,16 @@ export class ClientProfileComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     this.loggedInUser = this.authService.getUser();
-    this.loggedInClient = this.clientService.getClient(this.loggedInUser.id)
-
-    this.clientProfileFormHP.controls.companyName.setValue(this.loggedInClient.companyName)
-    this.clientProfileFormHP.controls.companyEmail.setValue(this.loggedInClient.email)
-    this.clientProfileFormHP.controls.location.setValue(this.loggedInClient.location)
-    this.clientProfileFormHP.controls.phonenumber.setValue(this.loggedInClient.phoneNumber)
-    this.imagePreview = this.loggedInClient.logo
-
-    this.imagePreview =
-      "https://about.canva.com/wp-content/uploads/sites/3/2016/08/Band-Logo.png";
-
-    this.loading = false;
+    this.clientService.getClient(this.loggedInUser.id)
+    this.clientProfileSub = this.clientService.getClientProfileListener().subscribe(clientProfile => {
+      this.loggedInClient = clientProfile.client
+      this.clientProfileFormHP.controls.companyName.setValue(this.loggedInClient.companyName)
+      this.clientProfileFormHP.controls.companyEmail.setValue(this.loggedInClient.email)
+      this.clientProfileFormHP.controls.location.setValue(this.loggedInClient.location)
+      this.clientProfileFormHP.controls.phonenumber.setValue(this.loggedInClient.phoneNumber)
+      this.imagePreview = this.loggedInClient.logo
+      this.loading = false;
+    })
   }
 
   clientProfileFormHP = this.fb.group({
@@ -48,7 +59,7 @@ export class ClientProfileComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.maxLength(50),
-        Validators.pattern("[a-zA-Z0-9]*")
+        Validators.pattern(this.validText)
       ])
     ],
     companyEmail: [
@@ -72,7 +83,7 @@ export class ClientProfileComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.maxLength(30),
-        Validators.pattern("[a-zA-Z0-9]*")
+        Validators.pattern(this.validText)
       ])
     ]
   });

@@ -73,6 +73,8 @@ export class JobPostingsListComponent implements OnInit {
       jobId
     );
     this.applicationService.addApplication(applicationData);
+    const params = this.buildQueryParams(this.jobPostingQP);
+    this.jobPostingService.getJobPostings(params);
     this.loading = false;
   }
 

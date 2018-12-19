@@ -42,6 +42,9 @@
             <div *ngIf="newClientForm.controls['companyName'].errors?.required">
               Company name is required.
             </div>
+            <div *ngIf="newClientForm.controls['companyName'].errors?.pattern">
+              Company name can be contain letters from the English alphabet, numbers and the the spetical characters "- @ . # & ! ' , _"
+            </div>
           </div>
 
           <!-- COMPANY EMAIL -->
@@ -138,6 +141,11 @@
               *ngIf="newClientForm.controls['companyLocation'].errors?.required"
             >
               Company location is required.
+            </div>
+            <div
+              *ngIf="newClientForm.controls['companyLocation'].errors?.pattern"
+            >
+            Location can be contain letters from the English alphabet, numbers and the the spetical characters "- @ . # & ! ' , _"
             </div>
           </div>
         </div>

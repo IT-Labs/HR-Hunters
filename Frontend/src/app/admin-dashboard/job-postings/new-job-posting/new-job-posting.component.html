@@ -1,6 +1,5 @@
 <div class="my-container">
-  <ng-template #customLoadingTemplate>
-  </ng-template>
+  <ng-template #customLoadingTemplate> </ng-template>
 
   <ngx-loading
     [show]="loading"
@@ -86,6 +85,10 @@
             <div *ngIf="newJobPostingForm.controls['title'].errors?.maxlength">
               Title must be up to 50 characters long.
             </div>
+            <div *ngIf="newJobPostingForm.controls['title'].errors?.pattern">
+              Title can be contain letters from the English alphabet, numbers
+              and the the spetical characters "- @ . # & ! ' , _"
+            </div>
           </div>
 
           <!-- DESCRIPTION -->
@@ -104,6 +107,22 @@
             formControlName="description"
             maxlength="300"
           ></textarea>
+
+          <div
+            *ngIf="
+              !newJobPostingForm.controls['description'].valid &&
+              (newJobPostingForm.controls['description'].dirty ||
+                newJobPostingForm.controls['description'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div
+              *ngIf="newJobPostingForm.controls['description'].errors?.pattern"
+            >
+              Description can be contain letters from the English alphabet,
+              numbers and the the spetical characters "- @ . # & ! ' , _"
+            </div>
+          </div>
 
           <!-- JOB TYPE -->
 
@@ -134,6 +153,10 @@
           >
             <div *ngIf="newJobPostingForm.controls['jobType'].errors?.required">
               Job type must be selected.
+            </div>
+            <div *ngIf="newJobPostingForm.controls['jobType'].errors?.pattern">
+              Description can be contain letters from the English alphabet,
+              numbers and the the spetical characters "- @ . # & ! ' , _"
             </div>
           </div>
 

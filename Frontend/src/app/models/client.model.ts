@@ -6,5 +6,6 @@ export interface Client extends User {
   activeJobs?: number,
   allJobs?: number,
   status?: string,
-  location?: string
+  location?: string,
+  phoneNumber?: string
 }
