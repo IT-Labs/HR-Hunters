@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { AuthService } from "src/app/services/auth.service";
 import { Subscription } from "rxjs";
-import { PasswordValidator } from '../../../validators/password.validator';
+import { PasswordValidator } from "../../../validators/password.validator";
 
 @Component({
   selector: "app-register",
@@ -11,8 +11,13 @@ import { PasswordValidator } from '../../../validators/password.validator';
 })
 export class ApplicantRegisterComponent implements OnInit {
   authError: string;
-  strongPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
-  validEmail = new RegExp("[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}");
+  strongPassword = new RegExp(
+    "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
+  );
+  validEmail = new RegExp(
+    "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
+  );
+  validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
 
   loading = false;
 
@@ -26,12 +31,15 @@ export class ApplicantRegisterComponent implements OnInit {
     this.authStatusSub = this.authService
       .getAuthStatusListener()
       .subscribe(authStatus => {});
-    this.authErrorStatusSub = this.authService.getAuthErrorStatusListener().subscribe(error => {
-      this.authError = error.error
-    })
+    this.authErrorStatusSub = this.authService
+      .getAuthErrorStatusListener()
+      .subscribe(error => {
+        this.authError = error.error;
+      });
 
     this.applicantRegisterForm.controls.applicantPassword.valueChanges.subscribe(
-      x => this.applicantRegisterForm.controls.applicantConfirmPassword.updateValueAndValidity()
+      x =>
+        this.applicantRegisterForm.controls.applicantConfirmPassword.updateValueAndValidity()
     );
     this.loading = false;
   }
@@ -43,7 +51,7 @@ export class ApplicantRegisterComponent implements OnInit {
         Validators.required,
         Validators.minLength(1),
         Validators.maxLength(30),
-        Validators.pattern("[a-zA-Z ]*")
+        Validators.pattern(this.validText)
       ])
     ],
     applicantLastName: [
@@ -52,7 +60,7 @@ export class ApplicantRegisterComponent implements OnInit {
         Validators.required,
         Validators.minLength(1),
         Validators.maxLength(30),
-        Validators.pattern("[a-zA-Z ]*")
+        Validators.pattern(this.validText)
       ])
     ],
     applicantEmail: [
@@ -75,23 +83,23 @@ export class ApplicantRegisterComponent implements OnInit {
     ],
     applicantConfirmPassword: [
       "",
-      Validators.compose([
-        Validators.required,
-        PasswordValidator
-      ])
+      Validators.compose([Validators.required, PasswordValidator])
     ]
   });
-  
+
   onApplicantRegister() {
     this.loading = true;
     if (this.applicantRegisterForm.invalid) {
       return;
     }
 
-    this.authService.registerUser( null, this.applicantRegisterForm.value.applicantFirstName,
+    this.authService.registerUser(
+      null,
+      this.applicantRegisterForm.value.applicantFirstName,
       this.applicantRegisterForm.value.applicantLastName,
       this.applicantRegisterForm.value.applicantEmail,
-      this.applicantRegisterForm.value.applicantPassword, 1
+      this.applicantRegisterForm.value.applicantPassword,
+      1
     );
     this.loading = false;
   }

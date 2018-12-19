@@ -39,6 +39,7 @@ namespace HRHunters.Domain.Managers
             //User not found by email
             if (user == null)
             {
+                userToReturn.Errors["Error"].Add("Invalid email or password");
                 return userToReturn;
             }
             //If user exists, check password
@@ -53,6 +54,12 @@ namespace HRHunters.Domain.Managers
             var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userLoginModel.Email.ToLower());
             userToReturn = _mapper.Map<UserLoginReturnModel>(appUser);
             var roles = await _userManager.GetRolesAsync(appUser);
+
+            //Check if it is first-time login
+            if (appUser.ModifiedDate != null)
+                userToReturn.NewUser = false;
+            else
+                userToReturn.NewUser = true;
 
             userToReturn.Succeeded = true;
             userToReturn.Token = await _tokenGeneration.GenerateJwtToken(user);

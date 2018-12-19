@@ -12,6 +12,10 @@ export class NewClientComponent implements OnInit {
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
 
+  validText = new RegExp(
+    "^([a-zA-Z0-9]|[- @\.#&!',_])*$"
+  )
+
   loading = false;
 
   constructor(private fb: FormBuilder, private clientService: ClientService) {}
@@ -23,7 +27,8 @@ export class NewClientComponent implements OnInit {
       "",
       Validators.compose([
         Validators.required,
-        Validators.maxLength(30)
+        Validators.maxLength(30),
+        Validators.pattern(this.validText)
       ])
     ],
     companyEmail: [
@@ -45,7 +50,8 @@ export class NewClientComponent implements OnInit {
       "",
       Validators.compose([
         Validators.required,
-        Validators.maxLength(30)
+        Validators.maxLength(30),
+        Validators.pattern(this.validText)
       ])
     ]
   });

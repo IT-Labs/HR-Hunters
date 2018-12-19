@@ -26,6 +26,7 @@ import { AuthAdminGuard } from "./auth-guards/auth-admin.guard";
 import { AuthClientGuard } from "./auth-guards/auth-client.guard";
 import { AuthApplicantGuard } from "./auth-guards/auth-applicant.guard";
 import { AddCSVComponent } from "./admin-dashboard/job-postings/add-csv/add-csv.component";
+import { ApplicationDetailsComponent } from "./homepage/application-details/application-details.component";
 
 const routes: Routes = [
   { path: "", redirectTo: "welcome", pathMatch: "full" },
@@ -67,7 +68,8 @@ const routes: Routes = [
       { path: "profile", component: ApplicantProfileComponent },
       { path: "job-postings", component: JobPostingsListComponent },
       { path: "job-postings/:id", component: JobPostingDetailsComponent },
-      { path: "my-applications", component: ApplicantApplicationsComponent }
+      { path: "my-applications", component: ApplicantApplicationsComponent },
+      { path: "my-applications/:id", component: ApplicationDetailsComponent }
     ]
   },
   { path: "**", component: ErrorComponent }

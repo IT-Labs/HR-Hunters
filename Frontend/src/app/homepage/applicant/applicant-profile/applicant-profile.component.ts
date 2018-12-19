@@ -3,6 +3,8 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { mimeType } from "../../../validators/mime-type.validator";
 import { AuthService } from "src/app/services/auth.service";
 import { ApplicantService } from "src/app/services/applicant.service";
+import { Applicant } from "src/app/models/applicant.model";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-applicant-profile",
@@ -14,19 +16,28 @@ export class ApplicantProfileComponent implements OnInit {
     "Highschool",
     "Bachelor",
     "Master",
-    "Doctor",
+    "Doctoral",
     "Select education level..."
   ];
   loggedInUser;
-  loggedInApplicant;
+  loggedInApplicant: Applicant = {
+    id: null,
+    email: null,
+    firstName: null,
+    lastName: null,
+    phoneNumber: null,
+    photo: null,
+    education: null,
+    experience: null,
+    school: null
+  };
   imagePreview: string | ArrayBuffer;
   imageValid = true;
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
-
+  validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
   loading = false;
-
   experience = [
     "<1",
     "1",
@@ -51,12 +62,8 @@ export class ApplicantProfileComponent implements OnInit {
     "20+",
     "Select experience..."
   ];
-
   validExperience: boolean;
-  validPhonenumber = new RegExp(
-    "^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$"
-  );
-  //ex: format: +61 01 2345 6789
+  private applicantProfileSub: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -67,17 +74,36 @@ export class ApplicantProfileComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     this.loggedInUser = this.authService.getUser();
-    this.loggedInApplicant = this.applicantService.getApplicant(this.loggedInUser.id)
-
-    this.applicantProfileFormHP.controls.applicantFirstName.setValue(this.loggedInApplicant.firstName)
-    this.applicantProfileFormHP.controls.applicantLastName.setValue(this.loggedInApplicant.lastName)
-    this.applicantProfileFormHP.controls.applicantEmail.setValue(this.loggedInApplicant.email)
-    this.applicantProfileFormHP.controls.phonenumber.setValue(this.loggedInApplicant.phoneNumber)
-    this.applicantProfileFormHP.controls.education.setValue(this.loggedInApplicant.education)
-    this.applicantProfileFormHP.controls.school.setValue(this.loggedInApplicant.school)
-    this.applicantProfileFormHP.controls.experience.setValue(this.loggedInApplicant.experience)
-    this.imagePreview = this.loggedInApplicant.photo
-    this.loading = false;
+    this.applicantService.getApplicant(this.loggedInUser.id);
+    this.applicantProfileSub = this.applicantService
+      .getApplicantProfileListener()
+      .subscribe(applicantProfile => {
+        this.loggedInApplicant = applicantProfile.applicant;
+        this.applicantProfileFormHP.controls.applicantFirstName.setValue(
+          this.loggedInApplicant.firstName
+        );
+        this.applicantProfileFormHP.controls.applicantLastName.setValue(
+          this.loggedInApplicant.lastName
+        );
+        this.applicantProfileFormHP.controls.applicantEmail.setValue(
+          this.loggedInApplicant.email
+        );
+        this.applicantProfileFormHP.controls.phonenumber.setValue(
+          this.loggedInApplicant.phoneNumber
+        );
+        this.applicantProfileFormHP.controls.education.setValue(
+          this.loggedInApplicant.education
+        );
+        console.log(this.loggedInApplicant.education);
+        this.applicantProfileFormHP.controls.school.setValue(
+          this.loggedInApplicant.school
+        );
+        this.applicantProfileFormHP.controls.experience.setValue(
+          this.loggedInApplicant.experience
+        );
+        this.imagePreview = this.loggedInApplicant.photo;
+        this.loading = false;
+      });
   }
 
   applicantProfileFormHP = this.fb.group({
@@ -87,7 +113,7 @@ export class ApplicantProfileComponent implements OnInit {
         Validators.required,
         Validators.minLength(1),
         Validators.maxLength(30),
-        Validators.pattern("[a-zA-Z0-9]*")
+        Validators.pattern(this.validText)
       ])
     ],
     applicantLastName: [
@@ -96,7 +122,7 @@ export class ApplicantProfileComponent implements OnInit {
         Validators.required,
         Validators.minLength(1),
         Validators.maxLength(30),
-        Validators.pattern("[a-zA-Z0-9]*")
+        Validators.pattern(this.validText)
       ])
     ],
     applicantEmail: [
@@ -108,15 +134,15 @@ export class ApplicantProfileComponent implements OnInit {
         Validators.pattern(this.validEmail)
       ])
     ],
-    phonenumber: [
+    phonenumber: ["", Validators.compose([Validators.required])],
+    education: ["", Validators.compose([Validators.required])],
+    school: [
       "",
       Validators.compose([
         Validators.required,
-        Validators.pattern(this.validPhonenumber)
+        Validators.pattern(this.validText)
       ])
     ],
-    education: ["", Validators.compose([Validators.required])],
-    school: ["", Validators.compose([Validators.required])],
     experience: [
       "",
       Validators.compose([Validators.required, Validators.maxLength(3)])
@@ -187,18 +213,20 @@ export class ApplicantProfileComponent implements OnInit {
     this.applicantProfileFormHP.controls["experience"].markAsTouched();
 
     let applicantData = this.buildApplicantDataOnUpdateApplicantProfile(
-      this.applicantProfileFormHP.value.firstName,
-      this.applicantProfileFormHP.value.lastName,
-      this.applicantProfileFormHP.value.email,
-      this.applicantProfileFormHP.value.phoneNumber,
+      this.applicantProfileFormHP.value.applicantFirstName,
+      this.applicantProfileFormHP.value.applicantLastName,
+      this.applicantProfileFormHP.value.applicantEmail,
+      this.applicantProfileFormHP.value.phonenumber,
       this.applicantProfileFormHP.value.education,
       this.applicantProfileFormHP.value.school,
       this.applicantProfileFormHP.value.experience
     );
 
-    
     if (this.applicantProfileFormHP.valid) {
-      this.applicantService.updateApplicant(applicantData, this.loggedInUser.id);
+      this.applicantService.updateApplicant(
+        applicantData,
+        this.loggedInUser.id
+      );
     }
     this.loading = false;
   }

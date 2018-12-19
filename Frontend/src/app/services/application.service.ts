@@ -5,6 +5,7 @@ import { Subject } from "rxjs";
 import { Application } from "../models/application.model";
 import { environment } from "../../environments/environment.prod";
 import { ToastrService } from "ngx-toastr";
+import { AuthService } from "./auth.service";
 
 @Injectable({ providedIn: "root" })
 export class ApplicationService {
@@ -21,15 +22,24 @@ export class ApplicationService {
     rejected: number;
   }>();
 
+  private application = new Subject<{
+    application: Application;
+  }>();
+
   constructor(
     private http: HttpClient,
     private router: Router,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private authService: AuthService
   ) {}
 
   // This method should be called within onInit within a component applications postings
   getApplicationsUpdateListener() {
     return this.applicationsUpdated.asObservable();
+  }
+
+  getApplicationListener() {
+    return this.application.asObservable();
   }
 
   // Get all applications
@@ -55,10 +65,50 @@ export class ApplicationService {
             hired: applicationsData.hired,
             rejected: applicationsData.rejected
           });
-          this.toastrService.success("", "Applications fetched successfully!");
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (error.error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
+        }
+      );
+  }
+
+  getApplication(applicationId) {
+    this.http
+      .get<{
+        id: number;
+        applicantFirstName: string;
+        applicantLastName: string;
+        applicantEmail: string;
+        jobTitle: string;
+        description: string;
+        experience: string;
+        postedOn: string;
+        dateFrom: string;
+        dateTo: string;
+        status: string;
+        jobType: string;
+      }>(this.baseUrl + "/Applications/" + applicationId)
+      .subscribe(
+        applicationData => {
+          this.application.next({
+            application: applicationData
+          });
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -84,7 +134,11 @@ export class ApplicationService {
           }
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -113,7 +167,11 @@ export class ApplicationService {
           }
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"

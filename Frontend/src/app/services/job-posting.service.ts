@@ -5,6 +5,7 @@ import { JobPosting } from "../models/job-posting.model";
 import { Subject } from "rxjs";
 import { environment } from "../../environments/environment.prod";
 import { ToastrService } from "ngx-toastr";
+import { AuthService } from "./auth.service";
 
 @Injectable({ providedIn: "root" })
 export class JobPostingService {
@@ -27,7 +28,8 @@ export class JobPostingService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private authService: AuthService
   ) {}
 
   // Get all job postings
@@ -51,7 +53,11 @@ export class JobPostingService {
           rejected: jobPostingData.rejected
         });
       }, error => {
-        if (error) {
+        if (error.status == 401) {
+          this.authService.logout()
+          return
+        }
+        if (error.error) {
           this.toastrService.error(
             error.error.errors.Error[0],
             "Error occured!"
@@ -79,7 +85,11 @@ export class JobPostingService {
           this.jobPostingEdit.next(jobPostingData);
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout()
+            return
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -115,7 +125,11 @@ export class JobPostingService {
           }
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout()
+            return
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -141,7 +155,11 @@ export class JobPostingService {
           }
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout()
+            return
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -167,7 +185,11 @@ export class JobPostingService {
           }
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout()
+            return
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"

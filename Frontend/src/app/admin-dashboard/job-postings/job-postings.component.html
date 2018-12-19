@@ -1,6 +1,5 @@
 <div class="my-container">
-  <ng-template #customLoadingTemplate>
-  </ng-template>
+  <ng-template #customLoadingTemplate> </ng-template>
 
   <ngx-loading
     [show]="loading"
@@ -17,7 +16,13 @@
       >
         Add New
       </button>
-      <button class="btn dash__heading--btn" type="button" routerLink="/admin-dashboard/new-csv">Import CSV</button>
+      <button
+        class="btn dash__heading--btn"
+        type="button"
+        routerLink="/admin-dashboard/new-csv"
+      >
+        Import CSV
+      </button>
       <div class="text-muted dash__filtering">
         <ul>
           <li (click)="onFilter(null)">
@@ -45,16 +50,158 @@
       >
         <thead>
           <tr class="dash__table__header">
-            <th scope="col" (click)="onSort('jobTitle')">Position Title</th>
-            <th scope="col" (click)="onSort('companyName')">Company Name</th>
-            <th scope="col" (click)="onSort('companyEmail')">Contact Email</th>
-            <th scope="col" (click)="onSort('location')">Location</th>
-            <th scope="col" (click)="onSort('jobType')">Job Type</th>
-            <th scope="col" (click)="onSort('dateTo')">Expires</th>
+            <th scope="col" (click)="onSort('jobTitle')">
+              Position Title
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'jobTitle' &&
+                  jobPostingQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'jobTitle' &&
+                  jobPostingQP.currentSortDirection === 1
+                "
+              ></i>
+            </th>
+            <th scope="col" (click)="onSort('companyName')">
+              Company Name
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'companyName' &&
+                  jobPostingQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'companyName' &&
+                  jobPostingQP.currentSortDirection === 1
+                "
+              ></i>
+            </th>
+            <th scope="col" (click)="onSort('companyEmail')">
+              Contact Email
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'companyEmail' &&
+                  jobPostingQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'companyEmail' &&
+                  jobPostingQP.currentSortDirection === 1
+                "
+              ></i>
+            </th>
+            <th scope="col" (click)="onSort('location')">
+              Location
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'location' &&
+                  jobPostingQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'location' &&
+                  jobPostingQP.currentSortDirection === 1
+                "
+              ></i>
+            </th>
+            <th scope="col" (click)="onSort('jobType')">
+              Job Type
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'jobType' &&
+                  jobPostingQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'jobType' &&
+                  jobPostingQP.currentSortDirection === 1
+                "
+              ></i>
+            </th>
+            <th scope="col" (click)="onSort('dateTo')">
+              Expires
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'dateTo' &&
+                  jobPostingQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'dateTo' &&
+                  jobPostingQP.currentSortDirection === 1
+                "
+              ></i>
+            </th>
             <th scope="col" (click)="onSort('allApplicationsCount')">
               Applications
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'allApplicationsCount' &&
+                  jobPostingQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'allApplicationsCount' &&
+                  jobPostingQP.currentSortDirection === 1
+                "
+              ></i>
             </th>
-            <th scope="col" (click)="onSort('status')">Status</th>
+            <th scope="col" (click)="onSort('status')">
+              Status
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'status' &&
+                  jobPostingQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  jobPostingQP.currentSortBy === 'status' &&
+                  jobPostingQP.currentSortDirection === 1
+                "
+              ></i>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -67,6 +214,7 @@
                 jobPosting.id
               ]"
               [queryParams]="{ edit: true }"
+              class="jobposting--color"
             >
               {{ jobPosting.jobTitle }}
             </td>
@@ -102,7 +250,7 @@
                   <span
                     class="dropdown-item"
                     (click)="chooseStatus($event, jobPosting.id)"
-                    >Expired</span
+                    >Rejected</span
                   >
                 </div>
               </div>
