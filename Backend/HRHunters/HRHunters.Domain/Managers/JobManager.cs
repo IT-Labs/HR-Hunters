@@ -51,14 +51,14 @@ namespace HRHunters.Domain.Managers
             IList<string> role = _userManager.GetRolesAsync(current).Result;
             var query = _repo.GetAll<JobPosting>(includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," + $"{nameof(JobPosting.Applications)}");
             var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == request.Id).Select(x => x.JobPostingId).ToList();
-            if (!role.Contains(UserType.ADMIN.ToString()))
+            if (!role.Contains(RoleConstants.ADMIN))
             {
-                if (role.Contains(UserType.APPLICANT.ToString()))
+                if (role.Contains(RoleConstants.APPLICANT))
                 {
                     query = query.Where(x => x.Client.Status == ClientStatus.Active && x.Status == JobPostingStatus.Approved).Where(x => !applied.Contains(x.Id));
                 }
 
-                if (role.Contains(UserType.CLIENT.ToString()))
+                if (role.Contains(RoleConstants.CLIENT))
                 {
                     query = query.Where(x => x.ClientId == request.Id);
                 }
@@ -84,7 +84,7 @@ namespace HRHunters.Domain.Managers
             var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(currentUserId.ToString()));
             var response = new GeneralResponse();
 
-            if (jobSubmit.Id != currentUserId && !userRole.Contains("Admin"))
+            if (jobSubmit.Id != currentUserId && !userRole.Contains(RoleConstants.ADMIN))
             {
                 _logger.LogError(ErrorConstants.UnauthorizedAccess);
                 response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
@@ -109,7 +109,7 @@ namespace HRHunters.Domain.Managers
                 _logger.LogError(ErrorConstants.InvalidInput, dateFrom, dateTo, education, empCategory);
                 response.Errors["Error"].Add(ErrorConstants.InvalidInput);
             }
-
+            
             jobPost.DateFrom = dateFrom;
             jobPost.DateTo = dateTo;
             jobPost.EmpCategory = empCategory;
