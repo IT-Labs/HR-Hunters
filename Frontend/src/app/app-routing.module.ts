@@ -25,6 +25,7 @@ import { NewClientComponent } from "./admin-dashboard/clients/new-client/new-cli
 import { AuthAdminGuard } from "./auth-guards/auth-admin.guard";
 import { AuthClientGuard } from "./auth-guards/auth-client.guard";
 import { AuthApplicantGuard } from "./auth-guards/auth-applicant.guard";
+import { AddCSVComponent } from "./admin-dashboard/job-postings/add-csv/add-csv.component";
 
 const routes: Routes = [
   { path: "", redirectTo: "welcome", pathMatch: "full" },
@@ -43,7 +44,8 @@ const routes: Routes = [
       { path: "new-client", component: NewClientComponent },
       { path: "job-postings", component: ADJobPostingsComponent },
       { path: "new-job-posting", component: ADNewJobPostingComponent },
-      { path: "new-job-posting/:id", component: ADNewJobPostingComponent }
+      { path: "new-job-posting/:id", component: ADNewJobPostingComponent },
+      { path: "new-csv", component: AddCSVComponent },
     ]
   },
   {
