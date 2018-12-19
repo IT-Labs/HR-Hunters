@@ -62,7 +62,9 @@ namespace HRHunters.WebAPI
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
                     .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    SaveSigninToken = true
                 });
             services.AddAuthorization();
 
@@ -81,8 +83,11 @@ namespace HRHunters.WebAPI
                         .AllowCredentials();
                 });
             });
-            services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
-            services.AddAWSService<IAmazonS3>();
+
+            //var AWSOptions = Configuration.GetAWSOptions();
+            //AWSOptions.Credentials = new Amazon.Runtime.EnvironmentVariablesAWSCredentials();
+            //services.AddDefaultAWSOptions(AWSOptions);
+            //services.AddAWSService<IAmazonS3>();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -124,7 +129,10 @@ namespace HRHunters.WebAPI
             }
 
             //app.UseHttpsRedirection(); 
-            
+
+            //Environment.SetEnvironmentVariable("AWS_ACCESS_KEY_ID", Configuration["AWS:AwsAccessKey"]);
+            //Environment.SetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", Configuration["AWS:AwsSecretKey"]);
+
             seeder.EnsureSeedData();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -138,6 +146,5 @@ namespace HRHunters.WebAPI
                 routes.MapRoute("default", "{controller=Admin}/{action=Jobs}/{id?}");
             });
         }
-
     }
 }

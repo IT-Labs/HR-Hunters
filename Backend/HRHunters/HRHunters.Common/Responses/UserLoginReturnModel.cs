@@ -14,6 +14,7 @@ namespace HRHunters.Common.Responses
         public string Email { get; set; }
         public int Id { get; set; }
         public int Role { get; set; }
+        public bool NewUser { get; set; }
         public IDictionary<string, List<string>> Errors { get; set; }
 
         public UserLoginReturnModel()
