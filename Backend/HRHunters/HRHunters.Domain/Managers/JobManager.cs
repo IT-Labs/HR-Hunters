@@ -6,6 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using CsvHelper.TypeConversion;
+using CsvHelper.Configuration.Attributes;
+using CsvHelper;
+using CsvHelper.Expressions;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Enums;
 using HRHunters.Common.ExtensionMethods;
@@ -219,16 +223,37 @@ namespace HRHunters.Domain.Managers
             return response;
         }
 
-        //public GeneralResponse CreateMultipleJobPostings(IFormFile formFile, int id)
-        //{
-           
-        //    var errors = new Dictionary<string, List<string>>();
+        public  GeneralResponse CreateMultiple(int id)
+        {
 
+            var _filePath = "C:\\Users\\tome.tasevski\\test.csv";
+            var _listJobs = new List<JobSubmit>();
+            var csvTextReader = new StreamReader(_filePath);
+            var iteration = 0;
+            var csv = new CsvReader(csvTextReader);
+            
+            csvTextReader.ReadLine();
+            while (csv.Read())
+            {
 
+                var _Job = new JobSubmit();
+                if (csv[0].ToString().Any())
+                {
+                    _Job.Title = csv[0];
+                }
+                _Job.Description = csv[1];
+                _Job.EmpCategory = csv[2];
+                _Job.Education = csv[3];
+                _Job.NeededExperience = csv[4];
+                _Job.DateFrom = csv[5];
+                _Job.DateTo = csv[6];
+                _Job.Id = id;
 
-           
-        //    return null;
-        //}
+                _listJobs.Add(_Job);
+                iteration++;
+            }
+            return null;
+        }
     }
 }
 

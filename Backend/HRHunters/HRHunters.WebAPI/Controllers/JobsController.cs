@@ -61,10 +61,10 @@ namespace HRHunters.WebAPI.Controllers
             return Ok(_jobManager.UpdateJob(jobSubmit, GetCurrentUserId()));
         }
         //[Authorize(Roles="Admin")]
-        //[HttpPost]
-        //public ActionResult<GeneralResponse> CreateMultipleJobPostings(IFormFile formFile,int id)
-        //{
-        //    return Ok(_jobManager.CreateMultipleJobPostings(formFile, id));
-        //}
+        [HttpPost("Multiple")]
+        public IActionResult CreateMultiple(int id)
+        {
+            return Ok(_jobManager.CreateMultiple(id));
+        }
     }
 }
