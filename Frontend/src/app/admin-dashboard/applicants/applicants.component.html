@@ -1,6 +1,5 @@
 <div class="my-container">
-  <ng-template #customLoadingTemplate>
-  </ng-template>
+  <ng-template #customLoadingTemplate> </ng-template>
 
   <ngx-loading
     [show]="loading"
@@ -25,10 +24,46 @@
       >
         <thead>
           <tr class="dash__table__header">
-            <th scope="col" (click)="onSort('firstName')">Name</th>
-            <th scope="col">Photo</th>
-            <th scope="col" (click)="onSort('email')">Email</th>
-            <th scope="col" (click)="onSort('phoneNumber')">Phone</th>
+            <th scope="col" (click)="onSort('firstName')">
+              Name
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="applicantsQP.currentSortBy === 'firstName' && applicantsQP.currentSortDirection === 0"
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="applicantsQP.currentSortBy === 'firstName' && applicantsQP.currentSortDirection === 1"
+              ></i>
+            </th>
+            <th scope="col" class="text-body">Photo</th>
+            <th scope="col" (click)="onSort('email')">
+              Email
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="applicantsQP.currentSortBy === 'email' && applicantsQP.currentSortDirection === 0"
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="applicantsQP.currentSortBy === 'email' && applicantsQP.currentSortDirection === 1"
+              ></i>
+            </th>
+            <th scope="col" (click)="onSort('phoneNumber')">
+              Phone
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="applicantsQP.currentSortBy === 'phoneNumber' && applicantsQP.currentSortDirection === 0"
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="applicantsQP.currentSortBy === 'phoneNumber' && applicantsQP.currentSortDirection === 1"
+              ></i>
+            </th>
           </tr>
         </thead>
         <tbody>

@@ -19,7 +19,6 @@
             <img
               [src]="imagePreview"
               class="company-logo__img"
-              [alt]="clientProfileFormHP.controls['companyName'].value"
             />
             <div class="company-logo__text" (click)="filePicker.click()">
               <i class="fa fa-camera u-color-dark" aria-hidden="true"></i
@@ -77,10 +76,11 @@
                 <div
                   *ngIf="
                     clientProfileFormHP.controls['companyName'].errors
-                      ?.maxlength
+                      ?.pattern
                   "
                 >
-                  Company name must be up to 50 characters long.
+                  Company name can be contain letters from the English alphabet,
+                  numbers and the the spetical characters "- @ . # & ! ' , _"
                 </div>
               </div>
 
@@ -168,14 +168,12 @@
                   Phone number is required.
                 </div>
                 <div
-                  *ngIf="newClientForm.controls['companyPhoneNumber'].errors"
+                  *ngIf="newClientForm.controls['phonenumber'].errors"
                 >
                   Phone number must be in valid format. Example: +1 (222)
                   333-444-55
                 </div>
               </div>
-
-              <!-- Phone-number end -->
 
               <!-- Location -->
 
@@ -207,10 +205,11 @@
                 </div>
                 <div
                   *ngIf="
-                    clientProfileFormHP.controls['location'].errors?.maxlength
+                    clientProfileFormHP.controls['location'].errors?.pattern
                   "
                 >
-                  Location must be up to 30 characters long.
+                  Location can be contain letters from the English alphabet,
+                  numbers and the the spetical characters "- @ . # & ! ' , _"
                 </div>
               </div>
             </div>

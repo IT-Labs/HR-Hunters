@@ -42,9 +42,10 @@
                     Title is required.
                   </div>
                   <div
-                    *ngIf="newJobPostingFormHP.controls['title'].errors?.maxlength"
+                    *ngIf="newJobPostingFormHP.controls['title'].errors?.pattern"
                   >
-                    Title must be up to 50 characters long.
+                    Title can be contain letters from the English alphabet,
+                    numbers and the the spetical characters "- @ . # & ! ' , _"
                   </div>
                 </div>
     
@@ -80,10 +81,11 @@
                   </div>
                   <div
                     *ngIf="
-                      newJobPostingFormHP.controls['location'].errors?.maxlength
+                      newJobPostingFormHP.controls['location'].errors?.pattern
                     "
                   >
-                    Location must be up to 50 characters long.
+                    Location can be contain letters from the English alphabet,
+                    numbers and the the spetical characters "- @ . # & ! ' , _"
                   </div>
                 </div>
     
@@ -216,6 +218,22 @@
                   formControlName="description"
                   maxlength="300"
                 ></textarea>
+
+                <div
+                  *ngIf="
+                    !newJobPostingFormHP.controls['description'].valid &&
+                    (newJobPostingFormHP.controls['description'].dirty ||
+                      newJobPostingFormHP.controls['description'].touched)
+                  "
+                  class="alert hp__form--alert-msg"
+                >
+                  <div
+                    *ngIf="newJobPostingFormHP.controls['description'].errors?.pattern"
+                  >
+                    Job type can be contain letters from the English alphabet,
+                    numbers and the the spetical characters "- @ . # & ! ' , _"
+                  </div>
+                </div>
     
                 <!-- DURATION -->
     
