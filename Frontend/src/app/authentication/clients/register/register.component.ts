@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { AuthService } from "src/app/services/auth.service";
-import { PasswordValidator } from '../../../validators/password.validator';
+import { PasswordValidator } from "../../../validators/password.validator";
 
 @Component({
   selector: "app-register",
@@ -11,8 +11,13 @@ import { PasswordValidator } from '../../../validators/password.validator';
 })
 export class ClientRegisterComponent {
   authError: string;
-  strongPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
-  validEmail = new RegExp("[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}");
+  strongPassword = new RegExp(
+    "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
+  );
+  validEmail = new RegExp(
+    "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
+  );
+  validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
   private authErrorStatusSub: Subscription;
   private authStatusSub: Subscription;
 
@@ -23,16 +28,18 @@ export class ClientRegisterComponent {
   ngOnInit() {
     this.loading = true;
     this.authStatusSub = this.authService
-    .getAuthStatusListener()
-    .subscribe(authStatus => {});
-    this.authErrorStatusSub = this.authService.getAuthErrorStatusListener().subscribe(error => {
-      if (error) {
-        this.authError = error.error;
-      }
-    })
+      .getAuthStatusListener()
+      .subscribe(authStatus => {});
+    this.authErrorStatusSub = this.authService
+      .getAuthErrorStatusListener()
+      .subscribe(error => {
+        if (error) {
+          this.authError = error.error;
+        }
+      });
 
-    this.clientRegisterForm.controls.clientPassword.valueChanges.subscribe(
-      x => this.clientRegisterForm.controls.clientConfirmPassword.updateValueAndValidity()
+    this.clientRegisterForm.controls.clientPassword.valueChanges.subscribe(x =>
+      this.clientRegisterForm.controls.clientConfirmPassword.updateValueAndValidity()
     );
 
     this.loading = false;
@@ -45,7 +52,7 @@ export class ClientRegisterComponent {
         Validators.required,
         Validators.minLength(1),
         Validators.maxLength(50),
-        Validators.pattern("[a-zA-Z ]*")
+        Validators.pattern(this.validEmail)
       ])
     ],
     clientEmail: [
@@ -68,10 +75,7 @@ export class ClientRegisterComponent {
     ],
     clientConfirmPassword: [
       "",
-      Validators.compose([
-        Validators.required,
-        PasswordValidator
-      ])
+      Validators.compose([Validators.required, PasswordValidator])
     ]
   });
 
@@ -83,7 +87,8 @@ export class ClientRegisterComponent {
 
     this.authService.registerUser(
       this.clientRegisterForm.value.clientName,
-      null, null,
+      null,
+      null,
       this.clientRegisterForm.value.clientEmail,
       this.clientRegisterForm.value.clientPassword,
       2

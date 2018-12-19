@@ -34,7 +34,7 @@ export class ADNewJobPostingComponent implements OnInit {
   ];
 
   edit = false;
-
+  validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
@@ -161,7 +161,8 @@ export class ADNewJobPostingComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.minLength(2),
-        Validators.maxLength(50)
+        Validators.maxLength(50),
+        Validators.pattern(this.validText)
       ])
     ],
     title: [
@@ -169,10 +170,17 @@ export class ADNewJobPostingComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.minLength(1),
-        Validators.maxLength(50)
+        Validators.maxLength(50),
+        Validators.pattern(this.validText)
       ])
     ],
-    description: ["", Validators.compose([Validators.maxLength(300)])],
+    description: [
+      "",
+      Validators.compose([
+        Validators.maxLength(300),
+        Validators.pattern(this.validText)
+      ])
+    ],
     jobType: ["", Validators.compose([Validators.required])],
     education: ["", Validators.compose([Validators.required])],
     experience: ["", Validators.compose([Validators.required])]

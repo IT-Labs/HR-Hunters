@@ -5,4 +5,7 @@ export interface Applicant extends User {
   lastName: string;
   photo?: string;
   phoneNumber?: string;
+  education?: string;
+  school?: string;
+  experience?: string;
 }

@@ -1,6 +1,5 @@
 <div class="my-container">
-  <ng-template #customLoadingTemplate>
-  </ng-template>
+  <ng-template #customLoadingTemplate> </ng-template>
 
   <ngx-loading
     [show]="loading"
@@ -38,11 +37,79 @@
       >
         <thead>
           <tr class="dash__table__header">
-            <th scope="col" (click)="onSort('companyName')">Company Name</th>
-            <th scope="col">Logo</th>
-            <th scope="col" (click)="onSort('email')">E-mail</th>
-            <th scope="col" (click)="onSort('allJobs')">Jobs(active/all)</th>
-            <th scope="col" (click)="onSort('status')">Status</th>
+            <th scope="col" (click)="onSort('companyName')">
+              Company Name
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  clientQP.currentSortBy === 'companyName' &&
+                  clientQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  clientQP.currentSortBy === 'companyName' &&
+                  clientQP.currentSortDirection === 1
+                "
+              ></i>
+            </th>
+            <th scope="col" class="text-body">Logo</th>
+            <th scope="col" (click)="onSort('email')">
+              E-mail
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  clientQP.currentSortBy === 'email' &&
+                  clientQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  clientQP.currentSortBy === 'email' &&
+                  clientQP.currentSortDirection === 1
+                "
+              ></i>
+            </th>
+            <th scope="col" (click)="onSort('allJobs')">
+              Jobs(active/all) <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  clientQP.currentSortBy === 'allJobs' &&
+                  clientQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  clientQP.currentSortBy === 'allJobs' &&
+                  clientQP.currentSortDirection === 1
+                "
+              ></i>
+            </th>
+            <th scope="col" (click)="onSort('status')">Status<i
+              class="fa fa-sort-asc"
+              aria-hidden="true"
+              *ngIf="
+                clientQP.currentSortBy === 'status' &&
+                clientQP.currentSortDirection === 0
+              "
+            ></i
+            ><i
+              class="fa fa-sort-desc"
+              aria-hidden="true"
+              *ngIf="
+                clientQP.currentSortBy === 'status' &&
+                clientQP.currentSortDirection === 1
+              "
+            ></i></th>
           </tr>
         </thead>
         <tbody>

@@ -11,6 +11,7 @@ import { AuthService } from "src/app/services/auth.service";
   styleUrls: ["./add-job-posting.component.scss"]
 })
 export class AddJobPostingComponent implements OnInit {
+  validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
   jobTypes = ["Full-time", "Part-time", "Intern", "Select job type..."];
   education = [
     "Highschool",
@@ -83,7 +84,8 @@ export class AddJobPostingComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.minLength(1),
-        Validators.maxLength(50)
+        Validators.maxLength(50),
+        Validators.pattern(this.validText)
       ])
     ],
     location: [
@@ -91,7 +93,8 @@ export class AddJobPostingComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.minLength(1),
-        Validators.maxLength(50)
+        Validators.maxLength(50),
+        Validators.pattern(this.validText)
       ])
     ],
     education: ["", Validators.compose([Validators.required])],
@@ -100,7 +103,13 @@ export class AddJobPostingComponent implements OnInit {
       Validators.compose([Validators.required, Validators.maxLength(3)])
     ],
     jobType: ["", Validators.compose([Validators.required])],
-    description: ["", Validators.compose([Validators.maxLength(300)])]
+    description: [
+      "",
+      Validators.compose([
+        Validators.maxLength(300),
+        Validators.pattern(this.validText)
+      ])
+    ]
   });
 
   buildJobPostingDataOnAddJobPosting(
@@ -220,16 +229,16 @@ export class AddJobPostingComponent implements OnInit {
       dateToday = `${this.todayDate.year}/${monthTodayDate}/${dayTodayDate}`;
     }
 
-    let education;
-    switch (this.newJobPostingFormHP.value.education) {
+    let empCategory;
+    switch (this.newJobPostingFormHP.value.jobType) {
       case "Full-time":
-        education = "Full_time";
+        empCategory = "Full_time";
         break;
       case "Part-time":
-        education = "Part_time";
+        empCategory = "Part_time";
         break;
       case "Intern":
-        education = "Intern";
+        empCategory = "Intern";
         break;
     }
 
@@ -237,8 +246,8 @@ export class AddJobPostingComponent implements OnInit {
       this.loggedInUser.id,
       this.newJobPostingFormHP.value.title,
       this.newJobPostingFormHP.value.description,
-      this.newJobPostingFormHP.value.jobType,
-      education,
+      empCategory,
+      this.newJobPostingFormHP.value.education,
       this.newJobPostingFormHP.value.experience,
       dateFrom,
       dateTo

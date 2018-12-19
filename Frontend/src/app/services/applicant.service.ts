@@ -5,6 +5,7 @@ import { Subject } from "rxjs";
 import { Applicant } from "../models/applicant.model";
 import { environment } from "../../environments/environment.prod";
 import { ToastrService } from "ngx-toastr";
+import { AuthService } from "./auth.service";
 
 @Injectable({ providedIn: "root" })
 export class ApplicantService {
@@ -23,12 +24,17 @@ export class ApplicantService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private authService: AuthService
   ) {}
 
   // This method should be called within onInit within a component applicants postings
   getApplicantsUpdateListener() {
     return this.applicantsUpdated.asObservable();
+  }
+  
+  getApplicantProfileListener() {
+    return this.applicantProfile.asObservable();
   }
 
   // Get all applicants
@@ -45,7 +51,11 @@ export class ApplicantService {
           });
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout()
+            return
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -72,7 +82,11 @@ export class ApplicantService {
           });
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout()
+            return
+          }
+          if (error.error) { 
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -98,7 +112,11 @@ export class ApplicantService {
           }
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout()
+            return
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
