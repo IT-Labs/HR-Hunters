@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HRHunters.Common.Constants;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
@@ -33,21 +34,11 @@ namespace HRHunters.Domain.Managers
         public async Task<UserLoginReturnModel> Login(UserLoginModel userLoginModel)
         {
             var user = await _userManager.FindByEmailAsync(userLoginModel.Email.ToLower());
-            
-            var userToReturn = new UserLoginReturnModel()
-            {
-                Succeeded = false,
-                Errors = new Dictionary<string, List<string>>()
-            };
-            //Error message for invalid username or password 
-            var list = new List<string>()
-            {
-                "Invalid username or password"
-            };
+
+            var userToReturn = new UserLoginReturnModel();
             //User not found by email
             if (user == null)
             {
-                userToReturn.Errors.Add("Error", list);
                 return userToReturn;
             }
             //If user exists, check password
@@ -55,17 +46,17 @@ namespace HRHunters.Domain.Managers
             if (!result.Succeeded)
             {
                 //Wrong password, return error
-                userToReturn.Errors.Add("Error", list);
+                userToReturn.Errors["Error"].Add("Invalid email or password.");
                 return userToReturn;
             }
-            //If OK sign in user
+            //If OK generate token
             var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userLoginModel.Email.ToLower());
             userToReturn = _mapper.Map<UserLoginReturnModel>(appUser);
             var roles = await _userManager.GetRolesAsync(appUser);
 
             userToReturn.Succeeded = true;
             userToReturn.Token = await _tokenGeneration.GenerateJwtToken(user);
-            userToReturn.Role = roles.Contains("Applicant") ? 1 : roles.Contains("Client") ? 2 : 3 ;
+            userToReturn.Role = roles.Contains(RoleConstants.APPLICANT) ? 1 : roles.Contains(RoleConstants.CLIENT) ? 2 : 3 ;
             return userToReturn;
         }
 
@@ -73,16 +64,12 @@ namespace HRHunters.Domain.Managers
         {
             var userToCreate = _mapper.Map<User>(userRegisterModel);
             userToCreate.UserName = userToCreate.Email.ToLower();
-            var role = userRegisterModel.UserType == UserType.APPLICANT ? "Applicant" : "Client";
-            var userToReturn = new GeneralResponse()
-            {
-                Succeeded = false,
-                Errors= new Dictionary<string, List<string>>()
-            };
+            var role = userRegisterModel.UserType == UserType.APPLICANT ? RoleConstants.APPLICANT : RoleConstants.CLIENT;
+            var userToReturn = new GeneralResponse();
 
-            if (string.IsNullOrEmpty(userRegisterModel.LastName) && role=="Applicant")
+            if (string.IsNullOrEmpty(userRegisterModel.LastName) && role==RoleConstants.APPLICANT)
             {
-                userToReturn.Errors.Add("LastName", new List<string>() { "Last name is required" });
+                userToReturn.Errors["Error"].Add("Last name is required");
                 return userToReturn;
             }
             var result = await _userManager.CreateAsync(userToCreate, userRegisterModel.Password);
@@ -94,15 +81,15 @@ namespace HRHunters.Domain.Managers
                 {
                     list.Add(error.Description);
                 }
-                userToReturn.Errors.Add("Error", list);
+                userToReturn.Errors["Error"].AddRange(list);
                 return userToReturn;
             }
-            if (role == "Client")
+            if (role == RoleConstants.CLIENT)
             {
                 userToCreate.LastName = null;
             }
 
-            if(role.Equals("Applicant"))
+            if(role.Equals(RoleConstants.APPLICANT))
                 _applicantManager.Create(new Applicant() { User = userToCreate });
             else
                 _clientManager.Create(new Client() { User = userToCreate });

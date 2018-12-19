@@ -38,8 +38,8 @@ namespace HRHunters.Domain.Managers
         {
             if (currentUserId != request.Id)
             {
-                _logger.LogError(Constants.UnauthorizedAccess);
-                throw new UnauthorizedAccessException();
+                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
             }
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
 
@@ -47,7 +47,7 @@ namespace HRHunters.Domain.Managers
                                    $"{nameof(Client.JobPostings)}");
             var selected = _mapper.ProjectTo<ClientInfo>(query);
             if (request.PageSize != 0 && request.CurrentPage != 0)
-                selected = selected.Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery);
+                selected = selected.Applyfilters(request);
 
             response.Clients.AddRange(selected.ToList());
 
@@ -70,57 +70,55 @@ namespace HRHunters.Domain.Managers
         {
             var client = _repo.GetOne<Client>(filter: x => x.Id == clientStatusUpdate.Id,
                                                     includeProperties: $"{nameof(User)},{nameof(Client.JobPostings)}");
-            var response = new GeneralResponse()
-            {
-                Succeeded = true,
-                Errors = new Dictionary<string, List<string>>()
-            };
+            var response = new GeneralResponse();
             if (client == null)
             {
-                response.Errors.Add("Error", new List<string>() { "Invalid id." });
-                response.Succeeded = false;
-
+                response.Errors["Error"].Add(ErrorConstants.NullValue);
             }
             else
             {
                 Enum.TryParse(clientStatusUpdate.Status, out ClientStatus statusToUpdate);
                 client.Status = statusToUpdate;
-                _repo.Update(client, "Admin");
+                _repo.Update(client, RoleConstants.ADMIN);
+                response.Succeeded = true;
             }
             return response;
         }
 
         public async Task<GeneralResponse> UpdateClientProfile(int id, ClientUpdate clientUpdate,int currentUserId)
         {
+            var response = new GeneralResponse();
             if (currentUserId != id)
             {
-                _logger.LogError(Constants.UnauthorizedAccess);
+                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
+                return response;
             }
 
-            var response = new GeneralResponse();
             var user = await _userManager.FindByIdAsync(id.ToString());
 
             var client = _repo.GetById<Client>(id);
             client = _mapper.Map(clientUpdate, client);
             client.User.ModifiedDate = DateTime.UtcNow;
             client.User.ModifiedBy = client.User.FirstName;
-            var exists = await _userManager.FindByEmailAsync(client.User.Email);
-            if (exists != null && user != exists)
+            var existingUser = await _userManager.FindByEmailAsync(client.User.Email);
+            if (existingUser != null && user != existingUser)
             {
                 response.Succeeded = false;
-                response.Errors["Error"].Add("Email is already in use");
+                response.Errors["Error"].Add("Email is already in use.");
                 return response;
             }
             try
             {
                 _repo.Update(client, client.User.FirstName);
                 await _userManager.UpdateAsync(user);
+                response.Succeeded = true;
             }
-            catch (Exception e)
+            catch
             {
-                throw new Exception(e.Message);
+                _logger.LogError(ErrorConstants.FailedToUpdateDatabase, client);
+                response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
             }
-            response.Succeeded = true;
             return response;
         }
 
@@ -128,11 +126,14 @@ namespace HRHunters.Domain.Managers
         {
             var currentUser = await _userManager.FindByIdAsync(currentUserId.ToString());
             var roles = await _userManager.GetRolesAsync(currentUser);
-            if (!roles.Contains("Admin"))
-            {
-                throw new InvalidUserException("Invalid user");
-            }
             var response = new GeneralResponse();
+
+            if (!roles.Contains(RoleConstants.ADMIN))
+            {
+                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
+                return response;
+            }
             var user = new User()
             {
                 FirstName = newCompany.CompanyName,
@@ -143,7 +144,8 @@ namespace HRHunters.Domain.Managers
             //TODO: Notify client with email
             if (!result.Succeeded)
             {
-                response.Errors.Add("Error", new List<string>() { "Failed to create user." });
+                _logger.LogError(ErrorConstants.FailedToUpdateDatabase, user);
+                response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
                 return response;
             }
             var company = new Client()
@@ -153,12 +155,13 @@ namespace HRHunters.Domain.Managers
             company = _mapper.Map(newCompany, company);
             try
             {
-                _repo.Create(company, "Admin");
+                _repo.Create(company, RoleConstants.ADMIN);
                 response.Succeeded = true;
             }
             catch
             {
-                response.Errors.Add("Error", new List<string>() { "Failed to create company." });
+                _logger.LogError(ErrorConstants.FailedToUpdateDatabase, company);
+                response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
             }
             return response;
         }
