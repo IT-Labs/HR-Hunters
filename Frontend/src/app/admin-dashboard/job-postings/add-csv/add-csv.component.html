@@ -1,4 +1,4 @@
-<!-- <div class="my-container">
+<div class="my-container">
   <ng-template #customLoadingTemplate> </ng-template>
 
   <ngx-loading
@@ -6,76 +6,86 @@
     [config]="{ backdropBorderRadius: '3px' }"
     [template]="customLoadingTemplate"
   ></ngx-loading>
-  <div class="dash__container">
-    <div class="dash__heading">
-      <h2 *ngIf="!edit">Add New Job Posting</h2>
-      <h2 *ngIf="edit">Edit Job Posting</h2>
-    </div>
-    <div class="dash__form__container">
-      <div class="dash__form--section">
-        <p>Company information</p>
+  <form class="dash__form" [formGroup]="newCSVForm" (ngSubmit)="onSubmitCSV()">
+    <div class="dash__container">
+      <div class="dash__heading">
+        <h2>Add job postings by uplolading CSV</h2>
+      </div>
+      <div class="dash__form__container">
+        <div class="dash__form--section">
+          <p>Company information</p>
 
-        
-        <label for="dashid_CompanyName" class="dash__form--label"
-          >Company Name <span class="u-required-star">*</span></label
-        >
-        <input
-          id="dashid_CompanyName"
-          formControlName="companyName"
-          type="text"
-          class="dash__form--input"
-          [ngbTypeahead]="search"
-          placeholder="Select company..."
-          (focus)="focus$.next($event.target.value)"
-          (click)="click$.next($event.target.value)"
-          #instance="ngbTypeahead"
-          (ngModelChange)="checkCompanyValidity()"
-        />
-        <div
-          *ngIf="
-            !newJobPostingForm.controls['companyName'].valid &&
-            (newJobPostingForm.controls['companyName'].dirty ||
-              newJobPostingForm.controls['companyName'].touched)
-          "
-          class="alert dash__form--alert-msg"
-        >
-          <div
-            *ngIf="newJobPostingForm.controls['companyName'].errors?.required"
+          <label for="dashid_CompanyName" class="dash__form--label"
+            >Company Name <span class="u-required-star">*</span></label
           >
-            Company must be selected.
+          <input
+            id="dashid_CompanyName"
+            formControlName="companyName"
+            type="text"
+            class="dash__form--input"
+            [ngbTypeahead]="search"
+            placeholder="Select company..."
+            (focus)="focus$.next($event.target.value)"
+            (click)="click$.next($event.target.value)"
+            #instance="ngbTypeahead"
+            (ngModelChange)="checkCompanyValidity()"
+          />
+          <div
+            *ngIf="
+              !newCSVForm.controls['companyName'].valid &&
+              (newCSVForm.controls['companyName'].dirty ||
+                newCSVForm.controls['companyName'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div *ngIf="newCSVForm.controls['companyName'].errors?.required">
+              Company must be selected.
+            </div>
+          </div>
+          <label class="dash__form--label"></label>
+          <div class="dash__form--info">
+            If the company you are looking for is not on this list, you can
+            <a routerLink="/admin-dashboard/new-client">add a new company</a>.
+          </div>
+
+          <label for="dashid__title" class="dash__form--label"
+            >Add CSV <span class="u-required-star">*</span></label
+          >
+          <button
+            class="btn dash__heading--btn "
+            type="button"
+            (click)="filePicker.click()"
+          >
+            Browse
+          </button>
+          <input
+            type="file"
+            id="hpid__logo"
+            class="dash__form--input"
+            #filePicker
+            formControlName="csv"
+          />
+          <div
+            *ngIf="
+              !newCSVForm.controls['csv'].valid &&
+              (newCSVForm.controls['csv'].dirty ||
+                newCSVForm.controls['csv'].touched)
+            "
+            class="alert dash__form--alert-msg"
+          >
+            <div *ngIf="newCSVForm.controls['csv'].errors?.required">
+              CSV must be uploaded.
+            </div>
           </div>
         </div>
-        <label class="dash__form--label"></label>
-        <div class="dash__form--info">
-          If the company you are looking for is not on this list, you can
-          <a routerLink="/admin-dashboard/new-client">add a new company</a>.
-        </div>
-
-        <p class="pt-3">Job information</p>
-        
-
-        <label for="dashid__title" class="dash__form--label"
-          >Title <span class="u-required-star">*</span></label
-        >
-        <input
-          type="text"
-          id="dashid__title"
-          class="dash__form--input"
-          placeholder="Enter job title..."
-          formControlName="title"
-          maxlength="50"
-        />
-
         <button
-          type="submit"
-          class="btn dash__form--btn"
-          [disabled]="
-            !newJobPostingForm.valid || !fromDate || !toDate || !validClient
-          "
-        >
-          Upload CSV
-        </button>
+            type="submit"
+            class="btn dash__form--btn"
+            [disabled]="!validClient"
+          >
+            Upload CSV
+          </button>
       </div>
     </div>
-  </div>
-</div> -->
+  </form>
+</div>
