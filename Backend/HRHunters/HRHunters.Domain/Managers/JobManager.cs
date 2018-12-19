@@ -44,21 +44,21 @@ namespace HRHunters.Domain.Managers
         {
             if (request.Id != currentUserId)
             {
-                _logger.LogCritical("Unauthorized user tried to access this method!.");
-                throw new UnauthorizedAccessException();
+                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
             }
             var current = await _userManager.FindByIdAsync(currentUserId.ToString());
             IList<string> role = _userManager.GetRolesAsync(current).Result;
             var query = _repo.GetAll<JobPosting>(includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," + $"{nameof(JobPosting.Applications)}");
             var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == request.Id).Select(x => x.JobPostingId).ToList();
-            if (!role.Contains("Admin"))
+            if (!role.Contains(UserType.ADMIN.ToString()))
             {
-                if (role.Contains("Applicant"))
+                if (role.Contains(UserType.APPLICANT.ToString()))
                 {
                     query = query.Where(x => x.Client.Status == ClientStatus.Active && x.Status == JobPostingStatus.Approved).Where(x => !applied.Contains(x.Id));
                 }
 
-                if (role.Contains("Client"))
+                if (role.Contains(UserType.CLIENT.ToString()))
                 {
                     query = query.Where(x => x.ClientId == request.Id);
                 }
@@ -66,7 +66,7 @@ namespace HRHunters.Domain.Managers
 
             var response = new JobResponse() { JobPostings = new List<JobInfo>() };
 
-            var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery);
+            var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(request);
             response.JobPostings.AddRange(selected.ToList());
             var groupings = _repo.GetAll<JobPosting>().GroupBy(x => x.Status).Select(x => new { Status = x.Key, Count = x.Count() }).ToList();
 
@@ -82,46 +82,66 @@ namespace HRHunters.Domain.Managers
         public async Task<GeneralResponse> CreateJobPosting(JobSubmit jobSubmit, int currentUserId)
         {
             var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(currentUserId.ToString()));
+            var response = new GeneralResponse();
 
             if (jobSubmit.Id != currentUserId && !userRole.Contains("Admin"))
             {
-                throw new UnauthorizedAccessException();
+                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
+                return response;
             }
             var company = new Client();
-            var list = new List<string>();
-            var response = new GeneralResponse()
-            {
-                Succeeded = true,
-                Errors = new Dictionary<string, List<string>>()
-            };
-
             company = _repo.GetById<Client>(jobSubmit.Id);
+
             var jobPost = new JobPosting()
             {
                 Client = company,
             };
+
             jobPost = _mapper.Map(jobSubmit, jobPost);
-            DateTime.TryParse(jobSubmit.DateFrom, out DateTime dateFrom);
-            DateTime.TryParse(jobSubmit.DateTo, out DateTime dateTo);
-            Enum.TryParse(jobSubmit.Education, out EducationType education);
-            Enum.TryParse(jobSubmit.EmpCategory, out JobType empCategory);
+            bool dateFromParse = DateTime.TryParse(jobSubmit.DateFrom, out DateTime dateFrom);
+            bool dateToParse = DateTime.TryParse(jobSubmit.DateTo, out DateTime dateTo);
+            bool educationParse = Enum.TryParse(jobSubmit.Education, out EducationType education);
+            bool empCategoryParse = Enum.TryParse(jobSubmit.EmpCategory, out JobType empCategory);
+
+            if(!dateFromParse || !dateToParse || !educationParse || !empCategoryParse)
+            {
+                _logger.LogError(ErrorConstants.InvalidInput, dateFrom, dateTo, education, empCategory);
+                response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+            }
 
             jobPost.DateFrom = dateFrom;
             jobPost.DateTo = dateTo;
             jobPost.EmpCategory = empCategory;
             jobPost.Education = education;
-            if (userRole.Contains("Client"))
+            if (userRole.Contains(RoleConstants.CLIENT))
             {
                 jobPost.Status = JobPostingStatus.Pending;
-                _repo.Create(jobPost, company.User.FirstName);
+                try
+                {
+                    _repo.Create(jobPost, company.User.FirstName);
+                    response.Succeeded = true;
+                }
+                catch
+                {
+                    _logger.LogError(ErrorConstants.FailedToUpdateDatabase, jobPost);
+                    response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
+                }
             }
             else
             {
                 jobPost.Status = JobPostingStatus.Approved;
-                _repo.Create(jobPost, "Admin");
+                try
+                {
+                    _repo.Create(jobPost, RoleConstants.ADMIN);
+                    response.Succeeded = true;
+                }
+                catch
+                {
+                    _logger.LogError(ErrorConstants.FailedToUpdateDatabase, jobPost);
+                    response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
+                }
             }
-
-
             return response;
         }
 
@@ -131,7 +151,7 @@ namespace HRHunters.Domain.Managers
             var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
 
-            return _mapper.Map(jobPost, new JobInfo());
+            return _mapper.Map<JobInfo>(jobPost);
 
         }
 
@@ -139,10 +159,10 @@ namespace HRHunters.Domain.Managers
         {
             var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(currentUserId.ToString()));
             var response = new GeneralResponse();
-            if (!userRole.Contains("Admin"))
+            if (!userRole.Contains(RoleConstants.ADMIN))
             {
-                _logger.LogError(Constants.UnauthorizedAccess);
-                response.Errors["Error"].Add(Constants.UnauthorizedAccess);
+                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
                 return response;
             }
             
@@ -151,29 +171,50 @@ namespace HRHunters.Domain.Managers
 
             if (!string.IsNullOrEmpty(jobUpdate.Status) && jobPost != null)
             {
-
-                Enum.TryParse(jobUpdate.Status, out JobPostingStatus statusToUpdate);
+                bool statusParse = Enum.TryParse(jobUpdate.Status, out JobPostingStatus statusToUpdate);
+                if (!statusParse)
+                {
+                    _logger.LogError(ErrorConstants.InvalidInput, jobUpdate.Status);
+                    response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+                    return response;
+                }
                 jobPost.Status = statusToUpdate;
             }
             else
             if (jobPost != null && jobUpdate != null)
             {
                 jobPost = _mapper.Map(jobUpdate, jobPost);
-                Enum.TryParse(jobUpdate.JobType, out JobType currentJobType);
+                bool jobTypeParse = Enum.TryParse(jobUpdate.JobType, out JobType currentJobType);
+                bool educationParse = Enum.TryParse(jobUpdate.Education, out EducationType currentEducation);
+                bool dateFromParse = DateTime.TryParse(jobUpdate.DateFrom, out DateTime dateFrom);
+                bool dateToParse = DateTime.TryParse(jobUpdate.DateTo, out DateTime dateTo);
+                if(!jobTypeParse || !educationParse || !dateToParse || !dateToParse)
+                {
+                    _logger.LogError(ErrorConstants.InvalidInput, dateFrom, dateTo, currentEducation, currentJobType);
+                    response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+                    return response;
+                }
+                jobPost.DateTo = dateTo;
+                jobPost.DateFrom = dateFrom;
                 jobPost.EmpCategory = currentJobType;
-                Enum.TryParse(jobUpdate.Education, out EducationType currentEducation);
                 jobPost.Education = currentEducation;
-                DateTime.TryParse(jobUpdate.DateFrom, out DateTime date);
-                jobPost.DateFrom = date;
-                DateTime.TryParse(jobUpdate.DateTo, out date);
-                jobPost.DateTo = date;
             }
             else
             {
-                response.Errors["Error"].Add(Constants.NullValue);
+                response.Errors["Error"].Add(ErrorConstants.NullValue);
                 return response;
             }
-            _repo.Update(jobPost, "Admin");
+
+            try
+            {
+                _repo.Update(jobPost, UserType.ADMIN.ToString());
+                response.Succeeded = true;
+            }
+            catch
+            {
+                _logger.LogError(ErrorConstants.FailedToUpdateDatabase);
+                response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
+            }
 
             return response;
         }

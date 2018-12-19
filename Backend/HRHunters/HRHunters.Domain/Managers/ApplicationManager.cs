@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HRHunters.Common.Constants;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Exceptions;
@@ -11,6 +12,7 @@ using HRHunters.Common.Responses;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,27 +27,30 @@ namespace HRHunters.Domain.Managers
         private readonly IRepository _repo;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<ApplicationManager> _logger;
 
-        public ApplicationManager(IRepository repo, IMapper mapper, UserManager<User> userManager) : base(repo)
+        public ApplicationManager(IRepository repo, IMapper mapper, UserManager<User> userManager, ILogger<ApplicationManager> logger) : base(repo)
         {
             _repo = repo;
             _mapper = mapper;
             _userManager = userManager;
+            _logger = logger;
         }
 
         public async Task<ApplicationResponse> GetMultiple(SearchRequest request, int currentUserId)
         {
             if (request.Id != currentUserId)
             {
-                throw new InvalidUserException("Bad request");
+                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
             }
             var current = await _userManager.FindByIdAsync(currentUserId.ToString());
             IList<string> role = _userManager.GetRolesAsync(current).Result;
             var query = _repo.GetAll<Application>(includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
                                                                      $"{nameof(JobPosting)}");
-            if (!role.Contains("Admin"))
+            if (!role.Contains(RoleConstants.ADMIN))
             {                
-                if (role.Contains("Applicant"))
+                if (role.Contains(RoleConstants.APPLICANT))
                 {
                     query = query.Where(x=>x.ApplicantId == request.Id);
                 }
@@ -53,7 +58,7 @@ namespace HRHunters.Domain.Managers
 
             var response = new ApplicationResponse() { Applications = new List<ApplicationInfo>() };          
             var selected = _mapper.ProjectTo<ApplicationInfo>(query);
-            selected = selected.Applyfilters(request.PageSize, request.CurrentPage, request.SortedBy, request.SortDir, request.FilterBy, request.FilterQuery);
+            selected = selected.Applyfilters(request);
 
             response.Applications.AddRange(selected.ToList());
             var groupings = _repo.GetAll<Application>().GroupBy(x => x.Status).Select(x => new { Status = x.Key, Count = x.Count() }).ToList();
@@ -71,43 +76,43 @@ namespace HRHunters.Domain.Managers
 
         public ApplicationInfo UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
         {
-            var application = _repo.Get<Application>(filter: x => x.Id == applicationStatusUpdate.Id,
+            var application = _repo.GetOne<Application>(filter: x => x.Id == applicationStatusUpdate.Id,
                                                     includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
-                                                                       $"{nameof(JobPosting)}").FirstOrDefault();
+                                                                       $"{nameof(JobPosting)}");
 
-            Enum.TryParse(applicationStatusUpdate.Status, out ApplicationStatus statusToUpdate);
-            application.Status = statusToUpdate;
-            _repo.Update(application, "Admin");
-            return _mapper.Map(application, new ApplicationInfo());
+            bool success = Enum.TryParse(applicationStatusUpdate.Status, out ApplicationStatus statusToUpdate);
+            if (!success) {
+                _logger.LogError(ErrorConstants.InvalidInput, applicationStatusUpdate.Status);
+                throw new ArgumentException(ErrorConstants.InvalidInput,applicationStatusUpdate.Status);
+            }
+            else
+            {
+                application.Status = statusToUpdate;
+                _repo.Update(application, RoleConstants.ADMIN);
+                return _mapper.Map<ApplicationInfo>(application);
+            }
         }
         public GeneralResponse CreateApplication(Apply apply,int currentUserId)
         {
+            var response = new GeneralResponse();
+
             if (currentUserId != apply.ApplicantId)
             {
-                throw new InvalidUserException("Invalid user id");
+                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
+                return response;
             }
 
-            var active = _repo.Get<JobPosting>(filter: x => x.Id == apply.JobId,
-                                              includeProperties: $"{nameof(JobPosting.Client)}").FirstOrDefault();
-            var company = _repo.Get<Client>(filter: x => x.Id == active.Client.Id).FirstOrDefault();
-            var applicant = _repo.Get<Applicant>(filter: x => x.Id == apply.ApplicantId, includeProperties: $"{nameof(User)}").FirstOrDefault();
-            var list = new List<string>();
-            var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == apply.ApplicantId && x.JobPostingId==active.Id).Any();
+            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == apply.JobId,
+                                              includeProperties: $"{nameof(JobPosting.Client)},{nameof(JobPosting.Applications)}");
 
-            var response = new GeneralResponse()
+            var applicant = _repo.GetOne<Applicant>(filter: x => x.Id == apply.ApplicantId, includeProperties: $"{nameof(User)}");
+            bool applied = jobPost.Applications.Any(x => x.ApplicantId == apply.ApplicantId);
+
+            
+            if (jobPost == null || jobPost.Client.Status==ClientStatus.Inactive || jobPost.Status != JobPostingStatus.Approved || applied)
             {
-                Succeeded = false,
-                Errors = new Dictionary<string, List<string>>()
-            };
-            if (
-                active == null ||
-                company.Status==ClientStatus.Inactive || 
-                active.Status != JobPostingStatus.Approved ||
-                applied
-               )
-            {
-                response.Errors.Add("Error", new List<string> { "Invalid input" });
-                response.Succeeded = false;
+                response.Errors["Error"].Add(ErrorConstants.InvalidInput);
             }
             else 
             {                                               
@@ -118,11 +123,18 @@ namespace HRHunters.Domain.Managers
                     JobPostingId = apply.JobId,
                     Status = ApplicationStatus.Pending
                 };
-                _repo.Create(application, applicant.User.FirstName);
-                response.Succeeded = true;
+                try
+                {
+                    _repo.Create(application, applicant.User.FirstName);
+                    response.Succeeded = true;
+                }
+                catch
+                {
+                    _logger.LogError(ErrorConstants.FailedToUpdateDatabase);
+                    response.Succeeded = false;
+                }
             }
             return response;
-
         }
     }
 }

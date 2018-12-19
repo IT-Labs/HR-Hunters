@@ -53,9 +53,8 @@ namespace HRHunters.Common.ExtensionMethods
             {
                 if (filter.PropertyType.Equals(typeof(int)))                
                     a = a.Where(x => (int)filter.GetValue(x, null) == int.Parse(filterQuery));
-               
                 else 
-                a = a.Where(x => filter.GetValue(x, null).Equals(filterQuery));
+                    a = a.Where(x => filter.GetValue(x, null).Equals(filterQuery));
 
             }
             var sort = typeof(T).GetProperty(sortedBy);
@@ -79,7 +78,10 @@ namespace HRHunters.Common.ExtensionMethods
             var filter = typeof(T).GetProperty(request.FilterBy);
             if (!string.IsNullOrWhiteSpace(request.FilterBy) && filter != null)
             {
-                a = a.Where(x => filter.GetValue(x, null).Equals(request.FilterQuery));
+                if (filter.PropertyType.Equals(typeof(int)))
+                    a = a.Where(x => (int)filter.GetValue(x, null) == int.Parse((request.FilterQuery)));
+                else
+                    a = a.Where(x => filter.GetValue(x, null).Equals(request.FilterQuery));
 
             }
             var sort = typeof(T).GetProperty(request.SortedBy);

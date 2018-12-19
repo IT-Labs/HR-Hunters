@@ -71,15 +71,17 @@ namespace HRHunters.WebAPI.Helpers
                                                      .ForMember(x => x.JobTitle, opt => opt.MapFrom(x => x.JobPosting.Title))
                                                      .ForMember(x => x.PostedOn, opt => opt.MapFrom(x => x.Date.ToString("yyy/MM/dd")))
                                                      .ForMember(x => x.Status, opt => opt.MapFrom(x => x.Status.ToString()))
-                                                     .ForMember(x => x.DateFrom, opt => opt.MapFrom(x=>x.JobPosting.DateFrom.ToString()))
-                                                     .ForMember(x => x.DateTo, opt => opt.MapFrom(x => x.JobPosting.DateTo.ToString()))
+                                                     .ForMember(x => x.DateFrom, opt => opt.MapFrom(x=>x.JobPosting.DateFrom.ToString("yyy/MM/dd")))
+                                                     .ForMember(x => x.DateTo, opt => opt.MapFrom(x => x.JobPosting.DateTo.ToString("yyy/MM/dd")))
                                                      .ForMember(x => x.JobType, opt => opt.MapFrom(x => x.JobPosting.EmpCategory.ToString()));
 
             CreateMap<Applicant, ApplicantInfo>().ForMember(x => x.Id, opt => opt.MapFrom(x => x.UserId))
                                                     .ForMember(x => x.FirstName, opt => opt.MapFrom(x => x.User.FirstName))
                                                     .ForMember(x => x.LastName, opt => opt.MapFrom(x => x.User.LastName))
                                                     .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
-                                                    .ForMember(x => x.Photo, opt => opt.MapFrom(x => x.Logo));
+                                                    .ForMember(x => x.Photo, opt => opt.MapFrom(x => x.Logo))
+                                                    .ForMember(x => x.Education, opt => opt.MapFrom(x => x.EducationType))
+                                                    .ForMember(x => x.School, opt => opt.MapFrom(x => x.SchoolUniversity));
         }
     }
 }
