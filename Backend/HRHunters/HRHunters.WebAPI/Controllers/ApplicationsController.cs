@@ -34,6 +34,13 @@ namespace HRHunters.WebAPI.Controllers
         {
             return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
+
+        [Authorize(Roles = "Applicant")]
+        [HttpGet("{id}")]
+        public IActionResult GetOneApplication(int id)  
+        {
+            return Ok(_applicationManager.GetOneApplication(id, GetCurrentUserId()));
+        }
         [Authorize(Roles = "Admin, Applicant")]
         [HttpGet]
         public async Task<IActionResult> GetMultipleApplications([FromQuery]SearchRequest request)

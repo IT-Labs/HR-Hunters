@@ -9,7 +9,7 @@ namespace HRHunters.Common.Requests.Users
     public class UserRegisterModel
     {
         [Required, StringLength(25, ErrorMessage = "First name cannot be longer than 25 characters.")]
-        [RegularExpression("^[a-zA-Z\\s]+$", ErrorMessage = "First name can only contain letters.")]
+        [RegularExpression("^([a-zA-Z0-9]|[- @\\.#&!',_])*$", ErrorMessage = "First name can only contain alphanumeric characters and few special characters.")]
         public string FirstName { get; set; }
         [StringLength(25, ErrorMessage = "Last name cannot be longer than 25 characters.")]
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Last name can only contain letters.")]
