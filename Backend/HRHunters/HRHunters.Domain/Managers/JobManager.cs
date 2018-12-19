@@ -226,7 +226,7 @@ namespace HRHunters.Domain.Managers
         public  GeneralResponse CreateMultiple(int id)
         {
 
-            var _filePath = "C:\\Users\\tome.tasevski\\test.csv";
+            var _filePath = "C:\\Users\\Tome\\test.csv";
             var _listJobs = new List<JobSubmit>();
             var csvTextReader = new StreamReader(_filePath);
             var iteration = 0;
@@ -235,7 +235,6 @@ namespace HRHunters.Domain.Managers
             csvTextReader.ReadLine();
             while (csv.Read())
             {
-
                 var _Job = new JobSubmit();
                 if (csv[0].ToString().Any())
                 {
@@ -251,6 +250,35 @@ namespace HRHunters.Domain.Managers
 
                 _listJobs.Add(_Job);
                 iteration++;
+            }
+
+            var company = _repo.GetById<Client>(id);
+            foreach (var job in _listJobs)
+            {
+
+
+                var jobPost = new JobPosting()
+                {
+                    Client = company,
+                };
+                   jobPost = _mapper.Map(job, jobPost);
+                bool dateFromParse = DateTime.TryParse(job.DateFrom, out DateTime dateFrom);
+                bool dateToParse = DateTime.TryParse(job.DateTo, out DateTime dateTo);
+                bool educationParse = Enum.TryParse(job.Education, out EducationType education);
+                bool empCategoryParse = Enum.TryParse(job.EmpCategory, out JobType empCategory);
+
+                if (!dateFromParse || !dateToParse || !educationParse || !empCategoryParse)
+                {
+                    //_logger.LogError(ErrorConstants.InvalidInput, dateFrom, dateTo, education, empCategory);
+                    //response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+                }
+                jobPost.Status = JobPostingStatus.Approved;
+                jobPost.DateFrom = dateFrom;
+                jobPost.DateTo = dateTo;
+                jobPost.EmpCategory = empCategory;
+                jobPost.Education = education;
+
+                _repo.Create(jobPost, RoleConstants.ADMIN);
             }
             return null;
         }
