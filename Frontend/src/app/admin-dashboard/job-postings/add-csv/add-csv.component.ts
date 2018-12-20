@@ -5,6 +5,7 @@ import { Subscription, Subject, Observable, merge } from "rxjs";
 import { FormBuilder, Validators } from "@angular/forms";
 import { AuthService } from "src/app/services/auth.service";
 import { NgbTypeahead } from "@ng-bootstrap/ng-bootstrap";
+import {FileValidator} from '../../../validators/file-input.validator'
 import {
   debounceTime,
   distinctUntilChanged,
@@ -74,7 +75,7 @@ export class AddCSVComponent {
     csv: [
       '',
       Validators.compose([
-        Validators.required
+        Validators.required,FileValidator.validate
       ])
     ]
   });

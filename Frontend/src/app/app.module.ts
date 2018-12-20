@@ -6,10 +6,12 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { TokenInterceptor } from './interceptors/token.interceptor';
+import {FileValidator} from './validators/file-input.validator'
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    FileValidator
   ],
   imports: [
     BrowserModule,
