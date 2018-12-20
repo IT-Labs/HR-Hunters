@@ -37,11 +37,22 @@ namespace HRHunters.Domain.Managers
             _logger = logger;
         }
 
+        public ApplicationInfo GetOneApplication(int id, int currentUserId)
+        {
+            var application = _repo.GetOne<Application>(x => x.Id == id, includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
+                                                                                            $"{nameof(JobPosting)}");
+            if (application.ApplicantId != currentUserId) {
+                _logger.LogError(ErrorConstants.UnauthorizedAccess, application.ApplicantId, currentUserId);
+                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
+            }
+            return _mapper.Map<ApplicationInfo>(application);
+        }
+
         public async Task<ApplicationResponse> GetMultiple(SearchRequest request, int currentUserId)
         {
             if (request.Id != currentUserId)
             {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                _logger.LogError(ErrorConstants.UnauthorizedAccess, request.Id, currentUserId);
                 throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
             }
             var current = await _userManager.FindByIdAsync(currentUserId.ToString());
@@ -98,7 +109,7 @@ namespace HRHunters.Domain.Managers
 
             if (currentUserId != apply.ApplicantId)
             {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                _logger.LogError(ErrorConstants.UnauthorizedAccess, apply.ApplicantId, currentUserId);
                 response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
                 return response;
             }
