@@ -27,6 +27,7 @@ using HRHunters.Common.Requests;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using HRHunters.Common.Constants;
+using System.Text.RegularExpressions;
 
 namespace HRHunters.Domain.Managers
 {
@@ -108,12 +109,12 @@ namespace HRHunters.Domain.Managers
             bool educationParse = Enum.TryParse(jobSubmit.Education, out EducationType education);
             bool empCategoryParse = Enum.TryParse(jobSubmit.EmpCategory, out JobType empCategory);
 
-            if(!dateFromParse || !dateToParse || !educationParse || !empCategoryParse)
+            if (!dateFromParse || !dateToParse || !educationParse || !empCategoryParse)
             {
                 _logger.LogError(ErrorConstants.InvalidInput, dateFrom, dateTo, education, empCategory);
                 response.Errors["Error"].Add(ErrorConstants.InvalidInput);
             }
-            
+
             jobPost.DateFrom = dateFrom;
             jobPost.DateTo = dateTo;
             jobPost.EmpCategory = empCategory;
@@ -169,7 +170,7 @@ namespace HRHunters.Domain.Managers
                 response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
                 return response;
             }
-            
+
             var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
 
@@ -192,7 +193,7 @@ namespace HRHunters.Domain.Managers
                 bool educationParse = Enum.TryParse(jobUpdate.Education, out EducationType currentEducation);
                 bool dateFromParse = DateTime.TryParse(jobUpdate.DateFrom, out DateTime dateFrom);
                 bool dateToParse = DateTime.TryParse(jobUpdate.DateTo, out DateTime dateTo);
-                if(!jobTypeParse || !educationParse || !dateToParse || !dateToParse)
+                if (!jobTypeParse || !educationParse || !dateToParse || !dateToParse)
                 {
                     _logger.LogError(ErrorConstants.InvalidInput, dateFrom, dateTo, currentEducation, currentJobType);
                     response.Errors["Error"].Add(ErrorConstants.InvalidInput);
@@ -223,23 +224,65 @@ namespace HRHunters.Domain.Managers
             return response;
         }
 
-        public  GeneralResponse CreateMultiple(int id)
+        public GeneralResponse CreateMultiple(IFormFile formFile, int id)
         {
-
-            var _filePath = "C:\\Users\\Tome\\test.csv";
+            var errorLine = new List<int>();
+            var response = new GeneralResponse();
             var _listJobs = new List<JobSubmit>();
-            var csvTextReader = new StreamReader(_filePath);
-            var iteration = 0;
-            var csv = new CsvReader(csvTextReader);
+            var result = string.Empty;
+            if(formFile.ContentType != "application/vnd.ms-excel")
+            {
+                response.Errors["Error"].Add("The file must be in csv format");
+                return response;
+            }
+
+            if (!(formFile.Length > 0))
+            {
+                response.Errors["Error"].Add("The csv file is empty!");
+                return response;
+            }
+
+
+            var reader = new StreamReader(formFile.OpenReadStream());
             
-            csvTextReader.ReadLine();
+            var iteration = 0;
+            var csv = new CsvReader(reader);
             while (csv.Read())
             {
-                var _Job = new JobSubmit();
-                if (csv[0].ToString().Any())
+                if (iteration == 0)
                 {
-                    _Job.Title = csv[0];
+                    if (
+                        !csv[0].Equals("Title") ||
+                        !csv[1].Equals("Description") ||
+                        !csv[2].Equals("Type") ||
+                        !csv[3].Equals("Education") ||
+                        !csv[4].Equals("Experience") ||
+                        !csv[5].Equals("DateFrom") ||
+                        !csv[6].Equals("DateTo")
+                        )
+                    {
+                     response.Errors["Error"].Add("The header columns must in the following order: Title, Description, Type, Education, Experience, DateFrom, DateTo ");
+                    }
+                    iteration++;
+                    continue;
                 }
+                var _Job = new JobSubmit();
+                 
+
+
+                if (
+                   !Regex.Match(csv[0].ToString(), "[A-Za-z]").Success||csv[0].Length>30||
+                   !Regex.Match(csv[1].ToString(), "[a-zA-Z0-9]").Success||csv[1].Length>800||
+                   !Regex.Match(csv[2].ToString(), "").Success||
+                   !Regex.Match(csv[3].ToString(), "Highschool|Bachelor|Master|Doctoral").Success||
+                   !Regex.Match(csv[4].ToString(), "[A-Za-z]").Success||csv[4].Length>3||
+                   !Regex.Match(csv[5].ToString(), "[A-Za-z]").Success||
+                   !Regex.Match(csv[6].ToString(), "[A-Za-z]").Success
+                   )
+                {
+                    response.Errors["Error"].Add("Invalid input at line"+iteration);
+                }                
+                _Job.Title = csv[0];
                 _Job.Description = csv[1];
                 _Job.EmpCategory = csv[2];
                 _Job.Education = csv[3];
@@ -247,7 +290,6 @@ namespace HRHunters.Domain.Managers
                 _Job.DateFrom = csv[5];
                 _Job.DateTo = csv[6];
                 _Job.Id = id;
-
                 _listJobs.Add(_Job);
                 iteration++;
             }
@@ -255,13 +297,11 @@ namespace HRHunters.Domain.Managers
             var company = _repo.GetById<Client>(id);
             foreach (var job in _listJobs)
             {
-
-
                 var jobPost = new JobPosting()
                 {
                     Client = company,
                 };
-                   jobPost = _mapper.Map(job, jobPost);
+                jobPost = _mapper.Map(job, jobPost);
                 bool dateFromParse = DateTime.TryParse(job.DateFrom, out DateTime dateFrom);
                 bool dateToParse = DateTime.TryParse(job.DateTo, out DateTime dateTo);
                 bool educationParse = Enum.TryParse(job.Education, out EducationType education);
@@ -269,8 +309,8 @@ namespace HRHunters.Domain.Managers
 
                 if (!dateFromParse || !dateToParse || !educationParse || !empCategoryParse)
                 {
-                    //_logger.LogError(ErrorConstants.InvalidInput, dateFrom, dateTo, education, empCategory);
-                    //response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+                    _logger.LogError(ErrorConstants.InvalidInput, dateFrom, dateTo, education, empCategory);
+                    response.Errors["Error"].Add(ErrorConstants.InvalidInput);
                 }
                 jobPost.Status = JobPostingStatus.Approved;
                 jobPost.DateFrom = dateFrom;
@@ -278,9 +318,9 @@ namespace HRHunters.Domain.Managers
                 jobPost.EmpCategory = empCategory;
                 jobPost.Education = education;
 
-                _repo.Create(jobPost, RoleConstants.ADMIN);
+                //_repo.Create(jobPost, RoleConstants.ADMIN);
             }
-            return null;
+            return response;
         }
     }
 }

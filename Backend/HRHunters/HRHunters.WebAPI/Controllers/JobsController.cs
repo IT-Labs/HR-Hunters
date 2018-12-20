@@ -62,9 +62,9 @@ namespace HRHunters.WebAPI.Controllers
         }
         //[Authorize(Roles="Admin")]
         [HttpPost("Multiple")]
-        public IActionResult CreateMultiple(int id)
+        public IActionResult CreateMultiple(IFormFile formFile, int id)
         {
-            return Ok(_jobManager.CreateMultiple(id));
+            return Ok(_jobManager.CreateMultiple(formFile, id));
         }
     }
 }
