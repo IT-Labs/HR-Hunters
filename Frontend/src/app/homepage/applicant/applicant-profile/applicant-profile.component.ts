@@ -19,6 +19,7 @@ export class ApplicantProfileComponent implements OnInit {
     "Doctoral",
     "Select education level..."
   ];
+  applicantError;
   loggedInUser;
   loggedInApplicant: Applicant = {
     id: null,
@@ -64,6 +65,7 @@ export class ApplicantProfileComponent implements OnInit {
   ];
   validExperience: boolean;
   private applicantProfileSub: Subscription;
+  private applicantErrorSub: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -103,6 +105,12 @@ export class ApplicantProfileComponent implements OnInit {
         );
         this.imagePreview = this.loggedInApplicant.photo;
         this.loading = false;
+      });
+
+    this.applicantErrorSub = this.applicantService
+      .getClientErrorListener()
+      .subscribe(error => {
+        this.applicantError = error.error;
       });
   }
 
@@ -149,15 +157,15 @@ export class ApplicantProfileComponent implements OnInit {
     ]
   });
 
-  /*
-  logo: [
-    "",
-    {
-      validators: [Validators.required],
-      asyncValidators: [mimeType]
-    }
-  ]
-  */
+  applicantProfileImageFormHP = this.fb.group({
+    logo: [
+      "",
+      {
+        validators: [Validators.required],
+        asyncValidators: [mimeType]
+      }
+    ]
+  });
 
   buildApplicantDataOnUpdateApplicantProfile(
     firstName: string,
@@ -200,6 +208,24 @@ export class ApplicantProfileComponent implements OnInit {
     };
     reader.readAsDataURL(file);
     this.loading = false;
+  }
+
+  buildImageFile(logo: any) {
+    const logoData = new FormData();
+    logoData.append("logo", logo);
+    return logoData;
+  }
+
+  onSubmitApplicantLogo() {
+    this.loading = true;
+    this.applicantService.uploadApplicantLogo(
+      this.loggedInUser.id,
+      this.buildImageFile(this.applicantProfileImageFormHP.value.logo)
+    );
+    setTimeout(() => {
+      this.applicantService.getApplicant(this.loggedInUser.id);
+      this.loading = false;
+    }, 3000);
   }
 
   onSubmitApplicantProfile() {

@@ -7,14 +7,13 @@
     [template]="customLoadingTemplate"
   ></ngx-loading>
   <div class="container">
-    <form
-      class="hp__form"
-      [formGroup]="clientProfileFormHP"
-      (ngSubmit)="onSubmitClientProfile()"
-    >
       <div class="row">
         <!-- LEFT SIDEBAR -->
         <div class="col-xs-12 col-md-3">
+            <form
+            class="hp__form"
+            [formGroup]="clientProfileImageFormHP"
+          >
           <div class="company-logo">
             <img
               [src]="imagePreview"
@@ -36,12 +35,18 @@
             Logo is required.<br /><br />
 
             Please upload a propper image file in .png or .jpg format. Maximum
-            size for the image is 600px x 600px
+            size of the image is 600px x 600px
           </div>
+          </form>
         </div>
 
         <!-- RIGHT SIDEBAR -->
         <div class="col-xs-12 col-md-9">
+            <form
+            class="hp__form"
+            [formGroup]="clientProfileFormHP"
+            (ngSubmit)="onSubmitClientProfile()"
+          >
           <div class="hp__form__container">
             <div class="hp__form--section">
               <!-- COMPANY NAME -->
@@ -79,8 +84,8 @@
                       ?.pattern
                   "
                 >
-                  Company name can be contain letters from the English alphabet,
-                  numbers and the the spetical characters "- @ . # & ! ' , _"
+                  Company name can contain letters from the English alphabet,
+                  numbers and the special characters "- @ . # & ! ' , _"
                 </div>
               </div>
 
@@ -99,9 +104,9 @@
 
               <div
                 *ngIf="
-                  !clientProfileFormHP.controls['companyEmail'].valid &&
+                  (!clientProfileFormHP.controls['companyEmail'].valid &&
                   (clientProfileFormHP.controls['companyEmail'].dirty ||
-                    clientProfileFormHP.controls['companyEmail'].touched)
+                    clientProfileFormHP.controls['companyEmail'].touched)) || serverError
                 "
                 class="alert hp__form--alert-msg"
               >
@@ -129,12 +134,9 @@
                   Email must be at least 6 characters long.
                 </div>
                 <div
-                  *ngIf="
-                    clientProfileFormHP.controls['companyEmail'].errors
-                      ?.maxlength
-                  "
+                  *ngIf="serverError"
                 >
-                  Email must be up to 30 characters long.
+                  {{ serverError }}
                 </div>
               </div>
 
@@ -208,8 +210,8 @@
                     clientProfileFormHP.controls['location'].errors?.pattern
                   "
                 >
-                  Location can be contain letters from the English alphabet,
-                  numbers and the the spetical characters "- @ . # & ! ' , _"
+                  Location can contain letters from the English alphabet,
+                  numbers and the special characters "- @ . # & ! ' , _"
                 </div>
               </div>
             </div>
@@ -225,8 +227,8 @@
               </button>
             </div>
           </div>
+        </form>
         </div>
       </div>
-    </form>
   </div>
 </div>

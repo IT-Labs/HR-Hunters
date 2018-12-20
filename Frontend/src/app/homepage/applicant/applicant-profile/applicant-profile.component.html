@@ -33,14 +33,14 @@
             </div>
           </div>
 
-          <div class="hp__form--btn-container-linkedin">
+          <!-- <div class="hp__form--btn-container-linkedin">
             <button type="submit" class="btn btn__linkedin">
               Linked
               <span class="btn__linkedin--span"
                 ><i class="fa fa-linkedin-square"></i
               ></span>
             </button>
-          </div>
+          </div> -->
 
           <div *ngIf="!imageValid" class="alert hp__form--alert-msg">
             Photo is required.<br /><br />
@@ -90,8 +90,8 @@
                       ?.pattern
                   "
                 >
-                  First name can be contain letters from the English alphabet,
-                  numbers and the the spetical characters "- @ . # & ! ' , _"
+                  First name can contain letters from the English alphabet,
+                  numbers and the special characters "- @ . # & ! ' , _"
                 </div>
               </div>
 
@@ -130,8 +130,8 @@
                       ?.pattern
                   "
                 >
-                  Last name can be contain letters from the English alphabet,
-                  numbers and the the spetical characters "- @ . # & ! ' , _"
+                  Last name can contain letters from the English alphabet,
+                  numbers and the special characters "- @ . # & ! ' , _"
                 </div>
               </div>
 
@@ -181,12 +181,9 @@
                   Email must be at least 6 characters long.
                 </div>
                 <div
-                  *ngIf="
-                    applicantProfileFormHP.controls['applicantEmail'].errors
-                      ?.maxlength
-                  "
+                  *ngIf="applicantError"
                 >
-                  Email must be up to 30 characters long.
+                  {{ applicantError }}
                 </div>
               </div>
 
@@ -272,7 +269,7 @@
                 class="hp__form--input"
                 placeholder="Enter school/university..."
                 formControlName="school"
-                maxlength="30"
+                maxlength="50"
               />
 
               <div
@@ -295,8 +292,8 @@
                     applicantProfileFormHP.controls['school'].errors?.pattern
                   "
                 >
-                  School/University can be contain letters from the English alphabet,
-                  numbers and the the spetical characters "- @ . # & ! ' , _"
+                  School/University can contain letters from the English alphabet,
+                  numbers and the special characters "- @ . # & ! ' , _"
                 </div>
               </div>
 
@@ -305,7 +302,6 @@
                 >Experience (in years)
                 <span class="u-required-star">*</span></label
               >
-
               <select
                 id="hpid__experience"
                 class="hp__form--input"

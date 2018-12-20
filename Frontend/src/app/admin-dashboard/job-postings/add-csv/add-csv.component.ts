@@ -1,21 +1,23 @@
-import { Component, ViewChild } from "@angular/core";
+import { Component, ViewChild, ChangeDetectorRef } from "@angular/core";
 import { Client } from "src/app/models/client.model";
 import { ClientService } from "src/app/services/client.service";
 import { Subscription, Subject, Observable, merge } from "rxjs";
 import { FormBuilder, Validators } from "@angular/forms";
 import { AuthService } from "src/app/services/auth.service";
 import { NgbTypeahead } from "@ng-bootstrap/ng-bootstrap";
+
 import {
   debounceTime,
   distinctUntilChanged,
   filter,
   map
 } from "rxjs/operators";
+import { CSVValidator } from "src/app/validators/csv.validator";
 
 @Component({
   selector: "app-add-csv",
   templateUrl: "./add-csv.component.html",
-  styleUrls: ['./add-csv.component.scss']
+  styleUrls: ["./add-csv.component.scss"]
 })
 export class AddCSVComponent {
   @ViewChild("instance") instance: NgbTypeahead;
@@ -43,7 +45,8 @@ export class AddCSVComponent {
   constructor(
     private clientService: ClientService,
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -71,13 +74,25 @@ export class AddCSVComponent {
         Validators.maxLength(50)
       ])
     ],
-    csv: [
-      '',
-      Validators.compose([
-        Validators.required
-      ])
-    ]
+    csv: [null, Validators.compose([Validators.required, CSVValidator])]
   });
+
+  onFileChange(event) {
+    let reader = new FileReader();
+   
+    if(event.target.files && event.target.files.length) {
+      const [file] = event.target.files;
+      reader.readAsDataURL(file);
+    
+      reader.onload = () => {
+        this.newCSVForm.patchValue({
+          file: reader.result
+        });
+        this.newCSVForm.updateValueAndValidity();
+        this.cd.markForCheck();
+      };
+    }
+  }
 
   search = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(
@@ -116,6 +131,6 @@ export class AddCSVComponent {
   }
 
   onSubmitCSV() {
-      
+    console.log(this.newCSVForm)
   }
 }

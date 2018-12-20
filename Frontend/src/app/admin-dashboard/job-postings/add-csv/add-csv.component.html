@@ -64,6 +64,8 @@
             class="dash__form--input"
             #filePicker
             formControlName="csv"
+            accept=".csv"
+            (change)="onFileChange($event)"
           />
           <div
             *ngIf="
@@ -81,7 +83,7 @@
         <button
             type="submit"
             class="btn dash__form--btn"
-            [disabled]="!validClient"
+            [disabled]="!newCSVForm.valid"
           >
             Upload CSV
           </button>
