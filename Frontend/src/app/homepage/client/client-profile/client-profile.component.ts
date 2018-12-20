@@ -12,7 +12,7 @@ import { Client } from "src/app/models/client.model";
   styleUrls: ["./client-profile.component.scss"]
 })
 export class ClientProfileComponent implements OnInit {
-
+  serverError;
   validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
   imagePreview: string | ArrayBuffer;
   imageValid = true;
@@ -23,7 +23,7 @@ export class ClientProfileComponent implements OnInit {
     email: null,
     location: null,
     phoneNumber: null,
-    logo: null,
+    logo: null
   };
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
@@ -31,6 +31,8 @@ export class ClientProfileComponent implements OnInit {
   loading = false;
 
   private clientProfileSub: Subscription;
+
+  private clientErrorSub: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -41,16 +43,32 @@ export class ClientProfileComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     this.loggedInUser = this.authService.getUser();
-    this.clientService.getClient(this.loggedInUser.id)
-    this.clientProfileSub = this.clientService.getClientProfileListener().subscribe(clientProfile => {
-      this.loggedInClient = clientProfile.client
-      this.clientProfileFormHP.controls.companyName.setValue(this.loggedInClient.companyName)
-      this.clientProfileFormHP.controls.companyEmail.setValue(this.loggedInClient.email)
-      this.clientProfileFormHP.controls.location.setValue(this.loggedInClient.location)
-      this.clientProfileFormHP.controls.phonenumber.setValue(this.loggedInClient.phoneNumber)
-      this.imagePreview = this.loggedInClient.logo
-      this.loading = false;
-    })
+    this.clientService.getClient(this.loggedInUser.id);
+    this.clientProfileSub = this.clientService
+      .getClientProfileListener()
+      .subscribe(clientProfile => {
+        this.loggedInClient = clientProfile.client;
+        this.clientProfileFormHP.controls.companyName.setValue(
+          this.loggedInClient.companyName
+        );
+        this.clientProfileFormHP.controls.companyEmail.setValue(
+          this.loggedInClient.email
+        );
+        this.clientProfileFormHP.controls.location.setValue(
+          this.loggedInClient.location
+        );
+        this.clientProfileFormHP.controls.phonenumber.setValue(
+          this.loggedInClient.phoneNumber
+        );
+        this.imagePreview = this.loggedInClient.logo;
+        this.loading = false;
+      });
+
+    this.clientErrorSub = this.clientService
+      .getClientErrorListener()
+      .subscribe(error => {
+        this.serverError = error.error;
+      });
   }
 
   clientProfileFormHP = this.fb.group({
@@ -73,10 +91,7 @@ export class ClientProfileComponent implements OnInit {
     ],
     phonenumber: [
       "",
-      Validators.compose([
-        Validators.required,
-        Validators.minLength(10)
-      ])
+      Validators.compose([Validators.required, Validators.minLength(10)])
     ],
     location: [
       "",
@@ -88,7 +103,7 @@ export class ClientProfileComponent implements OnInit {
     ]
   });
 
-  /*
+  clientProfileImageFormHP = this.fb.group({
     logo: [
       "",
       {
@@ -96,7 +111,7 @@ export class ClientProfileComponent implements OnInit {
         asyncValidators: [mimeType]
       }
     ]
-  */
+  });
 
   buildClientDataOnUpdateClientProfile(
     companyName: string,
@@ -124,17 +139,23 @@ export class ClientProfileComponent implements OnInit {
       img.src = reader.result.toString();
       setTimeout(() => {
         if (img.height < 600 || img.width < 600) {
-          this.clientProfileFormHP.patchValue({ logo: file });
-          this.clientProfileFormHP.controls["logo"].updateValueAndValidity();
+          this.clientProfileImageFormHP.patchValue({ logo: file });
+          this.clientProfileImageFormHP.controls["logo"].updateValueAndValidity();
           this.imagePreview = reader.result;
           this.imageValid = true;
         } else {
           this.imageValid = false;
         }
       }, 1000);
+      console.log(img)
     };
     reader.readAsDataURL(file);
+    this.onSubmitClientLogo();
+    console.log(file)
     this.loading = false;
+  }
+  
+  onSubmitClientLogo() {
   }
 
   onSubmitClientProfile() {

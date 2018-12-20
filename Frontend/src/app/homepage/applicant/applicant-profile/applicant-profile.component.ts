@@ -19,6 +19,7 @@ export class ApplicantProfileComponent implements OnInit {
     "Doctoral",
     "Select education level..."
   ];
+  applicantError;
   loggedInUser;
   loggedInApplicant: Applicant = {
     id: null,
@@ -64,6 +65,7 @@ export class ApplicantProfileComponent implements OnInit {
   ];
   validExperience: boolean;
   private applicantProfileSub: Subscription;
+  private applicantErrorSub: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -104,6 +106,10 @@ export class ApplicantProfileComponent implements OnInit {
         this.imagePreview = this.loggedInApplicant.photo;
         this.loading = false;
       });
+
+      this.applicantErrorSub = this.applicantService.getClientErrorListener().subscribe(error => {
+        this.applicantError = error.error
+      })
   }
 
   applicantProfileFormHP = this.fb.group({
