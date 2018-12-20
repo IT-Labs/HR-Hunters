@@ -151,11 +151,22 @@ export class ClientProfileComponent implements OnInit {
     };
     reader.readAsDataURL(file);
     this.onSubmitClientLogo();
-    console.log(file)
     this.loading = false;
+  }
+
+  buildImageFile(logo: any) {
+    const logoData = new FormData();
+    logoData.append("logo", logo);
+    return logoData
   }
   
   onSubmitClientLogo() {
+    this.loading = true;
+    this.clientService.uploadCLientLogo(this.loggedInUser.id, this.buildImageFile(this.clientProfileImageFormHP.value.logo))
+    setTimeout(() => {
+      this.clientService.getClient(this.loggedInUser.id);
+      this.loading = false;
+    }, 3000);
   }
 
   onSubmitClientProfile() {

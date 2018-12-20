@@ -137,4 +137,30 @@ export class ApplicantService {
         }
       );
   }
+
+  uploadApplicantLogo(applicantId, logo) {
+    this.http
+      .post<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        };
+      }>(this.baseUrl + "/Uploads/Image/" + applicantId, logo)
+      .subscribe(response => {
+        if (response.succeeded) {
+          this.toastrService.success("", "Image updloaded successfully!");
+        }
+      }, error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          return;
+        }
+        if (error.error) {
+          this.toastrService.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
+        }
+      });
+  }
 }
