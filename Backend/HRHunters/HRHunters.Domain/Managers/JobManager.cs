@@ -23,6 +23,7 @@ using HRHunters.Common.Requests;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using HRHunters.Common.Constants;
+using Microsoft.EntityFrameworkCore;
 
 namespace HRHunters.Domain.Managers
 {
@@ -48,9 +49,10 @@ namespace HRHunters.Domain.Managers
                 throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
             }
             var current = await _userManager.FindByIdAsync(currentUserId.ToString());
-            IList<string> role = _userManager.GetRolesAsync(current).Result;
+            IList<string> role = await _userManager.GetRolesAsync(current);
             var query = _repo.GetAll<JobPosting>(includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," + $"{nameof(JobPosting.Applications)}");
             var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == request.Id).Select(x => x.JobPostingId).ToList();
+
             if (!role.Contains(RoleConstants.ADMIN))
             {
                 if (role.Contains(RoleConstants.APPLICANT))
@@ -108,6 +110,8 @@ namespace HRHunters.Domain.Managers
             {
                 _logger.LogError(ErrorConstants.InvalidInput, dateFrom, dateTo, education, empCategory);
                 response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+
+                return response;
             }
             
             jobPost.DateFrom = dateFrom;
@@ -121,12 +125,12 @@ namespace HRHunters.Domain.Managers
                 {
                     _repo.Create(jobPost, company.User.FirstName);
                     response.Succeeded = true;
-                }
-                catch
+                }catch(DbUpdateException e)
                 {
-                    _logger.LogError(ErrorConstants.FailedToUpdateDatabase, jobPost);
-                    response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
+                    _logger.LogError(e.Message, jobPost);
+                    response.Errors["Error"].Add(e.Message);
                 }
+                
             }
             else
             {
@@ -135,12 +139,12 @@ namespace HRHunters.Domain.Managers
                 {
                     _repo.Create(jobPost, RoleConstants.ADMIN);
                     response.Succeeded = true;
-                }
-                catch
+                }catch(DbUpdateException e)
                 {
-                    _logger.LogError(ErrorConstants.FailedToUpdateDatabase, jobPost);
-                    response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
+                    _logger.LogError(e.Message, jobPost);
+                    response.Errors["Error"].Add(e.Message);
                 }
+                
             }
             return response;
         }
@@ -169,7 +173,12 @@ namespace HRHunters.Domain.Managers
             var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
 
-            if (!string.IsNullOrEmpty(jobUpdate.Status) && jobPost != null)
+            if(jobPost == null)
+            {
+                response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+                return response;
+            }
+            if (!string.IsNullOrEmpty(jobUpdate.Status))
             {
                 bool statusParse = Enum.TryParse(jobUpdate.Status, out JobPostingStatus statusToUpdate);
                 if (!statusParse)
@@ -181,7 +190,7 @@ namespace HRHunters.Domain.Managers
                 jobPost.Status = statusToUpdate;
             }
             else
-            if (jobPost != null && jobUpdate != null)
+            if (jobUpdate != null)
             {
                 jobPost = _mapper.Map(jobUpdate, jobPost);
                 bool jobTypeParse = Enum.TryParse(jobUpdate.JobType, out JobType currentJobType);
@@ -207,15 +216,15 @@ namespace HRHunters.Domain.Managers
 
             try
             {
-                _repo.Update(jobPost, UserType.ADMIN.ToString());
+                _repo.Update(jobPost, RoleConstants.ADMIN);
                 response.Succeeded = true;
             }
-            catch
+            catch(DbUpdateException e)
             {
-                _logger.LogError(ErrorConstants.FailedToUpdateDatabase);
-                response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
+                _logger.LogError(e.Message, jobPost);
+                response.Errors["Error"].Add(e.Message);
             }
-
+            
             return response;
         }
 

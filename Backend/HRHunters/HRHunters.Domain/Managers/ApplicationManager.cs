@@ -99,8 +99,16 @@ namespace HRHunters.Domain.Managers
             else
             {
                 application.Status = statusToUpdate;
-                _repo.Update(application, RoleConstants.ADMIN);
-                return _mapper.Map<ApplicationInfo>(application);
+                try
+                {
+                    _repo.Update(application, RoleConstants.ADMIN);
+                    return _mapper.Map<ApplicationInfo>(application);
+                }catch(Exception e)
+                {
+                    _logger.LogError(e.Message, application);
+                    throw;
+                }
+                
             }
         }
         public GeneralResponse CreateApplication(Apply apply,int currentUserId)
@@ -129,9 +137,9 @@ namespace HRHunters.Domain.Managers
             {                                               
                 var application = new Application()
                 {
-                    ApplicantId = apply.ApplicantId,
+                    Applicant = applicant,
                     Date = DateTime.UtcNow,
-                    JobPostingId = apply.JobId,
+                    JobPosting = jobPost,
                     Status = ApplicationStatus.Pending
                 };
                 try
@@ -139,10 +147,10 @@ namespace HRHunters.Domain.Managers
                     _repo.Create(application, applicant.User.FirstName);
                     response.Succeeded = true;
                 }
-                catch
+                catch(Exception e)
                 {
-                    _logger.LogError(ErrorConstants.FailedToUpdateDatabase);
-                    response.Succeeded = false;
+                    _logger.LogError(e.Message, application);
+                    response.Errors["Error"].Add(e.Message);
                 }
             }
             return response;

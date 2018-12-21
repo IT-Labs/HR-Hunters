@@ -4,6 +4,7 @@ using Amazon;
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.S3;
 using AutoMapper;
+using HRHunters.Common.Constants;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Responses;
 using HRHunters.Data.Context;
@@ -60,7 +61,7 @@ namespace HRHunters.WebAPI
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-                    .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
+                    .GetBytes(EnvironmentVariables.TOKEN)),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
@@ -69,7 +70,7 @@ namespace HRHunters.WebAPI
             services.AddAuthorization();
 
             services.AddTransient<SeedData>();
-            services.AddDbContext<DataContext>(x => x.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<DataContext>(x => x.UseNpgsql(EnvironmentVariables.CONN_STRING));
             services.AddHttpContextAccessor();
             services.AddAutoMapper();
             services.AddCors(opt =>

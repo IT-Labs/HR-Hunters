@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using HRHunters.Common.Constants;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HRHunters.Data
 {
     public class EFRepository<TContext>: EFReadOnlyRepository<TContext>, IRepository
         where TContext: DbContext
     {
-        public EFRepository(TContext context) : base(context) { }
+        private readonly ILogger<EFRepository<TContext>> _logger;
+        public EFRepository(TContext context, ILogger<EFRepository<TContext>> logger) : base(context)
+        {
+            _logger = logger;
+        }
 
         public virtual void Create<TEntity>(TEntity entity, string createdBy = null)
         where TEntity : Entity, IEntity
@@ -60,7 +66,8 @@ namespace HRHunters.Data
             }
             catch (Exception e)
             {
-                throw new Exception(e.Message);
+                _logger.LogError(e.Message, e.InnerException);
+                throw;
             }
         }
 
