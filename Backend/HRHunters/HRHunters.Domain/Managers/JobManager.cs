@@ -70,7 +70,7 @@ namespace HRHunters.Domain.Managers
                     query = query.Where(x => x.ClientId == request.Id);
                 }
             }
-
+            
             var response = new JobResponse() { JobPostings = new List<JobInfo>() };
 
             var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(request);
@@ -124,7 +124,10 @@ namespace HRHunters.Domain.Managers
 
                 return response;
             }
-
+            if (dateFrom > dateTo)
+            {
+                response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+            }
             jobPost.DateFrom = dateFrom;
             jobPost.DateTo = dateTo;
             jobPost.EmpCategory = empCategory;
@@ -213,6 +216,10 @@ namespace HRHunters.Domain.Managers
                     _logger.LogError(ErrorConstants.InvalidInput, dateFrom, dateTo, currentEducation, currentJobType);
                     response.Errors["Error"].Add(ErrorConstants.InvalidInput);
                     return response;
+                }
+                if (dateFrom > dateTo)
+                {
+                    response.Errors["Error"].Add(ErrorConstants.InvalidInput);
                 }
                 jobPost.DateTo = dateTo;
                 jobPost.DateFrom = dateFrom;
