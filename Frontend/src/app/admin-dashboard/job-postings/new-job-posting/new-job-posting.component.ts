@@ -264,6 +264,7 @@ export class ADNewJobPostingComponent implements OnInit {
       this.toDate = null;
       this.fromDate = date;
     }
+    this.calculateDateValidity()
   }
 
   isHovered(date: NgbDate) {
