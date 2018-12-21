@@ -7,6 +7,6 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IEmailSenderManager
     {
-        Task SendEmail(string from, List<string> MailingList);
+        Task SendEmail();
     }
 }

@@ -21,9 +21,11 @@ namespace HRHunters.Domain.Managers
         private readonly ITokenGeneration _tokenGeneration;
         private readonly IClientManager _clientManager;
         private readonly IApplicantManager _applicantManager;
+        private readonly IEmailSenderManager _emailSender;
         public UsersManager(UserManager<User> userManager, IMapper mapper, 
-            SignInManager<User> signInManager, ITokenGeneration tokenGeneration, IClientManager clientManager, IApplicantManager applicantManager)
+            SignInManager<User> signInManager, ITokenGeneration tokenGeneration, IClientManager clientManager, IApplicantManager applicantManager, IEmailSenderManager emailSender)
         {
+            _emailSender = emailSender;
             _clientManager = clientManager;
             _applicantManager = applicantManager;
             _tokenGeneration = tokenGeneration;
@@ -96,8 +98,11 @@ namespace HRHunters.Domain.Managers
                 userToCreate.LastName = null;
             }
 
-            if(role.Equals(RoleConstants.APPLICANT))
+            if (role.Equals(RoleConstants.APPLICANT))
+            {
                 _applicantManager.Create(new Applicant() { User = userToCreate });
+                await _emailSender.SendEmail();
+            }
             else
                 _clientManager.Create(new Client() { User = userToCreate });
 
