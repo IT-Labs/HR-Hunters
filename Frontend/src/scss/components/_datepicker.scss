@@ -38,3 +38,7 @@ ngb-datepicker-navigation {
 .ngb-dp-weekdays {
   margin-top: .6rem !important;
 }
+
+.ngb-dp-weekday:not(:last-child) {
+  padding-right: 3rem !important;
+}

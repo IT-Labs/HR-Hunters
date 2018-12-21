@@ -34,7 +34,7 @@ export class ADNewJobPostingComponent implements OnInit {
   ];
 
   edit = false;
-
+  validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
@@ -161,7 +161,8 @@ export class ADNewJobPostingComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.minLength(2),
-        Validators.maxLength(50)
+        Validators.maxLength(50),
+        Validators.pattern(this.validText)
       ])
     ],
     title: [
@@ -169,10 +170,17 @@ export class ADNewJobPostingComponent implements OnInit {
       Validators.compose([
         Validators.required,
         Validators.minLength(1),
-        Validators.maxLength(50)
+        Validators.maxLength(50),
+        Validators.pattern(this.validText)
       ])
     ],
-    description: ["", Validators.compose([Validators.maxLength(300)])],
+    description: [
+      "",
+      Validators.compose([
+        Validators.maxLength(300),
+        Validators.pattern(this.validText)
+      ])
+    ],
     jobType: ["", Validators.compose([Validators.required])],
     education: ["", Validators.compose([Validators.required])],
     experience: ["", Validators.compose([Validators.required])]
@@ -256,6 +264,7 @@ export class ADNewJobPostingComponent implements OnInit {
       this.toDate = null;
       this.fromDate = date;
     }
+    this.calculateDateValidity()
   }
 
   isHovered(date: NgbDate) {
@@ -281,14 +290,7 @@ export class ADNewJobPostingComponent implements OnInit {
     );
   }
 
-  onSubmitNewJobPosting() {
-    this.loading = true;
-    this.newJobPostingForm.controls["companyName"].markAsTouched();
-    this.newJobPostingForm.controls["title"].markAsTouched();
-    this.newJobPostingForm.controls["jobType"].markAsTouched();
-    this.newJobPostingForm.controls["education"].markAsTouched();
-    this.newJobPostingForm.controls["experience"].markAsTouched();
-
+  calculateDateValidity() {
     let monthToDate,
       monthFromDate,
       dayToDate,
@@ -341,25 +343,51 @@ export class ADNewJobPostingComponent implements OnInit {
       dateToday = `${this.todayDate.year}/${monthTodayDate}/${dayTodayDate}`;
     }
 
-    let empCategory;
-
-    if (this.newJobPostingForm.value.jobType === "Full-time") {
-      empCategory = "Full_time";
-    } else if (this.newJobPostingForm.value.jobType === "Part-time") {
-      empCategory = "Part_time";
-    } else if (this.newJobPostingForm.value.jobType === "Intern") {
-      empCategory = "Intern";
+    if (new Date(dateFrom) >= new Date(dateToday)) {
+      this.validDate = true;
+    } else {
+      this.validDate = false;
     }
+
+    return {
+      dateTo: dateTo,
+      dateFrom: dateFrom
+    }
+  }
+
+  fixJobType() {
+    let empCategory;
+    switch (this.newJobPostingForm.value.jobType) {
+      case "Full-time":
+        empCategory = "Full_time";
+        break;
+      case "Part-time":
+        empCategory = "Part_time";
+        break;
+      case "Intern":
+        empCategory = "Intern";
+        break;
+    }
+    return empCategory
+  }
+
+  onSubmitNewJobPosting() {
+    this.loading = true;
+    this.newJobPostingForm.controls["companyName"].markAsTouched();
+    this.newJobPostingForm.controls["title"].markAsTouched();
+    this.newJobPostingForm.controls["jobType"].markAsTouched();
+    this.newJobPostingForm.controls["education"].markAsTouched();
+    this.newJobPostingForm.controls["experience"].markAsTouched();
 
     let jobPostingData = this.buildJobPostingDataOnAddJobPosting(
       this.selectedCompany.id,
       this.newJobPostingForm.value.title,
       this.newJobPostingForm.value.description,
-      empCategory,
+      this.fixJobType(),
       this.newJobPostingForm.value.education,
       this.newJobPostingForm.value.experience,
-      dateFrom,
-      dateTo
+      this.calculateDateValidity().dateFrom,
+      this.calculateDateValidity().dateTo
     );
 
     if (

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Text;
+using Amazon;
+using Amazon.Extensions.NETCore.Setup;
 using Amazon.S3;
 using AutoMapper;
+using HRHunters.Common.Constants;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Responses;
 using HRHunters.Data.Context;
@@ -15,7 +18,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Tokens;
 using StructureMap;
 
@@ -27,7 +29,6 @@ namespace HRHunters.WebAPI
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         //  This method gets called by the runtime.Use this method to add services to the container.
@@ -60,14 +61,16 @@ namespace HRHunters.WebAPI
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-                    .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
+                    .GetBytes(EnvironmentVariables.TOKEN)),
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    SaveSigninToken = true
                 });
             services.AddAuthorization();
 
             services.AddTransient<SeedData>();
-            services.AddDbContext<DataContext>(x => x.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<DataContext>(x => x.UseNpgsql(EnvironmentVariables.CONN_STRING));
             services.AddHttpContextAccessor();
             services.AddAutoMapper();
             services.AddCors(opt =>
@@ -81,7 +84,14 @@ namespace HRHunters.WebAPI
                         .AllowCredentials();
                 });
             });
-            services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
+
+            var awsOptions = new AWSOptions
+            {
+                Credentials = new Amazon.Runtime.EnvironmentVariablesAWSCredentials(),
+                Region = RegionEndpoint.USWest2
+            };
+            
+            services.AddDefaultAWSOptions(awsOptions);
             services.AddAWSService<IAmazonS3>();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
@@ -98,12 +108,11 @@ namespace HRHunters.WebAPI
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerDocumentation();
             var container = new Container();
-
+            
             container.Configure(config =>
             {
                 config.AddRegistry(new StructureMapRegistry());
                 config.Populate(services);
-
             });
 
             return container.GetInstance<IServiceProvider>();
@@ -124,6 +133,7 @@ namespace HRHunters.WebAPI
             }
 
             //app.UseHttpsRedirection(); 
+
             
             seeder.EnsureSeedData();
             app.UseSwagger();
@@ -138,6 +148,5 @@ namespace HRHunters.WebAPI
                 routes.MapRoute("default", "{controller=Admin}/{action=Jobs}/{id?}");
             });
         }
-
     }
 }

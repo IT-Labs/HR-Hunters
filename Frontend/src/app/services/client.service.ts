@@ -5,6 +5,7 @@ import { Subject } from "rxjs";
 import { Client } from "../models/client.model";
 import { environment } from "../../environments/environment.prod";
 import { ToastrService } from "ngx-toastr";
+import { AuthService } from "./auth.service";
 
 @Injectable({ providedIn: "root" })
 export class ClientService {
@@ -22,15 +23,28 @@ export class ClientService {
     client: Client;
   }>();
 
+  private clientErrorListener = new Subject<{
+    error: string;
+  }>();
+
   constructor(
     private http: HttpClient,
     private router: Router,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private authService: AuthService
   ) {}
 
   // This method should be called within onInit within a component clients postings
   getClientsUpdateListener() {
     return this.clientsUpdated.asObservable();
+  }
+
+  getClientProfileListener() {
+    return this.clientProfile.asObservable();
+  }
+
+  getClientErrorListener() {
+    return this.clientErrorListener.asObservable();
   }
 
   // Get all applications
@@ -52,7 +66,11 @@ export class ClientService {
           });
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -81,7 +99,11 @@ export class ClientService {
           });
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -107,7 +129,11 @@ export class ClientService {
           }
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -136,7 +162,11 @@ export class ClientService {
           }
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -159,10 +189,18 @@ export class ClientService {
           if (response.succeeded) {
             this.router.navigate(["/admin-dashboard/clients"]);
             this.toastrService.success("", "Profile updated successfully!");
+          } else if (!response.succeeded) {
+            this.clientErrorListener.next({
+              error: response.errors.Error[0]
+            });
           }
         },
         error => {
-          if (error) {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -170,5 +208,31 @@ export class ClientService {
           }
         }
       );
+  }
+
+  uploadCLientLogo(clientId, logo) {
+    this.http
+      .post<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        };
+      }>(this.baseUrl + "/Uploads/Image/" + clientId, logo)
+      .subscribe(response => {
+        if (response.succeeded) {
+          this.toastrService.success("", "Image updloaded successfully!");
+        }
+      }, error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          return;
+        }
+        if (error.error) {
+          this.toastrService.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
+        }
+      });
   }
 }

@@ -84,14 +84,14 @@ namespace HRHunters.Domain.Managers
                 _repo.Update(applicant, applicant.User.FirstName);
                 await _userManager.UpdateAsync(user);
                 response.Succeeded = true;
-                return response;
             }
-            catch
+            catch(Exception e)
             {
-                _logger.LogError(ErrorConstants.FailedToUpdateDatabase, applicant);
-                response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
-                return response;
+                _logger.LogError(e.Message, applicant);
+                response.Errors["Error"].Add(e.Message);
             }
+            return response;
+
         }
     }
 

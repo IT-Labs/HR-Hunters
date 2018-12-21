@@ -77,10 +77,21 @@ namespace HRHunters.Domain.Managers
             }
             else
             {
-                Enum.TryParse(clientStatusUpdate.Status, out ClientStatus statusToUpdate);
-                client.Status = statusToUpdate;
-                _repo.Update(client, RoleConstants.ADMIN);
-                response.Succeeded = true;
+                bool statusParse = Enum.TryParse(clientStatusUpdate.Status, out ClientStatus statusToUpdate);
+
+                if (statusParse)
+                { 
+                    client.Status = statusToUpdate;
+                    try
+                    {
+                        _repo.Update(client, RoleConstants.ADMIN);
+                        response.Succeeded = true;
+                    }catch(Exception e)
+                    {
+                        _logger.LogError(e.Message, client);
+                        response.Errors["Error"].Add(e.Message);
+                    }
+                }
             }
             return response;
         }
@@ -114,10 +125,10 @@ namespace HRHunters.Domain.Managers
                 await _userManager.UpdateAsync(user);
                 response.Succeeded = true;
             }
-            catch
+            catch(Exception e)
             {
-                _logger.LogError(ErrorConstants.FailedToUpdateDatabase, client);
-                response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
+                _logger.LogError(e.Message, client);
+                response.Errors["Error"].Add(e.Message);
             }
             return response;
         }
@@ -131,8 +142,7 @@ namespace HRHunters.Domain.Managers
             if (!roles.Contains(RoleConstants.ADMIN))
             {
                 _logger.LogError(ErrorConstants.UnauthorizedAccess);
-                response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
-                return response;
+                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
             }
             var user = new User()
             {
@@ -158,10 +168,10 @@ namespace HRHunters.Domain.Managers
                 _repo.Create(company, RoleConstants.ADMIN);
                 response.Succeeded = true;
             }
-            catch
+            catch(Exception e)
             {
-                _logger.LogError(ErrorConstants.FailedToUpdateDatabase, company);
-                response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
+                _logger.LogError(e.Message, company);
+                response.Errors["Error"].Add(e.Message);
             }
             return response;
         }

@@ -73,7 +73,12 @@ export class JobPostingsListComponent implements OnInit {
       jobId
     );
     this.applicationService.addApplication(applicationData);
-    this.loading = false;
+    const params = this.buildQueryParams(this.jobPostingQP);
+    this.jobPostings = [];
+    setTimeout(() => {
+      this.jobPostingService.getJobPostings(params);
+      this.loading = false;
+    }, 1000);
   }
 
   ngOnDestroy() {

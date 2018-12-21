@@ -1,6 +1,5 @@
 <div class="my-container">
-  <ng-template #customLoadingTemplate>
-  </ng-template>
+  <ng-template #customLoadingTemplate> </ng-template>
 
   <ngx-loading
     [show]="loading"
@@ -42,14 +41,117 @@
           <tr class="dash__table__header">
             <th scope="col" (click)="onSort('applicantFirstName')">
               Applicant Name
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  applicationQP.currentSortBy === 'applicantFirstName' &&
+                  applicationQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  applicationQP.currentSortBy === 'applicantFirstName' &&
+                  applicationQP.currentSortDirection === 1
+                "
+              ></i>
             </th>
             <th scope="col" (click)="onSort('applicantEmail')">
               Applicant E-mail
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  applicationQP.currentSortBy === 'applicantEmail' &&
+                  applicationQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  applicationQP.currentSortBy === 'applicantEmail' &&
+                  applicationQP.currentSortDirection === 1
+                "
+              ></i>
             </th>
-            <th scope="col" (click)="onSort('jobTitle')">Job title</th>
-            <th scope="col" (click)="onSort('experience')">Experience</th>
-            <th scope="col" (click)="onSort('postedOn')">Posted</th>
-            <th scope="col" (click)="onSort('status')">Status</th>
+            <th scope="col" (click)="onSort('jobTitle')">
+              Job title
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  applicationQP.currentSortBy === 'jobTitle' &&
+                  applicationQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  applicationQP.currentSortBy === 'jobTitle' &&
+                  applicationQP.currentSortDirection === 1
+                "
+              ></i>
+            </th>
+            <th scope="col" (click)="onSort('experience')">
+              Experience
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  applicationQP.currentSortBy === 'experience' &&
+                  applicationQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  applicationQP.currentSortBy === 'experience' &&
+                  applicationQP.currentSortDirection === 1
+                "
+              ></i>
+            </th>
+            <th scope="col" (click)="onSort('postedOn')">
+              Posted
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  applicationQP.currentSortBy === 'postedOn' &&
+                  applicationQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  applicationQP.currentSortBy === 'postedOn' &&
+                  applicationQP.currentSortDirection === 1
+                "
+              ></i
+              >
+            </th>
+            <th scope="col" (click)="onSort('status')">Status
+              <i
+                class="fa fa-sort-asc"
+                aria-hidden="true"
+                *ngIf="
+                  applicationQP.currentSortBy === 'status' &&
+                  applicationQP.currentSortDirection === 0
+                "
+              ></i
+              ><i
+                class="fa fa-sort-desc"
+                aria-hidden="true"
+                *ngIf="
+                  applicationQP.currentSortBy === 'status' &&
+                  applicationQP.currentSortDirection === 1
+                "
+              ></i></th>
           </tr>
         </thead>
         <tbody>
@@ -88,7 +190,7 @@
                   <span
                     class="dropdown-item"
                     (click)="chooseStatus($event, application.id)"
-                    >Rejeceted</span
+                    >Rejected</span
                   >
                   <span
                     class="dropdown-item"

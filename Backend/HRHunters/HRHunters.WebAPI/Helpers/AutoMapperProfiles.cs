@@ -43,7 +43,8 @@ namespace HRHunters.WebAPI.Helpers
                                             .ForMember(x => x.DateTo, opt => opt.MapFrom(x => x.DateTo.ToString("yyyy/MM/dd")))
                                             .ForMember(x => x.DateFrom, opt => opt.MapFrom(x => x.DateFrom.ToString("yyyy/MM/dd")))
                                             .ForMember(x => x.Education, opt => opt.MapFrom(x => x.Education.ToString()))
-                                            .ForMember(x => x.Experience, opt => opt.MapFrom(x => x.NeededExperience.ToString()));
+                                            .ForMember(x => x.Experience, opt => opt.MapFrom(x => x.NeededExperience.ToString()))
+                                            .ForMember(x => x.Location, opt => opt.MapFrom(x => x.Client.Location));
             CreateMap<Client, ClientInfo>().ForMember(x => x.Id, opt => opt.MapFrom(x => x.UserId))
                                             .ForMember(x => x.CompanyName, opt => opt.MapFrom(x => x.User.FirstName))
                                             .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))

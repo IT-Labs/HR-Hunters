@@ -1,14 +1,14 @@
 export interface Application {
   id: number;
-  applicantFirstName: string;
-  applicantLastName: string;
-  applicantEmail: string;
+  applicantFirstName?: string;
+  applicantLastName?: string;
+  applicantEmail?: string;
   jobTitle: string;
   jobType: string;
-  experience: number;
-  postedOn: Date;
-  dateFrom: Date;
-  dateTo: Date;
-  status: string;
-  description: string;
+  experience?: string;
+  postedOn?: string;
+  dateFrom: string;
+  dateTo: string;
+  status?: string;
+  description?: string;
 }

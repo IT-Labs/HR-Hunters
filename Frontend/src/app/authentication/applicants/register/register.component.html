@@ -71,8 +71,8 @@
                       ?.pattern
                   "
                 >
-                  This fields can only contain letters from the English
-                  alphabet.
+                  This fields can contain letters from the English alphabet,
+                  numbers and the special characters "- @ . # & ! ' , _"
                 </div>
                 <div
                   *ngIf="
@@ -225,7 +225,9 @@
                   Passwords must match!
                 </div>
               </div>
-
+              <p class="auth-form__text">
+                You have an account?<br />Login <a routerLink="/login">here</a>
+              </p>
               <button
                 class="btn btn-auth"
                 type="submit"

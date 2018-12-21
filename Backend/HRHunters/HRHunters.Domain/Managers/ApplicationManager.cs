@@ -37,11 +37,22 @@ namespace HRHunters.Domain.Managers
             _logger = logger;
         }
 
+        public ApplicationInfo GetOneApplication(int id, int currentUserId)
+        {
+            var application = _repo.GetOne<Application>(x => x.Id == id, includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
+                                                                                            $"{nameof(JobPosting)}");
+            if (application.ApplicantId != currentUserId) {
+                _logger.LogError(ErrorConstants.UnauthorizedAccess, application.ApplicantId, currentUserId);
+                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
+            }
+            return _mapper.Map<ApplicationInfo>(application);
+        }
+
         public async Task<ApplicationResponse> GetMultiple(SearchRequest request, int currentUserId)
         {
             if (request.Id != currentUserId)
             {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                _logger.LogError(ErrorConstants.UnauthorizedAccess, request.Id, currentUserId);
                 throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
             }
             var current = await _userManager.FindByIdAsync(currentUserId.ToString());
@@ -88,8 +99,16 @@ namespace HRHunters.Domain.Managers
             else
             {
                 application.Status = statusToUpdate;
-                _repo.Update(application, RoleConstants.ADMIN);
-                return _mapper.Map<ApplicationInfo>(application);
+                try
+                {
+                    _repo.Update(application, RoleConstants.ADMIN);
+                    return _mapper.Map<ApplicationInfo>(application);
+                }catch(Exception e)
+                {
+                    _logger.LogError(e.Message, application);
+                    throw;
+                }
+                
             }
         }
         public GeneralResponse CreateApplication(Apply apply,int currentUserId)
@@ -98,7 +117,7 @@ namespace HRHunters.Domain.Managers
 
             if (currentUserId != apply.ApplicantId)
             {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                _logger.LogError(ErrorConstants.UnauthorizedAccess, apply.ApplicantId, currentUserId);
                 response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
                 return response;
             }
@@ -118,9 +137,9 @@ namespace HRHunters.Domain.Managers
             {                                               
                 var application = new Application()
                 {
-                    ApplicantId = apply.ApplicantId,
+                    Applicant = applicant,
                     Date = DateTime.UtcNow,
-                    JobPostingId = apply.JobId,
+                    JobPosting = jobPost,
                     Status = ApplicationStatus.Pending
                 };
                 try
@@ -128,10 +147,10 @@ namespace HRHunters.Domain.Managers
                     _repo.Create(application, applicant.User.FirstName);
                     response.Succeeded = true;
                 }
-                catch
+                catch(Exception e)
                 {
-                    _logger.LogError(ErrorConstants.FailedToUpdateDatabase);
-                    response.Succeeded = false;
+                    _logger.LogError(e.Message, application);
+                    response.Errors["Error"].Add(e.Message);
                 }
             }
             return response;
