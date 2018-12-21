@@ -140,7 +140,7 @@ export class ApplicantService {
 
   uploadApplicantLogo(applicantId, logo) {
     this.http
-      .post<{
+      .put<{
         succeeded: boolean;
         errors: {
           Error: string[] | null;

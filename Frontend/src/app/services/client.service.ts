@@ -212,7 +212,7 @@ export class ClientService {
 
   uploadCLientLogo(clientId, logo) {
     this.http
-      .post<{
+      .put<{
         succeeded: boolean;
         errors: {
           Error: string[] | null;
