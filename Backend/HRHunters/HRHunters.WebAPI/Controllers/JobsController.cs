@@ -70,9 +70,9 @@ namespace HRHunters.WebAPI.Controllers
             }
             else return BadRequest(result);
         }
-    
-        //[Authorize(Roles="Admin")]
-        [HttpPost("UploadCSV")]
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("UploadCSV/{id}")]
         public IActionResult CreateMultiple(IFormFile formFile, int id)
         {
             var result = _jobManager.CreateMultiple(formFile, id);
