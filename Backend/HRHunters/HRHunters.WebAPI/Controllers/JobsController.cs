@@ -51,20 +51,36 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateJobPosting(JobSubmit jobSubmit)
         {
-            return Ok(await _jobManager.CreateJobPosting(jobSubmit, GetCurrentUserId()));
+            var result = await _jobManager.CreateJobPosting(jobSubmit, GetCurrentUserId());
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else return BadRequest(result);
         }
 
         [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpPut]
-        public IActionResult UpdateJob(JobUpdate jobSubmit)
+        public async Task<IActionResult> UpdateJob(JobUpdate jobSubmit)
         {
-            return Ok(_jobManager.UpdateJob(jobSubmit, GetCurrentUserId()));
+            var result = await _jobManager.UpdateJob(jobSubmit, GetCurrentUserId());
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else return BadRequest(result);
         }
+    
         //[Authorize(Roles="Admin")]
-        //[HttpPost]
-        //public ActionResult<GeneralResponse> CreateMultipleJobPostings(IFormFile formFile,int id)
-        //{
-        //    return Ok(_jobManager.CreateMultipleJobPostings(formFile, id));
-        //}
+        [HttpPost("UploadCSV")]
+        public IActionResult CreateMultiple(IFormFile formFile, int id)
+        {
+            var result = _jobManager.CreateMultiple(formFile, id);
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else return BadRequest(result);
+        }
     }
 }

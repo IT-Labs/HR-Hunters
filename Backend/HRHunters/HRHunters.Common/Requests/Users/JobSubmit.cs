@@ -12,6 +12,7 @@ namespace HRHunters.Common.Requests.Users
         [Required]
         public int Id { get; set; }
         //Jobpost info
+        [Required]
         public string Title { get; set; }
         [StringLength(800)]
         public string Description { get; set; }

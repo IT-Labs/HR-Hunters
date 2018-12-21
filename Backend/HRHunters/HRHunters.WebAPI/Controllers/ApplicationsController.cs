@@ -58,7 +58,12 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPost]
         public IActionResult CreateApplication(Apply apply)
         {
-            return Ok(_applicationManager.CreateApplication(apply, GetCurrentUserId()));
+            var result = _applicationManager.CreateApplication(apply, GetCurrentUserId());
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else return BadRequest(result);
         }
 
 
