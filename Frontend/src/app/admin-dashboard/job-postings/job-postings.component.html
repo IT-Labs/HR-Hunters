@@ -214,9 +214,9 @@
                 jobPosting.id
               ]"
               [queryParams]="{ edit: true }"
-              class="jobposting--color"
+              class="jobposting--color jobposting--edit"
             >
-              {{ jobPosting.jobTitle }}
+              {{ jobPosting.jobTitle }} <i class="fa fa-pencil-square-o u-display-none" aria-hidden="true"></i>
             </td>
             <td>{{ jobPosting.companyName }}</td>
             <td>{{ jobPosting.companyEmail }}</td>
