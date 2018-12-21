@@ -99,6 +99,12 @@ namespace HRHunters.Domain.Managers
             }
             var company = new Client();
             company = _repo.GetById<Client>(jobSubmit.Id);
+            if (company == null)
+            {
+                _logger.LogError(ErrorConstants.InvalidInput,company);
+                response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+                return response;
+            }
 
             var jobPost = new JobPosting()
             {
@@ -295,6 +301,12 @@ namespace HRHunters.Domain.Managers
             if (!response.Errors["Error"].Any())
             {
                 var company = _repo.GetById<Client>(id);
+                if (company == null)
+                {
+                    _logger.LogError(ErrorConstants.InvalidInput,company);
+                    response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+                    return response;
+                }
                 foreach (var job in _listJobs)
                 {
                     var jobPost = new JobPosting()
