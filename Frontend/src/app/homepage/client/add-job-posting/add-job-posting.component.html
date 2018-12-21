@@ -44,8 +44,8 @@
                   <div
                     *ngIf="newJobPostingFormHP.controls['title'].errors?.pattern"
                   >
-                    Title can be contain letters from the English alphabet,
-                    numbers and the the spetical characters "- @ . # & ! ' , _"
+                    Title can contain letters from the English alphabet,
+                    numbers and the special characters "- @ . # & ! ' , _"
                   </div>
                 </div>
     
@@ -84,8 +84,8 @@
                       newJobPostingFormHP.controls['location'].errors?.pattern
                     "
                   >
-                    Location can be contain letters from the English alphabet,
-                    numbers and the the spetical characters "- @ . # & ! ' , _"
+                    Location can contain letters from the English alphabet,
+                    numbers and the special characters "- @ . # & ! ' , _"
                   </div>
                 </div>
     
@@ -230,8 +230,8 @@
                   <div
                     *ngIf="newJobPostingFormHP.controls['description'].errors?.pattern"
                   >
-                    Job type can be contain letters from the English alphabet,
-                    numbers and the the spetical characters "- @ . # & ! ' , _"
+                    Description can contain letters from the English alphabet,
+                    numbers and the special characters "- @ . # & ! ' , _"
                   </div>
                 </div>
     
@@ -263,7 +263,7 @@
     
                 <div
                   *ngIf="!fromDate || !toDate || (fromDate && toDate && !validDate)"
-                  class="alert dash__form--alert-msg"
+                  class="alert hp__form--alert-msg"
                 >
                   Start date must be equal to today's date or a later date. End date
                   can't be earlier or equal to start date.
@@ -281,7 +281,7 @@
                 <button
                   type="submit"
                   class="btn btn__success"
-                  [disabled]="!newJobPostingFormHP.valid || !fromDate || !toDate"
+                  [disabled]="!newJobPostingFormHP.valid || !fromDate || !toDate  || !validDate"
                 >
                   Submit
                 </button>

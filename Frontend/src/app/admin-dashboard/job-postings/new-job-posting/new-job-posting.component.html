@@ -119,8 +119,8 @@
             <div
               *ngIf="newJobPostingForm.controls['description'].errors?.pattern"
             >
-              Description can be contain letters from the English alphabet,
-              numbers and the the spetical characters "- @ . # & ! ' , _"
+              Description  can contain letters from the English alphabet,
+              numbers and the special characters "- @ . # & ! ' , _"
             </div>
           </div>
 
@@ -155,8 +155,8 @@
               Job type must be selected.
             </div>
             <div *ngIf="newJobPostingForm.controls['jobType'].errors?.pattern">
-              Description can be contain letters from the English alphabet,
-              numbers and the the spetical characters "- @ . # & ! ' , _"
+              Description can contain letters from the English alphabet,
+              numbers and the the special characters "- @ . # & ! ' , _"
             </div>
           </div>
 
@@ -269,7 +269,7 @@
           type="submit"
           class="btn dash__form--btn"
           [disabled]="
-            !newJobPostingForm.valid || !fromDate || !toDate || !validClient
+            !newJobPostingForm.valid || !fromDate || !toDate || !validClient || !validDate
           "
         >
           Publish Job

@@ -43,27 +43,30 @@ export class JobPostingService {
         expired: number;
         rejected: number;
       }>(this.baseUrl + "/Jobs" + queryParams)
-      .subscribe(jobPostingData => {
-        this.jobPostingsUpdated.next({
-          jobPostings: jobPostingData.jobPostings,
-          jobPostingCount: jobPostingData.maxJobPosts,
-          approved: jobPostingData.approved,
-          pending: jobPostingData.pending,
-          expired: jobPostingData.expired,
-          rejected: jobPostingData.rejected
-        });
-      }, error => {
-        if (error.status == 401) {
-          this.authService.logout()
-          return
+      .subscribe(
+        jobPostingData => {
+          this.jobPostingsUpdated.next({
+            jobPostings: jobPostingData.jobPostings,
+            jobPostingCount: jobPostingData.maxJobPosts,
+            approved: jobPostingData.approved,
+            pending: jobPostingData.pending,
+            expired: jobPostingData.expired,
+            rejected: jobPostingData.rejected
+          });
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (error.error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
         }
-        if (error.error) {
-          this.toastrService.error(
-            error.error.errors.Error[0],
-            "Error occured!"
-          );
-        }
-      });
+      );
   }
 
   // Get single job posting
@@ -86,8 +89,8 @@ export class JobPostingService {
         },
         error => {
           if (error.status == 401) {
-            this.authService.logout()
-            return
+            this.authService.logout();
+            return;
           }
           if (error.error) {
             this.toastrService.error(
@@ -126,8 +129,8 @@ export class JobPostingService {
         },
         error => {
           if (error.status == 401) {
-            this.authService.logout()
-            return
+            this.authService.logout();
+            return;
           }
           if (error.error) {
             this.toastrService.error(
@@ -151,13 +154,16 @@ export class JobPostingService {
         response => {
           if (response.succeeded) {
             this.router.navigate(["/admin-dashboard/job-postings"]);
-            this.toastrService.success("", "Job posting status updated successfully!");
+            this.toastrService.success(
+              "",
+              "Job posting status updated successfully!"
+            );
           }
         },
         error => {
           if (error.status == 401) {
-            this.authService.logout()
-            return
+            this.authService.logout();
+            return;
           }
           if (error.error) {
             this.toastrService.error(
@@ -186,8 +192,38 @@ export class JobPostingService {
         },
         error => {
           if (error.status == 401) {
-            this.authService.logout()
-            return
+            this.authService.logout();
+            return;
+          }
+          if (error.error) {
+            this.toastrService.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+          }
+        }
+      );
+  }
+
+  uploadCSV(clientId, csv) {
+    this.http
+      .put<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        };
+      }>(this.baseUrl + "/Jobs/UploadCSV/" + clientId, csv)
+      .subscribe(
+        response => {
+          if (response.succeeded) {
+            this.router.navigate(["/admin-dashboard/job-postings"]);
+            this.toastrService.success("", "CSV updloaded successfully!");
+          }
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
           }
           if (error.error) {
             this.toastrService.error(

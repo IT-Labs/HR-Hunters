@@ -23,6 +23,10 @@ export class ClientService {
     client: Client;
   }>();
 
+  private clientErrorListener = new Subject<{
+    error: string;
+  }>();
+
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -34,9 +38,13 @@ export class ClientService {
   getClientsUpdateListener() {
     return this.clientsUpdated.asObservable();
   }
-  
+
   getClientProfileListener() {
     return this.clientProfile.asObservable();
+  }
+
+  getClientErrorListener() {
+    return this.clientErrorListener.asObservable();
   }
 
   // Get all applications
@@ -59,8 +67,8 @@ export class ClientService {
         },
         error => {
           if (error.status == 401) {
-            this.authService.logout()
-            return
+            this.authService.logout();
+            return;
           }
           if (error.error) {
             this.toastrService.error(
@@ -92,8 +100,8 @@ export class ClientService {
         },
         error => {
           if (error.status == 401) {
-            this.authService.logout()
-            return
+            this.authService.logout();
+            return;
           }
           if (error.error) {
             this.toastrService.error(
@@ -122,8 +130,8 @@ export class ClientService {
         },
         error => {
           if (error.status == 401) {
-            this.authService.logout()
-            return
+            this.authService.logout();
+            return;
           }
           if (error.error) {
             this.toastrService.error(
@@ -155,8 +163,8 @@ export class ClientService {
         },
         error => {
           if (error.status == 401) {
-            this.authService.logout()
-            return
+            this.authService.logout();
+            return;
           }
           if (error.error) {
             this.toastrService.error(
@@ -181,12 +189,16 @@ export class ClientService {
           if (response.succeeded) {
             this.router.navigate(["/admin-dashboard/clients"]);
             this.toastrService.success("", "Profile updated successfully!");
+          } else if (!response.succeeded) {
+            this.clientErrorListener.next({
+              error: response.errors.Error[0]
+            });
           }
         },
         error => {
           if (error.status == 401) {
-            this.authService.logout()
-            return
+            this.authService.logout();
+            return;
           }
           if (error.error) {
             this.toastrService.error(
@@ -196,5 +208,31 @@ export class ClientService {
           }
         }
       );
+  }
+
+  uploadCLientLogo(clientId, logo) {
+    this.http
+      .put<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        };
+      }>(this.baseUrl + "/Uploads/Image/" + clientId, logo)
+      .subscribe(response => {
+        if (response.succeeded) {
+          this.toastrService.success("", "Image updloaded successfully!");
+        }
+      }, error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          return;
+        }
+        if (error.error) {
+          this.toastrService.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
+        }
+      });
   }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using HRHunters.Common.Constants;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
@@ -37,17 +38,22 @@ namespace HRHunters.WebAPI.Controllers
         {
             return Ok(_applicantManager.GetOneApplicant(id));
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpGet]
         public IActionResult GetMultipleApplicants([FromQuery]SearchRequest request)
         {
             return Ok(_applicantManager.GetMultiple(request));
         }
-        [Authorize(Roles = "Applicant")]
+        [Authorize(Roles = RoleConstants.APPLICANT)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate)
         {
-            return Ok(await _applicantManager.UpdateApplicantProfile(id, applicantUpdate, GetCurrentUserId()));
+            var result = await _applicantManager.UpdateApplicantProfile(id, applicantUpdate, GetCurrentUserId());
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else return BadRequest(result);
         }
     }
 }

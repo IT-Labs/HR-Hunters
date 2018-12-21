@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
+using HRHunters.Common.Constants;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
@@ -35,7 +36,7 @@ namespace HRHunters.WebAPI.Controllers
             return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpGet]
         public IActionResult GetMultipleClients([FromQuery]SearchRequest request)
         {
@@ -46,25 +47,40 @@ namespace HRHunters.WebAPI.Controllers
         {
             return Ok(_clientManager.GetOneClient(id));
         }
-        [Authorize(Roles = "Client")]
+        [Authorize(Roles = RoleConstants.CLIENT)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateClientProfile(int id, ClientUpdate clientUpdate)
         {
-            return Ok(await _clientManager.UpdateClientProfile(id, clientUpdate,GetCurrentUserId()));
+            var result = await _clientManager.UpdateClientProfile(id, clientUpdate, GetCurrentUserId());
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpPut]
         public IActionResult UpdateClientStatus(ClientStatusUpdate clientStatusUpdate)
         {
-            return Ok(_clientManager.UpdateClientStatus(clientStatusUpdate));
+            var result = (_clientManager.UpdateClientStatus(clientStatusUpdate));
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else return BadRequest(result);
         }
         
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpPost]
         public async Task<IActionResult> CreateCompany(NewCompany newCompany)
         {
-            return Ok(await _clientManager.CreateCompany(newCompany, GetCurrentUserId()));
+            var result = await _clientManager.CreateCompany(newCompany, GetCurrentUserId());
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }

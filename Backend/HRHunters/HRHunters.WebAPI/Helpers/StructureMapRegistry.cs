@@ -25,7 +25,15 @@ namespace HRHunters.WebAPI.Helpers
             For<IJobManager>().LifecycleIs(Lifecycles.Container).Use<JobManager>();
             For<ITokenGeneration>().LifecycleIs(Lifecycles.Container).Use<TokenGeneration>();
             For<IUsersManager>().LifecycleIs(Lifecycles.Container).Use<UsersManager>();
-            //For<IS3Service>().LifecycleIs(Lifecycles.Container).Use<S3Service>();
+            For<IS3Manager>().LifecycleIs(Lifecycles.Container).Use<S3Manager>();
+
+            //var config = new Config
+            //{
+            //    ConnString = Environment.GetEnvironmentVariable("CONN_STRING"),
+            //    Token = Environment.GetEnvironmentVariable("TOKEN"),
+            //    BucketName = Environment.GetEnvironmentVariable("BUCKET_NAME")
+            //};
+            //For<Config>().LifecycleIs(Lifecycles.Singleton).Use(config);
         }
     }
 }

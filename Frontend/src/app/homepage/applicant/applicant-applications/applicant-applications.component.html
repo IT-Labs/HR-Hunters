@@ -6,15 +6,31 @@
     [config]="{ backdropBorderRadius: '3px' }"
     [template]="customLoadingTemplate"
   ></ngx-loading>
-  <div class="jp__container" *ngFor="let application of applications">
-    <h1 class="jp__heading">{{ application.jobTitle }}</h1>
-    <p class="jp__sub-heading">{{ application.jobType }}</p>
-    <p class="jp__content" ng-init="limit = 150">{{ application.description }}</p>
-    <p class="jp__meta">
-      Job Posting added on: {{ application.dateFrom }}, available until: {{ application.dateTo }}
-    </p>
-    <div class="jp__btn-container">
-      <button class="btn btn__secondary" [routerLink]="['/applicant/my-applications/', application.id]">See more...</button>
+  <div
+    infiniteScroll
+    [infiniteScrollDistance]="1"
+    [infiniteScrollUpDistance]="1.5"
+    [infiniteScrollThrottle]="150"
+    (scrolled)="onScrollDown()"
+  >
+    <div class="jp__container" *ngFor="let application of applications">
+      <h1 class="jp__heading">{{ application.jobTitle }}</h1>
+      <p class="jp__sub-heading">{{ application.jobType }}</p>
+      <p class="jp__content" ng-init="limit = 150">
+        {{ application.description }}
+      </p>
+      <p class="jp__meta">
+        Job Posting added on: {{ application.dateFrom }}, available until:
+        {{ application.dateTo }}
+      </p>
+      <div class="jp__btn-container">
+        <button
+          class="btn btn__secondary"
+          [routerLink]="['/applicant/my-applications/', application.id]"
+        >
+          See more...
+        </button>
+      </div>
     </div>
   </div>
 </div>

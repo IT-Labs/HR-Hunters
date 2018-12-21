@@ -16,9 +16,13 @@ export class ApplicantService {
     applicants: Applicant[];
     applicantsCount: number;
   }>();
-  
+
   private applicantProfile = new Subject<{
     applicant: Applicant;
+  }>();
+
+  private applicantErrorListener = new Subject<{
+    error: string;
   }>();
 
   constructor(
@@ -32,9 +36,13 @@ export class ApplicantService {
   getApplicantsUpdateListener() {
     return this.applicantsUpdated.asObservable();
   }
-  
+
   getApplicantProfileListener() {
     return this.applicantProfile.asObservable();
+  }
+
+  getClientErrorListener() {
+    return this.applicantErrorListener.asObservable();
   }
 
   // Get all applicants
@@ -52,8 +60,8 @@ export class ApplicantService {
         },
         error => {
           if (error.status == 401) {
-            this.authService.logout()
-            return
+            this.authService.logout();
+            return;
           }
           if (error.error) {
             this.toastrService.error(
@@ -83,10 +91,10 @@ export class ApplicantService {
         },
         error => {
           if (error.status == 401) {
-            this.authService.logout()
-            return
+            this.authService.logout();
+            return;
           }
-          if (error.error) { 
+          if (error.error) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"
@@ -109,12 +117,16 @@ export class ApplicantService {
           if (response.succeeded) {
             this.router.navigate(["/admin-dashboard/applicants"]);
             this.toastrService.success("", "Profile was successfully updated!");
+          } else if (!response.succeeded) {
+            this.applicantErrorListener.next({
+              error: response.errors.Error[0]
+            });
           }
         },
         error => {
           if (error.status == 401) {
-            this.authService.logout()
-            return
+            this.authService.logout();
+            return;
           }
           if (error.error) {
             this.toastrService.error(
@@ -124,5 +136,31 @@ export class ApplicantService {
           }
         }
       );
+  }
+
+  uploadApplicantLogo(applicantId, logo) {
+    this.http
+      .put<{
+        succeeded: boolean;
+        errors: {
+          Error: string[] | null;
+        };
+      }>(this.baseUrl + "/Uploads/Image/" + applicantId, logo)
+      .subscribe(response => {
+        if (response.succeeded) {
+          this.toastrService.success("", "Image updloaded successfully!");
+        }
+      }, error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          return;
+        }
+        if (error.error) {
+          this.toastrService.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
+        }
+      });
   }
 }
