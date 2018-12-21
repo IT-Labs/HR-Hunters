@@ -13,6 +13,7 @@ import {
   map
 } from "rxjs/operators";
 import { CSVValidator } from "src/app/validators/csv.validator";
+import { JobPostingService } from "src/app/services/job-posting.service";
 
 @Component({
   selector: "app-add-csv",
@@ -46,7 +47,8 @@ export class AddCSVComponent {
     private clientService: ClientService,
     private fb: FormBuilder,
     private authService: AuthService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private jobPostingService: JobPostingService
   ) {}
 
   ngOnInit() {
@@ -130,7 +132,15 @@ export class AddCSVComponent {
     });
   }
 
+  buildCSVFile(csv: any) {
+    const csvData = new FormData();
+    csvData.append("csv", csv);
+    return csvData
+  }
+
   onSubmitCSV() {
-    console.log(this.newCSVForm)
+    this.loading = true;
+    this.jobPostingService.uploadCSV(this.selectedCompany.id, this.buildCSVFile(this.newCSVForm.value.csv))
+    this.loading = false;
   }
 }
