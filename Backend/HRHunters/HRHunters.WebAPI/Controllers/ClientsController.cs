@@ -50,21 +50,36 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateClientProfile(int id, ClientUpdate clientUpdate)
         {
-            return Ok(await _clientManager.UpdateClientProfile(id, clientUpdate,GetCurrentUserId()));
+            var result = await _clientManager.UpdateClientProfile(id, clientUpdate, GetCurrentUserId());
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPut]
         public IActionResult UpdateClientStatus(ClientStatusUpdate clientStatusUpdate)
         {
-            return Ok(_clientManager.UpdateClientStatus(clientStatusUpdate));
+            var result = (_clientManager.UpdateClientStatus(clientStatusUpdate));
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else return BadRequest(result);
         }
         
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateCompany(NewCompany newCompany)
         {
-            return Ok(await _clientManager.CreateCompany(newCompany, GetCurrentUserId()));
+            var result = await _clientManager.CreateCompany(newCompany, GetCurrentUserId());
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }

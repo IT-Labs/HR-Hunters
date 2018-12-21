@@ -47,7 +47,12 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate)
         {
-            return Ok(await _applicantManager.UpdateApplicantProfile(id, applicantUpdate, GetCurrentUserId()));
+            var result = await _applicantManager.UpdateApplicantProfile(id, applicantUpdate, GetCurrentUserId());
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else return BadRequest(result);
         }
     }
 }

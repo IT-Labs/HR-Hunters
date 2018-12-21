@@ -241,10 +241,7 @@ namespace HRHunters.Domain.Managers
                 response.Errors["Error"].Add("The csv file is empty!");
                 return response;
             }
-
-
-            var reader = new StreamReader(formFile.OpenReadStream());
-            
+            var reader = new StreamReader(formFile.OpenReadStream());            
             var iteration = 0;
             var csv = new CsvReader(reader);
             while (csv.Read())
@@ -265,23 +262,16 @@ namespace HRHunters.Domain.Managers
                     }
                     iteration++;
                     continue;
-                }
-                var _Job = new JobSubmit();
-                 
-
-
-                if (
-                   !Regex.Match(csv[0].ToString(), "[A-Za-z]").Success||csv[0].Length>30||
-                   !Regex.Match(csv[1].ToString(), "[a-zA-Z0-9]").Success||csv[1].Length>800||
-                   !Regex.Match(csv[2].ToString(), "").Success||
-                   !Regex.Match(csv[3].ToString(), "Highschool|Bachelor|Master|Doctoral").Success||
-                   !Regex.Match(csv[4].ToString(), "[A-Za-z]").Success||csv[4].Length>3||
-                   !Regex.Match(csv[5].ToString(), "[A-Za-z]").Success||
-                   !Regex.Match(csv[6].ToString(), "[A-Za-z]").Success
-                   )
+                }                                    
+                bool jobTypeParse = Enum.TryParse(csv[2].ToString(), out JobType currentJobType);
+                bool educationParse = Enum.TryParse(csv[3].ToString(), out EducationType currentEducation);
+                bool dateFromParse = DateTime.TryParse(csv[5].ToString(), out DateTime dateFrom);
+                bool dateToParse = DateTime.TryParse(csv[6].ToString(), out DateTime dateTo);
+                if (csv[0].Length>30 || csv[0].Length ==0 || csv[1].Length>800 || !jobTypeParse || !educationParse || !dateFromParse || !dateToParse )
                 {
-                    response.Errors["Error"].Add("Invalid input at line"+iteration);
+                    response.Errors["Error"].Add("Invalid input at line "+iteration);
                 }                
+                var _Job = new JobSubmit();
                 _Job.Title = csv[0];
                 _Job.Description = csv[1];
                 _Job.EmpCategory = csv[2];
@@ -293,32 +283,25 @@ namespace HRHunters.Domain.Managers
                 _listJobs.Add(_Job);
                 iteration++;
             }
-
-            var company = _repo.GetById<Client>(id);
-            foreach (var job in _listJobs)
+            if (!response.Errors["Error"].Any())
             {
-                var jobPost = new JobPosting()
+                var company = _repo.GetById<Client>(id);
+                foreach (var job in _listJobs)
                 {
-                    Client = company,
-                };
-                jobPost = _mapper.Map(job, jobPost);
-                bool dateFromParse = DateTime.TryParse(job.DateFrom, out DateTime dateFrom);
-                bool dateToParse = DateTime.TryParse(job.DateTo, out DateTime dateTo);
-                bool educationParse = Enum.TryParse(job.Education, out EducationType education);
-                bool empCategoryParse = Enum.TryParse(job.EmpCategory, out JobType empCategory);
+                    var jobPost = new JobPosting()
+                    {
+                        Client = company,
+                    };
+                    jobPost = _mapper.Map(job, jobPost);
+                    jobPost.Status = JobPostingStatus.Approved;
+                    jobPost.DateFrom = DateTime.Parse(job.DateFrom);
+                    jobPost.DateTo = DateTime.Parse(job.DateTo);
+                    jobPost.EmpCategory = Enum.Parse<JobType>(job.EmpCategory);
+                    jobPost.Education = Enum.Parse<EducationType>(job.Education);
 
-                if (!dateFromParse || !dateToParse || !educationParse || !empCategoryParse)
-                {
-                    _logger.LogError(ErrorConstants.InvalidInput, dateFrom, dateTo, education, empCategory);
-                    response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+                    _repo.Create(jobPost, RoleConstants.ADMIN);
                 }
-                jobPost.Status = JobPostingStatus.Approved;
-                jobPost.DateFrom = dateFrom;
-                jobPost.DateTo = dateTo;
-                jobPost.EmpCategory = empCategory;
-                jobPost.Education = education;
-
-                //_repo.Create(jobPost, RoleConstants.ADMIN);
+                response.Succeeded = true;
             }
             return response;
         }
