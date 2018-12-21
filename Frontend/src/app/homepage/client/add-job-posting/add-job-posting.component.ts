@@ -144,6 +144,7 @@ export class AddJobPostingComponent implements OnInit {
       this.toDate = null;
       this.fromDate = date;
     }
+    this.calculateDateValidity()
   }
 
   isHovered(date: NgbDate) {
@@ -169,14 +170,7 @@ export class AddJobPostingComponent implements OnInit {
     );
   }
 
-  onSubmitNewJobPosting() {
-    this.loading = true;
-    this.newJobPostingFormHP.controls["title"].markAsTouched();
-    this.newJobPostingFormHP.controls["location"].markAsTouched();
-    this.newJobPostingFormHP.controls["education"].markAsTouched();
-    this.newJobPostingFormHP.controls["experience"].markAsTouched();
-    this.newJobPostingFormHP.controls["jobType"].markAsTouched();
-
+  calculateDateValidity() {
     let monthToDate,
       monthFromDate,
       dayToDate,
@@ -229,6 +223,19 @@ export class AddJobPostingComponent implements OnInit {
       dateToday = `${this.todayDate.year}/${monthTodayDate}/${dayTodayDate}`;
     }
 
+    if (new Date(dateFrom) >= new Date(dateToday)) {
+      this.validDate = true;
+    } else {
+      this.validDate = false;
+    }
+
+    return {
+      dateTo: dateTo,
+      dateFrom: dateFrom
+    }
+  }
+
+  fixJobType() {
     let empCategory;
     switch (this.newJobPostingFormHP.value.jobType) {
       case "Full-time":
@@ -241,16 +248,26 @@ export class AddJobPostingComponent implements OnInit {
         empCategory = "Intern";
         break;
     }
+    return empCategory
+  }
+
+  onSubmitNewJobPosting() {
+    this.loading = true;
+    this.newJobPostingFormHP.controls["title"].markAsTouched();
+    this.newJobPostingFormHP.controls["location"].markAsTouched();
+    this.newJobPostingFormHP.controls["education"].markAsTouched();
+    this.newJobPostingFormHP.controls["experience"].markAsTouched();
+    this.newJobPostingFormHP.controls["jobType"].markAsTouched();
 
     let jobPostingData = this.buildJobPostingDataOnAddJobPosting(
       this.loggedInUser.id,
       this.newJobPostingFormHP.value.title,
       this.newJobPostingFormHP.value.description,
-      empCategory,
+      this.fixJobType(),
       this.newJobPostingFormHP.value.education,
       this.newJobPostingFormHP.value.experience,
-      dateFrom,
-      dateTo
+      this.calculateDateValidity().dateFrom,
+      this.calculateDateValidity().dateTo
     );
 
     if (
@@ -260,6 +277,7 @@ export class AddJobPostingComponent implements OnInit {
       this.validDate
     ) {
       this.jobPostingService.addJobPosting(jobPostingData);
+      console.log(jobPostingData)
     }
     this.loading = false;
   }
