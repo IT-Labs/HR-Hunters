@@ -1,4 +1,5 @@
-﻿using HRHunters.Common.Entities;
+﻿using HRHunters.Common.Constants;
+using HRHunters.Common.Entities;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
 using Microsoft.AspNetCore.Identity;
@@ -36,7 +37,7 @@ namespace HRHunters.WebAPI.Helpers
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(EnvironmentVariables.TOKEN));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 

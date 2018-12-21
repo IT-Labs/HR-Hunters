@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using HRHunters.Common.Constants;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
@@ -40,21 +41,20 @@ namespace HRHunters.WebAPI.Controllers
             return Ok(await _jobManager.GetMultiple(request, GetCurrentUserId()));
         }
 
-        [Authorize(Roles = "Applicant, Client")]
         [HttpGet("{id}")]
         public IActionResult GetOneJobPosting(int id)
         {
             return Ok(_jobManager.GetOneJobPosting(id));
         }
 
-        [Authorize(Roles ="Admin, Client")]
+        [Authorize(Roles = RoleConstants.ADMIN + ", " + RoleConstants.CLIENT)]
         [HttpPost]
         public async Task<IActionResult> CreateJobPosting(JobSubmit jobSubmit)
         {
             return Ok(await _jobManager.CreateJobPosting(jobSubmit, GetCurrentUserId()));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpPut]
         public IActionResult UpdateJob(JobUpdate jobSubmit)
         {

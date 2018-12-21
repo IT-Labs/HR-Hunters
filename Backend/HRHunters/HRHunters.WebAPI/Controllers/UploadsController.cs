@@ -28,11 +28,18 @@ namespace HRHunters.WebAPI.Controllers
         {
             return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
-        [Authorize(Roles = "Applicant, Client")]
-        [HttpPost("Image/{id}")]
+        [Authorize(Roles = RoleConstants.APPLICANT + ", " + RoleConstants.CLIENT)]
+        [HttpPut("Image/{id}")]
         public async Task<IActionResult> UploadImageAsync(IFormFile image, [FromRoute]int id)
         {
             return Ok(await _s3Manager.UploadFileAsync(EnvironmentVariables.BUCKET_NAME, image, id, GetCurrentUserId()));
+        }
+
+        [Authorize(Roles = RoleConstants.APPLICANT + ", " + RoleConstants.CLIENT)]
+        [HttpGet("Image/{id}")]
+        public async Task<IActionResult> GetImageAsync(int id)
+        {
+            return Ok(await _s3Manager.GetImageAsync(id, GetCurrentUserId()));
         }
     }
 }
