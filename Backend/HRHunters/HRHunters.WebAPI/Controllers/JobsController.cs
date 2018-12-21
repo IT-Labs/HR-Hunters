@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using HRHunters.Common.Constants;
 using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
@@ -40,31 +41,46 @@ namespace HRHunters.WebAPI.Controllers
             return Ok(await _jobManager.GetMultiple(request, GetCurrentUserId()));
         }
 
-        [Authorize(Roles = "Applicant, Client")]
         [HttpGet("{id}")]
         public IActionResult GetOneJobPosting(int id)
         {
             return Ok(_jobManager.GetOneJobPosting(id));
         }
 
-        [Authorize(Roles ="Admin, Client")]
+        [Authorize(Roles = RoleConstants.ADMIN + ", " + RoleConstants.CLIENT)]
         [HttpPost]
         public async Task<IActionResult> CreateJobPosting(JobSubmit jobSubmit)
         {
-            return Ok(await _jobManager.CreateJobPosting(jobSubmit, GetCurrentUserId()));
+            var result = await _jobManager.CreateJobPosting(jobSubmit, GetCurrentUserId());
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else return BadRequest(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpPut]
-        public IActionResult UpdateJob(JobUpdate jobSubmit)
+        public async Task<IActionResult> UpdateJob(JobUpdate jobSubmit)
         {
-            return Ok(_jobManager.UpdateJob(jobSubmit, GetCurrentUserId()));
+            var result = await _jobManager.UpdateJob(jobSubmit, GetCurrentUserId());
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else return BadRequest(result);
         }
+    
         //[Authorize(Roles="Admin")]
-        //[HttpPost]
-        //public ActionResult<GeneralResponse> CreateMultipleJobPostings(IFormFile formFile,int id)
-        //{
-        //    return Ok(_jobManager.CreateMultipleJobPostings(formFile, id));
-        //}
+        [HttpPost("UploadCSV")]
+        public IActionResult CreateMultiple(IFormFile formFile, int id)
+        {
+            var result = _jobManager.CreateMultiple(formFile, id);
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else return BadRequest(result);
+        }
     }
 }
