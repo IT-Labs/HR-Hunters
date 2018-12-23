@@ -79,6 +79,7 @@ namespace HRHunters.WebAPI.Helpers
                                                     .ForMember(x => x.Photo, opt => opt.MapFrom(x => x.Logo))
                                                     .ForMember(x => x.Education, opt => opt.MapFrom(x => x.EducationType))
                                                     .ForMember(x => x.School, opt => opt.MapFrom(x => x.SchoolUniversity));
+            CreateMap<JobPosting, JobPosting>().ForMember(x => x.Id, opt => opt.Ignore());
         }
     }
 }
