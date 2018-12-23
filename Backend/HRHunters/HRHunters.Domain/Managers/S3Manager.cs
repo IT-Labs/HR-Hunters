@@ -35,8 +35,8 @@ namespace HRHunters.Domain.Managers
             var response = new GeneralResponse();
             if (image.ContentType != "image/jpg" && image.ContentType != "image/png" && image.ContentType != "image/jpeg")
             {
-                _logger.LogError(ErrorConstants.InvalidInput, image);
-                response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+                _logger.LogError(ErrorConstants.InvalidFormat, image);
+                response.Errors["Error"].Add(ErrorConstants.InvalidFormat);
                 return response;
             }
             if (id != currentUserId)
