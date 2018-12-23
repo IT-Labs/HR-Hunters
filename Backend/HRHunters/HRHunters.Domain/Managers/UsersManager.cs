@@ -101,12 +101,15 @@ namespace HRHunters.Domain.Managers
             if (role.Equals(RoleConstants.APPLICANT))
             {
                 _applicantManager.Create(new Applicant() { User = userToCreate });
-                await _emailSender.SendEmail();
             }
             else
+            {
                 _clientManager.Create(new Client() { User = userToCreate });
+            }
 
             await _userManager.AddToRoleAsync(userToCreate, role);
+            await _emailSender.SendEmail(userToCreate);
+
             userToReturn.Succeeded = true;
             return userToReturn;
         }

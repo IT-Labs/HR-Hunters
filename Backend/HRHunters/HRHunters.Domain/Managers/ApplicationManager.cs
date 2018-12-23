@@ -28,9 +28,10 @@ namespace HRHunters.Domain.Managers
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly ILogger<ApplicationManager> _logger;
-
-        public ApplicationManager(IRepository repo, IMapper mapper, UserManager<User> userManager, ILogger<ApplicationManager> logger) : base(repo)
+        private readonly IEmailSenderManager _emailSender;
+        public ApplicationManager(IRepository repo, IMapper mapper, UserManager<User> userManager, ILogger<ApplicationManager> logger, IEmailSenderManager emailSender) : base(repo)
         {
+            _emailSender = emailSender;
             _repo = repo;
             _mapper = mapper;
             _userManager = userManager;
@@ -111,7 +112,7 @@ namespace HRHunters.Domain.Managers
                 
             }
         }
-        public GeneralResponse CreateApplication(Apply apply,int currentUserId)
+        public async Task<GeneralResponse> CreateApplication(Apply apply,int currentUserId)
         {
             var response = new GeneralResponse();
 
@@ -125,7 +126,7 @@ namespace HRHunters.Domain.Managers
             var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == apply.JobId,
                                               includeProperties: $"{nameof(JobPosting.Client)},{nameof(JobPosting.Applications)}");
 
-            var applicant = _repo.GetOne<Applicant>(filter: x => x.Id == apply.ApplicantId, includeProperties: $"{nameof(User)}");
+            var applicant = _repo.GetOne<Applicant>(filter: x => x.Id == apply.ApplicantId, includeProperties: $"{nameof(User)},{nameof(Applicant.Applications)}");
             bool applied = jobPost.Applications.Any(x => x.ApplicantId == apply.ApplicantId);
 
             
@@ -146,6 +147,7 @@ namespace HRHunters.Domain.Managers
                 {
                     _repo.Create(application, applicant.User.FirstName);
                     response.Succeeded = true;
+                    await _emailSender.SendEmail(applicant, jobPost);
                 }
                 catch(Exception e)
                 {

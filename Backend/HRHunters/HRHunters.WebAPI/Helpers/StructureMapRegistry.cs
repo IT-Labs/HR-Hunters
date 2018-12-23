@@ -27,6 +27,8 @@ namespace HRHunters.WebAPI.Helpers
             For<IUsersManager>().LifecycleIs(Lifecycles.Container).Use<UsersManager>();
             For<IS3Manager>().LifecycleIs(Lifecycles.Container).Use<S3Manager>();
             For<IEmailSenderManager>().LifecycleIs(Lifecycles.Container).Use<EmailSenderManager>();
+            For<IEmailTemplate>().LifecycleIs(Lifecycles.Container).Use<EmailTemplate>();
+            For<IEmailContent>().LifecycleIs(Lifecycles.Container).Use<EmailContent>();
             //var config = new Config
             //{
             //    ConnString = Environment.GetEnvironmentVariable("CONN_STRING"),

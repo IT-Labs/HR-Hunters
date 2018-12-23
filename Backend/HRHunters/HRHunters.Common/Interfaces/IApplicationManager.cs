@@ -18,7 +18,7 @@ namespace HRHunters.Common.Interfaces
     {
         Task<ApplicationResponse> GetMultiple(SearchRequest request, int currentUserId);
         ApplicationInfo UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate);
-        GeneralResponse CreateApplication(Apply apply,int currentUserId);
+        Task<GeneralResponse> CreateApplication(Apply apply,int currentUserId);
         ApplicationInfo GetOneApplication(int id, int currentUserId);
     }
 }

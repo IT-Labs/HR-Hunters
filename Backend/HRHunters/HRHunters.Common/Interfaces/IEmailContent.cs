@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace HRHunters.Common.Interfaces
 {
-    public interface IEmailSenderManager
+    public interface IEmailContent
     {
-        Task SendEmail(User user);
-        Task SendEmail(Applicant applicant, JobPosting jobPosting);
+        Task<string> NewUserContent(User user);
+        string NewApplicationContent(Applicant applicant, JobPosting jobPosting);
     }
 }
