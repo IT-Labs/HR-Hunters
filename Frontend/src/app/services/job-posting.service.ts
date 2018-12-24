@@ -207,7 +207,7 @@ export class JobPostingService {
 
   uploadCSV(clientId, csv) {
     this.http
-      .put<{
+      .post<{
         succeeded: boolean;
         errors: {
           Error: string[] | null;
