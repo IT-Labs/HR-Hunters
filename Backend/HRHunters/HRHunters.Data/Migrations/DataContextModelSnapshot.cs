@@ -50,7 +50,7 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<DateTime>("CreatedDate");
 
-                    b.Property<string>("EducationType");
+                    b.Property<int>("EducationType");
 
                     b.Property<string>("Experience");
 

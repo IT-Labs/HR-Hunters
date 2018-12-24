@@ -305,15 +305,19 @@ namespace HRHunters.Domain.Managers
                     {
                         response.Errors["Error"].Add(ErrorConstants.InvalidInput + " at line " + iteration);
                     }
-                    var _Job = new JobPosting();
-                    _Job.Title = csv[0];
-                    _Job.Description = csv[1];
-                    _Job.EmpCategory = currentJobType;
-                    _Job.Education = currentEducation;
-                    _Job.NeededExperience = csv[4];
-                    _Job.DateFrom = dateFrom;
-                    _Job.DateTo = dateTo;
-                    _Job.Id = id;
+                    var _Job = new JobPosting()
+                    {
+
+                        Title = csv[0],
+                        Description = csv[1],
+                        EmpCategory = currentJobType,
+                        Education = currentEducation,
+                        NeededExperience = csv[4],
+                        DateFrom = dateFrom,
+                        DateTo = dateTo,
+                        Id = id
+                    };
+
                     _listJobs.Add(_Job);
                     iteration++;
                 }
@@ -339,8 +343,8 @@ namespace HRHunters.Domain.Managers
                     var jobPost = new JobPosting();
 
                     jobPost = _mapper.Map(job, jobPost);
-                    jobPost.Client = company;              
-                    
+                    jobPost.Client = company;
+
                     _repo.Create(jobPost, RoleConstants.ADMIN);
                 }
                 response.Succeeded = true;

@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HRHunters.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20181215192601_newMig")]
-    partial class newMig
+    [Migration("20181224102053_Production")]
+    partial class Production
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -52,7 +52,7 @@ namespace HRHunters.Data.Migrations
 
                     b.Property<DateTime>("CreatedDate");
 
-                    b.Property<string>("EducationType");
+                    b.Property<int>("EducationType");
 
                     b.Property<string>("Experience");
 

@@ -1,4 +1,5 @@
-﻿using HRHunters.Common.Interfaces;
+﻿using HRHunters.Common.Enums;
+using HRHunters.Common.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace HRHunters.Common.Entities
     public class Applicant : Entity
     {        
         public string Experience { get; set; }
-        public string EducationType { get; set; }
+        public EducationType EducationType { get; set; }
         public string SchoolUniversity { get; set; }
         public string Logo { get; set; }
         public int UserId { get; set; }

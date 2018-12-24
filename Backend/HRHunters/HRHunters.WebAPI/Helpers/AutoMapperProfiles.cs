@@ -25,10 +25,11 @@ namespace HRHunters.WebAPI.Helpers
             CreateMap<UserLoginModel, User>();
             CreateMap<ClientUpdate, Client>().ForPath(x => x.User.FirstName, opt => opt.MapFrom(y => y.CompanyName))
                                              .ForPath(x => x.User.Email, opt => opt.MapFrom(y => y.CompanyEmail));
-                                             
+
             CreateMap<ApplicantUpdate, Applicant>().ForPath(x => x.User.FirstName, opt => opt.MapFrom(y => y.FirstName))
                                                     .ForPath(x => x.User.LastName, opt => opt.MapFrom(y => y.LastName))
-                                                    .ForPath(x => x.User.Email, opt => opt.MapFrom(y => y.Email));
+                                                    .ForPath(x => x.User.Email, opt => opt.MapFrom(y => y.Email))
+                                                    .ForPath(x => x.EducationType, opt => opt.Ignore());
             CreateMap<JobUpdate, JobPosting>().ForMember(x => x.DateFrom, opt => opt.Ignore())
                                                 .ForMember(x => x.DateTo, opt => opt.Ignore())
                                                 .ForMember(x => x.EmpCategory, opt => opt.Ignore())
@@ -76,9 +77,10 @@ namespace HRHunters.WebAPI.Helpers
                                                     .ForMember(x => x.FirstName, opt => opt.MapFrom(x => x.User.FirstName))
                                                     .ForMember(x => x.LastName, opt => opt.MapFrom(x => x.User.LastName))
                                                     .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
-                                                    .ForMember(x => x.Photo, opt => opt.MapFrom(x => x.Logo))
-                                                    .ForMember(x => x.Education, opt => opt.MapFrom(x => x.EducationType))
-                                                    .ForMember(x => x.School, opt => opt.MapFrom(x => x.SchoolUniversity));
+                                                    .ForMember(x => x.Photo, opt => opt.MapFrom(x => EnvironmentVariables.CLOUD_FRONT_URL+x.Logo))
+                                                    .ForMember(x => x.School, opt => opt.MapFrom(x => x.SchoolUniversity))
+                                                    .ForMember(x => x.Education, opt => opt.MapFrom(x=>x.EducationType.ToString()));
+                                                     
             CreateMap<JobPosting, JobPosting>().ForMember(x => x.Id, opt => opt.Ignore());
         }
     }
