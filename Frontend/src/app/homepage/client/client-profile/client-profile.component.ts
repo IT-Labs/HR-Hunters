@@ -147,7 +147,6 @@ export class ClientProfileComponent implements OnInit {
           this.imageValid = false;
         }
       }, 1000);
-      console.log(img)
     };
     reader.readAsDataURL(file);
     this.onSubmitClientLogo();
