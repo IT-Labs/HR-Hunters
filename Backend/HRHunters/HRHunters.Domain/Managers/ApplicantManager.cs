@@ -34,8 +34,13 @@ namespace HRHunters.Domain.Managers
             _userManager = userManager;
         }
 
-        public ApplicantResponse GetMultiple(SearchRequest request)
+        public ApplicantResponse GetMultiple(SearchRequest request,int currentUserId)
         {
+            if (currentUserId != request.Id)
+            {
+                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
+            }
             var response = new ApplicantResponse() { Applicants = new List<ApplicantInfo>()};
 
             var query = _repo.GetAll<Applicant>(includeProperties: $"{nameof(User)},");
