@@ -34,7 +34,7 @@ namespace HRHunters.Domain.Managers
                     Destination = new Destination
                     {
                         ToAddresses =
-                        new List<string> { ConstantStrings.EMAIL_RECIEVER }
+                        new List<string> { applicant.User.Email }
                     },
                     Message = new Message
                     {
