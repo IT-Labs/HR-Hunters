@@ -2,6 +2,7 @@
 using HRHunters.Common.Interfaces;
 using HRHunters.Data;
 using HRHunters.Data.Context;
+using HRHunters.Domain.EmailService;
 using HRHunters.Domain.Managers;
 using StructureMap;
 using StructureMap.Pipeline;
