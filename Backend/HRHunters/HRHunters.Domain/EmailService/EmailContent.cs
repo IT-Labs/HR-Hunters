@@ -24,7 +24,7 @@ namespace HRHunters.Domain.EmailService
                       </tr>
                       <tr>
                         <td style='color: #23282d; font-size: 16px; padding: 20px'>
-                            You have just applied for the following Job: <strong>{jobPosting.Title}<strong><br>
+                            You have just applied for the following Job: <strong>{jobPosting.Title}</strong><br>
                             You can see all your job applications <a href='http://dev-docker:9014/applicant/my-applications' target='_top' style='color:#37b3ad; text-decoration: none'>here.</a>
                             <br><br>
                             Sincerely,
