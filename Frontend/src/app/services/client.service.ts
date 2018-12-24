@@ -229,8 +229,8 @@ export class ClientService {
         }
         if (error.error) {
           this.toastrService.error(
-            error.error.errors.Error[0],
-            "Error occured!"
+            // error.error.errors.Error[0],
+            // "Error occured!"
           );
         }
       });

@@ -155,7 +155,7 @@ export class ClientProfileComponent implements OnInit {
 
   buildImageFile(logo: any) {
     const logoData = new FormData();
-    logoData.append("logo", logo);
+    logoData.append("logo", logo, this.clientProfileFormHP.value.companyName);
     return logoData
   }
   
