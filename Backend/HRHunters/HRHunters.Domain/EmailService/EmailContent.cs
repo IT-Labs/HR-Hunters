@@ -4,7 +4,7 @@ using HRHunters.Common.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
-namespace HRHunters.Domain.Managers
+namespace HRHunters.Domain.EmailService
 {
     public class EmailContent : IEmailContent
     {
