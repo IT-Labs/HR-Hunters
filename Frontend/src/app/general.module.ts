@@ -38,6 +38,7 @@ import {
 import { NewClientComponent } from "./admin-dashboard/clients/new-client/new-client.component";
 import { AddCSVComponent } from "./admin-dashboard/job-postings/add-csv/add-csv.component";
 import { ApplicationDetailsComponent } from "./homepage/application-details/application-details.component";
+import { JobTypePipe } from "./pipes/jobType.pipe";
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { ApplicationDetailsComponent } from "./homepage/application-details/appl
     LoginComponent,
     NewClientComponent,
     AddCSVComponent,
-    ApplicationDetailsComponent
+    ApplicationDetailsComponent,
+    JobTypePipe
   ],
   imports: [
     CommonModule,
@@ -85,6 +87,7 @@ import { ApplicationDetailsComponent } from "./homepage/application-details/appl
       preventDuplicates: true
     }),
     NgxPhoneMaskModule
-  ]
+  ],
+  exports: [ JobTypePipe ]
 })
 export class GeneralModule {}

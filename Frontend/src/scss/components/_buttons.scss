@@ -21,7 +21,7 @@
   &__primary {
     background-color: $color-btn-primary-bg;
     color: $color-white;
-    font-family: 'Roboto';
+    font-family: $roboto;
     font-weight: 400;
     font-size: 1.6rem;
     padding: .7rem;
@@ -42,7 +42,7 @@
     background-color: $color-white;
     color: $color-btn-primary-bg;
     border: 2px solid $color-btn-primary-bg;
-    font-family: 'Roboto';
+    font-family: $roboto;
     font-weight: 400;
     font-size: 1.6rem;
     padding: .7rem;
@@ -64,7 +64,7 @@
   &__success {
     background-color: $color-btn-success-bg;
     color: $color-white;
-    font-family: 'Roboto';
+    font-family: $roboto;
     font-weight: 400;
     font-size: 1.6rem;
     padding: .7rem;
@@ -85,7 +85,7 @@
     background-color: $color-white;
     color: $color-btn-danger-bg;
     border: 2px solid $color-btn-danger-bg;
-    font-family: 'Roboto';
+    font-family: $roboto;
     font-weight: 400;
     font-size: 1.6rem;
     padding: .7rem;
@@ -109,7 +109,7 @@
   &__linkedin {
     background-color: $color-linkedin;
     color: $color-white;
-    font-family: 'Roboto';
+    font-family: $roboto;
   
     font-size: 1.9rem;
     padding: .4rem;
