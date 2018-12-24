@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HRHunters.Data.Migrations
 {
-    public partial class finalMigration : Migration
+    public partial class Production : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -112,7 +112,7 @@ namespace HRHunters.Data.Migrations
                     CreatedBy = table.Column<string>(nullable: true),
                     ModifiedBy = table.Column<string>(nullable: true),
                     Experience = table.Column<string>(nullable: true),
-                    EducationType = table.Column<string>(nullable: true),
+                    EducationType = table.Column<int>(nullable: false),
                     SchoolUniversity = table.Column<string>(nullable: true),
                     Logo = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false),

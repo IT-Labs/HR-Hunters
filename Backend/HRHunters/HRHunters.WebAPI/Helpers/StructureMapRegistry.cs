@@ -2,6 +2,7 @@
 using HRHunters.Common.Interfaces;
 using HRHunters.Data;
 using HRHunters.Data.Context;
+using HRHunters.Domain.EmailService;
 using HRHunters.Domain.Managers;
 using StructureMap;
 using StructureMap.Pipeline;
@@ -26,7 +27,9 @@ namespace HRHunters.WebAPI.Helpers
             For<ITokenGeneration>().LifecycleIs(Lifecycles.Container).Use<TokenGeneration>();
             For<IUsersManager>().LifecycleIs(Lifecycles.Container).Use<UsersManager>();
             For<IS3Manager>().LifecycleIs(Lifecycles.Container).Use<S3Manager>();
-
+            For<IEmailSenderManager>().LifecycleIs(Lifecycles.Container).Use<EmailSenderManager>();
+            For<IEmailTemplate>().LifecycleIs(Lifecycles.Container).Use<EmailTemplate>();
+            For<IEmailContent>().LifecycleIs(Lifecycles.Container).Use<EmailContent>();
             //var config = new Config
             //{
             //    ConnString = Environment.GetEnvironmentVariable("CONN_STRING"),

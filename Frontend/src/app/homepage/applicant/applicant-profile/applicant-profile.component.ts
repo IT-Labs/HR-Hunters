@@ -96,7 +96,6 @@ export class ApplicantProfileComponent implements OnInit {
         this.applicantProfileFormHP.controls.education.setValue(
           this.loggedInApplicant.education
         );
-        console.log(this.loggedInApplicant.education);
         this.applicantProfileFormHP.controls.school.setValue(
           this.loggedInApplicant.school
         );

@@ -42,7 +42,7 @@ namespace HRHunters.WebAPI.Controllers
         [HttpGet]
         public IActionResult GetMultipleApplicants([FromQuery]SearchRequest request)
         {
-            return Ok(_applicantManager.GetMultiple(request));
+            return Ok(_applicantManager.GetMultiple(request,GetCurrentUserId()));
         }
         [Authorize(Roles = RoleConstants.APPLICANT)]
         [HttpPut("{id}")]

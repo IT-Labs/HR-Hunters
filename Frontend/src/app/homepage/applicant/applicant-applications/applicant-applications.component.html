@@ -15,7 +15,7 @@
   >
     <div class="jp__container" *ngFor="let application of applications">
       <h1 class="jp__heading">{{ application.jobTitle }}</h1>
-      <p class="jp__sub-heading">{{ application.jobType }}</p>
+      <p class="jp__sub-heading">{{ application.jobType | jobtype }}</p>
       <p class="jp__content" ng-init="limit = 150">
         {{ application.description }}
       </p>

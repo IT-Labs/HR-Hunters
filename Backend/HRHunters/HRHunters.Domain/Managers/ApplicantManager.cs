@@ -34,14 +34,20 @@ namespace HRHunters.Domain.Managers
             _userManager = userManager;
         }
 
-        public ApplicantResponse GetMultiple(SearchRequest request)
+        public ApplicantResponse GetMultiple(SearchRequest request,int currentUserId)
         {
+            if (currentUserId != request.Id)
+            {
+                _logger.LogError(ErrorConstants.UnauthorizedAccess);
+                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
+            }
             var response = new ApplicantResponse() { Applicants = new List<ApplicantInfo>()};
 
             var query = _repo.GetAll<Applicant>(includeProperties: $"{nameof(User)},");
 
             var selected = _mapper.ProjectTo<ApplicantInfo>(query)
                                         .Applyfilters(request).ToList();
+            
              
             response.Applicants.AddRange(selected);
             response.MaxApplicants = _repo.GetCount<Applicant>();
@@ -68,6 +74,14 @@ namespace HRHunters.Domain.Managers
             var applicant = _repo.GetById<Applicant>(id);
 
             applicant = _mapper.Map(applicantUpdate, applicant);
+            bool educationParse=Enum.TryParse(applicantUpdate.EducationType,out EducationType educationType);
+            if (!educationParse)
+            {
+                _logger.LogError(ErrorConstants.InvalidInput, applicantUpdate.EducationType);
+                response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+                return response;
+            }
+            applicant.EducationType = educationType;
             applicant.User.ModifiedBy = applicant.User.FirstName;
             applicant.User.ModifiedDate = DateTime.UtcNow;
             var existingUser = await _userManager.FindByEmailAsync(applicant.User.Email);

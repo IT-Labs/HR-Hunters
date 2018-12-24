@@ -56,9 +56,9 @@ namespace HRHunters.WebAPI.Controllers
         }
         [Authorize(Roles = RoleConstants.APPLICANT)]
         [HttpPost]
-        public IActionResult CreateApplication(Apply apply)
+        public async Task<IActionResult> CreateApplication(Apply apply)
         {
-            var result = _applicationManager.CreateApplication(apply, GetCurrentUserId());
+            var result = await _applicationManager.CreateApplication(apply, GetCurrentUserId());
             if (result.Succeeded)
             {
                 return Ok(result);

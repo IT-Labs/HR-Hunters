@@ -10,6 +10,7 @@ using HRHunters.Common.Responses;
 using HRHunters.Common.Requests.Admin;
 using HRHunters.Common.Responses.AdminDashboard;
 using HRHunters.Common.Enums;
+using HRHunters.Common.Constants;
 
 namespace HRHunters.WebAPI.Helpers
 {
@@ -24,10 +25,11 @@ namespace HRHunters.WebAPI.Helpers
             CreateMap<UserLoginModel, User>();
             CreateMap<ClientUpdate, Client>().ForPath(x => x.User.FirstName, opt => opt.MapFrom(y => y.CompanyName))
                                              .ForPath(x => x.User.Email, opt => opt.MapFrom(y => y.CompanyEmail));
-                                             
+
             CreateMap<ApplicantUpdate, Applicant>().ForPath(x => x.User.FirstName, opt => opt.MapFrom(y => y.FirstName))
                                                     .ForPath(x => x.User.LastName, opt => opt.MapFrom(y => y.LastName))
-                                                    .ForPath(x => x.User.Email, opt => opt.MapFrom(y => y.Email));
+                                                    .ForPath(x => x.User.Email, opt => opt.MapFrom(y => y.Email))
+                                                    .ForPath(x => x.EducationType, opt => opt.Ignore());
             CreateMap<JobUpdate, JobPosting>().ForMember(x => x.DateFrom, opt => opt.Ignore())
                                                 .ForMember(x => x.DateTo, opt => opt.Ignore())
                                                 .ForMember(x => x.EmpCategory, opt => opt.Ignore())
@@ -50,7 +52,7 @@ namespace HRHunters.WebAPI.Helpers
                                             .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
                                             .ForMember(x => x.ActiveJobs, opt => opt.MapFrom(x => x.JobPostings.Count))
                                             .ForMember(x => x.Status, opt => opt.MapFrom(x => x.Status.ToString()))
-                                            .ForMember(x => x.Logo, opt => opt.Ignore())
+                                            .ForMember(x => x.Logo, opt => opt.MapFrom(x => EnvironmentVariables.CLOUD_FRONT_URL + x.Logo))
                                             .ForMember(x => x.AllJobs, opt => opt.MapFrom(x => x.JobPostings.Count(y => y.DateTo < DateTime.UtcNow)));
             CreateMap<JobSubmit, JobPosting>().ForMember(x => x.Id, opt => opt.Ignore())
                                                 .ForMember(x => x.DateFrom, opt => opt.Ignore())
@@ -59,12 +61,7 @@ namespace HRHunters.WebAPI.Helpers
                                                  .ForMember(x => x.EmpCategory, opt => opt.Ignore());
             CreateMap<NewCompany, Client>().ForPath(x => x.User.FirstName, opt => opt.MapFrom(x => x.CompanyName))
                                             .ForPath(x => x.User.Email, opt => opt.MapFrom(x => x.Email));
-            CreateMap<Client, ClientInfo>().ForMember(x => x.CompanyName, opt => opt.MapFrom(x => x.User.FirstName))
-                                           .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
-                                           .ForMember(x => x.Id, opt => opt.MapFrom(x => x.UserId))
-                                           .ForMember(x => x.Status, opt => opt.MapFrom(x => x.Status.ToString()))
-                                           .ForMember(x => x.ActiveJobs, opt => opt.MapFrom(x => x.JobPostings.Count(y => y.DateTo < DateTime.UtcNow)))
-                                           .ForMember(x => x.AllJobs, opt => opt.MapFrom(x => x.JobPostings.Count()));
+            
             CreateMap<Application, ApplicationInfo>().ForMember(x => x.ApplicantEmail, opt => opt.MapFrom(x => x.Applicant.User.Email))
                                                      .ForMember(x => x.ApplicantFirstName, opt => opt.MapFrom(x => x.Applicant.User.FirstName))
                                                      .ForMember(x => x.ApplicantLastName, opt => opt.MapFrom(x => x.Applicant.User.LastName))
@@ -80,9 +77,11 @@ namespace HRHunters.WebAPI.Helpers
                                                     .ForMember(x => x.FirstName, opt => opt.MapFrom(x => x.User.FirstName))
                                                     .ForMember(x => x.LastName, opt => opt.MapFrom(x => x.User.LastName))
                                                     .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
-                                                    .ForMember(x => x.Photo, opt => opt.MapFrom(x => x.Logo))
-                                                    .ForMember(x => x.Education, opt => opt.MapFrom(x => x.EducationType))
-                                                    .ForMember(x => x.School, opt => opt.MapFrom(x => x.SchoolUniversity));
+                                                    .ForMember(x => x.Photo, opt => opt.MapFrom(x => EnvironmentVariables.CLOUD_FRONT_URL+x.Logo))
+                                                    .ForMember(x => x.School, opt => opt.MapFrom(x => x.SchoolUniversity))
+                                                    .ForMember(x => x.Education, opt => opt.MapFrom(x=>x.EducationType.ToString()));
+                                                     
+            CreateMap<JobPosting, JobPosting>().ForMember(x => x.Id, opt => opt.Ignore());
         }
     }
 }

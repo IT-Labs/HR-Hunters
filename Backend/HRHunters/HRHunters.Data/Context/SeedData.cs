@@ -1,4 +1,5 @@
-﻿using HRHunters.Common.Entities;
+﻿using HRHunters.Common.Constants;
+using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Domain.Managers;
@@ -69,7 +70,8 @@ namespace HRHunters.Data.Context
                             User = user,
                             Location = "Skopje",
                             PhoneNumber = "+3891112344",
-                            Status = (ClientStatus)values.GetValue(random.Next(values.Length))
+                            Status = (ClientStatus)values.GetValue(random.Next(values.Length)),
+                            Logo = EnvironmentVariables.CLOUD_FRONT_URL + "6780f660-95fe-47da-8beb-88639bcace3c.JPEG"
                         };
                         _clientManager.Create(client);
                         _userManager.AddToRoleAsync(user, "Client").Wait();
@@ -81,7 +83,11 @@ namespace HRHunters.Data.Context
                             DateTo = DateTime.UtcNow.AddDays(4),
                             Title = "Backend developer" + i,
                             Education = EducationType.Bachelor,
-                            Description = "Lorem ipsum bruh...",
+                            Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the" +
+                            " industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it " +
+                            "to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, " +
+                            "remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem " +
+                            "Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
                             EmpCategory = JobType.Full_time,
                             Status = (JobPostingStatus)values.GetValue(random.Next(values.Length)),
                             NeededExperience = "3",
@@ -94,10 +100,10 @@ namespace HRHunters.Data.Context
                         {
                             User = user,
                             SchoolUniversity = "school" + i,
-                            EducationType = "B",
+                            EducationType = EducationType.Bachelor,
                             PhoneNumber = "+38931453312",
                             Experience = "3",
-                            
+                            Logo = EnvironmentVariables.CLOUD_FRONT_URL + "6780f660-95fe-47da-8beb-88639bcace3c.JPEG"
                         };
 
                         _clientManager.Create(applicant, "Admin");
@@ -108,7 +114,7 @@ namespace HRHunters.Data.Context
                             Applicant = applicant,
                             Date = DateTime.UtcNow,
                             JobPosting = _clientManager.GetOne<JobPosting>(filter: x => x.ClientId == i),
-                            Status = (ApplicationStatus)values.GetValue(random.Next(values.Length)),
+                            Status = (ApplicationStatus)values.GetValue(random.Next(values.Length)),                            
                         };
                         _clientManager.Create(application, "Admin");
                     }
