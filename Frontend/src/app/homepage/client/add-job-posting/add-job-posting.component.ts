@@ -277,7 +277,6 @@ export class AddJobPostingComponent implements OnInit {
       this.validDate
     ) {
       this.jobPostingService.addJobPosting(jobPostingData);
-      console.log(jobPostingData)
     }
     this.loading = false;
   }
