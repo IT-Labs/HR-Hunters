@@ -200,6 +200,7 @@ export class ApplicantProfileComponent implements OnInit {
           this.applicantProfileFormHP.controls["logo"].updateValueAndValidity();
           this.imagePreview = reader.result;
           this.imageValid = true;
+          this.onSubmitApplicantLogo();
         } else {
           this.imageValid = false;
         }
