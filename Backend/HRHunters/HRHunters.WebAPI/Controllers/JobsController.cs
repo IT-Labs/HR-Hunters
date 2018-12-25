@@ -75,7 +75,7 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPost("UploadCSV/{id}")]
         public IActionResult CreateMultiple(IFormFile formFile, int id)
         {
-            var result = _jobManager.CreateMultiple(formFile, id);
+            var result = _jobManager.UploadCSV(formFile, id);
             if (result.Succeeded)
             {
                 return Ok(result);

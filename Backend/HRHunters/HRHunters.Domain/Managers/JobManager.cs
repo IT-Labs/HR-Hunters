@@ -248,10 +248,36 @@ namespace HRHunters.Domain.Managers
             return response;
         }
 
-        public GeneralResponse CreateMultiple(IFormFile formFile, int id)
+        public GeneralResponse UploadCSV(IFormFile formFile, int id)
+        {
+            var response = ValidateCSV(formFile, id);
+            //if (!response.Errors["Error"].Any())
+            //{
+            //    var company = _repo.GetById<Client>(id);
+            //    if (company == null)
+            //    {
+            //        _logger.LogError(ErrorConstants.InvalidInput, company);
+            //        response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+            //        return response;
+            //    }
+            //    foreach (var job in _listJobs)
+            //    {
+            //        var jobPost = new JobPosting();
+
+            //        jobPost = _mapper.Map(job, jobPost);
+            //        jobPost.Client = company;
+
+            //        _repo.Create(jobPost, RoleConstants.ADMIN);
+            //    }
+            //    response.Succeeded = true;
+            //}
+            return response;
+        }
+        private GeneralResponse ValidateCSV(IFormFile formFile, int id)
         {
             var response = new GeneralResponse();
             var _listJobs = new List<JobPosting>();
+            var formats = new string[] { "dd-MM-yy", "dd.MM.yy", "dd/MM/yy" };
 
             if (formFile == null)
             {
@@ -297,17 +323,19 @@ namespace HRHunters.Domain.Managers
                 }
                 try
                 {
+                    var a = csv[5];
+                    var b = csv[6];
                     bool jobTypeParse = Enum.TryParse(csv[2].ToString(), out JobType currentJobType);
                     bool educationParse = Enum.TryParse(csv[3].ToString(), out EducationType currentEducation);
-                    bool dateFromParse = DateTime.TryParse(csv[5].ToString(), out DateTime dateFrom);
-                    bool dateToParse = DateTime.TryParse(csv[6].ToString(), out DateTime dateTo);
+                    bool dateFromParse = DateTime.TryParseExact(csv[5].ToString(), formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateFrom);
+                    bool dateToParse = DateTime.TryParseExact(csv[6].ToString(), formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateTo);
+
                     if (csv[0].Length > 30 || csv[0].Length == 0 || csv[1].Length > 800 || !jobTypeParse || !educationParse || !dateFromParse || !dateToParse)
                     {
                         response.Errors["Error"].Add(ErrorConstants.InvalidInput + " at line " + iteration);
                     }
                     var _Job = new JobPosting()
                     {
-
                         Title = csv[0],
                         Description = csv[1],
                         EmpCategory = currentJobType,
@@ -327,27 +355,6 @@ namespace HRHunters.Domain.Managers
                     response.Errors["Error"].Add(ErrorConstants.InvalidFormat + " at line " + iteration);
                     return response;
                 }
-
-            }
-            if (!response.Errors["Error"].Any())
-            {
-                var company = _repo.GetById<Client>(id);
-                if (company == null)
-                {
-                    _logger.LogError(ErrorConstants.InvalidInput, company);
-                    response.Errors["Error"].Add(ErrorConstants.InvalidInput);
-                    return response;
-                }
-                foreach (var job in _listJobs)
-                {
-                    var jobPost = new JobPosting();
-
-                    jobPost = _mapper.Map(job, jobPost);
-                    jobPost.Client = company;
-
-                    _repo.Create(jobPost, RoleConstants.ADMIN);
-                }
-                response.Succeeded = true;
             }
             return response;
         }
