@@ -18,7 +18,7 @@ namespace HRHunters.WebAPI.Helpers
     {
         public AutoMapperProfiles()
         {
-            CreateMap<User, UserLoginModel>();
+            CreateMap<User, UserLoginModel>();  
             CreateMap<User, UserRegisterModel>();
             CreateMap<UserRegisterModel, User>();
             CreateMap<User, UserLoginReturnModel>();
@@ -29,7 +29,8 @@ namespace HRHunters.WebAPI.Helpers
             CreateMap<ApplicantUpdate, Applicant>().ForPath(x => x.User.FirstName, opt => opt.MapFrom(y => y.FirstName))
                                                     .ForPath(x => x.User.LastName, opt => opt.MapFrom(y => y.LastName))
                                                     .ForPath(x => x.User.Email, opt => opt.MapFrom(y => y.Email))
-                                                    .ForPath(x => x.EducationType, opt => opt.Ignore());
+                                                    .ForPath(x => x.EducationType, opt => opt.Ignore())
+                                                    .ForPath(x => x.Id, opt => opt.Ignore());
             CreateMap<JobUpdate, JobPosting>().ForMember(x => x.DateFrom, opt => opt.Ignore())
                                                 .ForMember(x => x.DateTo, opt => opt.Ignore())
                                                 .ForMember(x => x.EmpCategory, opt => opt.Ignore())

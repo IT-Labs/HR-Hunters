@@ -34,13 +34,11 @@ namespace HRHunters.Domain.Managers
 {
     public class JobManager : BaseManager, IJobManager
     {
-        private readonly IRepository _repo;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly ILogger<JobManager> _logger;
         public JobManager(IRepository repo, UserManager<User> userManager, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<JobManager> logger) : base(repo)
         {
-            _repo = repo;
             _userManager = userManager;
             _mapper = mapper;
             _logger = logger;
@@ -50,8 +48,8 @@ namespace HRHunters.Domain.Managers
         {
             var current = await _userManager.FindByIdAsync(currentUserId.ToString());
             IList<string> role = await _userManager.GetRolesAsync(current);
-            var query = _repo.GetAll<JobPosting>(includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," + $"{nameof(JobPosting.Applications)}");
-            var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == request.Id).Select(x => x.JobPostingId).ToList();
+            var query = GetAll<JobPosting>($"{nameof(Client)}.{nameof(Client.User)}," + $"{nameof(JobPosting.Applications)}");
+            var applied = Get<Application>(filter: x => x.ApplicantId.Equals(request.Id)).Select(x => x.JobPostingId).ToList();
 
             if (!role.Contains(RoleConstants.ADMIN))
             {
@@ -70,7 +68,7 @@ namespace HRHunters.Domain.Managers
 
             var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(request);
             response.JobPostings.AddRange(selected.ToList());
-            var groupings = _repo.GetAll<JobPosting>().GroupBy(x => x.Status).Select(x => new { Status = x.Key, Count = x.Count() }).ToList();
+            var groupings = GetAll<JobPosting>().GroupBy(x => x.Status).Select(x => new { Status = x.Key, Count = x.Count() }).ToList();
 
             response.MaxJobPosts = groupings.Sum(x => x.Count);
             response.Approved = groupings.Where(x => x.Status.Equals(JobPostingStatus.Approved)).Select(x => x.Count).FirstOrDefault();
@@ -91,7 +89,7 @@ namespace HRHunters.Domain.Managers
                 return response.ErrorHandling(ErrorConstants.UnauthorizedAccess, _logger, jobSubmit.Id, currentUserId);
             }
             var company = new Client();
-            company = _repo.GetById<Client>(jobSubmit.Id);
+            company = GetById<Client>(jobSubmit.Id);
             
             var jobPost = new JobPosting()
             {
@@ -118,7 +116,7 @@ namespace HRHunters.Domain.Managers
                 jobPost.Status = JobPostingStatus.Pending;
                 try
                 {
-                    _repo.Create(jobPost, company.User.FirstName);
+                    Create(jobPost, company.User.FirstName);
                     response.Succeeded = true;
                     return response;
                 }
@@ -132,7 +130,7 @@ namespace HRHunters.Domain.Managers
                 jobPost.Status = JobPostingStatus.Approved;
                 try
                 {
-                    _repo.Create(jobPost, RoleConstants.ADMIN);
+                    Create(jobPost, RoleConstants.ADMIN);
                     response.Succeeded = true;
                     return response;
                 }
@@ -145,7 +143,7 @@ namespace HRHunters.Domain.Managers
 
         public JobInfo GetOneJobPosting(int id)
         {
-            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == id,
+            var jobPost = GetOne<JobPosting>(filter: x => x.Id == id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
 
             return _mapper.Map<JobInfo>(jobPost);
@@ -160,7 +158,7 @@ namespace HRHunters.Domain.Managers
                 return response.ErrorHandling(ErrorConstants.UnauthorizedAccess, _logger, userRole);
             }
 
-            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
+            var jobPost = GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
 
             if (jobPost == null)
@@ -196,7 +194,7 @@ namespace HRHunters.Domain.Managers
         
             try
             {
-                _repo.Update(jobPost, RoleConstants.ADMIN);
+                Update(jobPost, RoleConstants.ADMIN);
                 response.Succeeded = true;
                 return response;
             }
