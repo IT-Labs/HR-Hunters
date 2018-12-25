@@ -20,7 +20,7 @@ namespace HRHunters.Common.Interfaces
     {
         Task<JobResponse> GetMultiple(SearchRequest request, int currentUserId);
         Task<GeneralResponse> CreateJobPosting(JobSubmit jobSubmit, int currentUserId);
-        GeneralResponse UploadCSV(IFormFile formFile, int id);
+        GeneralResponse UploadCSV(FileUpload fileUpload);
         JobInfo GetOneJobPosting(int id);
         Task<GeneralResponse> UpdateJob(JobUpdate jobSubmit, int currentUserId);
 

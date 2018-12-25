@@ -72,10 +72,10 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("UploadCSV/{id}")]
-        public IActionResult CreateMultiple(IFormFile formFile, int id)
+        [HttpPost("UploadCSV/{Id}")]
+        public IActionResult UploadCSV([FromForm]FileUpload fileUpload)
         {
-            var result = _jobManager.UploadCSV(formFile, id);
+            var result = _jobManager.UploadCSV(fileUpload);
             if (result.Succeeded)
             {
                 return Ok(result);
