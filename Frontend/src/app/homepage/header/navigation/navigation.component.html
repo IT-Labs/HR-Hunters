@@ -84,6 +84,7 @@
               'u-color-red-dot': !activeClient,
               'u-color-green-dot': activeClient
             }"
+            *ngIf="!activeApplicant"
           ></i>
           |
           <span class="hp-nav__logout--color" (click)="onLogout()"
