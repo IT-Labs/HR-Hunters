@@ -12,8 +12,7 @@ import { ToastrService } from "ngx-toastr";
 export class AuthService {
   baseUrl = environment.baseUrl;
 
-  private isAuthenticated = false;
-  private user = {
+  user = {
     id: null,
     firstName: "",
     lastName: "",
@@ -24,12 +23,6 @@ export class AuthService {
 
   private roleStatusListener = new Subject<{
     role: number;
-  }>();
-
-  private authStatusListener = new Subject<boolean>();
-  
-  private authErrorStatusListener = new Subject<{
-    error: string;
   }>();
 
   constructor(
@@ -58,15 +51,6 @@ export class AuthService {
     return this.user;
   }
 
-  // Check users authentication status
-  getAuthStatusListener() {
-    return this.authStatusListener.asObservable();
-  }
-
-  getAuthErrorStatusListener() {
-    return this.authErrorStatusListener.asObservable();
-  }
-
   getRoleStatusListener() {
     return this.roleStatusListener.asObservable();
   }
@@ -79,8 +63,8 @@ export class AuthService {
     this.user.role = role;
   }
 
-  // Saves the token to the local storage and deletes the old one if there already is a token saved
-  private saveAuthData(token: string) {
+  // DA
+  saveAuthData(token: string) {
     const hasToken = localStorage.getItem("token");
     if (hasToken) {
       localStorage.removeItem("token");
@@ -88,14 +72,14 @@ export class AuthService {
     localStorage.setItem("token", token);
   }
 
-  // Deletes the token from the local storage
+  // Deletes the token and user from the local storage
   private clearAuthData() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
   }
 
-  // Saves the userdata to the local storage and deletes the old one if there already is a token saved
-  private saveUserData(user: any) {
+  // DA
+  saveUserData(user: any) {
     const hasUserData = localStorage.getItem("user");
     const userData = JSON.parse(hasUserData);
     if (userData) {
@@ -105,64 +89,13 @@ export class AuthService {
   }
 
   // REGISTER
-  registerUser(
-    companyName: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    password: string,
-    userType: number
-  ) {
-    let authData: Client | Applicant;
-    // FOR APPLICANTS
-    if (companyName === null) {
-      authData = {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
-        userType: userType
-      };
-      // FOR CLIENTS
-    } else if (firstName === null) {
-      authData = {
-        firstName: companyName,
-        lastName: lastName,
-        email: email,
-        password: password,
-        userType: userType
-      };
-    }
-    this.http
-      .post<{
-        succeeded: boolean;
-        errors: {
-          Error: string[] | null;
-        };
-      }>(this.baseUrl + "/Authentication/register", authData)
-      .subscribe(
-        response => {
-          if (response.succeeded) {
-            this.router.navigate(["login"]);
-            this.toastrService.success("", "You've registered successfully!");
-          }
-        },
-        error => {
-          if (error.error) {
-            this.authErrorStatusListener.next({
-              error: error.error.errors.Error[0]
-            });
-          }
-        }
-      );
+  registerUser(authData) {
+    return this.http.post(this.baseUrl + "/Authentication/register", authData)
   }
 
   // LOGIN
-  loginUser(email: string, password: string) {
-    const authData: User = { email: email, password: password };
-    this.http
-      .post<{
-        succeeded: boolean;
+  loginUser(authData) {
+    return this.http.post<{
         firstName: string | null;
         lastName: string | null;
         token: string | null;
@@ -170,52 +103,8 @@ export class AuthService {
         id: number | null;
         role: number;
         newUser: boolean;
-        errors: {
-          Error: string[] | null;
-        };
       }>(this.baseUrl + "/Authentication/login", authData)
-      .subscribe(
-        response => {
-          if (response.succeeded) {
-            const token = response.token;
-            this.user.token = token;
-            this.user.id = response.id;
-            this.user.email = response.email;
-            this.user.role = response.role;
-            this.user.firstName = response.firstName;
-            this.user.lastName = response.lastName;
-            if (token) {
-              this.isAuthenticated = true;
-              this.authStatusListener.next(true);
-              this.saveAuthData(token);
-              this.saveUserData(JSON.stringify(this.user));
-              if (response.role === 1) {
-                if (response.newUser) {
-                  this.router.navigate(["/applicant/profile"]);
-                } else if (!response.newUser) {
-                  this.router.navigate(["/applicant/job-postings"]);
-                }
-              } else if (response.role === 2) {
-                if (response.newUser) {
-                  this.router.navigate(["/client/profile"]);
-                } else if (!response.newUser) {
-                  this.router.navigate(["/client/job-postings"]);
-                }
-              } else if (response.role === 3) {
-                this.router.navigate(["/admin-dashboard/job-postings"]);
-              }
-            }
-            this.toastrService.success("", "Logged in successfully!");
-          }
-        },
-        error => {
-          if (error.error) {
-            this.authErrorStatusListener.next({
-              error: error.error.errors.Error[0]
-            });
-          }
-        }
-      );
+      
   }
 
   // Caching unauthorized requests
@@ -226,18 +115,16 @@ export class AuthService {
     this.cachedRequests.push(request);
   }
 
-  public retryFailedRequests(): void {
-    // retry the requests. this method can
-    // be called after the token is refreshed
-  }
-
   // LOGOUT
   logout() {
-    this.user.token = null;
-    this.user.email = "";
-    this.user.id = "";
-    this.isAuthenticated = false;
-    this.authStatusListener.next(false);
+    this.user = {
+      id: null,
+      firstName: "",
+      lastName: "",
+      token: "",
+      email: "",
+      role: 0
+    };
     this.clearAuthData();
     this.router.navigate(["/login"]);
   }

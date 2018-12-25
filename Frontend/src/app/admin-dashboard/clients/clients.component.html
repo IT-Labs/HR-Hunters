@@ -117,10 +117,14 @@
             <td scope="row">{{ client.companyName }}</td>
             <td>
               <img
+                *ngIf="client.logo"
                 class="dash__table--image"
                 [src]="client.logo"
                 [alt]="client.companyName"
               />
+              <span *ngIf="!client.logo">
+                /
+              </span>
             </td>
             <td>{{ client.email }}</td>
             <td>{{ client.activeJobs }} / {{ client.allJobs }}</td>

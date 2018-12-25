@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { Client } from "src/app/models/client.model";
 import { JobPostingService } from "src/app/services/job-posting.service";
 import { ClientService } from "src/app/services/client.service";
-import { Subscription, Subject, Observable, merge } from "rxjs";
+import { Subject, Observable, merge } from "rxjs";
 import { NgbDate, NgbCalendar, NgbTypeahead } from "@ng-bootstrap/ng-bootstrap";
 import {
   debounceTime,
@@ -11,8 +11,9 @@ import {
   filter,
   map
 } from "rxjs/operators";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { AuthService } from "src/app/services/auth.service";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-ad-new-job-posting",
@@ -84,16 +85,15 @@ export class ADNewJobPostingComponent implements OnInit {
   loading = false;
   loggedInUser;
 
-  private jobPostingSub: Subscription;
-  private clientsSub: Subscription;
-
   constructor(
     private fb: FormBuilder,
     private jobPostingService: JobPostingService,
     private clientService: ClientService,
     private calendar: NgbCalendar,
     private activatedRoute: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -106,42 +106,34 @@ export class ADNewJobPostingComponent implements OnInit {
     }
 
     if (this.edit) {
-      this.jobPostingService.getJobPosting(id);
-      this.jobPostingSub = this.jobPostingService
-        .getJobPostingEditListener()
-        .subscribe(jobPostingData => {
-          this.newJobPostingForm.controls.companyName.setValue(
-            jobPostingData.companyName
-          );
-          this.newJobPostingForm.controls.title.setValue(
-            jobPostingData.jobTitle
-          );
-          this.newJobPostingForm.controls.description.setValue(
-            jobPostingData.description
-          );
-          this.newJobPostingForm.controls.jobType.setValue(
-            this.fixJobTypeName(jobPostingData.jobType)
-          );
-          this.newJobPostingForm.controls.education.setValue(
-            jobPostingData.education
-          );
-          this.newJobPostingForm.controls.experience.setValue(
-            jobPostingData.experience
-          );
-          this.checkCompanyValidity();
-        });
+      this.jobPostingService.getJobPosting(id).subscribe(jobPostingData => {
+        this.newJobPostingForm.controls.companyName.setValue(
+          jobPostingData.companyName
+        );
+        this.newJobPostingForm.controls.title.setValue(jobPostingData.jobTitle);
+        this.newJobPostingForm.controls.description.setValue(
+          jobPostingData.description
+        );
+        this.newJobPostingForm.controls.jobType.setValue(
+          this.fixJobTypeName(jobPostingData.jobType)
+        );
+        this.newJobPostingForm.controls.education.setValue(
+          jobPostingData.education
+        );
+        this.newJobPostingForm.controls.experience.setValue(
+          jobPostingData.experience
+        );
+        this.checkCompanyValidity();
+      });
     }
 
     const params = this.buildQueryParams();
-    this.clientService.getClients(params);
-    this.clientsSub = this.clientService
-      .getClientsUpdateListener()
-      .subscribe(clientsData => {
-        this.clients = clientsData.clients;
-        clientsData.clients.forEach(c => {
-          this.clientNames.push(c.companyName);
-        });
+    this.clientService.getClients(params).subscribe(clientsData => {
+      this.clients = clientsData.clients;
+      clientsData.clients.forEach(c => {
+        this.clientNames.push(c.companyName);
       });
+    });
 
     this.todayDate = this.calendar.getToday();
     this.fromDate = this.calendar.getToday();
@@ -264,7 +256,7 @@ export class ADNewJobPostingComponent implements OnInit {
       this.toDate = null;
       this.fromDate = date;
     }
-    this.calculateDateValidity()
+    this.calculateDateValidity();
   }
 
   isHovered(date: NgbDate) {
@@ -352,7 +344,7 @@ export class ADNewJobPostingComponent implements OnInit {
     return {
       dateTo: dateTo,
       dateFrom: dateFrom
-    }
+    };
   }
 
   fixJobType() {
@@ -368,7 +360,7 @@ export class ADNewJobPostingComponent implements OnInit {
         empCategory = "Intern";
         break;
     }
-    return empCategory
+    return empCategory;
   }
 
   onSubmitNewJobPosting() {
@@ -398,7 +390,24 @@ export class ADNewJobPostingComponent implements OnInit {
       this.validClient &&
       !this.edit
     ) {
-      this.jobPostingService.addJobPosting(jobPostingData);
+      this.jobPostingService.addJobPosting(jobPostingData).subscribe(
+        response => {
+          this.router.navigate(["/admin-dashboard/job-postings"]);
+          this.toastr.success("", "Job posting added successfully!");
+          this.loading = false;
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            this.loading = false;
+            return;
+          }
+          if (!!error.error.errors) {
+            this.loading = false;
+            this.toastr.error(error.error.errors.Error[0], "Error occured!");
+          }
+        }
+      );
     } else if (
       this.newJobPostingForm.valid &&
       this.fromDate &&
@@ -407,8 +416,24 @@ export class ADNewJobPostingComponent implements OnInit {
       this.validClient &&
       this.edit
     ) {
-      this.jobPostingService.updateJobPosting(jobPostingData);
+      this.jobPostingService.updateJobPosting(jobPostingData).subscribe(
+        response => {
+          this.router.navigate(["/admin-dashboard/job-postings"]);
+          this.loading = false;
+          this.toastr.success("", "Job posting status updated successfully!");
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            this.loading = false;
+            return;
+          }
+          if (!!error.error.errors) {
+            this.loading = false;
+            this.toastr.error(error.error.errors.Error[0], "Error occured!");
+          }
+        }
+      );
     }
-    this.loading = false;
   }
 }

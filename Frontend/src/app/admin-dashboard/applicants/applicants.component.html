@@ -29,12 +29,18 @@
               <i
                 class="fa fa-sort-asc"
                 aria-hidden="true"
-                *ngIf="applicantsQP.currentSortBy === 'firstName' && applicantsQP.currentSortDirection === 0"
+                *ngIf="
+                  applicantsQP.currentSortBy === 'firstName' &&
+                  applicantsQP.currentSortDirection === 0
+                "
               ></i
               ><i
                 class="fa fa-sort-desc"
                 aria-hidden="true"
-                *ngIf="applicantsQP.currentSortBy === 'firstName' && applicantsQP.currentSortDirection === 1"
+                *ngIf="
+                  applicantsQP.currentSortBy === 'firstName' &&
+                  applicantsQP.currentSortDirection === 1
+                "
               ></i>
             </th>
             <th scope="col" class="text-body">Photo</th>
@@ -43,12 +49,18 @@
               <i
                 class="fa fa-sort-asc"
                 aria-hidden="true"
-                *ngIf="applicantsQP.currentSortBy === 'email' && applicantsQP.currentSortDirection === 0"
+                *ngIf="
+                  applicantsQP.currentSortBy === 'email' &&
+                  applicantsQP.currentSortDirection === 0
+                "
               ></i
               ><i
                 class="fa fa-sort-desc"
                 aria-hidden="true"
-                *ngIf="applicantsQP.currentSortBy === 'email' && applicantsQP.currentSortDirection === 1"
+                *ngIf="
+                  applicantsQP.currentSortBy === 'email' &&
+                  applicantsQP.currentSortDirection === 1
+                "
               ></i>
             </th>
             <th scope="col" (click)="onSort('phoneNumber')">
@@ -56,12 +68,18 @@
               <i
                 class="fa fa-sort-asc"
                 aria-hidden="true"
-                *ngIf="applicantsQP.currentSortBy === 'phoneNumber' && applicantsQP.currentSortDirection === 0"
+                *ngIf="
+                  applicantsQP.currentSortBy === 'phoneNumber' &&
+                  applicantsQP.currentSortDirection === 0
+                "
               ></i
               ><i
                 class="fa fa-sort-desc"
                 aria-hidden="true"
-                *ngIf="applicantsQP.currentSortBy === 'phoneNumber' && applicantsQP.currentSortDirection === 1"
+                *ngIf="
+                  applicantsQP.currentSortBy === 'phoneNumber' &&
+                  applicantsQP.currentSortDirection === 1
+                "
               ></i>
             </th>
           </tr>
@@ -73,10 +91,12 @@
             </td>
             <td>
               <img
+                *ngIf="applicant.photo"
                 class="dash__table--image"
                 [src]="applicant.photo"
                 [alt]="applicant.firstName"
               />
+              <span *ngIf="!applicant.photo"> / </span>
             </td>
             <td>{{ applicant.email }}</td>
             <td>{{ applicant.phoneNumber }}</td>
