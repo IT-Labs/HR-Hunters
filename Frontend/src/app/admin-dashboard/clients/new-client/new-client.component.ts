@@ -1,6 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { Validators, FormBuilder } from "@angular/forms";
 import { ClientService } from "src/app/services/client.service";
+import { Router } from "@angular/router";
+import { ToastrService } from "ngx-toastr";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-new-client-posting",
@@ -12,13 +15,17 @@ export class NewClientComponent implements OnInit {
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
 
-  validText = new RegExp(
-    "^([a-zA-Z0-9]|[- @\.#&!',_])*$"
-  )
+  validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
 
   loading = false;
 
-  constructor(private fb: FormBuilder, private clientService: ClientService) {}
+  constructor(
+    private fb: FormBuilder,
+    private clientService: ClientService,
+    private router: Router,
+    private toastr: ToastrService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {}
 
@@ -41,10 +48,7 @@ export class NewClientComponent implements OnInit {
     ],
     companyPhoneNumber: [
       "",
-      Validators.compose([
-        Validators.required,
-        Validators.minLength(11)
-      ])
+      Validators.compose([Validators.required, Validators.minLength(11)])
     ],
     companyLocation: [
       "",
@@ -86,8 +90,26 @@ export class NewClientComponent implements OnInit {
     );
 
     if (this.newClientForm.valid) {
-      this.clientService.addClient(clientData);
-      this.loading = false;
+      this.clientService.addClient(clientData).subscribe(
+        response => {
+          this.router.navigate(["/admin-dashboard/clients"]);
+          this.toastr.success("", "Client status updated successfully!");
+          this.loading = false;
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (!!error.error.errors) {
+            this.toastr.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+              );
+            }
+            this.loading = false;
+        }
+      );
     }
   }
 }

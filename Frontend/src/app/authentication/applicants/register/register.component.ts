@@ -3,6 +3,8 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { AuthService } from "src/app/services/auth.service";
 import { Subscription } from "rxjs";
 import { PasswordValidator } from "../../../validators/password.validator";
+import { Router } from "@angular/router";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-register",
@@ -24,18 +26,15 @@ export class ApplicantRegisterComponent implements OnInit {
   private authStatusSub: Subscription;
   private authErrorStatusSub: Subscription;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.loading = true;
-    this.authStatusSub = this.authService
-      .getAuthStatusListener()
-      .subscribe(authStatus => {});
-    this.authErrorStatusSub = this.authService
-      .getAuthErrorStatusListener()
-      .subscribe(error => {
-        this.authError = error.error;
-      });
 
     this.applicantRegisterForm.controls.applicantPassword.valueChanges.subscribe(
       x =>
@@ -93,19 +92,26 @@ export class ApplicantRegisterComponent implements OnInit {
       return;
     }
 
-    this.authService.registerUser(
-      null,
-      this.applicantRegisterForm.value.applicantFirstName,
-      this.applicantRegisterForm.value.applicantLastName,
-      this.applicantRegisterForm.value.applicantEmail,
-      this.applicantRegisterForm.value.applicantPassword,
-      1
-    );
-    this.loading = false;
-  }
+    let applicantData = {
+      firstName: this.applicantRegisterForm.value.applicantFirstName,
+      lastName: this.applicantRegisterForm.value.applicantLastName,
+      email: this.applicantRegisterForm.value.applicantEmail,
+      password: this.applicantRegisterForm.value.applicantPassword,
+      userType: 1
+    };
 
-  ngOnDestroy() {
-    this.authStatusSub.unsubscribe();
-    this.authErrorStatusSub.unsubscribe();
+    this.authService.registerUser(applicantData).subscribe(
+      response => {
+        this.router.navigate(["/login"]);
+        this.loading = false;
+        this.toastr.success("", "You've registered successfully!");
+      },
+      error => {
+        if (!!error.error.errors) {
+          this.authError = error.error.errors.Error[0];
+        }
+        this.loading = false;
+      }
+    );
   }
 }

@@ -1,15 +1,16 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Client } from "src/app/models/client.model";
-import { Subscription } from "rxjs";
 import { ClientService } from "src/app/services/client.service";
 import { AuthService } from "src/app/services/auth.service";
+import { Router } from "@angular/router";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-ad-clients",
   templateUrl: "./clients.component.html",
   styleUrls: ["./clients.component.scss"]
 })
-export class ADClientsComponent implements OnInit, OnDestroy {
+export class ADClientsComponent implements OnInit {
   clientsCount = {
     all: 0,
     active: 0,
@@ -34,30 +35,28 @@ export class ADClientsComponent implements OnInit, OnDestroy {
 
   paginationSize: number[] = [];
 
-  private clientsSub: Subscription;
-
   constructor(
     private clientService: ClientService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
     this.loading = true;
     this.loggedInUser = this.authService.getUser();
+
     const params = this.buildQueryParams(this.clientQP);
-    this.clientService.getClients(params);
-    this.clientsSub = this.clientService
-      .getClientsUpdateListener()
-      .subscribe(clientsData => {
-        this.clients = clientsData.clients;
-        this.clientsCount.all = clientsData.clientsCount;
-        this.clientsCount.active = clientsData.active;
-        this.clientsCount.inactive = clientsData.inactive;
-        this.loading = false;
-      });
-    setTimeout(() => {
-      this.paginationMaxSize = this.clientsCount.all;
-    }, 1000);
+
+    this.clientService.getClients(params).subscribe(clientsData => {
+      this.clients = clientsData.clients;
+      this.clientsCount.all = clientsData.maxClients;
+      this.clientsCount.active = clientsData.active;
+      this.clientsCount.inactive = clientsData.inactive;
+      this.loading = false;
+
+      this.paginationMaxSize = clientsData.maxClients;
+    });
   }
 
   buildQueryParams(data) {
@@ -112,8 +111,16 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     if (this.clientQP.currentPage !== this.clientQP.previousPage) {
       this.clientQP.previousPage = this.clientQP.currentPage;
       const params = this.buildQueryParams(this.clientQP);
-      this.clientService.getClients(params);
-      this.loading = false;
+      this.clientService.getClients(params).subscribe(clientsData => {
+        this.clients = clientsData.clients;
+        this.clientsCount.all = clientsData.maxClients;
+        this.clientsCount.active = clientsData.active;
+        this.clientsCount.inactive = clientsData.inactive;
+        this.loading = false;
+  
+        this.paginationMaxSize = clientsData.maxClients;
+        this.loading = false;
+      });
     }
   }
 
@@ -125,19 +132,25 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       this.clientQP.currentFilter = "status";
     }
 
-    // CALCULATE PAGINATION
-    if (filterBy === null) {
-      this.paginationMaxSize = this.clientsCount.all;
-    } else if (filterBy === "Active") {
-      this.paginationMaxSize = this.clientsCount.active;
-    } else if (filterBy === "Inactive") {
-      this.paginationMaxSize = this.clientsCount.inactive;
-    }
-
     this.clientQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.clientQP);
-    this.clientService.getClients(params);
-    this.loading = false;
+    this.clientService.getClients(params).subscribe(clientsData => {
+      this.clients = clientsData.clients;
+      this.clientsCount.all = clientsData.maxClients;
+      this.clientsCount.active = clientsData.active;
+      this.clientsCount.inactive = clientsData.inactive;
+      this.loading = false;
+
+        // CALCULATE PAGINATION
+      if (filterBy === null) {
+        this.paginationMaxSize = clientsData.maxClients;
+      } else if (filterBy === "Active") {
+        this.paginationMaxSize = clientsData.active;
+      } else if (filterBy === "Inactive") {
+        this.paginationMaxSize = clientsData.inactive;
+      }
+      this.loading = false;
+    });
   }
 
   onSort(sortBy: string) {
@@ -159,8 +172,16 @@ export class ADClientsComponent implements OnInit, OnDestroy {
     }
     this.clientQP.currentSortBy = sortBy;
     const params = this.buildQueryParams(this.clientQP);
-    this.clientService.getClients(params);
-    this.loading = false;
+    this.clientService.getClients(params).subscribe(clientsData => {
+      this.clients = clientsData.clients;
+      this.clientsCount.all = clientsData.maxClients;
+      this.clientsCount.active = clientsData.active;
+      this.clientsCount.inactive = clientsData.inactive;
+      this.loading = false;
+
+      this.paginationMaxSize = clientsData.maxClients;
+      this.loading = false;
+    });
   }
 
   chooseStatus(event: any, id: number) {
@@ -172,15 +193,36 @@ export class ADClientsComponent implements OnInit, OnDestroy {
       currentId,
       currentStatus
     );
-    this.clientService.updateClientStatus(clientData);
-    setTimeout(() => {
-      const params = this.buildQueryParams(this.clientQP);
-      this.clientService.getClients(params);
-      this.loading = false;
-    }, 1000);
-  }
 
-  ngOnDestroy() {
-    this.clientsSub.unsubscribe();
+    this.clientService.updateClientStatus(clientData).subscribe(
+      response => {
+        this.router.navigate(["/admin-dashboard/clients"]);
+        this.toastr.success("", "Client status updated successfully!");
+        const params = this.buildQueryParams(this.clientQP);
+        this.clientService.getClients(params).subscribe(clientsData => {
+          this.clients = clientsData.clients;
+          this.clientsCount.all = clientsData.maxClients;
+          this.clientsCount.active = clientsData.active;
+          this.clientsCount.inactive = clientsData.inactive;
+          this.loading = false;
+    
+          this.paginationMaxSize = clientsData.maxClients;
+          this.loading = false;
+        });
+      },
+      error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          return;
+        }
+        if (!!error.error.errors) {
+          this.toastr.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
+          this.loading = false;
+        }
+      }
+    );
   }
 }

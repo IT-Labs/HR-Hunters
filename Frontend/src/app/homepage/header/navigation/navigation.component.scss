@@ -2,6 +2,11 @@
     padding: 0;
 }
 
+.fa-circle {
+    font-size: .8rem;
+    transform: translateY(-2px)
+}
+
 
 @media (min-width: 992px) {
     #mobile-logout {

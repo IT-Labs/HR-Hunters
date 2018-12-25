@@ -14,6 +14,8 @@ import {
 } from "rxjs/operators";
 import { CSVValidator } from "src/app/validators/csv.validator";
 import { JobPostingService } from "src/app/services/job-posting.service";
+import { Router } from "@angular/router";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-add-csv",
@@ -48,17 +50,16 @@ export class AddCSVComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private cd: ChangeDetectorRef,
-    private jobPostingService: JobPostingService
+    private jobPostingService: JobPostingService,
+    private router: Router,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
     this.loading = true;
     this.loggedInUser = this.authService.getUser();
     const params = this.buildQueryParams();
-    this.clientService.getClients(params);
-    this.clientsSub = this.clientService
-      .getClientsUpdateListener()
-      .subscribe(clientsData => {
+    this.clientService.getClients(params).subscribe(clientsData => {
         this.clients = clientsData.clients;
         clientsData.clients.forEach(c => {
           this.clientNames.push(c.companyName);
@@ -140,7 +141,26 @@ export class AddCSVComponent {
 
   onSubmitCSV() {
     this.loading = true;
-    this.jobPostingService.uploadCSV(this.selectedCompany.id, this.buildCSVFile(this.newCSVForm.value.csv))
-    this.loading = false;
+    this.jobPostingService.uploadCSV(this.selectedCompany.id, this.buildCSVFile(this.newCSVForm.value.csv)).subscribe(
+      response => {
+        this.router.navigate(["/admin-dashboard/job-postings"]);
+        this.loading = false;
+        this.toastr.success("", "CSV updloaded successfully!");
+      },
+      error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          this.loading = false;
+          return;
+        }
+        if (!!error.error.errors) {
+          this.toastr.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
+          this.loading = false;
+        }
+      }
+    );
   }
 }

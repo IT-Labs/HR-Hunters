@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { JobPosting } from "src/app/models/job-posting.model";
 import { JobPostingService } from "src/app/services/job-posting.service";
-import { ActivatedRoute } from "@angular/router";
-import { Subscription } from "rxjs";
+import { ActivatedRoute, Router } from "@angular/router";
 import { AuthService } from "src/app/services/auth.service";
 import { ApplicationService } from "src/app/services/application.service";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-job-posting-details",
@@ -13,12 +13,12 @@ import { ApplicationService } from "src/app/services/application.service";
 })
 export class JobPostingDetailsComponent implements OnInit {
   jobPosting: JobPosting = {
-    jobTitle: '',
-    jobType: '',
-    description: '',
-    dateFrom: '',
-    dateTo: '',
-    education: '',
+    jobTitle: "",
+    jobType: "",
+    description: "",
+    dateFrom: "",
+    dateTo: "",
+    education: "",
     experience: 0
   };
   jobPostingId;
@@ -26,13 +26,13 @@ export class JobPostingDetailsComponent implements OnInit {
   loggedInUser;
   loading = false;
 
-  private jobPostingSub: Subscription;
-
   constructor(
     private jobPostingService: JobPostingService,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
-    private applicationService: ApplicationService
+    private applicationService: ApplicationService,
+    private toastr: ToastrService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -41,14 +41,13 @@ export class JobPostingDetailsComponent implements OnInit {
     if (this.loggedInUser.role === 1) {
       this.isApplicant = true;
     }
-    this.jobPostingId = this.activatedRoute.snapshot.paramMap.get('id')
-    this.jobPostingService.getJobPosting(this.jobPostingId);
-    this.jobPostingSub = this.jobPostingService.getJobPostingEditListener().subscribe(
-      jobPostingData => {
-        this.jobPosting = jobPostingData
+    this.jobPostingId = this.activatedRoute.snapshot.paramMap.get("id");
+    this.jobPostingService
+      .getJobPosting(this.jobPostingId)
+      .subscribe(jobPostingData => {
+        this.jobPosting = jobPostingData;
         this.loading = false;
-      }
-    )
+      });
   }
 
   buildApplicationData(applicantId: number, jobId: number) {
@@ -65,11 +64,23 @@ export class JobPostingDetailsComponent implements OnInit {
       this.loggedInUser.id,
       this.jobPostingId
     );
-    this.applicationService.addApplication(applicationData);
-    this.loading = false;
-  }
-
-  ngOnDestroy() {
-    this.jobPostingSub.unsubscribe();
+    this.applicationService.addApplication(applicationData).subscribe(
+      response => {
+        this.router.navigate(["/applicant/job-postings"]);
+        this.toastr.success("", "You've applied to this job successfully!");
+        this.loading = false;
+      },
+      error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          this.loading = false;
+          return;
+        }
+        if (!!error.error.errors) {
+          this.toastr.error(error.error.errors.Error[0], "Error occured!");
+          this.loading = false;
+        }
+      }
+    );
   }
 }
