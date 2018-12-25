@@ -3,6 +3,7 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using HRHunters.Common.Constants;
 using HRHunters.Common.Entities;
+using HRHunters.Common.HelperMethods;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Responses;
 using Microsoft.AspNetCore.Http;
@@ -35,9 +36,7 @@ namespace HRHunters.Domain.Managers
             var response = new GeneralResponse();
             if (image.ContentType != "image/jpg" && image.ContentType != "image/png" && image.ContentType != "image/jpeg")
             {
-                _logger.LogError(ErrorConstants.InvalidFormat, image);
-                response.Errors["Error"].Add(ErrorConstants.InvalidFormat);
-                return response;
+                return response.ErrorHandling(ErrorConstants.InvalidFormat, _logger, image.ContentType);
             }
             if (id != currentUserId)
             {
@@ -77,9 +76,7 @@ namespace HRHunters.Domain.Managers
             }
             catch
             {
-                _logger.LogError("Failed to upload image", image);
-                response.Errors["Error"].Add("Failed to upload image.");
-                return response;
+                return response.ErrorHandling("Failed to upload image", _logger, objects: image);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using HRHunters.Common.Entities;
+using HRHunters.Common.Responses;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IEmailSenderManager
     {
-        Task SendEmail(User user);
-        Task SendEmail(Applicant applicant, JobPosting jobPosting);
+        Task<GeneralResponse> SendEmail(User user);
+        Task<GeneralResponse> SendEmail(Applicant applicant, JobPosting jobPosting);
     }
 }

@@ -17,6 +17,7 @@ using AutoMapper;
 using HRHunters.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 using HRHunters.Common.Constants;
+using HRHunters.Common.HelperMethods;
 
 namespace HRHunters.Domain.Managers
 {
@@ -65,22 +66,18 @@ namespace HRHunters.Domain.Managers
             var response = new GeneralResponse();
             if (currentUserId != id)
             {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess);
-                response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
-                return response;
+                return response.ErrorHandling(ErrorConstants.UnauthorizedAccess, _logger, id, currentUserId);
             }
             var user = await _userManager.FindByIdAsync(id.ToString());
 
             var applicant = _repo.GetById<Applicant>(id);
 
             applicant = _mapper.Map(applicantUpdate, applicant);
-            bool educationParse=Enum.TryParse(applicantUpdate.EducationType,out EducationType educationType);
+            bool educationParse = Enum.TryParse(applicantUpdate.EducationType,out EducationType educationType);
+
             if (!educationParse)
-            {
-                _logger.LogError(ErrorConstants.InvalidInput, applicantUpdate.EducationType);
-                response.Errors["Error"].Add(ErrorConstants.InvalidInput);
-                return response;
-            }
+                return response.ErrorHandling(ErrorConstants.InvalidInput, _logger, applicantUpdate.EducationType);
+
             applicant.EducationType = educationType;
             applicant.User.ModifiedBy = applicant.User.FirstName;
             applicant.User.ModifiedDate = DateTime.UtcNow;
@@ -90,22 +87,19 @@ namespace HRHunters.Domain.Managers
             if (existingUser != null && user != existingUser)
             {
                 response.Succeeded = false;
-                response.Errors["Error"].Add("Email is already in use.");
-                return response;
+                return response.ErrorHandling<ApplicantManager>("Email is already in use");
             }
             try
             {
                 _repo.Update(applicant, applicant.User.FirstName);
                 await _userManager.UpdateAsync(user);
                 response.Succeeded = true;
+                return response;
             }
             catch(Exception e)
             {
-                _logger.LogError(e.Message, applicant);
-                response.Errors["Error"].Add(e.Message);
+                return response.ErrorHandling(e.Message, _logger, applicant);
             }
-            return response;
-
         }
     }
 

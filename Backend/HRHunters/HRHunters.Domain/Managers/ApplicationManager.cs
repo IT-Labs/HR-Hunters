@@ -4,6 +4,7 @@ using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Exceptions;
 using HRHunters.Common.ExtensionMethods;
+using HRHunters.Common.HelperMethods;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
 using HRHunters.Common.Requests.Admin;
@@ -118,9 +119,7 @@ namespace HRHunters.Domain.Managers
 
             if (currentUserId != apply.ApplicantId)
             {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess, apply.ApplicantId, currentUserId);
-                response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
-                return response;
+                return response.ErrorHandling(ErrorConstants.UnauthorizedAccess, _logger, apply.ApplicantId, currentUserId);
             }
 
             var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == apply.JobId,
@@ -132,7 +131,7 @@ namespace HRHunters.Domain.Managers
             
             if (jobPost == null || jobPost.Client.Status==ClientStatus.Inactive || jobPost.Status != JobPostingStatus.Approved || applied)
             {
-                response.Errors["Error"].Add(ErrorConstants.InvalidInput);
+                return response.ErrorHandling<ApplicationManager>(ErrorConstants.InvalidInput);
             }
             else 
             {                                               
@@ -148,14 +147,13 @@ namespace HRHunters.Domain.Managers
                     _repo.Create(application, applicant.User.FirstName);
                     response.Succeeded = true;
                     await _emailSender.SendEmail(applicant, jobPost);
+                    return response;
                 }
                 catch(Exception e)
                 {
-                    _logger.LogError(e.Message, application);
-                    response.Errors["Error"].Add(e.Message);
-                }
+                    return response.ErrorHandling(e.Message, _logger, application);
+                } 
             }
-            return response;
         }
     }
 }

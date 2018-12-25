@@ -18,6 +18,7 @@ using HRHunters.Common.Requests;
 using HRHunters.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 using HRHunters.Common.Constants;
+using HRHunters.Common.HelperMethods;
 
 namespace HRHunters.Domain.Managers
 {
@@ -34,13 +35,8 @@ namespace HRHunters.Domain.Managers
             _mapper = mapper;
             _repo = repo;
         }
-        public ClientResponse GetMultiple(SearchRequest request, int currentUserId)
+        public ClientResponse GetMultiple(SearchRequest request)
         {
-            if (currentUserId != request.Id)
-            {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess);
-                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
-            }
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
 
             var query = _repo.GetAll<Client>(includeProperties: $"{nameof(User)}," +
@@ -101,9 +97,7 @@ namespace HRHunters.Domain.Managers
             var response = new GeneralResponse();
             if (currentUserId != id)
             {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess);
-                response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
-                return response;
+                return response.ErrorHandling(ErrorConstants.UnauthorizedAccess, _logger, id, currentUserId);
             }
 
             var user = await _userManager.FindByIdAsync(id.ToString());
@@ -116,21 +110,19 @@ namespace HRHunters.Domain.Managers
             if (existingUser != null && user != existingUser)
             {
                 response.Succeeded = false;
-                response.Errors["Error"].Add("Email is already in use.");
-                return response;
+                return response.ErrorHandling<ClientManager>("Email is already in use", objects:(existingUser,clientUpdate));
             }
             try
             {
                 _repo.Update(client, client.User.FirstName);
                 await _userManager.UpdateAsync(user);
                 response.Succeeded = true;
+                return response;
             }
             catch(Exception e)
             {
-                _logger.LogError(e.Message, client);
-                response.Errors["Error"].Add(e.Message);
+                return response.ErrorHandling(e.Message, _logger, client);
             }
-            return response;
         }
 
         public async Task<GeneralResponse> CreateCompany(NewCompany newCompany,int currentUserId)
@@ -139,11 +131,6 @@ namespace HRHunters.Domain.Managers
             var roles = await _userManager.GetRolesAsync(currentUser);
             var response = new GeneralResponse();
 
-            if (!roles.Contains(RoleConstants.ADMIN))
-            {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess);
-                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
-            }
             var user = new User()
             {
                 FirstName = newCompany.CompanyName,
@@ -151,12 +138,10 @@ namespace HRHunters.Domain.Managers
                 UserName = newCompany.Email.ToLower()
             };
             var result = await _userManager.CreateAsync(user, "ClientDefaultPassword");
-            //TODO: Notify client with email
+
             if (!result.Succeeded)
             {
-                _logger.LogError(ErrorConstants.FailedToUpdateDatabase, user);
-                response.Errors["Error"].Add(ErrorConstants.FailedToUpdateDatabase);
-                return response;
+                return response.ErrorHandling(ErrorConstants.FailedToUpdateDatabase, _logger, user);
             }
             var company = new Client()
             {
@@ -167,13 +152,12 @@ namespace HRHunters.Domain.Managers
             {
                 _repo.Create(company, RoleConstants.ADMIN);
                 response.Succeeded = true;
+                return response;
             }
             catch(Exception e)
             {
-                _logger.LogError(e.Message, company);
-                response.Errors["Error"].Add(e.Message);
+                return response.ErrorHandling(e.Message, _logger, company);
             }
-            return response;
         }
     }
 }
