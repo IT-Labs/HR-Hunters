@@ -113,6 +113,10 @@ export class ClientService {
       );
   }
 
+  // addClient(clientData) {
+  //   return this.http.post(this.baseUrl + "/Clients", clientData);
+  // }
+
   addClient(clientData) {
     this.http
       .post<{
@@ -133,7 +137,7 @@ export class ClientService {
             this.authService.logout();
             return;
           }
-          if (error.error) {
+          if (!!error.error.errors) {
             this.toastrService.error(
               error.error.errors.Error[0],
               "Error occured!"

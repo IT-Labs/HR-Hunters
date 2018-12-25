@@ -33,6 +33,7 @@ export class ApplicantProfileComponent implements OnInit {
     school: null
   };
   imagePreview: string | ArrayBuffer;
+  defaultImage = 'https://i.ibb.co/Rg5Rhpq/avatar.jpg';
   imageValid = true;
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
@@ -102,7 +103,11 @@ export class ApplicantProfileComponent implements OnInit {
         this.applicantProfileFormHP.controls.experience.setValue(
           this.loggedInApplicant.experience
         );
-        this.imagePreview = this.loggedInApplicant.photo;
+        if (this.loggedInApplicant.photo !== "") {
+          this.imagePreview = this.loggedInApplicant.photo;
+        } else {
+          this.imagePreview = this.defaultImage
+        }
         this.loading = false;
       });
 

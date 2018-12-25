@@ -15,6 +15,7 @@ export class ClientProfileComponent implements OnInit {
   serverError;
   validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
   imagePreview: string | ArrayBuffer;
+  defaultImage = 'https://i.ibb.co/Rg5Rhpq/avatar.jpg';
   imageValid = true;
   loggedInUser;
   loggedInClient: Client = {
@@ -60,7 +61,11 @@ export class ClientProfileComponent implements OnInit {
         this.clientProfileFormHP.controls.phonenumber.setValue(
           this.loggedInClient.phoneNumber
         );
-        this.imagePreview = this.loggedInClient.logo;
+        if (this.loggedInClient.logo !== "") {
+          this.imagePreview = this.loggedInClient.logo;
+        } else {
+          this.imagePreview = this.defaultImage;
+        }
         this.loading = false;
       });
 

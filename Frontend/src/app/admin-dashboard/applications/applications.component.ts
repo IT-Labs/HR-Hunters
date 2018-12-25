@@ -170,6 +170,16 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
+  // changeStatus(status) {
+  //   this.servic.changeStatus(status).subscribe(res => {
+  //     this.status= status;
+  //     this.toastrService.success('', 'Status changed successfully!');
+  //   }),
+  //   err=> {
+
+  //   }
+  // }
+
   ngOnDestroy() {
     this.applicationsSub.unsubscribe();
   }
