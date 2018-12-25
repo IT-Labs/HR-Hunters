@@ -30,5 +30,20 @@
         </button>
       </div>
     </div>
+    <!--  -->
+    <div class="jp__container" *ngIf="jobPostings.length === 0">
+      <p class="jp__meta">
+        There are no application to be showen, as you have not yet applied for a
+        job.
+      </p>
+      <div class="jp__btn-container">
+        <button
+          class="btn btn__secondary"
+          [routerLink]="['/client/add-job-posting']"
+        >
+          &larr; Add job posting
+        </button>
+      </div>
+    </div>
   </div>
 </div>
