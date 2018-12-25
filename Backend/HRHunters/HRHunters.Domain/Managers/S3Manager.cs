@@ -3,6 +3,7 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using HRHunters.Common.Constants;
 using HRHunters.Common.Entities;
+using HRHunters.Common.HelperMethods;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Responses;
 using Microsoft.AspNetCore.Http;
@@ -35,9 +36,7 @@ namespace HRHunters.Domain.Managers
             var response = new GeneralResponse();
             if (image.ContentType != "image/jpg" && image.ContentType != "image/png" && image.ContentType != "image/jpeg")
             {
-                _logger.LogError(ErrorConstants.InvalidFormat, image);
-                response.Errors["Error"].Add(ErrorConstants.InvalidFormat);
-                return response;
+                return response.ErrorHandling(ErrorConstants.InvalidFormat, _logger, image.ContentType);
             }
             if (id != currentUserId)
             {
@@ -46,28 +45,30 @@ namespace HRHunters.Domain.Managers
             }
             try
             {
+                var ext = image.FileName.EndsWith(".JPG")
+                                ? ".JPG" : image.FileName.EndsWith(".PNG")
+                                    ? ".PNG" : ".JPEG";
+                var keyName = g.ToString() + ext;
                 var fileTransferUtility = new TransferUtility(_amazonClient);
                 using (var stream = new MemoryStream())
                 {
                     image.CopyTo(stream);
-                    await fileTransferUtility.UploadAsync(stream, bucketName, g.ToString());
+                    await fileTransferUtility.UploadAsync(stream, bucketName, keyName);
                 }
-                var ext = image.FileName.EndsWith(".JPG")
-                                ? ".JPG" : image.FileName.EndsWith(".PNG")
-                                    ? ".PNG" : ".JPEG";
+                
                 //Update database with user picture
                 var user = await _userManager.FindByIdAsync(id.ToString());
                 var role = await _userManager.GetRolesAsync(user);
                 if (role.Contains(RoleConstants.APPLICANT))
                 {
                     var applicant = _baseManager.GetById<Applicant>(id);
-                    applicant.Logo = g.ToString() + ext;
+                    applicant.Logo = keyName;
                     _baseManager.Update(applicant, applicant.User.FirstName);
                 }
                 else if (role.Contains(RoleConstants.CLIENT))
                 {
                     var client = _baseManager.GetById<Client>(id);
-                    client.Logo = g.ToString() + ext;
+                    client.Logo = keyName;
                     _baseManager.Update(client, client.User.FirstName);
                 }
                 response.Succeeded = true;
@@ -75,40 +76,8 @@ namespace HRHunters.Domain.Managers
             }
             catch
             {
-                _logger.LogError("Failed to upload image", image);
-                response.Errors["Error"].Add("Failed to upload image.");
-                return response;
+                return response.ErrorHandling("Failed to upload image", _logger, objects: image);
             }
-        }
-
-        public async Task<string> GetImageAsync(int id, int currentUserId)
-        {
-            if(id != currentUserId)
-            {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess, id, currentUserId);
-                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
-            }
-            var user = await _userManager.FindByIdAsync(id.ToString());
-            var roles = await _userManager.GetRolesAsync(user);
-            string keyName = null;
-            if(roles.Contains(RoleConstants.APPLICANT))
-            {
-                var applicant = _baseManager.GetById<Applicant>(id);
-                keyName = applicant.Logo;
-            }else
-            {
-                var client = _baseManager.GetById<Client>(id);
-                keyName = client.Logo;
-            }
-
-            var urlRequest = new GetPreSignedUrlRequest
-            {
-                BucketName = EnvironmentVariables.BUCKET_NAME,
-                Key = keyName,
-                Expires = DateTime.Now.AddDays(10)
-            };
-
-            return _amazonClient.GetPreSignedURL(urlRequest);
         }
     }
 }

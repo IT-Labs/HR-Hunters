@@ -7,6 +7,7 @@ using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,15 +20,15 @@ namespace HRHunters.Domain.Managers
         private readonly IMapper _mapper;
         private readonly SignInManager<User> _signInManager;
         private readonly ITokenGeneration _tokenGeneration;
-        private readonly IClientManager _clientManager;
-        private readonly IApplicantManager _applicantManager;
+        private readonly IBaseManager _baseManager;
         private readonly IEmailSenderManager _emailSender;
-        public UsersManager(UserManager<User> userManager, IMapper mapper, 
-            SignInManager<User> signInManager, ITokenGeneration tokenGeneration, IClientManager clientManager, IApplicantManager applicantManager, IEmailSenderManager emailSender)
+        private readonly ILogger<UsersManager> _logger;
+        public UsersManager(UserManager<User> userManager, IMapper mapper, ILogger<UsersManager> logger, 
+            SignInManager<User> signInManager, ITokenGeneration tokenGeneration, IBaseManager baseManager, IEmailSenderManager emailSender)
         {
+            _logger = logger;
             _emailSender = emailSender;
-            _clientManager = clientManager;
-            _applicantManager = applicantManager;
+            _baseManager = baseManager;
             _tokenGeneration = tokenGeneration;
             _userManager = userManager;
             _mapper = mapper;
@@ -93,18 +94,14 @@ namespace HRHunters.Domain.Managers
                 userToReturn.Errors["Error"].AddRange(list);
                 return userToReturn;
             }
-            if (role == RoleConstants.CLIENT)
-            {
-                userToCreate.LastName = null;
-            }
 
             if (role.Equals(RoleConstants.APPLICANT))
             {
-                _applicantManager.Create(new Applicant() { User = userToCreate });
+                _baseManager.Create(new Applicant() { User = userToCreate });
             }
             else
             {
-                _clientManager.Create(new Client() { User = userToCreate });
+                _baseManager.Create(new Client() { User = userToCreate });
             }
 
             await _userManager.AddToRoleAsync(userToCreate, role);

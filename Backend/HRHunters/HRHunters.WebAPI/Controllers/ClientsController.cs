@@ -40,7 +40,7 @@ namespace HRHunters.WebAPI.Controllers
         [HttpGet]
         public IActionResult GetMultipleClients([FromQuery]SearchRequest request)
         {
-            return Ok(_clientManager.GetMultiple(request,GetCurrentUserId()));
+            return Ok(_clientManager.GetMultiple(request));
         }
         [HttpGet("{id}")]
         public IActionResult GetOneClient(int id)

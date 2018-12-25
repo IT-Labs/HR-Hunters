@@ -11,6 +11,8 @@ using Amazon.Runtime;
 using Amazon;
 using HRHunters.Common.Entities;
 using Microsoft.AspNetCore.Identity;
+using HRHunters.Common.Responses;
+using HRHunters.Common.HelperMethods;
 
 namespace HRHunters.Domain.Managers
 {
@@ -23,7 +25,7 @@ namespace HRHunters.Domain.Managers
             _userManager = userManager;
             _emailTemplate = emailTemplate;
         }
-        public async Task SendEmail(Applicant applicant, JobPosting jobPosting)
+        public async Task<GeneralResponse> SendEmail(Applicant applicant, JobPosting jobPosting)
         {
             var numOfApplication = applicant.Applications.Count;
             using (var client = new AmazonSimpleEmailServiceClient(new EnvironmentVariablesAWSCredentials(), RegionEndpoint.USWest2))
@@ -34,7 +36,7 @@ namespace HRHunters.Domain.Managers
                     Destination = new Destination
                     {
                         ToAddresses =
-                        new List<string> { ConstantStrings.EMAIL_RECIEVER }
+                        new List<string> { applicant.User.Email }
                     },
                     Message = new Message
                     {
@@ -58,18 +60,21 @@ namespace HRHunters.Domain.Managers
                         }
                     },
                 };
+                var generalResponse = new GeneralResponse();
+                var emailResponse = new SendEmailResponse();
                 try
                 {
-                    var response = await client.SendEmailAsync(sendRequest);
+                    emailResponse = await client.SendEmailAsync(sendRequest);
+                    generalResponse.Succeeded = true;
+                    return generalResponse;
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
-                    throw;
+                    return generalResponse.ErrorHandling<EmailSenderManager>(emailResponse.MessageId, objects: (sendRequest, e));
                 }
             }
         }
-        public async Task SendEmail(User user)
+        public async Task<GeneralResponse> SendEmail(User user)
         {
             var roles = await _userManager.GetRolesAsync(user);
             var role = roles.Contains(RoleConstants.APPLICANT) ? "Applicant" : "Client";
@@ -106,14 +111,17 @@ namespace HRHunters.Domain.Managers
                         }
                     },
                 };
+                var emailResponse = new SendEmailResponse();
+                var generalResponse = new GeneralResponse();
                 try
                 {
-                    var response = await client.SendEmailAsync(sendRequest);
+                    emailResponse = await client.SendEmailAsync(sendRequest);
+                    generalResponse.Succeeded = true;
+                    return generalResponse;
                 }
                 catch(Exception e)
                 {
-                    Console.WriteLine(e.Message);
-                    throw;
+                    return generalResponse.ErrorHandling<EmailSenderManager>(emailResponse.MessageId, objects: (sendRequest, e));
                 }
             }
         }

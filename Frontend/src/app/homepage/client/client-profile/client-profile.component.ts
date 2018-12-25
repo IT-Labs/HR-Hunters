@@ -143,19 +143,19 @@ export class ClientProfileComponent implements OnInit {
           this.clientProfileImageFormHP.controls["logo"].updateValueAndValidity();
           this.imagePreview = reader.result;
           this.imageValid = true;
+          this.onSubmitClientLogo();
         } else {
           this.imageValid = false;
         }
-      }, 1000);
+      }, 2000);
     };
     reader.readAsDataURL(file);
-    this.onSubmitClientLogo();
     this.loading = false;
   }
 
   buildImageFile(logo: any) {
     const logoData = new FormData();
-    logoData.append("logo", logo);
+    logoData.append("logo", logo, this.clientProfileFormHP.value.companyName);
     return logoData
   }
   
