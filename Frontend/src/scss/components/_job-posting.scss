@@ -1,6 +1,10 @@
 .jp {
     &__container {
         width: 100%;
+        border-bottom: 1px solid lightgray;
+        padding-bottom: 1rem;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
     }
 
     // &__heading {

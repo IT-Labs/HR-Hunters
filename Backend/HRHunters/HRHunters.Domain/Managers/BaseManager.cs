@@ -40,9 +40,9 @@ namespace HRHunters.Domain.Managers
             return _repo.Get(filter, includeProperties);
         }
 
-        public IQueryable<TEntity> GetAll<TEntity>(string includeProperities) where TEntity : Entity
+        public IQueryable<TEntity> GetAll<TEntity>(string includeProperties = null) where TEntity : Entity
         {
-            return _repo.GetAll<TEntity>(includeProperties: null);
+            return _repo.GetAll<TEntity>(includeProperties);
         }
 
         public TEntity GetById<TEntity>(object id) where TEntity : Entity

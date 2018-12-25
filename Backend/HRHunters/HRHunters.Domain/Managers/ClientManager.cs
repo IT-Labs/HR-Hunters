@@ -24,7 +24,6 @@ namespace HRHunters.Domain.Managers
 {
     public class ClientManager : BaseManager, IClientManager
     {
-        private readonly IRepository _repo;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly ILogger<ClientManager> _logger;
@@ -33,13 +32,12 @@ namespace HRHunters.Domain.Managers
             _logger = logger;
             _userManager = userManager;
             _mapper = mapper;
-            _repo = repo;
         }
         public ClientResponse GetMultiple(SearchRequest request)
         {
             var response = new ClientResponse() { Clients = new List<ClientInfo>()};
 
-            var query = _repo.GetAll<Client>(includeProperties: $"{nameof(User)}," +
+            var query = GetAll<Client>(includeProperties: $"{nameof(User)}," +
                                    $"{nameof(Client.JobPostings)}");
             var selected = _mapper.ProjectTo<ClientInfo>(query);
             if (request.PageSize != 0 && request.CurrentPage != 0)
@@ -47,7 +45,7 @@ namespace HRHunters.Domain.Managers
 
             response.Clients.AddRange(selected.ToList());
 
-            var groupings = _repo.GetAll<Client>().GroupBy(x => x.Status).Select(x => new{ Status = x.Key, Count = x.Count() }).ToList();
+            var groupings = GetAll<Client>().GroupBy(x => x.Status).Select(x => new{ Status = x.Key, Count = x.Count() }).ToList();
 
             response.MaxClients = groupings.Sum(x => x.Count);
             response.Active = groupings.Where(x => x.Status.Equals(ClientStatus.Active)).Select(x => x.Count).FirstOrDefault();
@@ -58,13 +56,13 @@ namespace HRHunters.Domain.Managers
 
         public ClientInfo GetOneClient(int id)
         {
-            var query = _repo.GetOne<Client>(x => x.Id == id, includeProperties: $"{nameof(User)}");
+            var query = GetOne<Client>(x => x.Id == id, includeProperties: $"{nameof(User)}");
             return _mapper.Map<ClientInfo>(query);
         }
 
         public GeneralResponse UpdateClientStatus(ClientStatusUpdate clientStatusUpdate)
         {
-            var client = _repo.GetOne<Client>(filter: x => x.Id == clientStatusUpdate.Id,
+            var client = GetOne<Client>(filter: x => x.Id == clientStatusUpdate.Id,
                                                     includeProperties: $"{nameof(User)},{nameof(Client.JobPostings)}");
             var response = new GeneralResponse();
             if (client == null)
@@ -80,7 +78,7 @@ namespace HRHunters.Domain.Managers
                     client.Status = statusToUpdate;
                     try
                     {
-                        _repo.Update(client, RoleConstants.ADMIN);
+                        Update(client, RoleConstants.ADMIN);
                         response.Succeeded = true;
                     }catch(Exception e)
                     {
@@ -102,7 +100,7 @@ namespace HRHunters.Domain.Managers
 
             var user = await _userManager.FindByIdAsync(id.ToString());
 
-            var client = _repo.GetById<Client>(id);
+            var client = GetById<Client>(id);
             client = _mapper.Map(clientUpdate, client);
             client.User.ModifiedDate = DateTime.UtcNow;
             client.User.ModifiedBy = client.User.FirstName;
@@ -114,7 +112,7 @@ namespace HRHunters.Domain.Managers
             }
             try
             {
-                _repo.Update(client, client.User.FirstName);
+                Update(client, client.User.FirstName);
                 await _userManager.UpdateAsync(user);
                 response.Succeeded = true;
                 return response;
@@ -150,7 +148,7 @@ namespace HRHunters.Domain.Managers
             company = _mapper.Map(newCompany, company);
             try
             {
-                _repo.Create(company, RoleConstants.ADMIN);
+                Create(company, RoleConstants.ADMIN);
                 response.Succeeded = true;
                 return response;
             }

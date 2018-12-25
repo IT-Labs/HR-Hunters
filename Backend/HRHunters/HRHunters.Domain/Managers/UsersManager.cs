@@ -5,6 +5,7 @@ using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests.Users;
 using HRHunters.Common.Responses;
+using HRHunters.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,21 +15,19 @@ using System.Threading.Tasks;
 
 namespace HRHunters.Domain.Managers
 {
-    public class UsersManager : IUsersManager
+    public class UsersManager : BaseManager, IUsersManager
     {
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly SignInManager<User> _signInManager;
         private readonly ITokenGeneration _tokenGeneration;
-        private readonly IBaseManager _baseManager;
         private readonly IEmailSenderManager _emailSender;
         private readonly ILogger<UsersManager> _logger;
         public UsersManager(UserManager<User> userManager, IMapper mapper, ILogger<UsersManager> logger, 
-            SignInManager<User> signInManager, ITokenGeneration tokenGeneration, IBaseManager baseManager, IEmailSenderManager emailSender)
+            SignInManager<User> signInManager, ITokenGeneration tokenGeneration, IRepository repo, IEmailSenderManager emailSender) : base(repo)
         {
             _logger = logger;
             _emailSender = emailSender;
-            _baseManager = baseManager;
             _tokenGeneration = tokenGeneration;
             _userManager = userManager;
             _mapper = mapper;
@@ -54,19 +53,18 @@ namespace HRHunters.Domain.Managers
                 return userToReturn;
             }
             //If OK generate token
-            var appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userLoginModel.Email.ToLower());
-            userToReturn = _mapper.Map<UserLoginReturnModel>(appUser);
-            var roles = await _userManager.GetRolesAsync(appUser);
+            userToReturn = _mapper.Map<UserLoginReturnModel>(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
             //Check if it is first-time login
-            if (appUser.ModifiedDate != null)
+            if (user.ModifiedDate != null)
                 userToReturn.NewUser = false;
             else
                 userToReturn.NewUser = true;
 
             userToReturn.Succeeded = true;
             userToReturn.Token = await _tokenGeneration.GenerateJwtToken(user);
-            userToReturn.Role = roles.Contains(RoleConstants.APPLICANT) ? 1 : roles.Contains(RoleConstants.CLIENT) ? 2 : 3 ;
+            userToReturn.Role = roles.Contains(RoleConstants.APPLICANT) ? (int)UserType.APPLICANT : roles.Contains(RoleConstants.CLIENT) ? (int)UserType.CLIENT : (int)UserType.ADMIN;
             return userToReturn;
         }
 
@@ -97,11 +95,11 @@ namespace HRHunters.Domain.Managers
 
             if (role.Equals(RoleConstants.APPLICANT))
             {
-                _baseManager.Create(new Applicant() { User = userToCreate });
+                Create(new Applicant() { User = userToCreate });
             }
             else
             {
-                _baseManager.Create(new Client() { User = userToCreate });
+                Create(new Client() { User = userToCreate });
             }
 
             await _userManager.AddToRoleAsync(userToCreate, role);

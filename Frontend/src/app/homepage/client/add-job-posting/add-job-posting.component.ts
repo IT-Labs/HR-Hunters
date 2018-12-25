@@ -4,6 +4,7 @@ import { JobPostingService } from "src/app/services/job-posting.service";
 import { Router } from "@angular/router";
 import { NgbDate, NgbCalendar } from "@ng-bootstrap/ng-bootstrap";
 import { AuthService } from "src/app/services/auth.service";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-add-job-posting",
@@ -59,7 +60,9 @@ export class AddJobPostingComponent implements OnInit {
     private fb: FormBuilder,
     private jobPostingService: JobPostingService,
     private calendar: NgbCalendar,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
@@ -276,8 +279,27 @@ export class AddJobPostingComponent implements OnInit {
       this.toDate &&
       this.validDate
     ) {
-      this.jobPostingService.addJobPosting(jobPostingData);
+      this.jobPostingService.addJobPosting(jobPostingData).subscribe(
+        response => {
+            this.router.navigate(["/admin-dashboard/job-postings"]);
+            this.loading = false;
+            this.toastr.success("", "Job posting added successfully!");
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            this.loading = false;
+            return;
+          }
+          if (error.error) {
+            this.toastr.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+            this.loading = false;
+          }
+        }
+      );
     }
-    this.loading = false;
   }
 }

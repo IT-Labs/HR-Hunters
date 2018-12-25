@@ -25,7 +25,6 @@ namespace HRHunters.Domain.Managers
 
     public class ApplicationManager : BaseManager, IApplicationManager
     {
-        private readonly IRepository _repo;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly ILogger<ApplicationManager> _logger;
@@ -33,33 +32,17 @@ namespace HRHunters.Domain.Managers
         public ApplicationManager(IRepository repo, IMapper mapper, UserManager<User> userManager, ILogger<ApplicationManager> logger, IEmailSenderManager emailSender) : base(repo)
         {
             _emailSender = emailSender;
-            _repo = repo;
             _mapper = mapper;
             _userManager = userManager;
             _logger = logger;
         }
 
-        public ApplicationInfo GetOneApplication(int id, int currentUserId)
+        public async Task<ApplicationResponse> GetMultiple(SearchRequest request)
         {
-            var application = _repo.GetOne<Application>(x => x.Id == id, includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
-                                                                                            $"{nameof(JobPosting)}");
-            if (application.ApplicantId != currentUserId) {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess, application.ApplicantId, currentUserId);
-                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
-            }
-            return _mapper.Map<ApplicationInfo>(application);
-        }
+            var user = await _userManager.FindByIdAsync(request.Id.ToString());
+            IList<string> role = _userManager.GetRolesAsync(user).Result;
 
-        public async Task<ApplicationResponse> GetMultiple(SearchRequest request, int currentUserId)
-        {
-            if (request.Id != currentUserId)
-            {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess, request.Id, currentUserId);
-                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
-            }
-            var current = await _userManager.FindByIdAsync(currentUserId.ToString());
-            IList<string> role = _userManager.GetRolesAsync(current).Result;
-            var query = _repo.GetAll<Application>(includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
+            var query = GetAll<Application>(includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
                                                                      $"{nameof(JobPosting)}");
             if (!role.Contains(RoleConstants.ADMIN))
             {                
@@ -74,7 +57,7 @@ namespace HRHunters.Domain.Managers
             selected = selected.Applyfilters(request);
 
             response.Applications.AddRange(selected.ToList());
-            var groupings = _repo.GetAll<Application>().GroupBy(x => x.Status).Select(x => new { Status = x.Key, Count = x.Count() }).ToList();
+            var groupings = GetAll<Application>().GroupBy(x => x.Status).Select(x => new { Status = x.Key, Count = x.Count() }).ToList();
             
             response.MaxApplications = groupings.Sum(x => x.Count);
             response.Contacted = groupings.Where(x => x.Status.Equals(ApplicationStatus.Contacted)).Select(x => x.Count).FirstOrDefault();
@@ -87,45 +70,42 @@ namespace HRHunters.Domain.Managers
 
         }
 
-        public ApplicationInfo UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
+        public ApplicationInfo GetOneApplication(int id)
         {
-            var application = _repo.GetOne<Application>(filter: x => x.Id == applicationStatusUpdate.Id,
+            return _mapper.Map<ApplicationInfo>(GetOne<Application>(x => x.Id == id, includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)},{nameof(JobPosting)}"));
+        }
+
+        public GeneralResponse UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
+        {
+            var response = new GeneralResponse();
+            var application = GetOne<Application>(filter: x => x.Id == applicationStatusUpdate.Id,
                                                     includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
                                                                        $"{nameof(JobPosting)}");
 
             bool success = Enum.TryParse(applicationStatusUpdate.Status, out ApplicationStatus statusToUpdate);
             if (!success) {
-                _logger.LogError(ErrorConstants.InvalidInput, applicationStatusUpdate.Status);
-                throw new ArgumentException(ErrorConstants.InvalidInput,applicationStatusUpdate.Status);
+                return response.ErrorHandling(ErrorConstants.InvalidInput, _logger, applicationStatusUpdate.Status);
             }
-            else
+            application.Status = statusToUpdate;
+            try
             {
-                application.Status = statusToUpdate;
-                try
-                {
-                    _repo.Update(application, RoleConstants.ADMIN);
-                    return _mapper.Map<ApplicationInfo>(application);
-                }catch(Exception e)
-                {
-                    _logger.LogError(e.Message, application);
-                    throw;
-                }
-                
+                Update(application, RoleConstants.ADMIN);
+                response.Succeeded = true;
+            }catch(Exception e)
+            {
+                _logger.LogError(e.Message, application);
+                throw;
             }
+            return response;
         }
-        public async Task<GeneralResponse> CreateApplication(Apply apply,int currentUserId)
+        public async Task<GeneralResponse> CreateApplication(Apply apply)
         {
             var response = new GeneralResponse();
 
-            if (currentUserId != apply.ApplicantId)
-            {
-                return response.ErrorHandling(ErrorConstants.UnauthorizedAccess, _logger, apply.ApplicantId, currentUserId);
-            }
-
-            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == apply.JobId,
+            var jobPost = GetOne<JobPosting>(filter: x => x.Id == apply.JobId,
                                               includeProperties: $"{nameof(JobPosting.Client)},{nameof(JobPosting.Applications)}");
 
-            var applicant = _repo.GetOne<Applicant>(filter: x => x.Id == apply.ApplicantId, includeProperties: $"{nameof(User)},{nameof(Applicant.Applications)}");
+            var applicant = GetOne<Applicant>(filter: x => x.Id == apply.ApplicantId, includeProperties: $"{nameof(User)},{nameof(Applicant.Applications)}");
             bool applied = jobPost.Applications.Any(x => x.ApplicantId == apply.ApplicantId);
 
             
@@ -144,7 +124,7 @@ namespace HRHunters.Domain.Managers
                 };
                 try
                 {
-                    _repo.Create(application, applicant.User.FirstName);
+                    Create(application, applicant.User.FirstName);
                     response.Succeeded = true;
                     await _emailSender.SendEmail(applicant, jobPost);
                     return response;

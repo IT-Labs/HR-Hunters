@@ -1,16 +1,16 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { JobPosting } from "src/app/models/job-posting.model";
-import { Subscription } from "rxjs";
 import { JobPostingService } from "src/app/services/job-posting.service";
 import { Router } from "@angular/router";
 import { AuthService } from "src/app/services/auth.service";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-ad-job-postings",
   templateUrl: "./job-postings.component.html",
   styleUrls: ["./job-postings.component.scss"]
 })
-export class ADJobPostingsComponent implements OnInit, OnDestroy {
+export class ADJobPostingsComponent implements OnInit {
   jobPostingsCount = {
     all: 0,
     approved: 0,
@@ -30,7 +30,7 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     currentSortDirection: 0,
     currentFilter: null,
     currentFilterQuery: null
-  }
+  };
 
   jobPostings: JobPosting[] = [];
   paginationSize: number[] = [];
@@ -38,36 +38,45 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
   loading = false;
   loggedInUser;
 
-  private jobPostingSub: Subscription;
-
-  constructor(private jobPostingService: JobPostingService, private router: Router, private authService: AuthService) {}
+  constructor(
+    private jobPostingService: JobPostingService,
+    private router: Router,
+    private authService: AuthService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.loading = true;
-    this.loggedInUser = this.authService.getUser()
+    this.loggedInUser = this.authService.getUser();
     const params = this.buildQueryParams(this.jobPostingQP);
-    this.jobPostingService.getJobPostings(params);
-    this.jobPostingSub = this.jobPostingService
-      .getJobPostingUpdateListener()
-      .subscribe(jobPostingData => {
-        this.jobPostings = jobPostingData.jobPostings;
-        this.jobPostingsCount.all = jobPostingData.jobPostingCount;
-        this.jobPostingsCount.approved = jobPostingData.approved;
-        this.jobPostingsCount.pending = jobPostingData.pending;
-        this.jobPostingsCount.expired = jobPostingData.expired;
-        this.jobPostingsCount.rejected = jobPostingData.rejected
-        this.loading = false;
-      });
-      setTimeout(() => {
-        this.paginationMaxSize = this.jobPostingsCount.all
-      }, 1000);
+    this.jobPostingService.getJobPostings(params).subscribe(jobPostingData => {
+      this.jobPostings = jobPostingData.jobPostings;
+      this.jobPostingsCount.all = jobPostingData.maxJobPosts;
+      this.jobPostingsCount.approved = jobPostingData.approved;
+      this.jobPostingsCount.pending = jobPostingData.pending;
+      this.jobPostingsCount.expired = jobPostingData.expired;
+      this.jobPostingsCount.rejected = jobPostingData.rejected;
+
+      this.paginationMaxSize = this.jobPostingsCount.all;
+      this.loading = false;
+    });
   }
 
   buildQueryParams(data) {
     if (data.currentFilter === null) {
-    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&id=${this.loggedInUser.id}`;
+      return `?pageSize=${data.postsPerPage}&currentPage=${
+        data.currentPage
+      }&sortedBy=${data.currentSortBy}&sortDir=${
+        data.currentSortDirection
+      }&id=${this.loggedInUser.id}`;
     }
-    return `?pageSize=${data.postsPerPage}&currentPage=${data.currentPage}&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&filterBy=${data.currentFilter}&filterQuery=${data.currentFilterQuery}&id=${this.loggedInUser.id}`;
+    return `?pageSize=${data.postsPerPage}&currentPage=${
+      data.currentPage
+    }&sortedBy=${data.currentSortBy}&sortDir=${
+      data.currentSortDirection
+    }&filterBy=${data.currentFilter}&filterQuery=${
+      data.currentFilterQuery
+    }&id=${this.loggedInUser.id}`;
   }
 
   buildJobPostingDataOnUpdate(
@@ -96,55 +105,74 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     return jobPostingData;
   }
 
-  onEditJobPosting(id: number) {
-    this.jobPostingService.editJobPostingId = id;
-  }
+  // onEditJobPosting(id: number) {
+  //   this.jobPostingService.editJobPostingId = id;
+  // }
 
   onChangedPage(page: number) {
     this.loading = true;
     if (this.jobPostingQP.currentPage !== this.jobPostingQP.previousPage) {
       this.jobPostingQP.previousPage = this.jobPostingQP.currentPage;
       const params = this.buildQueryParams(this.jobPostingQP);
-      this.jobPostingService.getJobPostings(params);
-      this.loading = false;
+      this.jobPostingService
+        .getJobPostings(params)
+        .subscribe(jobPostingData => {
+          this.jobPostings = jobPostingData.jobPostings;
+          this.jobPostingsCount.all = jobPostingData.maxJobPosts;
+          this.jobPostingsCount.approved = jobPostingData.approved;
+          this.jobPostingsCount.pending = jobPostingData.pending;
+          this.jobPostingsCount.expired = jobPostingData.expired;
+          this.jobPostingsCount.rejected = jobPostingData.rejected;
+
+          this.paginationMaxSize = this.jobPostingsCount.all;
+          this.loading = false;
+        });
     }
   }
 
   onFilter(filterBy: string) {
     this.loading = true;
     if (filterBy === null) {
-      this.jobPostingQP.currentFilter = null
+      this.jobPostingQP.currentFilter = null;
     } else {
-      this.jobPostingQP.currentFilter = 'status'
-    }
-
-    // CALCULATE PAGINATION
-    if (filterBy === null) {
-      this.paginationMaxSize = this.jobPostingsCount.all
-    } else if (filterBy === 'Pending') {
-      this.paginationMaxSize = this.jobPostingsCount.pending
-    } else if (filterBy === 'Expired') {
-      this.paginationMaxSize = this.jobPostingsCount.expired
-    } else if (filterBy === 'Approved') {
-      this.paginationMaxSize = this.jobPostingsCount.approved
-    } else if (filterBy === 'Rejected') {
-      this.paginationMaxSize = this.jobPostingsCount.rejected
+      this.jobPostingQP.currentFilter = "status";
     }
 
     this.jobPostingQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.jobPostingQP);
-    this.jobPostingService.getJobPostings(params);
-    this.loading = false;
+    this.jobPostingService.getJobPostings(params).subscribe(jobPostingData => {
+      this.jobPostings = jobPostingData.jobPostings;
+      this.jobPostingsCount.all = jobPostingData.maxJobPosts;
+      this.jobPostingsCount.approved = jobPostingData.approved;
+      this.jobPostingsCount.pending = jobPostingData.pending;
+      this.jobPostingsCount.expired = jobPostingData.expired;
+      this.jobPostingsCount.rejected = jobPostingData.rejected;
+
+      // CALCULATE PAGINATION
+      if (filterBy === null) {
+        this.paginationMaxSize = jobPostingData.maxJobPosts;
+      } else if (filterBy === "Pending") {
+        this.paginationMaxSize = jobPostingData.pending;
+      } else if (filterBy === "Expired") {
+        this.paginationMaxSize = jobPostingData.expired;
+      } else if (filterBy === "Approved") {
+        this.paginationMaxSize = jobPostingData.approved;
+      } else if (filterBy === "Rejected") {
+        this.paginationMaxSize = jobPostingData.rejected;
+      }
+      this.loading = false;
+    });
   }
 
   onSort(sortBy: any) {
+    this.loading = true;
     if (this.jobPostingQP.lastSortBy === sortBy) {
       if (this.jobPostingQP.currentSortDirection === 1) {
         this.jobPostingQP.currentSortDirection = 0;
       } else if (this.jobPostingQP.currentSortDirection === 0) {
         this.jobPostingQP.currentSortDirection = 1;
       }
-      this.jobPostingQP.lastSortBy = '';
+      this.jobPostingQP.lastSortBy = "";
     } else if (this.jobPostingQP.lastSortBy !== sortBy) {
       if (this.jobPostingQP.currentSortDirection === 1) {
         this.jobPostingQP.currentSortDirection = 0;
@@ -155,7 +183,17 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
     }
     this.jobPostingQP.currentSortBy = sortBy;
     const params = this.buildQueryParams(this.jobPostingQP);
-    this.jobPostingService.getJobPostings(params);
+    this.jobPostingService.getJobPostings(params).subscribe(jobPostingData => {
+      this.jobPostings = jobPostingData.jobPostings;
+      this.jobPostingsCount.all = jobPostingData.maxJobPosts;
+      this.jobPostingsCount.approved = jobPostingData.approved;
+      this.jobPostingsCount.pending = jobPostingData.pending;
+      this.jobPostingsCount.expired = jobPostingData.expired;
+      this.jobPostingsCount.rejected = jobPostingData.rejected;
+
+      this.paginationMaxSize = this.jobPostingsCount.all;
+      this.loading = false;
+    });
   }
 
   chooseStatus(event: any, id: number) {
@@ -173,17 +211,35 @@ export class ADJobPostingsComponent implements OnInit, OnDestroy {
       null,
       null,
       null
-    )
-    this.jobPostingService.updateJobPostingStatus(jobPostingData);
-
-    setTimeout(() => {
-      const params = this.buildQueryParams(this.jobPostingQP);
-      this.jobPostingService.getJobPostings(params);
-      this.loading = false;
-    }, 1000);
-  }
-
-  ngOnDestroy() {
-    this.jobPostingSub.unsubscribe();
+    );
+    this.jobPostingService.updateJobPostingStatus(jobPostingData).subscribe(
+      response => {
+        const params = this.buildQueryParams(this.jobPostingQP);
+        this.jobPostingService.getJobPostings(params).subscribe(jobPostingData => {
+          this.jobPostings = jobPostingData.jobPostings;
+          this.jobPostingsCount.all = jobPostingData.maxJobPosts;
+          this.jobPostingsCount.approved = jobPostingData.approved;
+          this.jobPostingsCount.pending = jobPostingData.pending;
+          this.jobPostingsCount.expired = jobPostingData.expired;
+          this.jobPostingsCount.rejected = jobPostingData.rejected;
+    
+          this.paginationMaxSize = this.jobPostingsCount.all;
+          this.loading = false;
+          this.toastr.success("", "Job posting status updated successfully!");
+        });
+      },
+      error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          return;
+        }
+        if (!!error.error.errors) {
+          this.toastr.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
+        }
+      }
+    );
   }
 }

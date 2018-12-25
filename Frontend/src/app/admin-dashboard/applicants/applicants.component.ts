@@ -1,17 +1,18 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Applicant } from "src/app/models/applicant.model";
-import { Subscription } from "rxjs";
 import { ApplicantService } from "src/app/services/applicant.service";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-ad-applicants",
   templateUrl: "./applicants.component.html",
   styleUrls: ["./applicants.component.scss"]
 })
-export class ADApplicantsComponent implements OnInit, OnDestroy {
+export class ADApplicantsComponent implements OnInit {
   applicantsCount = {
     all: 0
   };
+  loggedInUser;
   applicants: Applicant[] = [];
   applicantsQP = {
     postsPerPage: 10,
@@ -22,32 +23,30 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
     currentSortDirection: 0
   };
   paginationSize: number[] = [];
-
   loading = false;
 
-  private applicantsSub: Subscription;
-
   constructor(
-    private applicantService: ApplicantService
+    private applicantService: ApplicantService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     this.loading = true;
+    this.loggedInUser = this.authService.getUser();
     const params = this.buildQueryParams(this.applicantsQP);
-    this.applicantService.getApplicants(params);
-    this.applicantsSub = this.applicantService
-      .getApplicantsUpdateListener()
-      .subscribe(applicantData => {
-        this.applicants = applicantData.applicants;
-        this.applicantsCount.all = applicantData.applicantsCount;
-        this.loading = false;
-      });
+    this.applicantService.getApplicants(params).subscribe(applicantData => {
+      this.applicants = applicantData.applicants;
+      this.applicantsCount.all = applicantData.maxApplicants;
+      this.loading = false;
+    });
   }
 
   buildQueryParams(data) {
     return `?pageSize=${data.postsPerPage}&currentPage=${
       data.currentPage
-    }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+    }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&id=${
+      this.loggedInUser.id
+    }`;
   }
 
   buildApplicantDataOnUpdate(
@@ -76,8 +75,11 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
     if (this.applicantsQP.currentPage !== this.applicantsQP.previousPage) {
       this.applicantsQP.previousPage = this.applicantsQP.currentPage;
       const params = this.buildQueryParams(this.applicantsQP);
-      this.applicantService.getApplicants(params);
-      this.loading = false;
+      this.applicantService.getApplicants(params).subscribe(applicantData => {
+        this.applicants = applicantData.applicants;
+        this.applicantsCount.all = applicantData.maxApplicants;
+        this.loading = false;
+      });
     }
   }
 
@@ -100,11 +102,10 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
     }
     this.applicantsQP.currentSortBy = sortBy;
     const params = this.buildQueryParams(this.applicantsQP);
-    this.applicantService.getApplicants(params);
-    this.loading = false;
-  }
-
-  ngOnDestroy() {
-    this.applicantsSub.unsubscribe();
+    this.applicantService.getApplicants(params).subscribe(applicantData => {
+      this.applicants = applicantData.applicants;
+      this.applicantsCount.all = applicantData.maxApplicants;
+      this.loading = false;
+    });
   }
 }

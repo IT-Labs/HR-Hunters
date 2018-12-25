@@ -5,6 +5,7 @@ import { ClientService } from "src/app/services/client.service";
 import { AuthService } from "src/app/services/auth.service";
 import { Subscription } from "rxjs";
 import { Client } from "src/app/models/client.model";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-client-profile",
@@ -15,6 +16,7 @@ export class ClientProfileComponent implements OnInit {
   serverError;
   validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
   imagePreview: string | ArrayBuffer;
+  defaultImage = "https://i.ibb.co/Rg5Rhpq/avatar.jpg";
   imageValid = true;
   loggedInUser;
   loggedInClient: Client = {
@@ -30,45 +32,39 @@ export class ClientProfileComponent implements OnInit {
   );
   loading = false;
 
-  private clientProfileSub: Subscription;
-
-  private clientErrorSub: Subscription;
-
   constructor(
     private fb: FormBuilder,
     private clientService: ClientService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
     this.loading = true;
     this.loggedInUser = this.authService.getUser();
-    this.clientService.getClient(this.loggedInUser.id);
-    this.clientProfileSub = this.clientService
-      .getClientProfileListener()
-      .subscribe(clientProfile => {
-        this.loggedInClient = clientProfile.client;
-        this.clientProfileFormHP.controls.companyName.setValue(
-          this.loggedInClient.companyName
-        );
-        this.clientProfileFormHP.controls.companyEmail.setValue(
-          this.loggedInClient.email
-        );
-        this.clientProfileFormHP.controls.location.setValue(
-          this.loggedInClient.location
-        );
-        this.clientProfileFormHP.controls.phonenumber.setValue(
-          this.loggedInClient.phoneNumber
-        );
-        this.imagePreview = this.loggedInClient.logo;
-        this.loading = false;
-      });
+    this.clientService.getClient(this.loggedInUser.id).subscribe(client => {
+      this.loggedInClient = client;
+      this.clientProfileFormHP.controls.companyName.setValue(
+        client.companyName
+      );
+      this.clientProfileFormHP.controls.companyEmail.setValue(client.email);
+      this.clientProfileFormHP.controls.location.setValue(client.location);
+      this.clientProfileFormHP.controls.phonenumber.setValue(
+        client.phoneNumber
+      );
+      if (this.loggedInClient.logo !== "") {
+        this.imagePreview = client.logo;
+      } else {
+        this.imagePreview = this.defaultImage;
+      }
+      this.loading = false;
+    });
 
-    this.clientErrorSub = this.clientService
-      .getClientErrorListener()
-      .subscribe(error => {
-        this.serverError = error.error;
-      });
+    // this.clientErrorSub = this.clientService
+    //   .getClientErrorListener()
+    //   .subscribe(error => {
+    //     this.serverError = error.error;
+    //   });
   }
 
   clientProfileFormHP = this.fb.group({
@@ -140,7 +136,9 @@ export class ClientProfileComponent implements OnInit {
       setTimeout(() => {
         if (img.height < 600 || img.width < 600) {
           this.clientProfileImageFormHP.patchValue({ logo: file });
-          this.clientProfileImageFormHP.controls["logo"].updateValueAndValidity();
+          this.clientProfileImageFormHP.controls[
+            "logo"
+          ].updateValueAndValidity();
           this.imagePreview = reader.result;
           this.imageValid = true;
           this.onSubmitClientLogo();
@@ -156,16 +154,53 @@ export class ClientProfileComponent implements OnInit {
   buildImageFile(logo: any) {
     const logoData = new FormData();
     logoData.append("logo", logo, this.clientProfileFormHP.value.companyName);
-    return logoData
+    return logoData;
   }
-  
+
   onSubmitClientLogo() {
     this.loading = true;
-    this.clientService.uploadCLientLogo(this.loggedInUser.id, this.buildImageFile(this.clientProfileImageFormHP.value.logo))
-    setTimeout(() => {
-      this.clientService.getClient(this.loggedInUser.id);
-      this.loading = false;
-    }, 3000);
+    this.clientService
+      .uploadCLientLogo(
+        this.loggedInUser.id,
+        this.buildImageFile(this.clientProfileImageFormHP.value.logo)
+      )
+      .subscribe(
+        response => {
+          this.clientService.getClient(this.loggedInUser.id).subscribe(
+            clientsData => {
+                this.loggedInClient = clientsData
+            },
+            error => {
+              if (error.status == 401) {
+                this.authService.logout();
+                this.loading = false;
+                return;
+              }
+              if (error.error) {
+                this.toastr.error(
+                  error.error.errors.Error[0],
+                  "Error occured!"
+                );
+                this.loading = false;
+              }
+            }
+          );
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            this.loading = false;
+            return;
+          }
+          if (!!error.error.errors) {
+            this.toastr.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+            this.loading = false;
+          }
+        }
+      );
   }
 
   onSubmitClientProfile() {
@@ -184,8 +219,27 @@ export class ClientProfileComponent implements OnInit {
     );
 
     if (this.clientProfileFormHP.valid) {
-      this.clientService.updateClientProfile(clientData, this.loggedInUser.id);
+      this.clientService.updateClientProfile(clientData, this.loggedInUser.id).subscribe(
+        response => {
+          this.clientService.getClient(this.loggedInUser.id);
+          this.toastr.success('', "Profile updated successfully!");
+          this.loading = false;
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            this.loading = false;
+            return;
+          }
+          if (!!error.error.errors) {
+            this.toastr.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+            this.loading = false;
+          }
+        }
+      );
     }
-    this.loading = false;
   }
 }

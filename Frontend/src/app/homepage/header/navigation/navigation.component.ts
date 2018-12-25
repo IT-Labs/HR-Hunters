@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthService } from "src/app/services/auth.service";
+import { ClientService } from "src/app/services/client.service";
 
 @Component({
   selector: "app-navigation",
@@ -8,21 +9,35 @@ import { AuthService } from "src/app/services/auth.service";
 })
 export class NavigationComponent implements OnInit {
   activeApplicant = true;
+  activeClient = false;
   name = "Josh";
   test = "";
   loggedInUser;
+  loggedInClient;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private clientService: ClientService
+  ) {}
 
   ngOnInit() {
     this.loggedInUser = this.authService.getUser();
-
     this.name = `${this.loggedInUser.firstName}`;
 
     if (this.loggedInUser.role === 1) {
       this.activeApplicant = true;
     } else if (this.loggedInUser.role === 2) {
       this.activeApplicant = false;
+
+      this.clientService.getClient(this.loggedInUser.id).subscribe(client => {
+        this.loggedInClient = client;
+
+        if (client.status === "Active") {
+          this.activeClient = true;
+        } else if (client.status === "Inactive") {
+          this.activeClient = false;
+        }
+      });
     }
   }
 

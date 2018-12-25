@@ -26,9 +26,29 @@
       <div class="jp__btn-container">
         <button
           class="btn btn__secondary"
+          [routerLink]="['/applicant/job-postings']"
+        >
+          &larr; Back
+        </button>
+        <button
+          class="btn btn__secondary"
           [routerLink]="['/applicant/my-applications/', application.id]"
         >
           See more...
+        </button>
+      </div>
+    </div>
+    <!--  -->
+    <div class="jp__container" *ngIf="applications.length === 0">
+      <p class="jp__meta">
+        There are no application to be shown, as you have not yet applied for a
+        job.
+      </p>
+      <div class="jp__btn-container">
+        <button
+          class="btn btn__secondary"
+          [routerLink]="['/applicant/job-postings']"
+        >Find jobs
         </button>
       </div>
     </div>

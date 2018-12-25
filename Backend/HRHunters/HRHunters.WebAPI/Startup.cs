@@ -78,7 +78,7 @@ namespace HRHunters.WebAPI
             opt.AddPolicy("AllowSpecificOrigin",
                 buildr =>
                 {
-                    buildr.WithOrigins("http://dev-docker:9014")
+                    buildr.WithOrigins("http://dev-docker:9014", "http://localhost:4200")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
