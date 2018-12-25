@@ -3,8 +3,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-applicant',
-  templateUrl: './applicant.component.html',
-  styleUrls: ['./applicant.component.scss']
+  templateUrl: './applicant.component.html'
 })
 export class ApplicantComponent implements OnInit {
 

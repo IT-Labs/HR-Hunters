@@ -6,8 +6,7 @@ import { Application } from "src/app/models/application.model";
 
 @Component({
   selector: "app-application-details",
-  templateUrl: "./application-details.component.html",
-  styleUrls: ["./application-details.component.scss"]
+  templateUrl: "./application-details.component.html"
 })
 export class ApplicationDetailsComponent implements OnInit {
   application: Application = {

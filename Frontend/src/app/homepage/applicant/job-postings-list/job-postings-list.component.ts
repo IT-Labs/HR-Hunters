@@ -8,8 +8,7 @@ import { Router } from "@angular/router";
 
 @Component({
   selector: "app-job-postings-list",
-  templateUrl: "./job-postings-list.component.html",
-  styleUrls: ["./job-postings-list.component.scss"]
+  templateUrl: "./job-postings-list.component.html"
 })
 export class JobPostingsListComponent implements OnInit {
   jobPostingQP = {

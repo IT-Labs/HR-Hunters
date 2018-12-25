@@ -7,8 +7,7 @@ import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-new-client-posting",
-  templateUrl: "./new-client.component.html",
-  styleUrls: ["./new-client.component.scss"]
+  templateUrl: "./new-client.component.html"
 })
 export class NewClientComponent implements OnInit {
   validEmail = new RegExp(

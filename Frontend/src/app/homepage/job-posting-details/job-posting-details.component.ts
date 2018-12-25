@@ -8,8 +8,7 @@ import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-job-posting-details",
-  templateUrl: "./job-posting-details.component.html",
-  styleUrls: ["./job-posting-details.component.scss"]
+  templateUrl: "./job-posting-details.component.html"
 })
 export class JobPostingDetailsComponent implements OnInit {
   jobPosting: JobPosting = {

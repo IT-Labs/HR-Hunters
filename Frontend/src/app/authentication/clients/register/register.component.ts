@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
-import { Subscription } from "rxjs";
 import { AuthService } from "src/app/services/auth.service";
 import { PasswordValidator } from "../../../validators/password.validator";
 import { Router } from "@angular/router";
@@ -8,8 +7,7 @@ import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-register",
-  templateUrl: "./register.component.html",
-  styleUrls: ["./register.component.scss"]
+  templateUrl: "./register.component.html"
 })
 export class ClientRegisterComponent {
   authError: string;

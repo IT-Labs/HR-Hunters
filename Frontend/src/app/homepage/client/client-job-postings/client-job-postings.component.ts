@@ -1,13 +1,11 @@
 import { Component } from "@angular/core";
 import { JobPosting } from "src/app/models/job-posting.model";
 import { AuthService } from "src/app/services/auth.service";
-import { Subscription } from "rxjs";
 import { JobPostingService } from "src/app/services/job-posting.service";
 
 @Component({
   selector: "app-client-job-postings",
-  templateUrl: "./client-job-postings.component.html",
-  styleUrls: ["./client-job-postings.component.scss"]
+  templateUrl: "./client-job-postings.component.html"
 })
 export class ClientJobPostingsComponent {
   jobPostingQP = {

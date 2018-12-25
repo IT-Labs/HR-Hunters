@@ -5,8 +5,7 @@ import { Application } from "src/app/models/application.model";
 
 @Component({
   selector: "app-applicant-applications",
-  templateUrl: "./applicant-applications.component.html",
-  styleUrls: ["./applicant-applications.component.scss"]
+  templateUrl: "./applicant-applications.component.html"
 })
 export class ApplicantApplicationsComponent implements OnInit {
   applicationsQP = {
