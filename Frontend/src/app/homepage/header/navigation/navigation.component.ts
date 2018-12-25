@@ -29,13 +29,12 @@ export class NavigationComponent implements OnInit {
     } else if (this.loggedInUser.role === 2) {
       this.activeApplicant = false;
 
-      this.clientService.getClient(this.loggedInUser.id);
-      this.clientService.getClientProfileListener().subscribe(client => {
+      this.clientService.getClient(this.loggedInUser.id).subscribe(client => {
         this.loggedInClient = client;
 
-        if (client.client.status === "Active") {
+        if (client.status === "Active") {
           this.activeClient = true;
-        } else if (client.client.status === "Inactive") {
+        } else if (client.status === "Inactive") {
           this.activeClient = false;
         }
       });

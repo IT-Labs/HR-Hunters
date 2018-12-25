@@ -4,7 +4,8 @@ import { mimeType } from "../../../validators/mime-type.validator";
 import { AuthService } from "src/app/services/auth.service";
 import { ApplicantService } from "src/app/services/applicant.service";
 import { Applicant } from "src/app/models/applicant.model";
-import { Subscription } from "rxjs";
+import { ToastrService } from "ngx-toastr";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-applicant-profile",
@@ -33,7 +34,7 @@ export class ApplicantProfileComponent implements OnInit {
     school: null
   };
   imagePreview: string | ArrayBuffer;
-  defaultImage = 'https://i.ibb.co/Rg5Rhpq/avatar.jpg';
+  defaultImage = "https://i.ibb.co/Rg5Rhpq/avatar.jpg";
   imageValid = true;
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
@@ -65,57 +66,53 @@ export class ApplicantProfileComponent implements OnInit {
     "Select experience..."
   ];
   validExperience: boolean;
-  private applicantProfileSub: Subscription;
-  private applicantErrorSub: Subscription;
 
   constructor(
     private fb: FormBuilder,
     private applicantService: ApplicantService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.loading = true;
     this.loggedInUser = this.authService.getUser();
-    this.applicantService.getApplicant(this.loggedInUser.id);
-    this.applicantProfileSub = this.applicantService
-      .getApplicantProfileListener()
-      .subscribe(applicantProfile => {
-        this.loggedInApplicant = applicantProfile.applicant;
+    this.applicantService.getApplicant(this.loggedInUser.id).subscribe(
+      applicantProfile => {
+        this.loggedInApplicant = applicantProfile;
         this.applicantProfileFormHP.controls.applicantFirstName.setValue(
-          this.loggedInApplicant.firstName
+          applicantProfile.firstName
         );
         this.applicantProfileFormHP.controls.applicantLastName.setValue(
-          this.loggedInApplicant.lastName
+          applicantProfile.lastName
         );
         this.applicantProfileFormHP.controls.applicantEmail.setValue(
-          this.loggedInApplicant.email
+          applicantProfile.email
         );
         this.applicantProfileFormHP.controls.phonenumber.setValue(
-          this.loggedInApplicant.phoneNumber
+          applicantProfile.phoneNumber
         );
         this.applicantProfileFormHP.controls.education.setValue(
-          this.loggedInApplicant.education
+          applicantProfile.education
         );
         this.applicantProfileFormHP.controls.school.setValue(
-          this.loggedInApplicant.school
+          applicantProfile.school
         );
         this.applicantProfileFormHP.controls.experience.setValue(
-          this.loggedInApplicant.experience
+          applicantProfile.experience
         );
-        if (this.loggedInApplicant.photo !== "") {
-          this.imagePreview = this.loggedInApplicant.photo;
+        if (applicantProfile.photo !== "") {
+          this.imagePreview = applicantProfile.photo;
         } else {
-          this.imagePreview = this.defaultImage
+          this.imagePreview = this.defaultImage;
         }
         this.loading = false;
-      });
-
-    this.applicantErrorSub = this.applicantService
-      .getClientErrorListener()
-      .subscribe(error => {
+      },
+      error => {
         this.applicantError = error.error;
-      });
+      }
+    );
   }
 
   applicantProfileFormHP = this.fb.group({
@@ -223,14 +220,48 @@ export class ApplicantProfileComponent implements OnInit {
 
   onSubmitApplicantLogo() {
     this.loading = true;
-    this.applicantService.uploadApplicantLogo(
-      this.loggedInUser.id,
-      this.buildImageFile(this.applicantProfileImageFormHP.value.logo)
-    );
-    setTimeout(() => {
-      this.applicantService.getApplicant(this.loggedInUser.id);
-      this.loading = false;
-    }, 3000);
+    this.applicantService
+      .uploadApplicantLogo(
+        this.loggedInUser.id,
+        this.buildImageFile(this.applicantProfileImageFormHP.value.logo)
+      )
+      .subscribe(response => {
+        this.applicantService.getApplicant(this.loggedInUser.id).subscribe(
+          applicantProfile => {
+            this.loggedInApplicant = applicantProfile;
+            this.applicantProfileFormHP.controls.applicantFirstName.setValue(
+              applicantProfile.firstName
+            );
+            this.applicantProfileFormHP.controls.applicantLastName.setValue(
+              applicantProfile.lastName
+            );
+            this.applicantProfileFormHP.controls.applicantEmail.setValue(
+              applicantProfile.email
+            );
+            this.applicantProfileFormHP.controls.phonenumber.setValue(
+              applicantProfile.phoneNumber
+            );
+            this.applicantProfileFormHP.controls.education.setValue(
+              applicantProfile.education
+            );
+            this.applicantProfileFormHP.controls.school.setValue(
+              applicantProfile.school
+            );
+            this.applicantProfileFormHP.controls.experience.setValue(
+              applicantProfile.experience
+            );
+            if (applicantProfile.photo !== "") {
+              this.imagePreview = applicantProfile.photo;
+            } else {
+              this.imagePreview = this.defaultImage;
+            }
+            this.loading = false;
+          },
+          error => {
+            this.applicantError = error.error;
+          }
+        );
+      });
   }
 
   onSubmitApplicantProfile() {
@@ -254,10 +285,26 @@ export class ApplicantProfileComponent implements OnInit {
     );
 
     if (this.applicantProfileFormHP.valid) {
-      this.applicantService.updateApplicant(
-        applicantData,
-        this.loggedInUser.id
-      );
+      this.applicantService
+        .updateApplicant(applicantData, this.loggedInUser.id)
+        .subscribe(
+          response => {
+            this.router.navigate(["/admin-dashboard/applicants"]);
+            this.toastr.success("", "Profile was successfully updated!");
+          },
+          error => {
+            if (error.status == 401) {
+              this.authService.logout();
+              return;
+            }
+            if (!!error.error.errors) {
+              this.toastr.error(
+                error.error.errors.Error[0],
+                "Error occured!"
+              );
+            }
+          }
+        );
     }
     this.loading = false;
   }

@@ -3,6 +3,8 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { AuthService } from "src/app/services/auth.service";
 import { PasswordValidator } from "../../../validators/password.validator";
+import { Router } from "@angular/router";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-register",
@@ -18,25 +20,17 @@ export class ClientRegisterComponent {
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
   );
   validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
-  private authErrorStatusSub: Subscription;
-  private authStatusSub: Subscription;
-
   loading = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.loading = true;
-    this.authStatusSub = this.authService
-      .getAuthStatusListener()
-      .subscribe(authStatus => {});
-    this.authErrorStatusSub = this.authService
-      .getAuthErrorStatusListener()
-      .subscribe(error => {
-        if (error) {
-          this.authError = error.error;
-        }
-      });
 
     this.clientRegisterForm.controls.clientPassword.valueChanges.subscribe(x =>
       this.clientRegisterForm.controls.clientConfirmPassword.updateValueAndValidity()
@@ -85,19 +79,26 @@ export class ClientRegisterComponent {
       return;
     }
 
-    this.authService.registerUser(
-      this.clientRegisterForm.value.clientName,
-      null,
-      null,
-      this.clientRegisterForm.value.clientEmail,
-      this.clientRegisterForm.value.clientPassword,
-      2
-    );
-    this.loading = false;
-  }
+    let clientData = {
+      firstName: this.clientRegisterForm.value.clientName,
+      lastName: null,
+      email: this.clientRegisterForm.value.clientEmail,
+      password: this.clientRegisterForm.value.clientPassword,
+      userType: 2
+    };
 
-  ngOnDestroy() {
-    this.authStatusSub.unsubscribe();
-    this.authErrorStatusSub.unsubscribe();
+    this.authService.registerUser(clientData).subscribe(
+      response => {
+        this.router.navigate(["/login"]);
+        this.loading = false;
+        this.toastr.success("", "You've registered successfully!");
+      },
+      error => {
+        if (!!error.error.errors) {
+          this.authError = error.error.errors.Error[0];
+        }
+        this.loading = false;
+      }
+    );
   }
 }

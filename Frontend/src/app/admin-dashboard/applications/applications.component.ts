@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Subscription } from "rxjs";
 import { Application } from "src/app/models/application.model";
 import { ApplicationService } from "src/app/services/application.service";
@@ -10,7 +10,7 @@ import { ToastrService } from "ngx-toastr";
   templateUrl: "./applications.component.html",
   styleUrls: ["./applications.component.scss"]
 })
-export class ADApplicationsComponent implements OnInit, OnDestroy {
+export class ADApplicationsComponent implements OnInit {
   applicationCount = {
     all: 0,
     pending: 0,
@@ -37,34 +37,30 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
   loading = false;
   loggedInUser;
 
-  private applicationsSub: Subscription;
-
   constructor(
     private applicationService: ApplicationService,
     private authService: AuthService,
-    private toastrService: ToastrService
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
     this.loading = true;
     this.loggedInUser = this.authService.getUser();
     const params = this.buildQueryParams(this.applicationQP);
-    this.applicationService.getApplications(params);
-    this.applicationsSub = this.applicationService
-      .getApplicationsUpdateListener()
+    this.applicationService
+      .getApplications(params)
       .subscribe(applicationsData => {
         this.applications = applicationsData.applications;
-        this.applicationCount.all = applicationsData.applicationsCount;
+        this.applicationCount.all = applicationsData.maxApplications;
         this.applicationCount.pending = applicationsData.pending;
         this.applicationCount.contacted = applicationsData.contacted;
         this.applicationCount.interviewed = applicationsData.interviewed;
         this.applicationCount.hired = applicationsData.hired;
         this.applicationCount.rejected = applicationsData.rejected;
+
+        this.paginationMaxSize = this.applicationCount.all;
         this.loading = false;
       });
-    setTimeout(() => {
-      this.paginationMaxSize = this.applicationCount.all;
-    }, 1000);
   }
 
   buildQueryParams(data) {
@@ -97,9 +93,21 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
     if (this.applicationQP.currentPage !== this.applicationQP.previousPage) {
       this.applicationQP.previousPage = this.applicationQP.currentPage;
       const params = this.buildQueryParams(this.applicationQP);
-      this.applicationService.getApplications(params);
+      this.applicationService
+        .getApplications(params)
+        .subscribe(applicationsData => {
+          this.applications = applicationsData.applications;
+          this.applicationCount.all = applicationsData.maxApplications;
+          this.applicationCount.pending = applicationsData.pending;
+          this.applicationCount.contacted = applicationsData.contacted;
+          this.applicationCount.interviewed = applicationsData.interviewed;
+          this.applicationCount.hired = applicationsData.hired;
+          this.applicationCount.rejected = applicationsData.rejected;
+
+          this.paginationMaxSize = this.applicationCount.all;
+          this.loading = false;
+        });
     }
-    this.loading = false;
   }
 
   onFilter(filterBy: string) {
@@ -110,25 +118,35 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       this.applicationQP.currentFilter = "status";
     }
 
-    // CALCULATE PAGINATION
-    if (filterBy === null) {
-      this.paginationMaxSize = this.applicationCount.all;
-    } else if (filterBy === "Pending") {
-      this.paginationMaxSize = this.applicationCount.pending;
-    } else if (filterBy === "Contacted") {
-      this.paginationMaxSize = this.applicationCount.contacted;
-    } else if (filterBy === "Interviewed") {
-      this.paginationMaxSize = this.applicationCount.interviewed;
-    } else if (filterBy === "Hired") {
-      this.paginationMaxSize = this.applicationCount.hired;
-    } else if (filterBy === "Rejected") {
-      this.paginationMaxSize = this.applicationCount.rejected;
-    }
-
     this.applicationQP.currentFilterQuery = filterBy;
     const params = this.buildQueryParams(this.applicationQP);
-    this.applicationService.getApplications(params);
-    this.loading = false;
+    this.applicationService
+      .getApplications(params)
+      .subscribe(applicationsData => {
+        this.applications = applicationsData.applications;
+        this.applicationCount.all = applicationsData.maxApplications;
+        this.applicationCount.pending = applicationsData.pending;
+        this.applicationCount.contacted = applicationsData.contacted;
+        this.applicationCount.interviewed = applicationsData.interviewed;
+        this.applicationCount.hired = applicationsData.hired;
+        this.applicationCount.rejected = applicationsData.rejected;
+
+        // CALCULATE PAGINATION
+        if (filterBy === null) {
+          this.paginationMaxSize = applicationsData.maxApplications;
+        } else if (filterBy === "Pending") {
+          this.paginationMaxSize = applicationsData.pending;
+        } else if (filterBy === "Contacted") {
+          this.paginationMaxSize = applicationsData.contacted;
+        } else if (filterBy === "Interviewed") {
+          this.paginationMaxSize = applicationsData.interviewed;
+        } else if (filterBy === "Hired") {
+          this.paginationMaxSize = applicationsData.hired;
+        } else if (filterBy === "Rejected") {
+          this.paginationMaxSize = applicationsData.rejected;
+        }
+        this.loading = false;
+      });
   }
 
   onSort(sortBy: string) {
@@ -148,8 +166,22 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       this.applicationQP.lastSortBy = sortBy;
     }
     this.applicationQP.currentSortBy = sortBy;
+
     const params = this.buildQueryParams(this.applicationQP);
-    this.applicationService.getApplications(params);
+    this.applicationService
+      .getApplications(params)
+      .subscribe(applicationsData => {
+        this.applications = applicationsData.applications;
+        this.applicationCount.all = applicationsData.maxApplications;
+        this.applicationCount.pending = applicationsData.pending;
+        this.applicationCount.contacted = applicationsData.contacted;
+        this.applicationCount.interviewed = applicationsData.interviewed;
+        this.applicationCount.hired = applicationsData.hired;
+        this.applicationCount.rejected = applicationsData.rejected;
+
+        this.paginationMaxSize = this.applicationCount.all;
+        this.loading = false;
+      });
   }
 
   chooseStatus(event: any, id: number) {
@@ -160,27 +192,36 @@ export class ADApplicationsComponent implements OnInit, OnDestroy {
       currentId,
       currentStatus
     );
-    this.applicationService.updateApplication(applicationData);
+    this.applicationService.updateApplication(applicationData).subscribe(
+      response => {
+        const params = this.buildQueryParams(this.applicationQP);
+        this.applicationService
+          .getApplications(params)
+          .subscribe(applicationsData => {
+            this.applications = applicationsData.applications;
+            this.applicationCount.all = applicationsData.maxApplications;
+            this.applicationCount.pending = applicationsData.pending;
+            this.applicationCount.contacted = applicationsData.contacted;
+            this.applicationCount.interviewed = applicationsData.interviewed;
+            this.applicationCount.hired = applicationsData.hired;
+            this.applicationCount.rejected = applicationsData.rejected;
 
-    setTimeout(() => {
-      const params = this.buildQueryParams(this.applicationQP);
-      this.applicationService.getApplications(params);
-      this.loading = false;
-      this.toastrService.success('', 'Status changed successfully!');
-    }, 1000);
-  }
-
-  // changeStatus(status) {
-  //   this.servic.changeStatus(status).subscribe(res => {
-  //     this.status= status;
-  //     this.toastrService.success('', 'Status changed successfully!');
-  //   }),
-  //   err=> {
-
-  //   }
-  // }
-
-  ngOnDestroy() {
-    this.applicationsSub.unsubscribe();
+            this.paginationMaxSize = this.applicationCount.all;
+            this.toastr.success("", "Application status updated successfully!");
+            this.loading = false;
+          });
+      },
+      error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          this.loading = false;
+          return;
+        }
+        if (error.error) {
+          this.toastr.error(error.error.errors.Error[0], "Error occured!");
+          this.loading = false;
+        }
+      }
+    );
   }
 }
