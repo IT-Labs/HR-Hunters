@@ -22,25 +22,23 @@ export class NavigationComponent implements OnInit {
 
   ngOnInit() {
     this.loggedInUser = this.authService.getUser();
-
     this.name = `${this.loggedInUser.firstName}`;
 
     if (this.loggedInUser.role === 1) {
       this.activeApplicant = true;
+    } else if (this.loggedInUser.role === 2) {
+      this.activeApplicant = false;
+
       this.clientService.getClient(this.loggedInUser.id);
       this.clientService.getClientProfileListener().subscribe(client => {
         this.loggedInClient = client;
-        console.log(client)
 
         if (client.client.status === "Active") {
           this.activeClient = true;
         } else if (client.client.status === "Inactive") {
           this.activeClient = false;
         }
-
       });
-    } else if (this.loggedInUser.role === 2) {
-      this.activeApplicant = false;
     }
   }
 

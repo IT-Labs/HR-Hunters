@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Applicant } from "src/app/models/applicant.model";
 import { Subscription } from "rxjs";
 import { ApplicantService } from "src/app/services/applicant.service";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
   selector: "app-ad-applicants",
@@ -12,6 +13,7 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
   applicantsCount = {
     all: 0
   };
+  loggedInUser;
   applicants: Applicant[] = [];
   applicantsQP = {
     postsPerPage: 10,
@@ -28,11 +30,13 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
   private applicantsSub: Subscription;
 
   constructor(
-    private applicantService: ApplicantService
+    private applicantService: ApplicantService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     this.loading = true;
+    this.loggedInUser = this.authService.getUser();
     const params = this.buildQueryParams(this.applicantsQP);
     this.applicantService.getApplicants(params);
     this.applicantsSub = this.applicantService
@@ -47,7 +51,7 @@ export class ADApplicantsComponent implements OnInit, OnDestroy {
   buildQueryParams(data) {
     return `?pageSize=${data.postsPerPage}&currentPage=${
       data.currentPage
-    }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}`;
+    }&sortedBy=${data.currentSortBy}&sortDir=${data.currentSortDirection}&id=${this.loggedInUser.id}`;
   }
 
   buildApplicantDataOnUpdate(
