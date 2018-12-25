@@ -24,6 +24,12 @@
         {{ application.dateTo }}
       </p>
       <div class="jp__btn-container">
+          <button
+          class="btn btn__secondary"
+          [routerLink]="['/applicant/job-postings']"
+        >
+        &larr; Back
+        </button>
         <button
           class="btn btn__secondary"
           [routerLink]="['/applicant/my-applications/', application.id]"
@@ -32,5 +38,13 @@
         </button>
       </div>
     </div>
+        <!--  -->
+        <div class="jp__container" *ngIf="applications.length ===0">
+        
+            <p class="jp__meta">
+             You  have not still applied for any job, please apply.
+            </p>
+    
+          </div>
   </div>
 </div>
