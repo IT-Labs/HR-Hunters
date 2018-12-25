@@ -10,6 +10,5 @@ namespace HRHunters.Common.Interfaces
     public interface IS3Manager
     {
         Task<GeneralResponse> UploadFileAsync(string bucketName, IFormFile file, int id, int currentUserId);
-        Task<string> GetImageAsync(int id, int currentUserId);
     }
 }

@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 
 namespace HRHunters.WebAPI.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     [Authorize]
     public class UploadsController : ControllerBase
     {
@@ -35,11 +35,5 @@ namespace HRHunters.WebAPI.Controllers
             return Ok(await _s3Manager.UploadFileAsync(EnvironmentVariables.BUCKET_NAME, image, id, GetCurrentUserId()));
         }
 
-        [Authorize(Roles = RoleConstants.APPLICANT + ", " + RoleConstants.CLIENT)]
-        [HttpGet("Image/{id}")]
-        public async Task<IActionResult> GetImageAsync(int id)
-        {
-            return Ok(await _s3Manager.GetImageAsync(id, GetCurrentUserId()));
-        }
     }
 }
