@@ -22,6 +22,8 @@
         {{ jp.dateTo }}
       </p>
       <div class="jp__btn-container">
+
+ 
         <button
           class="btn btn__secondary"
           [routerLink]="['/client/job-postings/', jp.id]"
@@ -30,5 +32,11 @@
         </button>
       </div>
     </div>
+    <!--  -->
+    <div class="jp__container" *ngIf="jobPostings.length === 0">
+        <p class="jp__meta">
+            You  have not still add any job, please add.
+           </p>
+      </div>
   </div>
 </div>

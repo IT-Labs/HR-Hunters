@@ -14,6 +14,17 @@
         Job Posting added on: {{ jobPosting.dateFrom }}, available until:
         {{ jobPosting.dateTo }}
       </p>
+
+      <div class="jp__btn-container">
+
+          <button
+          class="btn btn__secondary"
+          [routerLink]="['/client/job-postings']"
+        >
+        &larr; Back
+        </button>
+ 
+      </div>
       <div class="jp__btn-container" *ngIf="isApplicant">
         <button class="btn btn__primary" (click)="onApply()">Apply</button>
       </div>
