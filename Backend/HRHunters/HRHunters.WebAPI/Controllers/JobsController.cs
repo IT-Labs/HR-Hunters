@@ -21,24 +21,18 @@ namespace HRHunters.WebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class JobsController : ControllerBase
+    public class JobsController : BaseController
     {
         private readonly IJobManager _jobManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public JobsController(IJobManager jobManager, IHttpContextAccessor httpContextAccessor)
+        public JobsController(IJobManager jobManager, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             _jobManager = jobManager;
-            _httpContextAccessor = httpContextAccessor;
-        }
-        private int GetCurrentUserId()
-        {
-            return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetJobs([FromQuery]SearchRequest request)
         {
-            return Ok(await _jobManager.GetMultiple(request, GetCurrentUserId()));
+            return Ok(await _jobManager.GetMultiple(request));
         }
 
         [HttpGet("{id}")]
@@ -51,7 +45,7 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateJobPosting(JobSubmit jobSubmit)
         {
-            var result = await _jobManager.CreateJobPosting(jobSubmit, GetCurrentUserId());
+            var result = await _jobManager.CreateJobPosting(jobSubmit, CurrentUserId);
             if (result.Succeeded)
             {
                 return Ok(result);
@@ -61,9 +55,9 @@ namespace HRHunters.WebAPI.Controllers
 
         [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpPut]
-        public async Task<IActionResult> UpdateJob(JobUpdate jobSubmit)
+        public IActionResult UpdateJob(JobUpdate jobSubmit)
         {
-            var result = await _jobManager.UpdateJob(jobSubmit, GetCurrentUserId());
+            var result = _jobManager.UpdateJob(jobSubmit);
             if (result.Succeeded)
             {
                 return Ok(result);

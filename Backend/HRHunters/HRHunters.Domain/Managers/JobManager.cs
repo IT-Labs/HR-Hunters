@@ -44,9 +44,9 @@ namespace HRHunters.Domain.Managers
             _logger = logger;
         }
 
-        public async Task<JobResponse> GetMultiple(SearchRequest request, int currentUserId)
+        public async Task<JobResponse> GetMultiple(SearchRequest request)
         {
-            var current = await _userManager.FindByIdAsync(currentUserId.ToString());
+            var current = await _userManager.FindByIdAsync(request.Id.ToString());
             IList<string> role = await _userManager.GetRolesAsync(current);
             var query = GetAll<JobPosting>($"{nameof(Client)}.{nameof(Client.User)}," + $"{nameof(JobPosting.Applications)}");
             var applied = Get<Application>(filter: x => x.ApplicantId.Equals(request.Id)).Select(x => x.JobPostingId).ToList();
@@ -114,31 +114,15 @@ namespace HRHunters.Domain.Managers
             if (userRole.Contains(RoleConstants.CLIENT))
             {
                 jobPost.Status = JobPostingStatus.Pending;
-                try
-                {
-                    Create(jobPost, company.User.FirstName);
-                    response.Succeeded = true;
-                    return response;
-                }
-                catch (DbUpdateException e)
-                {
-                    return response.ErrorHandling(e.Message, _logger, jobPost);
-                }
-            }
-            else
+                Create(jobPost, company.User.FirstName);
+            }else
             {
                 jobPost.Status = JobPostingStatus.Approved;
-                try
-                {
-                    Create(jobPost, RoleConstants.ADMIN);
-                    response.Succeeded = true;
-                    return response;
-                }
-                catch (DbUpdateException e)
-                {
-                    return response.ErrorHandling(e.Message, _logger, jobPost);
-                }
+                Create(jobPost, RoleConstants.ADMIN);
             }
+            
+            response.Succeeded = true;
+            return response;
         }
 
         public JobInfo GetOneJobPosting(int id)
@@ -149,14 +133,9 @@ namespace HRHunters.Domain.Managers
             return _mapper.Map<JobInfo>(jobPost);
         }
 
-        public async Task<GeneralResponse> UpdateJob(JobUpdate jobUpdate, int currentUserId)
+        public GeneralResponse UpdateJob(JobUpdate jobUpdate)
         {
-            var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(currentUserId.ToString()));
             var response = new GeneralResponse();
-            if (!userRole.Contains(RoleConstants.ADMIN))
-            {
-                return response.ErrorHandling(ErrorConstants.UnauthorizedAccess, _logger, userRole);
-            }
 
             var jobPost = GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
@@ -192,16 +171,9 @@ namespace HRHunters.Domain.Managers
                 jobPost.Education = currentEducation;
             }
         
-            try
-            {
-                Update(jobPost, RoleConstants.ADMIN);
-                response.Succeeded = true;
-                return response;
-            }
-            catch (DbUpdateException e)
-            {
-                return response.ErrorHandling(e.Message, _logger, jobPost);
-            }
+            Update(jobPost, RoleConstants.ADMIN);
+            response.Succeeded = true;
+            return response;
         }
 
         public GeneralResponse UploadCSV(IFormFile formFile, int id)

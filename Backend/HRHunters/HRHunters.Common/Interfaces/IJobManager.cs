@@ -18,11 +18,11 @@ namespace HRHunters.Common.Interfaces
 {
     public interface IJobManager : IBaseManager
     {
-        Task<JobResponse> GetMultiple(SearchRequest request, int currentUserId);
+        Task<JobResponse> GetMultiple(SearchRequest request);
         Task<GeneralResponse> CreateJobPosting(JobSubmit jobSubmit, int currentUserId);
         GeneralResponse UploadCSV(IFormFile formFile, int id);
         JobInfo GetOneJobPosting(int id);
-        Task<GeneralResponse> UpdateJob(JobUpdate jobSubmit, int currentUserId);
+        GeneralResponse UpdateJob(JobUpdate jobUpdate);
 
     }
 }

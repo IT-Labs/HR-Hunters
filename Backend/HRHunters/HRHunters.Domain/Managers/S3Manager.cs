@@ -19,13 +19,9 @@ namespace HRHunters.Domain.Managers
     public class S3Manager : IS3Manager
     {
         private readonly IAmazonS3 _amazonClient;
-        private readonly IBaseManager _baseManager;
-        private readonly UserManager<User> _userManager;
         private readonly ILogger<S3Manager> _logger;
-        public S3Manager(IAmazonS3 amazonClient, ILogger<S3Manager> logger, UserManager<User> userManager, IBaseManager baseManager)
+        public S3Manager(IAmazonS3 amazonClient, ILogger<S3Manager> logger)
         {
-            _userManager = userManager;
-            _baseManager = baseManager;
             _amazonClient = amazonClient;
             _logger = logger;
         }

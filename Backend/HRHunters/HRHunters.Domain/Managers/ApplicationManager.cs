@@ -40,7 +40,7 @@ namespace HRHunters.Domain.Managers
         public async Task<ApplicationResponse> GetMultiple(SearchRequest request)
         {
             var user = await _userManager.FindByIdAsync(request.Id.ToString());
-            IList<string> role = _userManager.GetRolesAsync(user).Result;
+            IList<string> role = await _userManager.GetRolesAsync(user);
 
             var query = GetAll<Application>(includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
                                                                      $"{nameof(JobPosting)}");
@@ -75,27 +75,21 @@ namespace HRHunters.Domain.Managers
             return _mapper.Map<ApplicationInfo>(GetOne<Application>(x => x.Id == id, includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)},{nameof(JobPosting)}"));
         }
 
-        public GeneralResponse UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
+        public GeneralResponse UpdateApplicationStatus(int id, ApplicationStatusUpdate statusUpdate)
         {
             var response = new GeneralResponse();
-            var application = GetOne<Application>(filter: x => x.Id == applicationStatusUpdate.Id,
+            var application = GetOne<Application>(filter: x => x.Id == id,
                                                     includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)}," +
                                                                        $"{nameof(JobPosting)}");
 
-            bool success = Enum.TryParse(applicationStatusUpdate.Status, out ApplicationStatus statusToUpdate);
-            if (!success) {
-                return response.ErrorHandling(ErrorConstants.InvalidInput, _logger, applicationStatusUpdate.Status);
-            }
+            bool success = Enum.TryParse(statusUpdate.Status, out ApplicationStatus statusToUpdate);
+
+            if (!success)
+                return response.ErrorHandling(ErrorConstants.InvalidInput, _logger, statusUpdate.Status);
+
             application.Status = statusToUpdate;
-            try
-            {
-                Update(application, RoleConstants.ADMIN);
-                response.Succeeded = true;
-            }catch(Exception e)
-            {
-                _logger.LogError(e.Message, application);
-                throw;
-            }
+            Update(application, RoleConstants.ADMIN);
+            response.Succeeded = true;
             return response;
         }
         public async Task<GeneralResponse> CreateApplication(Apply apply)
@@ -122,17 +116,10 @@ namespace HRHunters.Domain.Managers
                     JobPosting = jobPost,
                     Status = ApplicationStatus.Pending
                 };
-                try
-                {
-                    Create(application, applicant.User.FirstName);
-                    response.Succeeded = true;
-                    await _emailSender.SendEmail(applicant, jobPost);
-                    return response;
-                }
-                catch(Exception e)
-                {
-                    return response.ErrorHandling(e.Message, _logger, application);
-                } 
+                Create(application, applicant.User.FirstName);
+                response.Succeeded = true;
+                await _emailSender.SendEmail(applicant, jobPost);
+                return response;
             }
         }
     }

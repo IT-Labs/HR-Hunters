@@ -45,7 +45,6 @@ namespace HRHunters.Domain.Managers
             var selected = _mapper.ProjectTo<ApplicantInfo>(query)
                                         .Applyfilters(request).ToList();
             
-             
             response.Applicants.AddRange(selected);
             response.MaxApplicants = GetCount<Applicant>();
             return response;
@@ -53,7 +52,7 @@ namespace HRHunters.Domain.Managers
 
         public ApplicantInfo GetOneApplicant(int id)
         {
-            return _mapper.Map<ApplicantInfo>(GetById<Applicant>(id));
+            return _mapper.Map<ApplicantInfo>(GetOne<Applicant>(x => x.Id == id, includeProperties: $"{nameof(User)}"));
         }
 
         public async Task<GeneralResponse> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate)
@@ -78,19 +77,12 @@ namespace HRHunters.Domain.Managers
             //Allow the current user to use their existing email
             if (existingUser != null && user != existingUser)
             {
-                return response.ErrorHandling<ApplicantManager>("Email is already in use");
+                return response.ErrorHandling<ApplicantManager>("Email is already in use", objects: existingUser.Email);
             }
-            try
-            {
-                Update(applicant, applicant.User.FirstName);
-                await _userManager.UpdateAsync(user);
-                response.Succeeded = true;
-                return response;
-            }
-            catch(Exception e)
-            {
-                return response.ErrorHandling(e.Message, _logger, applicant);
-            }
+            Update(applicant, applicant.User.FirstName);
+            await _userManager.UpdateAsync(user);
+            response.Succeeded = true;
+            return response;
         }
 
         public async Task<GeneralResponse> UpdateProfileImage(FileUpload fileUpload)
