@@ -21,21 +21,15 @@ namespace HRHunters.WebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class ClientsController : ControllerBase
+    public class ClientsController : BaseController
     {
         private readonly IClientManager _clientManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ClientsController(IClientManager clientManager,IHttpContextAccessor httpContextAccessor )
+        public ClientsController(IClientManager clientManager,IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             _clientManager = clientManager;
-            _httpContextAccessor = httpContextAccessor;
         }
-        private int GetCurrentUserId()
-        {
-            return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        }
-
+        
         [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpGet]
         public IActionResult GetMultipleClients([FromQuery]SearchRequest request)
@@ -51,7 +45,10 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateClientProfile(int id, ClientUpdate clientUpdate)
         {
-            var result = await _clientManager.UpdateClientProfile(id, clientUpdate, GetCurrentUserId());
+            if (CurrentUserId != id)
+                return BadRequest((sentId: id, currentUserId: CurrentUserId));
+
+            var result = await _clientManager.UpdateClientProfile(id, clientUpdate);
             if (result.Succeeded)
             {
                 return Ok(result);
@@ -59,11 +56,23 @@ namespace HRHunters.WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [Authorize(Roles = RoleConstants.ADMIN)]
-        [HttpPut]
-        public IActionResult UpdateClientStatus(ClientStatusUpdate clientStatusUpdate)
+        [Authorize(Roles = RoleConstants.CLIENT)]
+        [HttpPut("image/{Id}")]
+        public async Task<IActionResult> UpdateClientLogo([FromForm]FileUpload fileUpload)
         {
-            var result = (_clientManager.UpdateClientStatus(clientStatusUpdate));
+            if (CurrentUserId != fileUpload.Id)
+                return BadRequest(fileUpload);
+            var result = await _clientManager.UpdateCompanyLogo(fileUpload);
+            if (!result.Succeeded)
+                return BadRequest(result);
+            return Ok(result);
+        }
+
+        [Authorize(Roles = RoleConstants.ADMIN)]
+        [HttpPut("{id}/status")]
+        public IActionResult UpdateClientStatus(int id, ClientStatusUpdate statusUpdate)
+        {
+            var result = _clientManager.UpdateClientStatus(id, statusUpdate);
             if (result.Succeeded)
             {
                 return Ok(result);
@@ -75,7 +84,7 @@ namespace HRHunters.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCompany(NewCompany newCompany)
         {
-            var result = await _clientManager.CreateCompany(newCompany, GetCurrentUserId());
+            var result = await _clientManager.CreateCompany(newCompany);
             if (result.Succeeded)
             {
                 return Ok(result);

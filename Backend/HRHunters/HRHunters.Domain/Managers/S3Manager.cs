@@ -5,6 +5,7 @@ using HRHunters.Common.Constants;
 using HRHunters.Common.Entities;
 using HRHunters.Common.HelperMethods;
 using HRHunters.Common.Interfaces;
+using HRHunters.Common.Requests;
 using HRHunters.Common.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -18,30 +19,23 @@ namespace HRHunters.Domain.Managers
     public class S3Manager : IS3Manager
     {
         private readonly IAmazonS3 _amazonClient;
-        private readonly IBaseManager _baseManager;
-        private readonly UserManager<User> _userManager;
         private readonly ILogger<S3Manager> _logger;
-        public S3Manager(IAmazonS3 amazonClient, ILogger<S3Manager> logger, UserManager<User> userManager, IBaseManager baseManager)
+        public S3Manager(IAmazonS3 amazonClient, ILogger<S3Manager> logger)
         {
-            _userManager = userManager;
-            _baseManager = baseManager;
             _amazonClient = amazonClient;
             _logger = logger;
         }
 
-        public async Task<GeneralResponse> UploadFileAsync(string bucketName, IFormFile image, int id, int currentUserId)
+        public async Task<S3Response> UploadProfileImage(string bucketName,FileUpload fileUpload)
         {
             Guid g;
             g = Guid.NewGuid();
-            var response = new GeneralResponse();
+            var response = new S3Response();
+            var image = fileUpload.FormFile;
+
             if (image.ContentType != "image/jpg" && image.ContentType != "image/png" && image.ContentType != "image/jpeg")
             {
-                return response.ErrorHandling(ErrorConstants.InvalidFormat, _logger, image.ContentType);
-            }
-            if (id != currentUserId)
-            {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess);
-                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
+                return response;
             }
             try
             {
@@ -54,30 +48,15 @@ namespace HRHunters.Domain.Managers
                 {
                     image.CopyTo(stream);
                     await fileTransferUtility.UploadAsync(stream, bucketName, keyName);
+                    response.Succeeded = true;
+                    response.Guid = keyName;
                 }
-                
-                //Update database with user picture
-                var user = await _userManager.FindByIdAsync(id.ToString());
-                var role = await _userManager.GetRolesAsync(user);
-                if (role.Contains(RoleConstants.APPLICANT))
-                {
-                    var applicant = _baseManager.GetById<Applicant>(id);
-                    applicant.Logo = keyName;
-                    _baseManager.Update(applicant, applicant.User.FirstName);
-                }
-                else if (role.Contains(RoleConstants.CLIENT))
-                {
-                    var client = _baseManager.GetById<Client>(id);
-                    client.Logo = keyName;
-                    _baseManager.Update(client, client.User.FirstName);
-                }
-                response.Succeeded = true;
-                return response;
             }
-            catch
+            catch(Exception e)
             {
-                return response.ErrorHandling("Failed to upload image", _logger, objects: image);
+                _logger.LogError(e.Message, image);
             }
+            return response;
         }
     }
 }

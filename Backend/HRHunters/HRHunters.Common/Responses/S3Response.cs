@@ -7,7 +7,7 @@ namespace HRHunters.Common.Responses
 {
     public class S3Response
     {
-        public string Message { get; set; }
-        public HttpStatusCode Status { get; set; }
+        public string Guid { get; set; } = null;
+        public bool Succeeded { get; set; } = false;
     }
 }

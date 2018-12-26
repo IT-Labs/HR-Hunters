@@ -54,7 +54,7 @@ namespace HRHunters.Domain.Managers
                                 Data = $"Congratulations on your {numOfApplication}{(numOfApplication == 1 ? "st" : numOfApplication == 2 ? "nd" : numOfApplication == 3 ? "rd" : "th")} application, {applicant.User.FirstName}!" +
                                         "You have just applied for the following Job:" +
                                         $"Position: {jobPosting.Title}" +
-                                        "You can see all your job applications on https://dev-docker:9014/applicant/my-applications" +
+                                        "You can see all your job applications on http://dev-docker:9014/applicant/my-applications" +
                                         "Sincerely, HRHunters"
                             }
                         }
