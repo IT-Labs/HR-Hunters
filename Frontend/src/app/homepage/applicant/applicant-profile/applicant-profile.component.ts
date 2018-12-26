@@ -20,6 +20,7 @@ export class ApplicantProfileComponent implements OnInit {
     "Doctoral",
     "Select education level..."
   ];
+  uploadedImage;
   applicantError;
   loggedInUser;
   loggedInApplicant: Applicant = {
@@ -34,7 +35,8 @@ export class ApplicantProfileComponent implements OnInit {
     school: null
   };
   imagePreview: string | ArrayBuffer;
-  defaultImage = "https://i.ibb.co/j8brMcC/9c038242-7771-496c-b644-4690217c0841.png";
+  defaultImage =
+    "https://i.ibb.co/j8brMcC/9c038242-7771-496c-b644-4690217c0841.png";
   imageValid = true;
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
@@ -116,7 +118,7 @@ export class ApplicantProfileComponent implements OnInit {
           return;
         }
         if (!!error.error.errors) {
-          this.applicantError = error.error.errors.Error[0]
+          this.applicantError = error.error.errors.Error[0];
           this.loading = false;
         }
       }
@@ -199,15 +201,17 @@ export class ApplicantProfileComponent implements OnInit {
 
   onImagePicked(event: Event) {
     this.loading = true;
-    const file = (event.target as HTMLInputElement).files[0];
+    this.uploadedImage = (event.target as HTMLInputElement).files[0];
     const reader = new FileReader();
     reader.onload = () => {
       let img = new Image();
       img.src = reader.result.toString();
       setTimeout(() => {
         if (img.height < 600 || img.width < 600) {
-          this.applicantProfileFormHP.patchValue({ logo: file });
-          this.applicantProfileFormHP.controls["logo"].updateValueAndValidity();
+          this.applicantProfileFormHP.patchValue({ logo: this.uploadedImage });
+          this.applicantProfileImageFormHP.controls[
+            "logo"
+          ].updateValueAndValidity();
           this.imagePreview = reader.result;
           this.imageValid = true;
           this.onSubmitApplicantLogo();
@@ -216,24 +220,19 @@ export class ApplicantProfileComponent implements OnInit {
         }
       }, 1000);
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(this.uploadedImage);
     this.loading = false;
-  }
-
-  buildImageFile(logo: any) {
-    const logoData = new FormData();
-    logoData.append("logo", logo);
-    return logoData;
   }
 
   onSubmitApplicantLogo() {
     this.loading = true;
+    const logoData = new FormData();
+    logoData.append("FormFile", this.uploadedImage);
     this.applicantService
-      .uploadApplicantLogo(
-        this.loggedInUser.id,
-        this.buildImageFile(this.applicantProfileImageFormHP.value.logo)
-      )
+      .uploadApplicantLogo(this.loggedInUser.id, logoData)
       .subscribe(response => {
+        this.loading = false;
+        this.toastr.success("", "Image uploaded successfully!");
         this.applicantService.getApplicant(this.loggedInUser.id).subscribe(
           applicantProfile => {
             this.loggedInApplicant = applicantProfile;
@@ -272,7 +271,7 @@ export class ApplicantProfileComponent implements OnInit {
               return;
             }
             if (!!error.error.errors) {
-              this.applicantError = error.error.errors.Error[0]
+              this.applicantError = error.error.errors.Error[0];
               this.loading = false;
             }
           }
@@ -305,7 +304,7 @@ export class ApplicantProfileComponent implements OnInit {
         .updateApplicant(applicantData, this.loggedInUser.id)
         .subscribe(
           response => {
-            this.router.navigate(["/admin-dashboard/applicants"]);
+            this.loading = false;
             this.toastr.success("", "Profile was successfully updated!");
           },
           error => {
@@ -314,10 +313,7 @@ export class ApplicantProfileComponent implements OnInit {
               return;
             }
             if (!!error.error.errors) {
-              this.toastr.error(
-                error.error.errors.Error[0],
-                "Error occured!"
-              );
+              this.toastr.error(error.error.errors.Error[0], "Error occured!");
             }
           }
         );

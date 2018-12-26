@@ -27,6 +27,8 @@ export class AddCSVComponent {
   focus$ = new Subject<string>();
   click$ = new Subject<string>();
 
+  uploadedCSVfile;
+
   validClient = false;
   clients: Client[] = [];
   clientNames: string[] = [];
@@ -60,12 +62,12 @@ export class AddCSVComponent {
     this.loggedInUser = this.authService.getUser();
     const params = this.buildQueryParams();
     this.clientService.getClients(params).subscribe(clientsData => {
-        this.clients = clientsData.clients;
-        clientsData.clients.forEach(c => {
-          this.clientNames.push(c.companyName);
-        });
-        this.loading = false;
+      this.clients = clientsData.clients;
+      clientsData.clients.forEach(c => {
+        this.clientNames.push(c.companyName);
       });
+      this.loading = false;
+    });
   }
 
   newCSVForm = this.fb.group({
@@ -77,24 +79,21 @@ export class AddCSVComponent {
         Validators.maxLength(50)
       ])
     ],
-    csv: [null, Validators.compose([Validators.required, CSVValidator])]
+    csv: ["", Validators.compose([Validators.required, CSVValidator])]
   });
 
-  onFileChange(event) {
+  onFileChange(event: Event) {
+    this.loading = true;
+    this.uploadedCSVfile = (event.target as HTMLInputElement).files[0];
     let reader = new FileReader();
-   
-    if(event.target.files && event.target.files.length) {
-      const [file] = event.target.files;
-      reader.readAsDataURL(file);
-    
+    setTimeout(() => {
       reader.onload = () => {
-        this.newCSVForm.patchValue({
-          file: reader.result
-        });
-        this.newCSVForm.updateValueAndValidity();
-        this.cd.markForCheck();
+        this.newCSVForm.patchValue({ csv: reader.result });
+        this.newCSVForm.controls.csv.updateValueAndValidity();
       };
-    }
+    }, 2000);
+    reader.readAsDataURL(this.uploadedCSVfile);
+    this.loading = false;
   }
 
   search = (text$: Observable<string>) => {
@@ -133,34 +132,30 @@ export class AddCSVComponent {
     });
   }
 
-  buildCSVFile(csv: any) {
-    const csvData = new FormData();
-    csvData.append("csv", csv);
-    return csvData
-  }
-
   onSubmitCSV() {
     this.loading = true;
-    this.jobPostingService.uploadCSV(this.selectedCompany.id, this.buildCSVFile(this.newCSVForm.value.csv)).subscribe(
-      response => {
-        this.loading = false;
-        this.toastr.success("", "CSV updloaded successfully!");
-        this.router.navigate(["/admin-dashboard/job-postings"]);
-      },
-      error => {
-        if (error.status == 401) {
-          this.authService.logout();
+    const csvData = new FormData();
+    csvData.append("FormFile", this.uploadedCSVfile);
+
+    this.jobPostingService
+      .uploadCSV(this.selectedCompany.id, csvData)
+      .subscribe(
+        response => {
           this.loading = false;
-          return;
+          this.toastr.success("", "CSV updloaded successfully!");
+          this.router.navigate(["/admin-dashboard/job-postings"]);
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            this.loading = false;
+            return;
+          }
+          if (!!error.error.errors) {
+            this.toastr.error(error.error.errors.Error[0], "Error occured!");
+            this.loading = false;
+          }
         }
-        if (!!error.error.errors) {
-          this.toastr.error(
-            error.error.errors.Error[0],
-            "Error occured!"
-          );
-          this.loading = false;
-        }
-      }
-    );
+      );
   }
 }

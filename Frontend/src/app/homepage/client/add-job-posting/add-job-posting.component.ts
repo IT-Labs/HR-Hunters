@@ -281,9 +281,9 @@ export class AddJobPostingComponent implements OnInit {
     ) {
       this.jobPostingService.addJobPosting(jobPostingData).subscribe(
         response => {
-            this.router.navigate(["/admin-dashboard/job-postings"]);
-            this.loading = false;
-            this.toastr.success("", "Job posting added successfully!");
+          this.loading = false;
+          this.toastr.success("", "Job posting added successfully!");
+          this.router.navigate(["/client/job-postings"]);
         },
         error => {
           if (error.status == 401) {
