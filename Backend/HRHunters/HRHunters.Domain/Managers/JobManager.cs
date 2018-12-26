@@ -176,114 +176,30 @@ namespace HRHunters.Domain.Managers
             return response;
         }
 
-        public GeneralResponse UploadCSV(IFormFile formFile, int id)
-        {
-            var response = ValidateCSV(formFile, id);
-            //if (!response.Errors["Error"].Any())
-            //{
-            //    var company = _repo.GetById<Client>(id);
-            //    if (company == null)
-            //    {
-            //        _logger.LogError(ErrorConstants.InvalidInput, company);
-            //        response.Errors["Error"].Add(ErrorConstants.InvalidInput);
-            //        return response;
-            //    }
-            //    foreach (var job in _listJobs)
-            //    {
-            //        var jobPost = new JobPosting();
-
-            //        jobPost = _mapper.Map(job, jobPost);
-            //        jobPost.Client = company;
-
-            //        _repo.Create(jobPost, RoleConstants.ADMIN);
-            //    }
-            //    response.Succeeded = true;
-            //}
-            return response;
-        }
-        private GeneralResponse ValidateCSV(IFormFile formFile, int id)
+        public GeneralResponse UploadCSV(FileUpload fileUpload)
         {
             var response = new GeneralResponse();
-            var _listJobs = new List<JobPosting>();
-            var formats = new string[] { "dd-MM-yy", "dd.MM.yy", "dd/MM/yy" };
-
-            if (formFile == null)
+            var result = HelperMethods.ValidateCSV(fileUpload.FormFile);
+            if (!result.Response.Errors["Error"].Any())
             {
-                response.Errors["Error"].Add("Please insert a file");
-                return response;
-            }
-
-            if (formFile.ContentType != "application/vnd.ms-excel" && formFile.ContentType != "application/octet-stream")
-            {
-                response.Errors["Error"].Add(ErrorConstants.InvalidFormat);
-                return response;
-            }
-
-            if (!(formFile.Length > 0))
-            {
-                response.Errors["Error"].Add("The csv file is empty!");
-                return response;
-            }
-            var reader = new StreamReader(formFile.OpenReadStream());
-            var iteration = 0;
-
-            var csv = new CsvReader(reader);
-            csv.Configuration.Delimiter = ",";
-
-            while (csv.Read())
-            {
-                if (iteration == 0)
+                var company = _repo.GetById<Client>(fileUpload.Id);
+                if (company == null)
                 {
-                    if (
-                        !csv[0].Equals("Title") ||
-                        !csv[1].Equals("Description") ||
-                        !csv[2].Equals("Type") ||
-                        !csv[3].Equals("Education") ||
-                        !csv[4].Equals("Experience") ||
-                        !csv[5].Equals("DateFrom") ||
-                        !csv[6].Equals("DateTo")
-                        )
-                    {
-                        response.Errors["Error"].Add("The header columns must in the following order: Title, Description, Type, Education, Experience, DateFrom, DateTo ");
-                    }
-                    iteration++;
-                    continue;
-                }
-                try
-                {
-                    var a = csv[5];
-                    var b = csv[6];
-                    bool jobTypeParse = Enum.TryParse(csv[2].ToString(), out JobType currentJobType);
-                    bool educationParse = Enum.TryParse(csv[3].ToString(), out EducationType currentEducation);
-                    bool dateFromParse = DateTime.TryParseExact(csv[5].ToString(), formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateFrom);
-                    bool dateToParse = DateTime.TryParseExact(csv[6].ToString(), formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateTo);
-
-                    if (csv[0].Length > 30 || csv[0].Length == 0 || csv[1].Length > 800 || !jobTypeParse || !educationParse || !dateFromParse || !dateToParse)
-                    {
-                        response.Errors["Error"].Add(ErrorConstants.InvalidInput + " at line " + iteration);
-                    }
-                    var _Job = new JobPosting()
-                    {
-                        Title = csv[0],
-                        Description = csv[1],
-                        EmpCategory = currentJobType,
-                        Education = currentEducation,
-                        NeededExperience = csv[4],
-                        DateFrom = dateFrom,
-                        DateTo = dateTo,
-                        Id = id
-                    };
-
-                    _listJobs.Add(_Job);
-                    iteration++;
-                }
-                catch
-                {
-                    _logger.LogError(ErrorConstants.InvalidInput, formFile);
-                    response.Errors["Error"].Add(ErrorConstants.InvalidFormat + " at line " + iteration);
+                    response.ErrorHandling(ErrorConstants.InvalidInput,_logger,company);
                     return response;
                 }
+                foreach (var job in result.Jobs)
+                {
+                    var jobPost = new JobPosting();
+
+                    jobPost = _mapper.Map(job, jobPost);
+                    jobPost.Client = company;
+
+                    _repo.Create(jobPost, RoleConstants.ADMIN);
+                }
+                response.Succeeded = true;
             }
+            response.Errors = result.Response.Errors;
             return response;
         }
     }
