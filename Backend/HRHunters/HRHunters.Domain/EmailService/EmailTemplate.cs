@@ -24,7 +24,7 @@ namespace HRHunters.Domain.EmailService
                                 <tr style='background-color: #23282d; color: white;'>
                                     <td style='padding: 20px; width: 100px'>
                                         <img
-                                            src='https://i.imgur.com/GtTlwZh.png'
+                                            src='https://i.ibb.co/myCD0Q9/hrhunterslogo.png'
                                             alt='HR logo'
                                             style='height: 85px; width: 85px'
                                         />
@@ -49,7 +49,7 @@ namespace HRHunters.Domain.EmailService
                                 <tr style='background-color: #23282d; color: white;'>
                                     <td style='padding: 20px; width: 100px'>
                                         <img
-                                            src='https://i.imgur.com/GtTlwZh.png'
+                                            src='https://i.ibb.co/myCD0Q9/hrhunterslogo.png'
                                             alt='HR logo'
                                             style='height: 85px; width: 85px'
                                         />
