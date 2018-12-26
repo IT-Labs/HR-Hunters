@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Subscription } from "rxjs";
 import { AuthService } from "src/app/services/auth.service";
 import { ApplicationService } from "src/app/services/application.service";
 import { Application } from "src/app/models/application.model";
@@ -23,8 +22,6 @@ export class ApplicationDetailsComponent implements OnInit {
   loggedInUser;
   loading = false;
 
-  private applicationSub: Subscription;
-
   constructor(
     private applicationService: ApplicationService,
     private activatedRoute: ActivatedRoute,
@@ -35,16 +32,11 @@ export class ApplicationDetailsComponent implements OnInit {
     this.loading = true;
     this.loggedInUser = this.authService.getUser();
     this.application.id = parseInt(this.activatedRoute.snapshot.paramMap.get('id'))
-    this.applicationService.getApplication(this.application.id);
-    this.applicationSub = this.applicationService.getApplicationListener().subscribe(
+    this.applicationService.getApplication(this.application.id).subscribe(
       applicationData => {
-        this.application = applicationData.application
+        this.application = applicationData
         this.loading = false;
       }
     )
-  }
-
-  ngOnDestroy() {
-    this.applicationSub.unsubscribe();
   }
 }

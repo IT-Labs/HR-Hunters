@@ -17,70 +17,58 @@ using AutoMapper;
 using HRHunters.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 using HRHunters.Common.Constants;
+using HRHunters.Common.HelperMethods;
+using Microsoft.AspNetCore.Http;
 
 namespace HRHunters.Domain.Managers
 {
     public class ApplicantManager : BaseManager, IApplicantManager
     {
-        private readonly IRepository _repo;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly ILogger<ApplicantManager> _logger;
-        public ApplicantManager(IRepository repo, UserManager<User> userManager, IMapper mapper, ILogger<ApplicantManager> logger) : base(repo)
+        private readonly IS3Manager _s3Manager;
+        public ApplicantManager(IRepository repo, IS3Manager s3Manager, UserManager<User> userManager, IMapper mapper, ILogger<ApplicantManager> logger) : base(repo)
         {
+            _s3Manager = s3Manager;
             _logger = logger;
-            _repo = repo;
             _mapper = mapper;
             _userManager = userManager;
         }
 
-        public ApplicantResponse GetMultiple(SearchRequest request,int currentUserId)
+        public ApplicantResponse GetMultiple(SearchRequest request)
         {
-            if (currentUserId != request.Id)
-            {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess);
-                throw new UnauthorizedAccessException(ErrorConstants.UnauthorizedAccess);
-            }
             var response = new ApplicantResponse() { Applicants = new List<ApplicantInfo>()};
 
-            var query = _repo.GetAll<Applicant>(includeProperties: $"{nameof(User)},");
+            var query = GetAll<Applicant>(includeProperties: $"{nameof(User)},");
 
             var selected = _mapper.ProjectTo<ApplicantInfo>(query)
                                         .Applyfilters(request).ToList();
             
-             
             response.Applicants.AddRange(selected);
-            response.MaxApplicants = _repo.GetCount<Applicant>();
+            response.MaxApplicants = GetCount<Applicant>();
             return response;
         }
 
         public ApplicantInfo GetOneApplicant(int id)
         {
-            var query = _repo.GetOne<Applicant>(x => x.Id == id, includeProperties: $"{nameof(User)}");
-            return _mapper.Map<ApplicantInfo>(query);
+            return _mapper.Map<ApplicantInfo>(GetOne<Applicant>(x => x.Id == id, includeProperties: $"{nameof(User)}"));
         }
 
-        public async Task<GeneralResponse> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate, int currentUserId)
+        public async Task<GeneralResponse> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate)
         {
             var response = new GeneralResponse();
-            if (currentUserId != id)
-            {
-                _logger.LogError(ErrorConstants.UnauthorizedAccess);
-                response.Errors["Error"].Add(ErrorConstants.UnauthorizedAccess);
-                return response;
-            }
+            
             var user = await _userManager.FindByIdAsync(id.ToString());
 
-            var applicant = _repo.GetById<Applicant>(id);
+            var applicant = GetById<Applicant>(id);
 
             applicant = _mapper.Map(applicantUpdate, applicant);
-            bool educationParse=Enum.TryParse(applicantUpdate.EducationType,out EducationType educationType);
+            bool educationParse = Enum.TryParse(applicantUpdate.EducationType,out EducationType educationType);
+
             if (!educationParse)
-            {
-                _logger.LogError(ErrorConstants.InvalidInput, applicantUpdate.EducationType);
-                response.Errors["Error"].Add(ErrorConstants.InvalidInput);
-                return response;
-            }
+                return response.ErrorHandling(ErrorConstants.InvalidInput, _logger, applicantUpdate.EducationType);
+
             applicant.EducationType = educationType;
             applicant.User.ModifiedBy = applicant.User.FirstName;
             applicant.User.ModifiedDate = DateTime.UtcNow;
@@ -89,23 +77,27 @@ namespace HRHunters.Domain.Managers
             //Allow the current user to use their existing email
             if (existingUser != null && user != existingUser)
             {
-                response.Succeeded = false;
-                response.Errors["Error"].Add("Email is already in use.");
-                return response;
+                return response.ErrorHandling<ApplicantManager>("Email is already in use", objects: existingUser.Email);
             }
-            try
-            {
-                _repo.Update(applicant, applicant.User.FirstName);
-                await _userManager.UpdateAsync(user);
-                response.Succeeded = true;
-            }
-            catch(Exception e)
-            {
-                _logger.LogError(e.Message, applicant);
-                response.Errors["Error"].Add(e.Message);
-            }
+            Update(applicant, applicant.User.FirstName);
+            await _userManager.UpdateAsync(user);
+            response.Succeeded = true;
             return response;
+        }
 
+        public async Task<GeneralResponse> UpdateProfileImage(FileUpload fileUpload)
+        {
+            var response = new GeneralResponse();
+            var result = await _s3Manager.UploadProfileImage(EnvironmentVariables.BUCKET_NAME, fileUpload);
+            if (!result.Succeeded)
+            {
+                return response.ErrorHandling(ErrorConstants.FailedToUpdateDatabase, _logger, fileUpload);
+            }
+            var applicant = GetOne<Applicant>(x => x.Id == fileUpload.Id, includeProperties: $"{nameof(User)}");
+            applicant.Logo = result.Guid;
+            Update(applicant, applicant.User.FirstName);
+            response.Succeeded = true;
+            return response;
         }
     }
 

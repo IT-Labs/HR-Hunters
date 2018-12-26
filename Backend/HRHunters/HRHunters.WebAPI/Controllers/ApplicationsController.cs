@@ -21,44 +21,46 @@ namespace HRHunters.WebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class ApplicationsController : ControllerBase
+    public class ApplicationsController : BaseController
     {
         private readonly IApplicationManager _applicationManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ApplicationsController(IApplicationManager applicationManager,IHttpContextAccessor httpContextAccessor)
+        public ApplicationsController(IApplicationManager applicationManager,IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             _applicationManager = applicationManager;
-            _httpContextAccessor = httpContextAccessor;
-        }
-        private int GetCurrentUserId()
-        {
-            return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
         [Authorize(Roles = RoleConstants.APPLICANT)]
         [HttpGet("{id}")]
         public IActionResult GetOneApplication(int id)  
         {
-            return Ok(_applicationManager.GetOneApplication(id, GetCurrentUserId()));
+            return Ok(_applicationManager.GetOneApplication(id));
         }
+
         [Authorize(Roles = RoleConstants.ADMIN + ", " + RoleConstants.APPLICANT)]
         [HttpGet]
         public async Task<IActionResult> GetMultipleApplications([FromQuery]SearchRequest request)
         {
-            return Ok(await _applicationManager.GetMultiple(request, GetCurrentUserId()));
-        }        
-        [Authorize(Roles = RoleConstants.ADMIN)]
-        [HttpPut]
-        public IActionResult UpdateApplicationStatus(ApplicationStatusUpdate applicationStatusUpdate)
-        {
-            return Ok(_applicationManager.UpdateApplicationStatus(applicationStatusUpdate));
+            return Ok(await _applicationManager.GetMultiple(request));
         }
+        
+        [Authorize(Roles = RoleConstants.ADMIN)]
+        [HttpPut("{id}/status")]
+        public IActionResult UpdateApplicationStatus(int id, [FromBody]ApplicationStatusUpdate statusUpdate)
+        {
+            var result = _applicationManager.UpdateApplicationStatus(id, statusUpdate);
+            if (!result.Succeeded)
+                return BadRequest(result);
+            return Ok(result);
+        }
+
         [Authorize(Roles = RoleConstants.APPLICANT)]
         [HttpPost]
         public async Task<IActionResult> CreateApplication(Apply apply)
         {
-            var result = await _applicationManager.CreateApplication(apply, GetCurrentUserId());
+            if (CurrentUserId != apply.ApplicantId)
+                return BadRequest(apply);
+            var result = await _applicationManager.CreateApplication(apply);
             if (result.Succeeded)
             {
                 return Ok(result);

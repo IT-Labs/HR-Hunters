@@ -71,7 +71,6 @@ namespace HRHunters.Data.Context
                             Location = "Skopje",
                             PhoneNumber = "+3891112344",
                             Status = (ClientStatus)values.GetValue(random.Next(values.Length)),
-                            Logo = EnvironmentVariables.CLOUD_FRONT_URL + "6780f660-95fe-47da-8beb-88639bcace3c.JPEG"
                         };
                         _clientManager.Create(client);
                         _userManager.AddToRoleAsync(user, "Client").Wait();
@@ -103,7 +102,6 @@ namespace HRHunters.Data.Context
                             EducationType = EducationType.Bachelor,
                             PhoneNumber = "+38931453312",
                             Experience = "3",
-                            Logo = EnvironmentVariables.CLOUD_FRONT_URL + "6780f660-95fe-47da-8beb-88639bcace3c.JPEG"
                         };
 
                         _clientManager.Create(applicant, "Admin");

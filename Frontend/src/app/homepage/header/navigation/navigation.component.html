@@ -64,19 +64,10 @@
       >
         <a class="nav-link" routerLink="profile">Company profile</a>
       </li>
-      <li
-        class="nav-item active hp-nav__item"
-        id="mobile-logout"
-        routerLinkActive="hp-nav__item--active"
-        (click)="onLogout()"
-      >
-        <a class="nav-link" routerLink="profile">Logout</a>
-      </li>
       <hr />
       <li
         class="nav-item active hp-nav__item"
-        id="hp-nav__logout-mob"
-        *ngIf="!activeApplicant"
+        id="mobile-logout"
         (click)="onLogout()"
       >
         <a class="nav-link">Logout</a>
@@ -86,7 +77,17 @@
       <span class="hp-nav__name text-white"
         >Hi, {{ name }}
         <span class="hp-nav__logout"
-          >|
+          ><i
+            class="fa fa-circle"
+            aria-hidden="true"
+            [ngClass]="{
+              'u-color-red-dot': !activeClient,
+              'u-color-green-dot': activeClient
+            }"
+            placement="top" ngbTooltip="Current status"
+            *ngIf="!activeApplicant"
+          ></i>
+          |
           <span class="hp-nav__logout--color" (click)="onLogout()"
             >Logout</span
           ></span

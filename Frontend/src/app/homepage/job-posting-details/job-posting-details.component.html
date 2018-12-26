@@ -7,15 +7,24 @@
     [template]="customLoadingTemplate"
   ></ngx-loading>
   <div class="jp__container">
-      <h1 class="jp__heading">{{ jobPosting.jobTitle }}</h1>
-      <p class="jp__sub-heading">{{ jobPosting.jobType }}</p>
-      <p class="jp__content">{{ jobPosting.description }}</p>
-      <p class="jp__meta">
-        Job Posting added on: {{ jobPosting.dateFrom }}, available until:
-        {{ jobPosting.dateTo }}
-      </p>
-      <div class="jp__btn-container" *ngIf="isApplicant">
-        <button class="btn btn__primary" (click)="onApply()">Apply</button>
-      </div>
+    <h1 class="jp__heading">{{ jobPosting.jobTitle }}</h1>
+    <p class="jp__sub-heading">{{ jobPosting.jobType }}</p>
+    <p class="jp__content">{{ jobPosting.description }}</p>
+    <p class="jp__meta">
+      Job Posting added on: {{ jobPosting.dateFrom }}, available until:
+      {{ jobPosting.dateTo }}
+    </p>
+
+    <div class="jp__btn-container">
+      <button
+        class="btn btn__secondary"
+        [routerLink]="['/client/job-postings']"
+      >
+        &larr; Back
+      </button>
     </div>
+    <div class="jp__btn-container" *ngIf="isApplicant">
+      <button class="btn btn__primary" (click)="onApply()">Apply</button>
+    </div>
+  </div>
 </div>

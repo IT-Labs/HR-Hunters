@@ -75,10 +75,10 @@ namespace HRHunters.WebAPI
             services.AddAutoMapper();
             services.AddCors(opt =>
             {
-            opt.AddPolicy("AllowAll",
+            opt.AddPolicy("AllowSpecificOrigin",
                 buildr =>
                 {
-                    buildr.AllowAnyOrigin()
+                    buildr.WithOrigins("http://dev-docker:9014", "http://localhost:4200")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
@@ -94,14 +94,11 @@ namespace HRHunters.WebAPI
             services.AddDefaultAWSOptions(awsOptions);
             services.AddAWSService<IAmazonS3>();
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.Configure<ApiBehaviorOptions>(options => {
                 //Custom ModelState validations through [ApiController] attribute, to match the client's expected response
                 options.InvalidModelStateResponseFactory = actionContext =>
                 {
-                    if(actionContext.RouteData.Values["action"].Equals("Login"))
-                        return new BadRequestObjectResult(new UserLoginReturnModel(actionContext.ModelState));
                     return new BadRequestObjectResult(new GeneralResponse(actionContext.ModelState));
                 };
             });
@@ -142,7 +139,7 @@ namespace HRHunters.WebAPI
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
             app.UseAuthentication();
-            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseCors("AllowSpecificOrigin");
             app.UseMvc(routes =>
             {
                 routes.MapRoute("default", "{controller=Admin}/{action=Jobs}/{id?}");

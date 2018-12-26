@@ -18,7 +18,7 @@ namespace HRHunters.WebAPI.Helpers
     {
         public AutoMapperProfiles()
         {
-            CreateMap<User, UserLoginModel>();
+            CreateMap<User, UserLoginModel>();  
             CreateMap<User, UserRegisterModel>();
             CreateMap<UserRegisterModel, User>();
             CreateMap<User, UserLoginReturnModel>();
@@ -29,7 +29,8 @@ namespace HRHunters.WebAPI.Helpers
             CreateMap<ApplicantUpdate, Applicant>().ForPath(x => x.User.FirstName, opt => opt.MapFrom(y => y.FirstName))
                                                     .ForPath(x => x.User.LastName, opt => opt.MapFrom(y => y.LastName))
                                                     .ForPath(x => x.User.Email, opt => opt.MapFrom(y => y.Email))
-                                                    .ForPath(x => x.EducationType, opt => opt.Ignore());
+                                                    .ForPath(x => x.EducationType, opt => opt.Ignore())
+                                                    .ForPath(x => x.Id, opt => opt.Ignore());
             CreateMap<JobUpdate, JobPosting>().ForMember(x => x.DateFrom, opt => opt.Ignore())
                                                 .ForMember(x => x.DateTo, opt => opt.Ignore())
                                                 .ForMember(x => x.EmpCategory, opt => opt.Ignore())
@@ -50,10 +51,10 @@ namespace HRHunters.WebAPI.Helpers
             CreateMap<Client, ClientInfo>().ForMember(x => x.Id, opt => opt.MapFrom(x => x.UserId))
                                             .ForMember(x => x.CompanyName, opt => opt.MapFrom(x => x.User.FirstName))
                                             .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
-                                            .ForMember(x => x.ActiveJobs, opt => opt.MapFrom(x => x.JobPostings.Count))
+                                            .ForMember(x => x.ActiveJobs, opt => opt.MapFrom(x => x.JobPostings.Count(y => y.DateTo < DateTime.UtcNow)))
                                             .ForMember(x => x.Status, opt => opt.MapFrom(x => x.Status.ToString()))
                                             .ForMember(x => x.Logo, opt => opt.MapFrom(x => EnvironmentVariables.CLOUD_FRONT_URL + x.Logo))
-                                            .ForMember(x => x.AllJobs, opt => opt.MapFrom(x => x.JobPostings.Count(y => y.DateTo < DateTime.UtcNow)));
+                                            .ForMember(x => x.AllJobs, opt => opt.MapFrom(x => x.JobPostings.Count));
             CreateMap<JobSubmit, JobPosting>().ForMember(x => x.Id, opt => opt.Ignore())
                                                 .ForMember(x => x.DateFrom, opt => opt.Ignore())
                                                  .ForMember(x => x.DateTo, opt => opt.Ignore())
