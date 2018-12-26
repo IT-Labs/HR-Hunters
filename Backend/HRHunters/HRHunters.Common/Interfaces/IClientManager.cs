@@ -20,5 +20,6 @@ namespace HRHunters.Common.Interfaces
         Task<GeneralResponse> UpdateClientProfile(int id, ClientUpdate clientUpdate);
         Task<GeneralResponse> CreateCompany(NewCompany newCompany);
         ClientInfo GetOneClient(int id);
+        Task<GeneralResponse> UpdateCompanyLogo(FileUpload fileUpload);
     }
 }

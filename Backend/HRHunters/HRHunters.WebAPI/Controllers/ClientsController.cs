@@ -56,6 +56,18 @@ namespace HRHunters.WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [Authorize(Roles = RoleConstants.CLIENT)]
+        [HttpPut("image/{Id}")]
+        public async Task<IActionResult> UpdateClientLogo([FromForm]FileUpload fileUpload)
+        {
+            if (CurrentUserId != fileUpload.Id)
+                return BadRequest(fileUpload);
+            var result = await _clientManager.UpdateCompanyLogo(fileUpload);
+            if (!result.Succeeded)
+                return BadRequest(result);
+            return Ok(result);
+        }
+
         [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpPut("{id}/status")]
         public IActionResult UpdateClientStatus(int id, ClientStatusUpdate statusUpdate)
