@@ -27,8 +27,8 @@ export class ApplicationService {
     );
   }
 
-  updateApplication(applicationData) {
-    return this.http.put(this.baseUrl + "/Applications", applicationData);
+  updateApplication(applicationData, applicationId) {
+    return this.http.put(this.baseUrl + "/Applications/" + applicationId + '/status', applicationData);
   }
 
   addApplication(applicationData) {

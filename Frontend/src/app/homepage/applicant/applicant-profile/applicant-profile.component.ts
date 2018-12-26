@@ -34,7 +34,7 @@ export class ApplicantProfileComponent implements OnInit {
     school: null
   };
   imagePreview: string | ArrayBuffer;
-  defaultImage = "https://i.ibb.co/Rg5Rhpq/avatar.jpg";
+  defaultImage = "https://i.ibb.co/j8brMcC/9c038242-7771-496c-b644-4690217c0841.png";
   imageValid = true;
   validEmail = new RegExp(
     "[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
@@ -110,7 +110,15 @@ export class ApplicantProfileComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.applicantError = error.error;
+        if (error.status == 401) {
+          this.authService.logout();
+          this.loading = false;
+          return;
+        }
+        if (!!error.error.errors) {
+          this.applicantError = error.error.errors.Error[0]
+          this.loading = false;
+        }
       }
     );
   }
@@ -258,7 +266,15 @@ export class ApplicantProfileComponent implements OnInit {
             this.loading = false;
           },
           error => {
-            this.applicantError = error.error;
+            if (error.status == 401) {
+              this.authService.logout();
+              this.loading = false;
+              return;
+            }
+            if (!!error.error.errors) {
+              this.applicantError = error.error.errors.Error[0]
+              this.loading = false;
+            }
           }
         );
       });

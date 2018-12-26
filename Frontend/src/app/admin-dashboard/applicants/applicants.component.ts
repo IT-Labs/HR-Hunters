@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Applicant } from "src/app/models/applicant.model";
 import { ApplicantService } from "src/app/services/applicant.service";
 import { AuthService } from "src/app/services/auth.service";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-ad-applicants",
@@ -27,7 +28,8 @@ export class ADApplicantsComponent implements OnInit {
 
   constructor(
     private applicantService: ApplicantService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
@@ -79,6 +81,19 @@ export class ADApplicantsComponent implements OnInit {
         this.applicants = applicantData.applicants;
         this.applicantsCount.all = applicantData.maxApplicants;
         this.loading = false;
+      },
+      error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          return;
+        }
+        if (!!error.error.errors) {
+          this.toastr.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
+          this.loading = false;
+        }
       });
     }
   }
@@ -106,6 +121,19 @@ export class ADApplicantsComponent implements OnInit {
       this.applicants = applicantData.applicants;
       this.applicantsCount.all = applicantData.maxApplicants;
       this.loading = false;
+    },
+    error => {
+      if (error.status == 401) {
+        this.authService.logout();
+        return;
+      }
+      if (!!error.error.errors) {
+        this.toastr.error(
+          error.error.errors.Error[0],
+          "Error occured!"
+        );
+        this.loading = false;
+      }
     });
   }
 }

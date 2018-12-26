@@ -26,8 +26,8 @@ export class ClientService {
     return this.http.post(this.baseUrl + "/Clients", clientData);
   }
 
-  updateClientStatus(clientData) {
-    return this.http.put(this.baseUrl + "/Clients", clientData);
+  updateClientStatus(clientData, clientId) {
+    return this.http.put(this.baseUrl + "/Clients/" + clientId + '/status', clientData);
   }
 
   updateClientProfile(clientData, clientId) {
@@ -35,6 +35,6 @@ export class ClientService {
   }
 
   uploadCLientLogo(clientId, logo) {
-    return this.http.put(this.baseUrl + "/Uploads/Image/" + clientId, logo);
+    return this.http.put(this.baseUrl + "/Clients/image/" + clientId, logo);
   }
 }

@@ -143,9 +143,9 @@ export class AddCSVComponent {
     this.loading = true;
     this.jobPostingService.uploadCSV(this.selectedCompany.id, this.buildCSVFile(this.newCSVForm.value.csv)).subscribe(
       response => {
-        this.router.navigate(["/admin-dashboard/job-postings"]);
         this.loading = false;
         this.toastr.success("", "CSV updloaded successfully!");
+        this.router.navigate(["/admin-dashboard/job-postings"]);
       },
       error => {
         if (error.status == 401) {

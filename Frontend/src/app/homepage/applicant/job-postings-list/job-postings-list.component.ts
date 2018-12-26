@@ -90,10 +90,12 @@ export class JobPostingsListComponent implements OnInit {
       error => {
         if (error.status == 401) {
           this.authService.logout();
+          this.loading = false;
           return;
         }
         if (!!error.error.errors) {
           this.toastr.error(error.error.errors.Error[0], "Error occured!");
+          this.loading = false;
         }
       }
     );

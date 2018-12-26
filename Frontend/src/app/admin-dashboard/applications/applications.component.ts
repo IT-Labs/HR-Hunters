@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { Subscription } from "rxjs";
 import { Application } from "src/app/models/application.model";
 import { ApplicationService } from "src/app/services/application.service";
 import { AuthService } from "src/app/services/auth.service";
@@ -60,6 +59,20 @@ export class ADApplicationsComponent implements OnInit {
 
         this.paginationMaxSize = this.applicationCount.all;
         this.loading = false;
+      },
+      error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          this.loading = false;
+          return;
+        }
+        if (!!error.error.errors) {
+          this.toastr.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
+          this.loading = false;
+        }
       });
   }
 
@@ -80,14 +93,6 @@ export class ADApplicationsComponent implements OnInit {
     }&id=${this.loggedInUser.id}`;
   }
 
-  buildApplicationsDataOnUpdate(id: number, status: string) {
-    let applicationData = {
-      id: id,
-      status: status
-    };
-    return applicationData;
-  }
-
   onChangedPage(page: number) {
     this.loading = true;
     if (this.applicationQP.currentPage !== this.applicationQP.previousPage) {
@@ -106,6 +111,20 @@ export class ADApplicationsComponent implements OnInit {
 
           this.paginationMaxSize = this.applicationCount.all;
           this.loading = false;
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            this.loading = false;
+            return;
+          }
+          if (!!error.error.errors) {
+            this.toastr.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+            this.loading = false;
+          }
         });
     }
   }
@@ -146,6 +165,20 @@ export class ADApplicationsComponent implements OnInit {
           this.paginationMaxSize = applicationsData.rejected;
         }
         this.loading = false;
+      },
+      error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          this.loading = false;
+          return;
+        }
+        if (!!error.error.errors) {
+          this.toastr.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
+          this.loading = false;
+        }
       });
   }
 
@@ -181,35 +214,6 @@ export class ADApplicationsComponent implements OnInit {
 
         this.paginationMaxSize = this.applicationCount.all;
         this.loading = false;
-      });
-  }
-
-  chooseStatus(event: any, id: number) {
-    this.loading = true;
-    const currentStatus = event.target.innerText;
-    const currentId = id;
-    const applicationData = this.buildApplicationsDataOnUpdate(
-      currentId,
-      currentStatus
-    );
-    this.applicationService.updateApplication(applicationData).subscribe(
-      response => {
-        const params = this.buildQueryParams(this.applicationQP);
-        this.applicationService
-          .getApplications(params)
-          .subscribe(applicationsData => {
-            this.applications = applicationsData.applications;
-            this.applicationCount.all = applicationsData.maxApplications;
-            this.applicationCount.pending = applicationsData.pending;
-            this.applicationCount.contacted = applicationsData.contacted;
-            this.applicationCount.interviewed = applicationsData.interviewed;
-            this.applicationCount.hired = applicationsData.hired;
-            this.applicationCount.rejected = applicationsData.rejected;
-
-            this.paginationMaxSize = this.applicationCount.all;
-            this.toastr.success("", "Application status updated successfully!");
-            this.loading = false;
-          });
       },
       error => {
         if (error.status == 401) {
@@ -217,11 +221,71 @@ export class ADApplicationsComponent implements OnInit {
           this.loading = false;
           return;
         }
-        if (error.error) {
-          this.toastr.error(error.error.errors.Error[0], "Error occured!");
+        if (!!error.error.errors) {
+          this.toastr.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
           this.loading = false;
         }
-      }
-    );
+      });
+  }
+
+  chooseStatus(event: any, id: number) {
+    this.loading = true;
+    const currentStatus = {
+      status: event.target.innerText
+    };
+    const currentId = id;
+    this.applicationService
+      .updateApplication(currentStatus, currentId)
+      .subscribe(
+        response => {
+          const params = this.buildQueryParams(this.applicationQP);
+          this.applicationService.getApplications(params).subscribe(
+            applicationsData => {
+              this.applications = applicationsData.applications;
+              this.applicationCount.all = applicationsData.maxApplications;
+              this.applicationCount.pending = applicationsData.pending;
+              this.applicationCount.contacted = applicationsData.contacted;
+              this.applicationCount.interviewed = applicationsData.interviewed;
+              this.applicationCount.hired = applicationsData.hired;
+              this.applicationCount.rejected = applicationsData.rejected;
+
+              this.paginationMaxSize = this.applicationCount.all;
+              this.toastr.success(
+                "",
+                "Application status updated successfully!"
+              );
+              this.loading = false;
+            },
+            error => {
+              if (error.status == 401) {
+                this.authService.logout();
+                this.loading = false;
+                return;
+              }
+              if (!!error.error.errors) {
+                this.toastr.error(
+                  error.error.errors.Error[0],
+                  "Error occured!"
+                );
+                this.loading = false;
+              }
+            }
+          );
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            this.loading = false;
+            return;
+          }
+          if (!!error.error.errors) {
+            this.toastr.error(error.error.errors.Error[0], "Error occured!");
+            this.loading = false;
+          }
+        }
+      );
   }
 }

@@ -291,7 +291,7 @@ export class AddJobPostingComponent implements OnInit {
             this.loading = false;
             return;
           }
-          if (error.error) {
+          if (!!error.error.errors) {
             this.toastr.error(
               error.error.errors.Error[0],
               "Error occured!"

@@ -3,7 +3,6 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { mimeType } from "../../../validators/mime-type.validator";
 import { ClientService } from "src/app/services/client.service";
 import { AuthService } from "src/app/services/auth.service";
-import { Subscription } from "rxjs";
 import { Client } from "src/app/models/client.model";
 import { ToastrService } from "ngx-toastr";
 
@@ -16,7 +15,7 @@ export class ClientProfileComponent implements OnInit {
   serverError;
   validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
   imagePreview: string | ArrayBuffer;
-  defaultImage = "https://i.ibb.co/Rg5Rhpq/avatar.jpg";
+  defaultImage = "https://i.ibb.co/j8brMcC/9c038242-7771-496c-b644-4690217c0841.png";
   imageValid = true;
   loggedInUser;
   loggedInClient: Client = {
@@ -58,13 +57,18 @@ export class ClientProfileComponent implements OnInit {
         this.imagePreview = this.defaultImage;
       }
       this.loading = false;
+    },
+    error => {
+      if (error.status == 401) {
+        this.authService.logout();
+        this.loading = false;
+        return;
+      }
+      if (!!error.error.errors) {
+        this.serverError = error.error.errors.Error[0]
+        this.loading = false;
+      }
     });
-
-    // this.clientErrorSub = this.clientService
-    //   .getClientErrorListener()
-    //   .subscribe(error => {
-    //     this.serverError = error.error;
-    //   });
   }
 
   clientProfileFormHP = this.fb.group({

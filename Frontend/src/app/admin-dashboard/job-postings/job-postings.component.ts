@@ -59,6 +59,19 @@ export class ADJobPostingsComponent implements OnInit {
 
       this.paginationMaxSize = this.jobPostingsCount.all;
       this.loading = false;
+    },
+    error => {
+      if (error.status == 401) {
+        this.authService.logout();
+        return;
+      }
+      if (!!error.error.errors) {
+        this.toastr.error(
+          error.error.errors.Error[0],
+          "Error occured!"
+        );
+        this.loading = false;
+      }
     });
   }
 
@@ -126,6 +139,19 @@ export class ADJobPostingsComponent implements OnInit {
 
           this.paginationMaxSize = this.jobPostingsCount.all;
           this.loading = false;
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (!!error.error.errors) {
+            this.toastr.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+            this.loading = false;
+          }
         });
     }
   }
@@ -161,6 +187,19 @@ export class ADJobPostingsComponent implements OnInit {
         this.paginationMaxSize = jobPostingData.rejected;
       }
       this.loading = false;
+    },
+    error => {
+      if (error.status == 401) {
+        this.authService.logout();
+        return;
+      }
+      if (!!error.error.errors) {
+        this.toastr.error(
+          error.error.errors.Error[0],
+          "Error occured!"
+        );
+        this.loading = false;
+      }
     });
   }
 
@@ -193,6 +232,19 @@ export class ADJobPostingsComponent implements OnInit {
 
       this.paginationMaxSize = this.jobPostingsCount.all;
       this.loading = false;
+    },
+    error => {
+      if (error.status == 401) {
+        this.authService.logout();
+        return;
+      }
+      if (!!error.error.errors) {
+        this.toastr.error(
+          error.error.errors.Error[0],
+          "Error occured!"
+        );
+        this.loading = false;
+      }
     });
   }
 
@@ -226,6 +278,19 @@ export class ADJobPostingsComponent implements OnInit {
           this.paginationMaxSize = this.jobPostingsCount.all;
           this.loading = false;
           this.toastr.success("", "Job posting status updated successfully!");
+        },
+        error => {
+          if (error.status == 401) {
+            this.authService.logout();
+            return;
+          }
+          if (!!error.error.errors) {
+            this.toastr.error(
+              error.error.errors.Error[0],
+              "Error occured!"
+            );
+            this.loading = false;
+          }
         });
       },
       error => {

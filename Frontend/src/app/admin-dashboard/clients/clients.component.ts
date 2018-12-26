@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Client } from "src/app/models/client.model";
 import { ClientService } from "src/app/services/client.service";
 import { AuthService } from "src/app/services/auth.service";
@@ -56,6 +56,19 @@ export class ADClientsComponent implements OnInit {
       this.loading = false;
 
       this.paginationMaxSize = clientsData.maxClients;
+    },
+    error => {
+      if (error.status == 401) {
+        this.authService.logout();
+        return;
+      }
+      if (!!error.error.errors) {
+        this.toastr.error(
+          error.error.errors.Error[0],
+          "Error occured!"
+        );
+        this.loading = false;
+      }
     });
   }
 
@@ -74,14 +87,6 @@ export class ADClientsComponent implements OnInit {
     }&filterBy=${data.currentFilter}&filterQuery=${
       data.currentFilterQuery
     }&id=${this.loggedInUser.id}`;
-  }
-
-  buildClientDataOnUpdateStatus(id: number, status: string) {
-    let clientData = {
-      id: id,
-      status: status
-    };
-    return clientData;
   }
 
   //DA SE PREMESTI SMESTA NA BOLJE MESTO
@@ -120,6 +125,19 @@ export class ADClientsComponent implements OnInit {
   
         this.paginationMaxSize = clientsData.maxClients;
         this.loading = false;
+      },
+      error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          return;
+        }
+        if (!!error.error.errors) {
+          this.toastr.error(
+            error.error.errors.Error[0],
+            "Error occured!"
+          );
+          this.loading = false;
+        }
       });
     }
   }
@@ -150,6 +168,19 @@ export class ADClientsComponent implements OnInit {
         this.paginationMaxSize = clientsData.inactive;
       }
       this.loading = false;
+    },
+    error => {
+      if (error.status == 401) {
+        this.authService.logout();
+        return;
+      }
+      if (!!error.error.errors) {
+        this.toastr.error(
+          error.error.errors.Error[0],
+          "Error occured!"
+        );
+        this.loading = false;
+      }
     });
   }
 
@@ -181,20 +212,30 @@ export class ADClientsComponent implements OnInit {
 
       this.paginationMaxSize = clientsData.maxClients;
       this.loading = false;
+    },
+    error => {
+      if (error.status == 401) {
+        this.authService.logout();
+        return;
+      }
+      if (!!error.error.errors) {
+        this.toastr.error(
+          error.error.errors.Error[0],
+          "Error occured!"
+        );
+        this.loading = false;
+      }
     });
   }
 
   chooseStatus(event: any, id: number) {
     this.loading = true;
-    const currentStatus = event.target.innerText;
+    const currentStatus = {
+      status: event.target.innerText
+    } 
     const currentId = id;
 
-    let clientData = this.buildClientDataOnUpdateStatus(
-      currentId,
-      currentStatus
-    );
-
-    this.clientService.updateClientStatus(clientData).subscribe(
+    this.clientService.updateClientStatus(currentStatus, currentId).subscribe(
       response => {
         this.router.navigate(["/admin-dashboard/clients"]);
         this.toastr.success("", "Client status updated successfully!");

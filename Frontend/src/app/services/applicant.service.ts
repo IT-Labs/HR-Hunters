@@ -28,6 +28,6 @@ export class ApplicantService {
   }
 
   uploadApplicantLogo(applicantId, logo) {
-    return this.http.put(this.baseUrl + "/Uploads/Image/" + applicantId, logo);
+    return this.http.put(this.baseUrl + "/Applicants/image/" + applicantId, logo);
   }
 }
