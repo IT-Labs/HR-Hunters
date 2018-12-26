@@ -182,7 +182,7 @@ namespace HRHunters.Domain.Managers
             var result = HelperMethods.ValidateCSV(fileUpload.FormFile);
             if (!result.Response.Errors["Error"].Any())
             {
-                var company = _repo.GetById<Client>(fileUpload.Id);
+                var company = GetById<Client>(fileUpload.Id);
                 if (company == null)
                 {
                     response.ErrorHandling(ErrorConstants.InvalidInput,_logger,company);
@@ -195,7 +195,7 @@ namespace HRHunters.Domain.Managers
                     jobPost = _mapper.Map(job, jobPost);
                     jobPost.Client = company;
 
-                    _repo.Create(jobPost, RoleConstants.ADMIN);
+                    Create(jobPost, RoleConstants.ADMIN);
                 }
                 response.Succeeded = true;
             }
