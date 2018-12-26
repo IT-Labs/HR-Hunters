@@ -104,30 +104,10 @@
       border: 2px solid $color-btn-danger-active;
     }
   }
+}
 
-  // linked in 
-  &__linkedin {
-    background-color: $color-linkedin;
-    color: $color-white;
-    font-family: $roboto;
-  
-    font-size: 1.9rem;
-    padding: .4rem;
-    margin: 1rem;
-    width: 12rem;
-    border-radius: 1.2rem;
-    font-weight: 600;
-
-    &--span{
-      font-size: 2.2rem;
-    }
-
-    &:hover {
-      background-color: $color-linkedin-hover;
-    }
-    
-    &:active {
-      background-color: $color-linkedin;
-    }
+@media (min-width: 991px) {
+  .btn__mobile-upload {
+    display: none;
   }
 }

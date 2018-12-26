@@ -7,21 +7,15 @@
     [template]="customLoadingTemplate"
   ></ngx-loading>
   <div class="container">
-      <div class="row">
-        <!-- LEFT SIDEBAR -->
-        <div class="col-xs-12 col-md-3">
-            <form
-            class="hp__form"
-            [formGroup]="clientProfileImageFormHP"
-          >
+    <div class="row">
+      <!-- LEFT SIDEBAR -->
+      <div class="col-xs-12 col-md-3">
+        <form class="hp__form" [formGroup]="clientProfileImageFormHP">
           <div class="company-logo">
-            <img
-              [src]="imagePreview"
-              class="company-logo__img"
-            />
+            <img [src]="imagePreview" class="company-logo__img" />
             <div class="company-logo__text" (click)="filePicker.click()">
-              <i class="fa fa-camera u-color-dark" aria-hidden="true"></i
-              >Upload photo
+              <i class="fa fa-camera u-color-dark" aria-hidden="true"></i>
+              Upload photo
               <input
                 type="file"
                 id="hpid__logo"
@@ -31,22 +25,31 @@
               />
             </div>
           </div>
+          <div class="text-center mt-3">
+            <button
+              class="btn btn__primary btn__mobile-upload"
+              (click)="filePicker.click()"
+            >
+              Upload photo
+            </button>
+          </div>
+
           <div *ngIf="!imageValid" class="alert hp__form--alert-msg">
             Logo is required.<br /><br />
 
             Please upload a propper image file in .png or .jpg format. Maximum
             size of the image is 600px x 600px
           </div>
-          </form>
-        </div>
+        </form>
+      </div>
 
-        <!-- RIGHT SIDEBAR -->
-        <div class="col-xs-12 col-md-9">
-            <form
-            class="hp__form"
-            [formGroup]="clientProfileFormHP"
-            (ngSubmit)="onSubmitClientProfile()"
-          >
+      <!-- RIGHT SIDEBAR -->
+      <div class="col-xs-12 col-md-9">
+        <form
+          class="hp__form"
+          [formGroup]="clientProfileFormHP"
+          (ngSubmit)="onSubmitClientProfile()"
+        >
           <div class="hp__form__container">
             <div class="hp__form--section">
               <!-- COMPANY NAME -->
@@ -80,8 +83,7 @@
                 </div>
                 <div
                   *ngIf="
-                    clientProfileFormHP.controls['companyName'].errors
-                      ?.pattern
+                    clientProfileFormHP.controls['companyName'].errors?.pattern
                   "
                 >
                   Company name can contain letters from the English alphabet,
@@ -105,8 +107,9 @@
               <div
                 *ngIf="
                   (!clientProfileFormHP.controls['companyEmail'].valid &&
-                  (clientProfileFormHP.controls['companyEmail'].dirty ||
-                    clientProfileFormHP.controls['companyEmail'].touched)) || serverError
+                    (clientProfileFormHP.controls['companyEmail'].dirty ||
+                      clientProfileFormHP.controls['companyEmail'].touched)) ||
+                  serverError
                 "
                 class="alert hp__form--alert-msg"
               >
@@ -133,11 +136,7 @@
                 >
                   Email must be at least 6 characters long.
                 </div>
-                <div
-                  *ngIf="serverError"
-                >
-                  {{ serverError }}
-                </div>
+                <div *ngIf="serverError">{{ serverError }}</div>
               </div>
 
               <!-- E-mail end -->
@@ -169,9 +168,7 @@
                 >
                   Phone number is required.
                 </div>
-                <div
-                  *ngIf="clientProfileFormHP.controls['phonenumber'].errors"
-                >
+                <div *ngIf="clientProfileFormHP.controls['phonenumber'].errors">
                   Phone number must be in valid format. Example: +1 (222)
                   333-444-55
                 </div>
@@ -228,7 +225,7 @@
             </div>
           </div>
         </form>
-        </div>
       </div>
+    </div>
   </div>
 </div>

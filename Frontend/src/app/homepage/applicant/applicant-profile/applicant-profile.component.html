@@ -16,13 +16,10 @@
         <!-- LEFT SIDEBAR -->
         <div class="col-xs-12 col-md-3">
           <div class="company-logo">
-            <img
-              [src]="imagePreview"
-              class="company-logo__img"
-            />
+            <img [src]="imagePreview" class="company-logo__img" />
             <div class="company-logo__text" (click)="filePicker.click()">
-              <i class="fa fa-camera u-color-dark" aria-hidden="true"></i
-              >Upload photo
+              <i class="fa fa-camera u-color-dark" aria-hidden="true"></i>
+              Upload photo
               <input
                 type="file"
                 id="hpid__logo"
@@ -32,15 +29,14 @@
               />
             </div>
           </div>
-
-          <!-- <div class="hp__form--btn-container-linkedin">
-            <button type="submit" class="btn btn__linkedin">
-              Linked
-              <span class="btn__linkedin--span"
-                ><i class="fa fa-linkedin-square"></i
-              ></span>
+          <div class="text-center mt-3">
+            <button
+              class="btn btn__primary btn__mobile-upload"
+              (click)="filePicker.click()"
+            >
+              Upload photo
             </button>
-          </div> -->
+          </div>
 
           <div *ngIf="!imageValid" class="alert hp__form--alert-msg">
             Photo is required.<br /><br />
@@ -180,11 +176,7 @@
                 >
                   Email must be at least 6 characters long.
                 </div>
-                <div
-                  *ngIf="applicantError"
-                >
-                  {{ applicantError }}
-                </div>
+                <div *ngIf="applicantError">{{ applicantError }}</div>
               </div>
 
               <!-- Phone-number start -->
@@ -292,8 +284,9 @@
                     applicantProfileFormHP.controls['school'].errors?.pattern
                   "
                 >
-                  School/University can contain letters from the English alphabet,
-                  numbers and the special characters "- @ . # & ! ' , _"
+                  School/University can contain letters from the English
+                  alphabet, numbers and the special characters "- @ . # & ! ' ,
+                  _"
                 </div>
               </div>
 

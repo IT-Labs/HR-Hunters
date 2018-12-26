@@ -1,26 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
-
+//bootstrap
 @import "../../node_modules/bootstrap/scss/bootstrap.scss";
+
+//toastr
 @import '~ngx-toastr/toastr-bs4-alert';
 
-@import "./abstracts/variables";
-@import "./abstracts/mixins";
-@import "./abstracts/utilities";
+@import "./abstracts/abstracts";
 
 @import "./base/base";
-@import "./base/typography";
 
-@import "./components/buttons";
-@import "./components/auth-form";
-@import "./components/admin-form";
-@import "./components/dropdown";
-@import "./components/job-posting";
-@import "./components/logo";
-@import "./components/homepage-form";
-@import "./components/header.scss";
-@import "./components/hp-navigation.scss";
-@import "./components/datepicker.scss";
+@import "./components/components";
 
-@import "./layout/auth-page.scss";
-@import "./layout/admin-dashboard.scss";
-@import "./layout/dashboard.scss";
+@import "./layouts/layouts";
