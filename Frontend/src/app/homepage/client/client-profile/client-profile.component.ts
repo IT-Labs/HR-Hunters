@@ -15,8 +15,10 @@ export class ClientProfileComponent implements OnInit {
   serverError;
   validText = new RegExp("^([a-zA-Z0-9]|[- @.#&!',_])*$");
   imagePreview: string | ArrayBuffer;
-  defaultImage = "https://i.ibb.co/j8brMcC/9c038242-7771-496c-b644-4690217c0841.png";
+  defaultImage =
+    "https://i.ibb.co/j8brMcC/9c038242-7771-496c-b644-4690217c0841.png";
   imageValid = true;
+  uploadedImage;
   loggedInUser;
   loggedInClient: Client = {
     id: null,
@@ -41,34 +43,36 @@ export class ClientProfileComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     this.loggedInUser = this.authService.getUser();
-    this.clientService.getClient(this.loggedInUser.id).subscribe(client => {
-      this.loggedInClient = client;
-      this.clientProfileFormHP.controls.companyName.setValue(
-        client.companyName
-      );
-      this.clientProfileFormHP.controls.companyEmail.setValue(client.email);
-      this.clientProfileFormHP.controls.location.setValue(client.location);
-      this.clientProfileFormHP.controls.phonenumber.setValue(
-        client.phoneNumber
-      );
-      if (this.loggedInClient.logo !== "") {
-        this.imagePreview = client.logo;
-      } else {
-        this.imagePreview = this.defaultImage;
-      }
-      this.loading = false;
-    },
-    error => {
-      if (error.status == 401) {
-        this.authService.logout();
+    this.clientService.getClient(this.loggedInUser.id).subscribe(
+      client => {
+        this.loggedInClient = client;
+        this.clientProfileFormHP.controls.companyName.setValue(
+          client.companyName
+        );
+        this.clientProfileFormHP.controls.companyEmail.setValue(client.email);
+        this.clientProfileFormHP.controls.location.setValue(client.location);
+        this.clientProfileFormHP.controls.phonenumber.setValue(
+          client.phoneNumber
+        );
+        if (this.loggedInClient.logo !== "") {
+          this.imagePreview = client.logo;
+        } else {
+          this.imagePreview = this.defaultImage;
+        }
         this.loading = false;
-        return;
+      },
+      error => {
+        if (error.status == 401) {
+          this.authService.logout();
+          this.loading = false;
+          return;
+        }
+        if (!!error.error.errors) {
+          this.serverError = error.error.errors.Error[0];
+          this.loading = false;
+        }
       }
-      if (!!error.error.errors) {
-        this.serverError = error.error.errors.Error[0]
-        this.loading = false;
-      }
-    });
+    );
   }
 
   clientProfileFormHP = this.fb.group({
@@ -132,14 +136,16 @@ export class ClientProfileComponent implements OnInit {
 
   onImagePicked(event: Event) {
     this.loading = true;
-    const file = (event.target as HTMLInputElement).files[0];
+    this.uploadedImage = (event.target as HTMLInputElement).files[0];
     const reader = new FileReader();
     reader.onload = () => {
       let img = new Image();
       img.src = reader.result.toString();
       setTimeout(() => {
         if (img.height < 600 || img.width < 600) {
-          this.clientProfileImageFormHP.patchValue({ logo: file });
+          this.clientProfileImageFormHP.patchValue({
+            logo: this.uploadedImage
+          });
           this.clientProfileImageFormHP.controls[
             "logo"
           ].updateValueAndValidity();
@@ -151,28 +157,23 @@ export class ClientProfileComponent implements OnInit {
         }
       }, 2000);
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(this.uploadedImage);
     this.loading = false;
-  }
-
-  buildImageFile(logo: any) {
-    const logoData = new FormData();
-    logoData.append("logo", logo, this.clientProfileFormHP.value.companyName);
-    return logoData;
   }
 
   onSubmitClientLogo() {
     this.loading = true;
+    const logoData = new FormData();
+    logoData.append("FormFile", this.uploadedImage);
     this.clientService
-      .uploadCLientLogo(
-        this.loggedInUser.id,
-        this.buildImageFile(this.clientProfileImageFormHP.value.logo)
-      )
+      .uploadCLientLogo(this.loggedInUser.id, logoData)
       .subscribe(
         response => {
+          this.loading = false;
+          this.toastr.success("", "Image uploaded successfully!");
           this.clientService.getClient(this.loggedInUser.id).subscribe(
             clientsData => {
-                this.loggedInClient = clientsData
+              this.loggedInClient = clientsData;
             },
             error => {
               if (error.status == 401) {
@@ -197,10 +198,7 @@ export class ClientProfileComponent implements OnInit {
             return;
           }
           if (!!error.error.errors) {
-            this.toastr.error(
-              error.error.errors.Error[0],
-              "Error occured!"
-            );
+            this.toastr.error(error.error.errors.Error[0], "Error occured!");
             this.loading = false;
           }
         }
@@ -223,27 +221,44 @@ export class ClientProfileComponent implements OnInit {
     );
 
     if (this.clientProfileFormHP.valid) {
-      this.clientService.updateClientProfile(clientData, this.loggedInUser.id).subscribe(
-        response => {
-          this.clientService.getClient(this.loggedInUser.id);
-          this.toastr.success('', "Profile updated successfully!");
-          this.loading = false;
-        },
-        error => {
-          if (error.status == 401) {
-            this.authService.logout();
-            this.loading = false;
-            return;
-          }
-          if (!!error.error.errors) {
-            this.toastr.error(
-              error.error.errors.Error[0],
-              "Error occured!"
+      this.clientService
+        .updateClientProfile(clientData, this.loggedInUser.id)
+        .subscribe(
+          response => {
+            this.toastr.success("", "Profile updated successfully!");
+            this.clientService.getClient(this.loggedInUser.id).subscribe(
+              clientsData => {
+                this.loggedInClient = clientsData;
+              },
+              error => {
+                if (error.status == 401) {
+                  this.authService.logout();
+                  this.loading = false;
+                  return;
+                }
+                if (error.error) {
+                  this.toastr.error(
+                    error.error.errors.Error[0],
+                    "Error occured!"
+                  );
+                  this.loading = false;
+                }
+              }
             );
             this.loading = false;
+          },
+          error => {
+            if (error.status == 401) {
+              this.authService.logout();
+              this.loading = false;
+              return;
+            }
+            if (!!error.error.errors) {
+              this.toastr.error(error.error.errors.Error[0], "Error occured!");
+              this.loading = false;
+            }
           }
-        }
-      );
+        );
     }
   }
 }
