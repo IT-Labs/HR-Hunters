@@ -208,7 +208,6 @@
           <tr *ngFor="let jobPosting of jobPostings">
             <td
               scope="row"
-              (click)="onEditJobPosting(jobPosting.id)"
               [routerLink]="[
                 '/admin-dashboard/new-job-posting/',
                 jobPosting.id
