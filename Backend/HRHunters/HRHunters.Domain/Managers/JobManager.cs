@@ -34,24 +34,22 @@ namespace HRHunters.Domain.Managers
 {
     public class JobManager : BaseManager, IJobManager
     {
-        private readonly IRepository _repo;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly ILogger<JobManager> _logger;
         public JobManager(IRepository repo, UserManager<User> userManager, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<JobManager> logger) : base(repo)
         {
-            _repo = repo;
             _userManager = userManager;
             _mapper = mapper;
             _logger = logger;
         }
 
-        public async Task<JobResponse> GetMultiple(SearchRequest request, int currentUserId)
+        public async Task<JobResponse> GetMultiple(SearchRequest request)
         {
-            var current = await _userManager.FindByIdAsync(currentUserId.ToString());
+            var current = await _userManager.FindByIdAsync(request.Id.ToString());
             IList<string> role = await _userManager.GetRolesAsync(current);
-            var query = _repo.GetAll<JobPosting>(includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," + $"{nameof(JobPosting.Applications)}");
-            var applied = _repo.GetAll<Application>().Where(x => x.ApplicantId == request.Id).Select(x => x.JobPostingId).ToList();
+            var query = GetAll<JobPosting>($"{nameof(Client)}.{nameof(Client.User)}," + $"{nameof(JobPosting.Applications)}");
+            var applied = Get<Application>(filter: x => x.ApplicantId.Equals(request.Id)).Select(x => x.JobPostingId).ToList();
 
             if (!role.Contains(RoleConstants.ADMIN))
             {
@@ -70,7 +68,7 @@ namespace HRHunters.Domain.Managers
 
             var selected = _mapper.ProjectTo<JobInfo>(query).Applyfilters(request);
             response.JobPostings.AddRange(selected.ToList());
-            var groupings = _repo.GetAll<JobPosting>().GroupBy(x => x.Status).Select(x => new { Status = x.Key, Count = x.Count() }).ToList();
+            var groupings = GetAll<JobPosting>().GroupBy(x => x.Status).Select(x => new { Status = x.Key, Count = x.Count() }).ToList();
 
             response.MaxJobPosts = groupings.Sum(x => x.Count);
             response.Approved = groupings.Where(x => x.Status.Equals(JobPostingStatus.Approved)).Select(x => x.Count).FirstOrDefault();
@@ -91,7 +89,7 @@ namespace HRHunters.Domain.Managers
                 return response.ErrorHandling(ErrorConstants.UnauthorizedAccess, _logger, jobSubmit.Id, currentUserId);
             }
             var company = new Client();
-            company = _repo.GetById<Client>(jobSubmit.Id);
+            company = GetById<Client>(jobSubmit.Id);
             
             var jobPost = new JobPosting()
             {
@@ -116,51 +114,30 @@ namespace HRHunters.Domain.Managers
             if (userRole.Contains(RoleConstants.CLIENT))
             {
                 jobPost.Status = JobPostingStatus.Pending;
-                try
-                {
-                    _repo.Create(jobPost, company.User.FirstName);
-                    response.Succeeded = true;
-                    return response;
-                }
-                catch (DbUpdateException e)
-                {
-                    return response.ErrorHandling(e.Message, _logger, jobPost);
-                }
-            }
-            else
+                Create(jobPost, company.User.FirstName);
+            }else
             {
                 jobPost.Status = JobPostingStatus.Approved;
-                try
-                {
-                    _repo.Create(jobPost, RoleConstants.ADMIN);
-                    response.Succeeded = true;
-                    return response;
-                }
-                catch (DbUpdateException e)
-                {
-                    return response.ErrorHandling(e.Message, _logger, jobPost);
-                }
+                Create(jobPost, RoleConstants.ADMIN);
             }
+            
+            response.Succeeded = true;
+            return response;
         }
 
         public JobInfo GetOneJobPosting(int id)
         {
-            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == id,
+            var jobPost = GetOne<JobPosting>(filter: x => x.Id == id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
 
             return _mapper.Map<JobInfo>(jobPost);
         }
 
-        public async Task<GeneralResponse> UpdateJob(JobUpdate jobUpdate, int currentUserId)
+        public GeneralResponse UpdateJob(JobUpdate jobUpdate)
         {
-            var userRole = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(currentUserId.ToString()));
             var response = new GeneralResponse();
-            if (!userRole.Contains(RoleConstants.ADMIN))
-            {
-                return response.ErrorHandling(ErrorConstants.UnauthorizedAccess, _logger, userRole);
-            }
 
-            var jobPost = _repo.GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
+            var jobPost = GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
 
             if (jobPost == null)
@@ -194,126 +171,35 @@ namespace HRHunters.Domain.Managers
                 jobPost.Education = currentEducation;
             }
         
-            try
-            {
-                _repo.Update(jobPost, RoleConstants.ADMIN);
-                response.Succeeded = true;
-                return response;
-            }
-            catch (DbUpdateException e)
-            {
-                return response.ErrorHandling(e.Message, _logger, jobPost);
-            }
-        }
-
-        public GeneralResponse UploadCSV(IFormFile formFile, int id)
-        {
-            var response = ValidateCSV(formFile, id);
-            //if (!response.Errors["Error"].Any())
-            //{
-            //    var company = _repo.GetById<Client>(id);
-            //    if (company == null)
-            //    {
-            //        _logger.LogError(ErrorConstants.InvalidInput, company);
-            //        response.Errors["Error"].Add(ErrorConstants.InvalidInput);
-            //        return response;
-            //    }
-            //    foreach (var job in _listJobs)
-            //    {
-            //        var jobPost = new JobPosting();
-
-            //        jobPost = _mapper.Map(job, jobPost);
-            //        jobPost.Client = company;
-
-            //        _repo.Create(jobPost, RoleConstants.ADMIN);
-            //    }
-            //    response.Succeeded = true;
-            //}
+            Update(jobPost, RoleConstants.ADMIN);
+            response.Succeeded = true;
             return response;
         }
-        private GeneralResponse ValidateCSV(IFormFile formFile, int id)
+
+        public GeneralResponse UploadCSV(FileUpload fileUpload)
         {
             var response = new GeneralResponse();
-            var _listJobs = new List<JobPosting>();
-            var formats = new string[] { "dd-MM-yy", "dd.MM.yy", "dd/MM/yy" };
-
-            if (formFile == null)
+            var result = HelperMethods.ValidateCSV(fileUpload.FormFile);
+            if (!result.Response.Errors["Error"].Any())
             {
-                response.Errors["Error"].Add("Please insert a file");
-                return response;
-            }
-
-            if (formFile.ContentType != "application/vnd.ms-excel" && formFile.ContentType != "application/octet-stream")
-            {
-                response.Errors["Error"].Add(ErrorConstants.InvalidFormat);
-                return response;
-            }
-
-            if (!(formFile.Length > 0))
-            {
-                response.Errors["Error"].Add("The csv file is empty!");
-                return response;
-            }
-            var reader = new StreamReader(formFile.OpenReadStream());
-            var iteration = 0;
-
-            var csv = new CsvReader(reader);
-            csv.Configuration.Delimiter = ",";
-
-            while (csv.Read())
-            {
-                if (iteration == 0)
+                var company = GetById<Client>(fileUpload.Id);
+                if (company == null)
                 {
-                    if (
-                        !csv[0].Equals("Title") ||
-                        !csv[1].Equals("Description") ||
-                        !csv[2].Equals("Type") ||
-                        !csv[3].Equals("Education") ||
-                        !csv[4].Equals("Experience") ||
-                        !csv[5].Equals("DateFrom") ||
-                        !csv[6].Equals("DateTo")
-                        )
-                    {
-                        response.Errors["Error"].Add("The header columns must in the following order: Title, Description, Type, Education, Experience, DateFrom, DateTo ");
-                    }
-                    iteration++;
-                    continue;
-                }
-                try
-                {
-                    var a = csv[5];
-                    var b = csv[6];
-                    bool jobTypeParse = Enum.TryParse(csv[2].ToString(), out JobType currentJobType);
-                    bool educationParse = Enum.TryParse(csv[3].ToString(), out EducationType currentEducation);
-                    bool dateFromParse = DateTime.TryParseExact(csv[5].ToString(), formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateFrom);
-                    bool dateToParse = DateTime.TryParseExact(csv[6].ToString(), formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateTo);
-
-                    if (csv[0].Length > 30 || csv[0].Length == 0 || csv[1].Length > 800 || !jobTypeParse || !educationParse || !dateFromParse || !dateToParse)
-                    {
-                        response.Errors["Error"].Add(ErrorConstants.InvalidInput + " at line " + iteration);
-                    }
-                    var _Job = new JobPosting()
-                    {
-                        Title = csv[0],
-                        Description = csv[1],
-                        EmpCategory = currentJobType,
-                        Education = currentEducation,
-                        NeededExperience = csv[4],
-                        DateFrom = dateFrom,
-                        DateTo = dateTo,
-                        Id = id
-                    };
-
-                    _listJobs.Add(_Job);
-                    iteration++;
-                }
-                catch
-                {
-                    _logger.LogError(ErrorConstants.InvalidInput, formFile);
-                    response.Errors["Error"].Add(ErrorConstants.InvalidFormat + " at line " + iteration);
+                    response.ErrorHandling(ErrorConstants.InvalidInput,_logger,company);
                     return response;
                 }
+                foreach (var job in result.Jobs)
+                {
+                    var jobPost = new JobPosting();
+
+                    jobPost = _mapper.Map(job, jobPost);
+                    jobPost.Client = company;
+
+                    Create(jobPost, RoleConstants.ADMIN);
+                }
+                response.Succeeded = true;
             }
+            response.Errors = result.Response.Errors;
             return response;
         }
     }

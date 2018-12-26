@@ -20,37 +20,34 @@ namespace HRHunters.Domain.Managers
         public void Create<TEntity>(TEntity entity, string createdBy = null) where TEntity : Entity
         {
             _repo.Create(entity, createdBy);
-            Save();
         }
 
         public void Delete<TEntity>(object id) where TEntity : Entity
         {
             _repo.Delete<TEntity>(id);
-            Save();
         }
 
-        public void Delete<TEntity>(TEntity entity) where TEntity : Entity
+        public void Delete<TEntity>(TEntity entity) where TEntity : Entity 
         {
             _repo.Delete(entity);
-            Save();
         }
 
-        public IQueryable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null) where TEntity : Entity
+        public IQueryable<TEntity> Get<TEntity>(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null) where TEntity : Entity 
         {
             return _repo.Get(filter, includeProperties);
         }
 
-        public IQueryable<TEntity> GetAll<TEntity>(string includeProperities) where TEntity : Entity
+        public IQueryable<TEntity> GetAll<TEntity>(string includeProperties = null) where TEntity : Entity
         {
-            return _repo.GetAll<TEntity>(includeProperties: null);
+            return _repo.GetAll<TEntity>(includeProperties);
         }
 
-        public TEntity GetById<TEntity>(object id) where TEntity : Entity
+        public TEntity GetById<TEntity>(object id) where TEntity : Entity 
         {
             return _repo.GetById<TEntity>(id);
         }
 
-        public int GetCount<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : Entity
+        public int GetCount<TEntity>(Expression<Func<TEntity, bool>> filter = null) where TEntity : Entity 
         {
             return _repo.GetCount(filter);
         }
@@ -60,7 +57,7 @@ namespace HRHunters.Domain.Managers
             return _repo.GetExists(filter);
         }
 
-        public TEntity GetOne<TEntity>(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null) where TEntity : Entity
+        public TEntity GetOne<TEntity>(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null) where TEntity : Entity 
         {
             return _repo.GetOne(filter, includeProperties);
         }
@@ -73,7 +70,6 @@ namespace HRHunters.Domain.Managers
         public void Update<TEntity>(TEntity entity, string modifiedBy = null) where TEntity : Entity
         {
             _repo.Update(entity, modifiedBy);
-            Save();
         }
     }
 }

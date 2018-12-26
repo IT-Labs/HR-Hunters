@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using HRHunters.Common.Constants;
+using HRHunters.Common.Entities;
 using HRHunters.Common.Enums;
 using HRHunters.Common.Interfaces;
 using HRHunters.Common.Requests;
@@ -19,41 +20,56 @@ namespace HRHunters.WebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class ApplicantsController : ControllerBase
+    public class ApplicantsController : BaseController
     {
         private readonly IApplicantManager _applicantManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ApplicantsController(IApplicantManager applicantManager, IHttpContextAccessor httpContextAccessor)
+        public ApplicantsController(IApplicantManager applicantManager, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             _applicantManager = applicantManager;
-            _httpContextAccessor = httpContextAccessor;
         }
-        private int GetCurrentUserId()
-        {
-            return int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        }
+       
         [HttpGet("{id}")]
         public IActionResult GetOneApplicant(int id)
         {
             return Ok(_applicantManager.GetOneApplicant(id));
         }
+
         [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpGet]
         public IActionResult GetMultipleApplicants([FromQuery]SearchRequest request)
         {
-            return Ok(_applicantManager.GetMultiple(request,GetCurrentUserId()));
+            return Ok(_applicantManager.GetMultiple(request));
         }
+
         [Authorize(Roles = RoleConstants.APPLICANT)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateApplicantProfile(int id, ApplicantUpdate applicantUpdate)
         {
-            var result = await _applicantManager.UpdateApplicantProfile(id, applicantUpdate, GetCurrentUserId());
+            if (CurrentUserId != id)
+                return BadRequest(applicantUpdate);
+
+            var result = await _applicantManager.UpdateApplicantProfile(id, applicantUpdate);
             if (result.Succeeded)
             {
                 return Ok(result);
             }
-            else return BadRequest(result);
+            return BadRequest(result);
+        }
+
+        [Authorize(Roles = RoleConstants.APPLICANT)]
+        [HttpPut("image/{Id}")]
+        public async Task<IActionResult> UpdateProfileImage([FromForm]FileUpload fileUpload)
+        {
+            if (CurrentUserId != fileUpload.Id)
+                return BadRequest(fileUpload);
+
+            var result = await _applicantManager.UpdateProfileImage(fileUpload);
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }
