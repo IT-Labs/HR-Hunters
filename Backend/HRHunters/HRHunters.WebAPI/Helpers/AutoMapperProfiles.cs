@@ -53,7 +53,7 @@ namespace HRHunters.WebAPI.Helpers
                                             .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
                                             .ForMember(x => x.ActiveJobs, opt => opt.MapFrom(x => x.JobPostings.Count(y => y.DateTo < DateTime.UtcNow)))
                                             .ForMember(x => x.Status, opt => opt.MapFrom(x => x.Status.ToString()))
-                                            .ForMember(x => x.Logo, opt => opt.MapFrom(x => EnvironmentVariables.CLOUD_FRONT_URL + x.Logo))
+                                            .ForMember(x => x.Logo, opt => opt.MapFrom(x => x.Logo != null ? EnvironmentVariables.CLOUD_FRONT_URL + x.Logo : " "))
                                             .ForMember(x => x.AllJobs, opt => opt.MapFrom(x => x.JobPostings.Count));
             CreateMap<JobSubmit, JobPosting>().ForMember(x => x.Id, opt => opt.Ignore())
                                                 .ForMember(x => x.DateFrom, opt => opt.Ignore())
@@ -78,7 +78,7 @@ namespace HRHunters.WebAPI.Helpers
                                                     .ForMember(x => x.FirstName, opt => opt.MapFrom(x => x.User.FirstName))
                                                     .ForMember(x => x.LastName, opt => opt.MapFrom(x => x.User.LastName))
                                                     .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
-                                                    .ForMember(x => x.Photo, opt => opt.MapFrom(x => EnvironmentVariables.CLOUD_FRONT_URL+x.Logo))
+                                                    .ForMember(x => x.Photo, opt => opt.MapFrom(x => x.Logo != null ? EnvironmentVariables.CLOUD_FRONT_URL + x.Logo : " "))
                                                     .ForMember(x => x.School, opt => opt.MapFrom(x => x.SchoolUniversity))
                                                     .ForMember(x => x.Education, opt => opt.MapFrom(x=>x.EducationType.ToString()));
                                                      
