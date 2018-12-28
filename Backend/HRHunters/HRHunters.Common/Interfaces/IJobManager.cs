@@ -22,7 +22,7 @@ namespace HRHunters.Common.Interfaces
         Task<GeneralResponse> CreateJobPosting(JobSubmit jobSubmit, int currentUserId);
         GeneralResponse UploadCSV(FileUpload fileUpload);
         JobInfo GetOneJobPosting(int id);
-        GeneralResponse UpdateJob(JobUpdate jobUpdate);
+        GeneralResponse UpdateJob(JobUpdate jobUpdate,int id);
 
     }
 }

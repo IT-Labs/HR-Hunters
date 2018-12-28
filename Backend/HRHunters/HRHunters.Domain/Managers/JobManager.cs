@@ -133,11 +133,11 @@ namespace HRHunters.Domain.Managers
             return _mapper.Map<JobInfo>(jobPost);
         }
 
-        public GeneralResponse UpdateJob(JobUpdate jobUpdate)
+        public GeneralResponse UpdateJob(JobUpdate jobUpdate, int id)
         {
             var response = new GeneralResponse();
 
-            var jobPost = GetOne<JobPosting>(filter: x => x.Id == jobUpdate.Id,
+            var jobPost = GetOne<JobPosting>(filter: x => x.Id == id,
                                                     includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
 
             if (jobPost == null)

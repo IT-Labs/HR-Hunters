@@ -54,16 +54,16 @@ namespace HRHunters.WebAPI.Controllers
         }
 
         [Authorize(Roles = RoleConstants.ADMIN)]
-        [HttpPut]
-        public IActionResult UpdateJob(JobUpdate jobSubmit)
+        [HttpPut("{id}")]
+        public IActionResult UpdateJob(JobUpdate jobSubmit, [FromRoute]int id)
         {
-            var result = _jobManager.UpdateJob(jobSubmit);
+            var result = _jobManager.UpdateJob(jobSubmit, id);
             if (result.Succeeded)
             {
                 return Ok(result);
             }
             else return BadRequest(result);
-        }
+        }   
 
         [Authorize(Roles = "Admin")]
         [HttpPost("UploadCSV/{Id}")]

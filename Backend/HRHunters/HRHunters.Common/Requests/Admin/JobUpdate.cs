@@ -1,4 +1,5 @@
 ﻿using HRHunters.Common.CustomValidationAttributes;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +9,6 @@ namespace HRHunters.Common.Requests.Admin
 {
     public class JobUpdate
     {
-        public int Id { get; set; }
         public string Status { get; set; }
         [RequiredIf("Status", null, errormessage: "The JobTitle field is required")]
         public string JobTitle { get; set; }
