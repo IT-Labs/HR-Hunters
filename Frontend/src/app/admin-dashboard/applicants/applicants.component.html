@@ -89,14 +89,14 @@
             <td scope="row">
               {{ applicant.firstName }} {{ applicant.lastName }}
             </td>
-            <td>
+            <td class="text-center">
               <img
-                *ngIf="applicant.photo"
+                *ngIf="applicant.photo !== ' '"
                 class="dash__table--image"
                 [src]="applicant.photo"
                 [alt]="applicant.firstName"
               />
-              <span *ngIf="!applicant.photo"> / </span>
+              <span *ngIf="applicant.photo === ' '"> / </span>
             </td>
             <td>{{ applicant.email }}</td>
             <td>{{ applicant.phoneNumber }}</td>

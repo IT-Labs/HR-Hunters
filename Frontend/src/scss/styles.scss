@@ -1,9 +1,6 @@
 //bootstrap
 @import "../../node_modules/bootstrap/scss/bootstrap.scss";
 
-//toastr
-@import '~ngx-toastr/toastr-bs4-alert';
-
 @import "./abstracts/abstracts";
 
 @import "./base/base";
@@ -11,3 +8,6 @@
 @import "./components/components";
 
 @import "./layouts/layouts";
+
+//toastr
+@import '~ngx-toastr/toastr-bs4-alert';

@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { TokenInterceptor } from './interceptors/token.interceptor';
-import { JobTypePipe } from './pipes/jobType.pipe';
 
 @NgModule({
   declarations: [

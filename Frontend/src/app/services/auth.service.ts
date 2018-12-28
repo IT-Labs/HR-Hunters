@@ -108,7 +108,6 @@ export class AuthService {
   }
 
   // Caching unauthorized requests
-
   cachedRequests: Array<HttpRequest<any>> = [];
 
   public collectFailedRequest(request): void {

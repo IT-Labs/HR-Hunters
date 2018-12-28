@@ -121,9 +121,7 @@ export class ADClientsComponent implements OnInit {
         this.clientsCount.all = clientsData.maxClients;
         this.clientsCount.active = clientsData.active;
         this.clientsCount.inactive = clientsData.inactive;
-        this.loading = false;
-  
-        this.paginationMaxSize = clientsData.maxClients;
+        
         this.loading = false;
       },
       error => {
@@ -237,7 +235,6 @@ export class ADClientsComponent implements OnInit {
 
     this.clientService.updateClientStatus(currentStatus, currentId).subscribe(
       response => {
-        this.router.navigate(["/admin-dashboard/clients"]);
         this.toastr.success("", "Client status updated successfully!");
         const params = this.buildQueryParams(this.clientQP);
         this.clientService.getClients(params).subscribe(clientsData => {

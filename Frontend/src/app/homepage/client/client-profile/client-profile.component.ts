@@ -54,7 +54,7 @@ export class ClientProfileComponent implements OnInit {
         this.clientProfileFormHP.controls.phonenumber.setValue(
           client.phoneNumber
         );
-        if (this.loggedInClient.logo !== "") {
+        if (this.loggedInClient.logo !== " ") {
           this.imagePreview = client.logo;
         } else {
           this.imagePreview = this.defaultImage;

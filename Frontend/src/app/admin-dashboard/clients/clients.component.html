@@ -115,14 +115,14 @@
         <tbody>
           <tr *ngFor="let client of clients">
             <td scope="row">{{ client.companyName }}</td>
-            <td>
+            <td class="text-center"> 
               <img
-                *ngIf="client.logo"
+                *ngIf="client.logo  !== ' '"
                 class="dash__table--image"
                 [src]="client.logo"
                 [alt]="client.companyName"
               />
-              <span *ngIf="!client.logo">
+              <span *ngIf="client.logo === ' '">
                 /
               </span>
             </td>

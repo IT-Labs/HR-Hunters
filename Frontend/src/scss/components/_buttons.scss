@@ -9,10 +9,12 @@
 
   &:hover {
     background-color: $color-btn-auth-hover;
+    color: $color-white;
   }
 
   &:active {
     background-color: $color-btn-auth-active;
+    color: $color-white;
   }
 }
 
@@ -32,10 +34,12 @@
 
     &:hover {
       background-color: $color-btn-primary-hover;
+      color: $color-white;
     }
     
     &:active {
       background-color: $color-btn-primary-active;
+      color: $color-white;
     }
   }
   &__secondary {
@@ -75,10 +79,12 @@
 
     &:hover {
       background-color: $color-btn-success-hover;
+      color: $color-white;
     }
     
     &:active {
       background-color: $color-btn-success-active;
+      color: $color-white;
     }
   }
   &__danger {

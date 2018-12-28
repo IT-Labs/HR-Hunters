@@ -2,10 +2,11 @@ import 'rxjs/add/operator/do';
 import { Observable } from 'rxjs';
 import { HttpEvent, HttpRequest, HttpInterceptor, HttpResponse, HttpErrorResponse, HttpHandler } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 export class JwtInterceptor implements HttpInterceptor {
 
-  constructor(public auth: AuthService) {}
+  constructor(public auth: AuthService, private router: Router) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     
@@ -17,6 +18,8 @@ export class JwtInterceptor implements HttpInterceptor {
       if (err instanceof HttpErrorResponse) {
         if (err.status === 401) {
             this.auth.collectFailedRequest(request);
+            this.auth.logout();
+            this.router.navigate(['/login'])
         }
       }
     });

@@ -39,6 +39,7 @@ import { NewClientComponent } from "./admin-dashboard/clients/new-client/new-cli
 import { AddCSVComponent } from "./admin-dashboard/job-postings/add-csv/add-csv.component";
 import { ApplicationDetailsComponent } from "./homepage/application-details/application-details.component";
 import { JobTypePipe } from "./pipes/jobType.pipe";
+import { AppRoutingModule } from "./app-routing.module";
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { JobTypePipe } from "./pipes/jobType.pipe";
   ],
   imports: [
     CommonModule,
+    AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
     RouterModule,

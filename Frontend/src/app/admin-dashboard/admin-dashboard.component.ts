@@ -1,6 +1,5 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, } from "@angular/core";
 import { AuthService } from "../services/auth.service";
-import { Subscription } from "rxjs";
 import { Router } from "@angular/router";
 
 @Component({
@@ -8,7 +7,7 @@ import { Router } from "@angular/router";
   templateUrl: "./admin-dashboard.component.html",
   styleUrls: ["./admin-dashboard.component.scss"]
 })
-export class AdminDashboardComponent implements OnInit, OnDestroy {
+export class AdminDashboardComponent implements OnInit {
 
   dropdownOpen = false;
   
@@ -30,8 +29,5 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   onLogout() {
     this.authService.logout();
     this.router.navigate(['/login']);
-  }
-
-  ngOnDestroy() {
   }
 }

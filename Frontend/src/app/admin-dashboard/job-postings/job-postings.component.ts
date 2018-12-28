@@ -137,7 +137,6 @@ export class ADJobPostingsComponent implements OnInit {
           this.jobPostingsCount.expired = jobPostingData.expired;
           this.jobPostingsCount.rejected = jobPostingData.rejected;
 
-          this.paginationMaxSize = this.jobPostingsCount.all;
           this.loading = false;
         },
         error => {

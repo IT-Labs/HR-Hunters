@@ -109,7 +109,6 @@ export class ADApplicationsComponent implements OnInit {
           this.applicationCount.hired = applicationsData.hired;
           this.applicationCount.rejected = applicationsData.rejected;
 
-          this.paginationMaxSize = this.applicationCount.all;
           this.loading = false;
         },
         error => {

@@ -84,6 +84,7 @@ export class ADNewJobPostingComponent implements OnInit {
 
   loading = false;
   loggedInUser;
+  jobPostingId;
 
   constructor(
     private fb: FormBuilder,
@@ -100,13 +101,13 @@ export class ADNewJobPostingComponent implements OnInit {
     this.loading = true;
     this.loggedInUser = this.authService.getUser();
     const edit = this.activatedRoute.snapshot.queryParamMap.get("edit");
-    const id = this.activatedRoute.snapshot.paramMap.get("id");
+    this.jobPostingId = this.activatedRoute.snapshot.paramMap.get("id");
     if (edit === "true") {
       this.edit = true;
     }
 
     if (this.edit) {
-      this.jobPostingService.getJobPosting(id).subscribe(jobPostingData => {
+      this.jobPostingService.getJobPosting(this.jobPostingId).subscribe(jobPostingData => {
         this.newJobPostingForm.controls.companyName.setValue(
           jobPostingData.companyName
         );
@@ -124,7 +125,19 @@ export class ADNewJobPostingComponent implements OnInit {
           jobPostingData.experience
         );
         this.checkCompanyValidity();
+        
+        this.newJobPostingForm.controls["companyName"].updateValueAndValidity();
+        this.newJobPostingForm.controls["title"].updateValueAndValidity();
+        this.newJobPostingForm.controls["jobType"].updateValueAndValidity();
+        this.newJobPostingForm.controls["education"].updateValueAndValidity();
+        this.newJobPostingForm.controls["experience"].updateValueAndValidity();
+        this.validClient = true;
+
+        this.newJobPostingForm.controls.companyName.disable();
+
+        console.log(this.newJobPostingForm.valid, this.fromDate, this.toDate, this.validClient, this.validDate)
       });
+
     }
 
     const params = this.buildQueryParams();
@@ -190,21 +203,21 @@ export class ADNewJobPostingComponent implements OnInit {
 
   buildJobPostingDataOnAddJobPosting(
     id: number,
-    title: string,
+    jobTitle: string,
     description: string,
-    empCategory: string,
+    jobType: string,
     education: string,
-    neededExperience: number,
+    experience: number,
     dateFrom: string,
     dateTo: string
   ) {
     const newJobPostingData = {
       id: id,
-      title: title,
+      jobTitle: jobTitle,
       description: description,
-      empCategory: empCategory,
+      jobType: jobType,
       education: education,
-      neededExperience: neededExperience,
+      experience: experience,
       dateFrom: dateFrom,
       dateTo: dateTo
     };
@@ -348,19 +361,19 @@ export class ADNewJobPostingComponent implements OnInit {
   }
 
   fixJobType() {
-    let empCategory;
+    let jobType;
     switch (this.newJobPostingForm.value.jobType) {
       case "Full-time":
-        empCategory = "Full_time";
+        jobType = "Full_time";
         break;
       case "Part-time":
-        empCategory = "Part_time";
+        jobType = "Part_time";
         break;
       case "Intern":
-        empCategory = "Intern";
+        jobType = "Intern";
         break;
     }
-    return empCategory;
+    return jobType;
   }
 
   onSubmitNewJobPosting() {
@@ -372,7 +385,7 @@ export class ADNewJobPostingComponent implements OnInit {
     this.newJobPostingForm.controls["experience"].markAsTouched();
 
     let jobPostingData = this.buildJobPostingDataOnAddJobPosting(
-      this.selectedCompany.id,
+      this.jobPostingId,
       this.newJobPostingForm.value.title,
       this.newJobPostingForm.value.description,
       this.fixJobType(),
@@ -418,9 +431,9 @@ export class ADNewJobPostingComponent implements OnInit {
     ) {
       this.jobPostingService.updateJobPosting(jobPostingData).subscribe(
         response => {
-          this.router.navigate(["/admin-dashboard/job-postings"]);
           this.loading = false;
           this.toastr.success("", "Job posting status updated successfully!");
+          this.router.navigate(["/admin-dashboard/job-postings"]);
         },
         error => {
           if (error.status == 401) {
