@@ -17,7 +17,7 @@ namespace HRHunters.Common.Interfaces
     public interface IApplicationManager : IBaseManager
     {
         Task<ApplicationResponse> GetMultiple(SearchRequest request);
-        GeneralResponse UpdateApplicationStatus(int id, ApplicationStatusUpdate statusUpdate);
+        GeneralResponse UpdateApplicationStatus(int id, StatusUpdate statusUpdate);
         Task<GeneralResponse> CreateApplication(Apply apply);
         ApplicationInfo GetOneApplication(int id);
     }

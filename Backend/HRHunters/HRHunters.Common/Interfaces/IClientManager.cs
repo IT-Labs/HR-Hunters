@@ -16,7 +16,7 @@ namespace HRHunters.Common.Interfaces
     public interface IClientManager : IBaseManager
     {
         ClientResponse GetMultiple(SearchRequest request);
-        GeneralResponse UpdateClientStatus(int id, ClientStatusUpdate statusUpdate);
+        GeneralResponse UpdateClientStatus(int id, StatusUpdate statusUpdate);
         Task<GeneralResponse> UpdateClientProfile(int id, ClientUpdate clientUpdate);
         Task<GeneralResponse> CreateCompany(NewCompany newCompany);
         ClientInfo GetOneClient(int id);

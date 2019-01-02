@@ -50,19 +50,30 @@ namespace HRHunters.WebAPI.Controllers
             {
                 return Ok(result);
             }
-            else return BadRequest(result);
+            return BadRequest(result);
         }
 
         [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpPut("{id}")]
-        public IActionResult UpdateJob(JobUpdate jobSubmit, [FromRoute]int id)
+        public IActionResult UpdateJob(JobPostingEdit jobSubmit, [FromRoute]int id)
         {
             var result = _jobManager.UpdateJob(jobSubmit, id);
             if (result.Succeeded)
             {
                 return Ok(result);
             }
-            else return BadRequest(result);
+            return BadRequest(result);
+        }
+        [Authorize(Roles = RoleConstants.ADMIN)]
+        [HttpPut("{id}/status")]
+        public IActionResult UpdateJobStatus(StatusUpdate statusUpdate, [FromRoute]int id)
+        {
+            var result = _jobManager.UpdateJobStatus(statusUpdate, id);
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }   
 
         [Authorize(Roles = "Admin")]
@@ -74,7 +85,7 @@ namespace HRHunters.WebAPI.Controllers
             {
                 return Ok(result);
             }
-            else return BadRequest(result);
+            return BadRequest(result);
         }
     }
 }

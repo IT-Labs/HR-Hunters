@@ -70,7 +70,7 @@ namespace HRHunters.WebAPI.Controllers
 
         [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpPut("{id}/status")]
-        public IActionResult UpdateClientStatus(int id, ClientStatusUpdate statusUpdate)
+        public IActionResult UpdateClientStatus(int id, StatusUpdate statusUpdate)
         {
             var result = _clientManager.UpdateClientStatus(id, statusUpdate);
             if (result.Succeeded)

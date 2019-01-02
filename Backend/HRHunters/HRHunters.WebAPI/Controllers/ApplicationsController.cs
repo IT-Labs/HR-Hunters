@@ -46,7 +46,7 @@ namespace HRHunters.WebAPI.Controllers
         
         [Authorize(Roles = RoleConstants.ADMIN)]
         [HttpPut("{id}/status")]
-        public IActionResult UpdateApplicationStatus(int id, [FromBody]ApplicationStatusUpdate statusUpdate)
+        public IActionResult UpdateApplicationStatus(int id, [FromBody]StatusUpdate statusUpdate)
         {
             var result = _applicationManager.UpdateApplicationStatus(id, statusUpdate);
             if (!result.Succeeded)

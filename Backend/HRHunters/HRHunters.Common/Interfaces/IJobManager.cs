@@ -22,7 +22,8 @@ namespace HRHunters.Common.Interfaces
         Task<GeneralResponse> CreateJobPosting(JobSubmit jobSubmit, int currentUserId);
         GeneralResponse UploadCSV(FileUpload fileUpload);
         JobInfo GetOneJobPosting(int id);
-        GeneralResponse UpdateJob(JobUpdate jobUpdate,int id);
+        GeneralResponse UpdateJob(JobPostingEdit jobUpdate, int id);
+        GeneralResponse UpdateJobStatus(StatusUpdate statusUpdate, int id);
 
     }
 }

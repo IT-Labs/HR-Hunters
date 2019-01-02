@@ -75,7 +75,7 @@ namespace HRHunters.Domain.Managers
             return _mapper.Map<ApplicationInfo>(GetOne<Application>(x => x.Id == id, includeProperties: $"{nameof(Applicant)}.{nameof(Applicant.User)},{nameof(JobPosting)}"));
         }
 
-        public GeneralResponse UpdateApplicationStatus(int id, ApplicationStatusUpdate statusUpdate)
+        public GeneralResponse UpdateApplicationStatus(int id, StatusUpdate statusUpdate)
         {
             var response = new GeneralResponse();
             var application = GetOne<Application>(filter: x => x.Id == id,

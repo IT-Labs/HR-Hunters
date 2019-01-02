@@ -90,7 +90,7 @@ namespace HRHunters.Domain.Managers
             }
             var company = new Client();
             company = GetById<Client>(jobSubmit.Id);
-            
+
             var jobPost = new JobPosting()
             {
                 Client = company,
@@ -106,7 +106,7 @@ namespace HRHunters.Domain.Managers
             {
                 return response.ErrorHandling(ErrorConstants.InvalidInput, _logger, dateFrom, dateTo, education, empCategory);
             }
-            
+
             jobPost.DateFrom = dateFrom;
             jobPost.DateTo = dateTo;
             jobPost.EmpCategory = empCategory;
@@ -115,12 +115,13 @@ namespace HRHunters.Domain.Managers
             {
                 jobPost.Status = JobPostingStatus.Pending;
                 Create(jobPost, company.User.FirstName);
-            }else
+            }
+            else
             {
                 jobPost.Status = JobPostingStatus.Approved;
                 Create(jobPost, RoleConstants.ADMIN);
             }
-            
+
             response.Succeeded = true;
             return response;
         }
@@ -133,44 +134,53 @@ namespace HRHunters.Domain.Managers
             return _mapper.Map<JobInfo>(jobPost);
         }
 
-        public GeneralResponse UpdateJob(JobUpdate jobUpdate, int id)
+        public GeneralResponse UpdateJob(JobPostingEdit jobUpdate, int id)
         {
             var response = new GeneralResponse();
 
-            var jobPost = GetOne<JobPosting>(filter: x => x.Id == id,
-                                                    includeProperties: $"{nameof(Client)}.{nameof(Client.User)},{nameof(JobPosting.Applications)}");
-
+            var jobPost = GetOne<JobPosting>(filter: x => x.Id == id, includeProperties: $"{nameof(Client)}.{nameof(Client.User)}," +
+                                                                                         $"{nameof(JobPosting.Applications)}");
             if (jobPost == null)
             {
                 return response.ErrorHandling<JobManager>(ErrorConstants.NullValue, objects: jobPost);
             }
-            if (!string.IsNullOrEmpty(jobUpdate.Status))
-            {
-                bool statusParse = Enum.TryParse(jobUpdate.Status, out JobPostingStatus statusToUpdate);
-                if (!statusParse)
-                {
-                    return response.ErrorHandling(ErrorConstants.InvalidInput, _logger, jobUpdate.Status);
-                }
-                jobPost.Status = statusToUpdate;
-            }
-            else
-            { 
-                jobPost = _mapper.Map(jobUpdate, jobPost);
-                bool jobTypeParse = Enum.TryParse(jobUpdate.JobType, out JobType currentJobType);
-                bool educationParse = Enum.TryParse(jobUpdate.Education, out EducationType currentEducation);
-                bool dateFromParse = DateTime.TryParse(jobUpdate.DateFrom, out DateTime dateFrom);
-                bool dateToParse = DateTime.TryParse(jobUpdate.DateTo, out DateTime dateTo);
-                if (!jobTypeParse || !educationParse || !dateToParse || !dateToParse || dateFrom > dateTo)
-                {
-                    return response.ErrorHandling(ErrorConstants.InvalidInput, _logger, dateFrom, dateTo, currentEducation, currentJobType);
-                }
 
-                jobPost.DateTo = dateTo;
-                jobPost.DateFrom = dateFrom;
-                jobPost.EmpCategory = currentJobType;
-                jobPost.Education = currentEducation;
+            jobPost = _mapper.Map(jobUpdate, jobPost);
+            bool jobTypeParse = Enum.TryParse(jobUpdate.JobType, out JobType currentJobType);
+            bool educationParse = Enum.TryParse(jobUpdate.Education, out EducationType currentEducation);
+            bool dateFromParse = DateTime.TryParse(jobUpdate.DateFrom, out DateTime dateFrom);
+            bool dateToParse = DateTime.TryParse(jobUpdate.DateTo, out DateTime dateTo);
+            if (!jobTypeParse || !educationParse || !dateToParse || !dateToParse || dateFrom > dateTo)
+            {
+                return response.ErrorHandling(ErrorConstants.InvalidInput, _logger, dateFrom, dateTo, currentEducation, currentJobType);
             }
-        
+
+            jobPost.DateTo = dateTo;
+            jobPost.DateFrom = dateFrom;
+            jobPost.EmpCategory = currentJobType;
+            jobPost.Education = currentEducation;
+
+            Update(jobPost, RoleConstants.ADMIN);
+            response.Succeeded = true;
+            return response;
+        }
+        public GeneralResponse UpdateJobStatus(StatusUpdate statusUpdate, int id)
+        {
+            var response = new GeneralResponse();
+            var jobPost = GetOne<JobPosting>(filter: x => x.Id == id);
+            if (jobPost == null)
+            {
+                return response.ErrorHandling<JobManager>(ErrorConstants.NullValue, objects: jobPost);
+            }
+
+            bool statusParse = Enum.TryParse(statusUpdate.Status, out JobPostingStatus statusToUpdate);
+
+            if (!statusParse)
+            {
+                return response.ErrorHandling(ErrorConstants.InvalidInput, _logger, statusUpdate.Status);
+            }
+
+            jobPost.Status = statusToUpdate;
             Update(jobPost, RoleConstants.ADMIN);
             response.Succeeded = true;
             return response;
@@ -185,7 +195,7 @@ namespace HRHunters.Domain.Managers
                 var company = GetById<Client>(fileUpload.Id);
                 if (company == null)
                 {
-                    response.ErrorHandling(ErrorConstants.InvalidInput,_logger,company);
+                    response.ErrorHandling(ErrorConstants.InvalidInput, _logger, company);
                     return response;
                 }
                 foreach (var job in result.Jobs)

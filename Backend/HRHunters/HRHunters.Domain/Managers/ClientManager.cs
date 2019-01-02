@@ -62,7 +62,7 @@ namespace HRHunters.Domain.Managers
             return _mapper.Map<ClientInfo>(query);
         }
 
-        public GeneralResponse UpdateClientStatus(int id, ClientStatusUpdate statusUpdate)
+        public GeneralResponse UpdateClientStatus(int id, StatusUpdate statusUpdate)
         {
             var client = GetOne<Client>(filter: x => x.Id == id,
                                                     includeProperties: $"{nameof(User)},{nameof(Client.JobPostings)}");
