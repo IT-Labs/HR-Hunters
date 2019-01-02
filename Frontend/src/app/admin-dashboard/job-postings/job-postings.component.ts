@@ -92,36 +92,6 @@ export class ADJobPostingsComponent implements OnInit {
     }&id=${this.loggedInUser.id}`;
   }
 
-  buildJobPostingDataOnUpdate(
-    id: number,
-    status: string,
-    jobTitle: string,
-    description: string,
-    jobType: string,
-    education: string,
-    experience: number,
-    dateFrom: string,
-    dateTo: string
-  ) {
-    let jobPostingData: JobPosting;
-    jobPostingData = {
-      id: id,
-      status: status,
-      jobTitle: jobTitle,
-      description: description,
-      jobType: jobType,
-      education: education,
-      experience: experience,
-      dateFrom: dateFrom,
-      dateTo: dateTo
-    };
-    return jobPostingData;
-  }
-
-  // onEditJobPosting(id: number) {
-  //   this.jobPostingService.editJobPostingId = id;
-  // }
-
   onChangedPage(page: number) {
     this.loading = true;
     if (this.jobPostingQP.currentPage !== this.jobPostingQP.previousPage) {
@@ -249,21 +219,11 @@ export class ADJobPostingsComponent implements OnInit {
 
   chooseStatus(event: any, id: number) {
     this.loading = true;
-    const currentStatus = event.target.innerText;
+    const currentStatus = {
+      status: event.target.innerText
+    } 
     const currentId = id;
-
-    const jobPostingData = this.buildJobPostingDataOnUpdate(
-      currentId,
-      currentStatus,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    );
-    this.jobPostingService.updateJobPostingStatus(jobPostingData).subscribe(
+    this.jobPostingService.updateJobPostingStatus(currentStatus, currentId).subscribe(
       response => {
         const params = this.buildQueryParams(this.jobPostingQP);
         this.jobPostingService.getJobPostings(params).subscribe(jobPostingData => {
