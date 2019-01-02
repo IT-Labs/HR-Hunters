@@ -174,7 +174,6 @@ export class ADNewJobPostingComponent implements OnInit {
       "",
       Validators.compose([
         Validators.required,
-        Validators.minLength(1),
         Validators.maxLength(50),
         Validators.pattern(this.validText)
       ])
@@ -213,6 +212,27 @@ export class ADNewJobPostingComponent implements OnInit {
   ) {
     const newJobPostingData = {
       id: id,
+      jobTitle: jobTitle,
+      description: description,
+      jobType: jobType,
+      education: education,
+      experience: experience,
+      dateFrom: dateFrom,
+      dateTo: dateTo
+    };
+    return newJobPostingData;
+  }
+
+  buildJobPostingDataOnEditJobPosting(
+    jobTitle: string,
+    description: string,
+    jobType: string,
+    education: string,
+    experience: number,
+    dateFrom: string,
+    dateTo: string
+  ) {
+    const newJobPostingData = {
       jobTitle: jobTitle,
       description: description,
       jobType: jobType,
@@ -384,17 +404,6 @@ export class ADNewJobPostingComponent implements OnInit {
     this.newJobPostingForm.controls["education"].markAsTouched();
     this.newJobPostingForm.controls["experience"].markAsTouched();
 
-    let jobPostingData = this.buildJobPostingDataOnAddJobPosting(
-      this.jobPostingId,
-      this.newJobPostingForm.value.title,
-      this.newJobPostingForm.value.description,
-      this.fixJobType(),
-      this.newJobPostingForm.value.education,
-      this.newJobPostingForm.value.experience,
-      this.calculateDateValidity().dateFrom,
-      this.calculateDateValidity().dateTo
-    );
-
     if (
       this.newJobPostingForm.valid &&
       this.fromDate &&
@@ -403,6 +412,17 @@ export class ADNewJobPostingComponent implements OnInit {
       this.validClient &&
       !this.edit
     ) {
+      let jobPostingData = this.buildJobPostingDataOnAddJobPosting(
+        this.jobPostingId,
+        this.newJobPostingForm.value.title,
+        this.newJobPostingForm.value.description,
+        this.fixJobType(),
+        this.newJobPostingForm.value.education,
+        this.newJobPostingForm.value.experience,
+        this.calculateDateValidity().dateFrom,
+        this.calculateDateValidity().dateTo
+      );
+
       this.jobPostingService.addJobPosting(jobPostingData).subscribe(
         response => {
           this.router.navigate(["/admin-dashboard/job-postings"]);
@@ -429,7 +449,17 @@ export class ADNewJobPostingComponent implements OnInit {
       this.validClient &&
       this.edit
     ) {
-      this.jobPostingService.updateJobPosting(jobPostingData).subscribe(
+      let jobPostingData = this.buildJobPostingDataOnEditJobPosting(
+        this.newJobPostingForm.value.title,
+        this.newJobPostingForm.value.description,
+        this.fixJobType(),
+        this.newJobPostingForm.value.education,
+        this.newJobPostingForm.value.experience,
+        this.calculateDateValidity().dateFrom,
+        this.calculateDateValidity().dateTo
+      );
+
+      this.jobPostingService.updateJobPosting(jobPostingData, this.jobPostingId).subscribe(
         response => {
           this.loading = false;
           this.toastr.success("", "Job posting status updated successfully!");

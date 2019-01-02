@@ -1,10 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Router } from "@angular/router";
 import { JobPosting } from "../models/job-posting.model";
 import { environment } from "../../environments/environment.prod";
-import { ToastrService } from "ngx-toastr";
-import { AuthService } from "./auth.service";
 
 @Injectable({ providedIn: "root" })
 export class JobPostingService {
@@ -31,12 +28,12 @@ export class JobPostingService {
     return this.http.post(this.baseUrl + "/Jobs", jobPostingData);
   }
 
-  updateJobPostingStatus(jobPostingData) {
-    return this.http.put(this.baseUrl + "/Jobs", jobPostingData);
+  updateJobPostingStatus(jobPostingData, jobPostingId) {
+    return this.http.put(this.baseUrl + "/Jobs/" + jobPostingId + '/status', jobPostingData);
   }
 
-  updateJobPosting(jobPostingData) {
-    return this.http.put(this.baseUrl + "/Jobs", jobPostingData);
+  updateJobPosting(jobPostingData, jobPostingId) {
+    return this.http.put(this.baseUrl + "/Jobs/" + jobPostingId, jobPostingData);
   }
 
   uploadCSV(clientId, csv) {

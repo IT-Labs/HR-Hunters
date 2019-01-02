@@ -1,10 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpRequest } from "@angular/common/http";
 import { Router } from "@angular/router";
-import { User } from "../models/user.model";
 import { Subject } from "rxjs";
-import { Client } from "../models/client.model";
-import { Applicant } from "../models/applicant.model";
 import { environment } from "../../environments/environment";
 import { ToastrService } from "ngx-toastr";
 

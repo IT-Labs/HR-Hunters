@@ -119,9 +119,9 @@ export class AddJobPostingComponent implements OnInit {
     id: number,
     title: string,
     description: string,
-    empCategory: string,
+    jobType: string,
     education: string,
-    neededExperience: number,
+    experience: number,
     dateFrom: string,
     dateTo: string
   ) {
@@ -129,9 +129,9 @@ export class AddJobPostingComponent implements OnInit {
       id: id,
       title: title,
       description: description,
-      empCategory: empCategory,
+      jobType: jobType,
       education: education,
-      neededExperience: neededExperience,
+      experience: experience,
       dateFrom: dateFrom,
       dateTo: dateTo
     };
@@ -239,19 +239,19 @@ export class AddJobPostingComponent implements OnInit {
   }
 
   fixJobType() {
-    let empCategory;
+    let jobType;
     switch (this.newJobPostingFormHP.value.jobType) {
       case "Full-time":
-        empCategory = "Full_time";
+        jobType = "Full_time";
         break;
       case "Part-time":
-        empCategory = "Part_time";
+        jobType = "Part_time";
         break;
       case "Intern":
-        empCategory = "Intern";
+        jobType = "Intern";
         break;
     }
-    return empCategory
+    return jobType
   }
 
   onSubmitNewJobPosting() {
