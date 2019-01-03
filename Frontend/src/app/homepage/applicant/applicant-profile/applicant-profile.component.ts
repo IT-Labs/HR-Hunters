@@ -6,7 +6,6 @@ import { ApplicantService } from "src/app/services/applicant.service";
 import { Applicant } from "src/app/models/applicant.model";
 import { ToastrService } from "ngx-toastr";
 import { Router } from "@angular/router";
-import { LinkedInService } from "src/app/services/linkedin.service";
 
 @Component({
   selector: "app-applicant-profile",
@@ -75,8 +74,7 @@ export class ApplicantProfileComponent implements OnInit {
     private applicantService: ApplicantService,
     private authService: AuthService,
     private toastr: ToastrService,
-    private router: Router,
-    private linkedinService: LinkedInService
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -224,17 +222,6 @@ export class ApplicantProfileComponent implements OnInit {
     };
     reader.readAsDataURL(this.uploadedImage);
     this.loading = false;
-  }
-
-  
-  getLinkedIn() {
-    this.linkedinService.getProfileInfo().subscribe(res => {
-      console.log(res)
-    },
-    err => {
-      console.log(err)
-    }
-    );
   }
 
   onSubmitApplicantLogo() {
